@@ -427,11 +427,50 @@
       <div class="dash-panel" style="border-color: var(--warning);">
          <h3 style="color: var(--warning);">🔥 Ore de varf (avertizare bar)</h3>
          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-            <p style="color:var(--text-muted); font-size:13px; max-width:80%;">Actívalo para mostrar un aviso rojo a los clientes indicando que la cocina está saturada y los tiempos de espera son mayores de lo habitual.</p>
+            <p style="color:var(--text-muted); font-size:13px; max-width:80%;">Activeaza ca sa arati clientilor un avertisment rosu: barul e aglomerat si timpii de asteptare sunt mai mari decat de obicei.</p>
             <label class="switch"><input type="checkbox" id="toggleBusyMode"><span class="slider"></span></label>
          </div>
       </div>
       
+      <div class="dash-panel" style="border-color: var(--blue);">
+         <h3 style="color: var(--blue);">🙋 Mod fara ospatari</h3>
+         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <p style="color:var(--text-muted); font-size:13px; max-width:80%;">
+              Cand nu e niciun ospatar in tura, activeaza asta. Comenzile nu mai
+              asteapta pasul „ospatar”: barul si bucataria vad direct butonul
+              „Servit” dupa ce marcheaza „Gata”, iar cererile de la mese (nota,
+              ajutor) ajung direct la bar. Se opreste singur cand revine tura
+              normala — nu uita sa-l stingi.
+            </p>
+            <label class="switch"><input type="checkbox" id="toggleFaraOspatari"><span class="slider"></span></label>
+         </div>
+         <div id="faraOspatariStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+      </div>
+
+      <div class="dash-panel" style="border-color: var(--accent);">
+          <h3 style="color: var(--accent);">💶 Preturi</h3>
+          <p style="color:var(--text-muted); font-size:13px; margin-bottom:14px;">
+            Preturile de aici sunt cele dupa care serverul recalculeaza fiecare
+            comanda. Ce schimbi aici se aplica imediat. Atentie: meniul afisat
+            clientilor se citeste din <code>menu.json</code>, asa ca daca vrei ca
+            si clientul sa vada pretul nou, schimba-l si acolo.
+          </p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+            <input type="text" id="cautaPret" placeholder="🔍 Cauta produs..."
+                   style="flex:1; min-width:180px; padding:10px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text);">
+            <button class="btn-primary" style="width:auto; padding:10px 18px;" id="btnSalveazaPreturi">💾 Salveaza modificarile</button>
+          </div>
+          <div id="preturiStare" style="font-size:13px; margin-bottom:10px; min-height:18px;"></div>
+          <div class="table-responsive">
+            <table class="staff-table" id="tabelPreturi">
+              <thead>
+                <tr><th>Produs</th><th>Sectiune</th><th style="width:130px;">Pret (lei)</th></tr>
+              </thead>
+              <tbody id="preturiBody"></tbody>
+            </table>
+          </div>
+      </div>
+
       <div class="dash-panel">
           <h3>🏆 Top 5 produse</h3>
           <ul class="top-list" id="topProductsList"></ul>
@@ -439,7 +478,7 @@
 
       <div class="dash-panel">
           <h3>👤 Raport pe angajat</h3>
-          <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Incasari generate, comenzi gestionate si rata de anulare pentru fiecare membru del staff, en el periodo seleccionado (Hoy / Luna aceasta).</p>
+          <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Incasari generate, comenzi gestionate si rata de anulare pentru fiecare membru al echipei, in perioada selectata (Azi / Luna aceasta).</p>
           <div class="table-responsive">
             <table class="staff-table">
               <thead>
@@ -607,13 +646,15 @@
 
   async function logActivity(actiune, comanda_id, detalii) {
     try {
-      await _supabase.from('jurnal_activitate').insert([{
-        utilizator: currentUserEmail || 'desconocido',
+      const {error} = await _supabase.from('jurnal_activitate').insert([{
+        utilizator: currentUserEmail || 'necunoscut',
         actiune: actiune,
         comanda_id: comanda_id || null,
         detalii: detalii || {}
       }]);
-    } catch(e) { console.log('Error log:', e); }
+      if (error) { console.warn('Jurnal respins:', error.message); return false; }
+      return true;
+    } catch(e) { console.warn('Eroare jurnal:', e); return false; }
   }
 
   // =========================================================================
@@ -889,7 +930,7 @@
     const rol = await fetchStaffRole();
     if (!rol) {
       await _supabase.auth.signOut();
-      alert("Esta cuenta no tiene un rol asignado. Contacta con el responsable.");
+      alert("Acest cont nu are niciun rol atribuit. Vorbeste cu responsabilul.");
       document.getElementById('authOverlay').style.display = 'flex';
       return false;
     }
@@ -962,7 +1003,8 @@
     loadOrders(); 
     loadTablesConfig(); 
     loadFreedTables();
-    loadBusyMode(); 
+    loadBusyMode();
+        loadFaraOspatari().then(() => renderOrders()); 
     if(userRole === 'director') loadFeedbacks();
     
     subscribeRealtime();
@@ -1019,6 +1061,8 @@
         document.getElementById('adminView').style.display = 'block';
         calculateDirectorStats();
         renderHeatmap();
+        loadPreturi();
+        loadFaraOspatari();
     } else if(tab === 'meniu') {
         document.getElementById('navMeniu').classList.add('active');
         document.getElementById('pageTitle').textContent = 'Meniu - comanda rapida';
@@ -1026,7 +1070,7 @@
         loadMeniuForOspatar();
     } else if(tab === 'jurnal') {
         document.getElementById('navJurnal').classList.add('active');
-        document.getElementById('pageTitle').textContent = 'Log de Actividad';
+        document.getElementById('pageTitle').textContent = 'Jurnal de activitate';
         document.getElementById('jurnalView').style.display = 'block';
         loadJurnal();
     } else if(tab === 'map') {
@@ -1310,6 +1354,28 @@
       document.getElementById('tableActionOverlay').classList.add('open');
   }
 
+  // Cand e true, pasul "ospatar" din fluxul comenzii e sarit: barul si
+  // bucataria pot inchide singure comenzile si preiau alertele de la mese.
+  let faraOspatari = false;
+
+  async function loadFaraOspatari() {
+      const {data} = await _supabase.from('jurnal_activitate')
+          .select('detalii, created_at')
+          .eq('actiune', 'setari_ospatari')
+          .order('created_at', {ascending:false}).limit(1);
+      faraOspatari = !!(data && data[0] && data[0].detalii && data[0].detalii.faraOspatari);
+      const box = document.getElementById('toggleFaraOspatari');
+      if (box) box.checked = faraOspatari;
+      const stare = document.getElementById('faraOspatariStare');
+      if (stare) {
+          stare.textContent = faraOspatari
+            ? '● ACTIV — barul si bucataria inchid comenzile singure'
+            : '○ inactiv — comenzile trec prin ospatar';
+          stare.style.color = faraOspatari ? 'var(--warning)' : 'var(--text-muted)';
+      }
+      return faraOspatari;
+  }
+
   async function loadBusyMode() {
       const {data} = await _supabase.from('jurnal_activitate').select('detalii').eq('actiune', 'setari_busy').order('created_at', {ascending:false}).limit(1);
       if(data && data.length > 0 && data[0].detalii) {
@@ -1320,6 +1386,119 @@
   document.getElementById('toggleBusyMode').addEventListener('change', async (e) => {
       await logActivity('setari_busy', null, { isBusy: e.target.checked });
   });
+
+  document.getElementById('toggleFaraOspatari').addEventListener('change', async (e) => {
+      const val = e.target.checked;
+      // Politica RLS lasa doar directorul sa scrie `setari_ospatari`, deci un
+      // ospatar nu si-l poate activa singur ca sa treaca peste flux.
+      const ok = await logActivity('setari_ospatari', null, { faraOspatari: val });
+      if (ok === false) {
+          e.target.checked = !val;
+          alert('Nu s-a putut salva. Doar directorul poate schimba setarea.');
+          return;
+      }
+      await loadFaraOspatari();
+      renderOrders();
+  });
+
+  // --- Editor de preturi (director) -------------------------------------
+  // Scrierea e permisa de politica RLS "scrie preturi director"; daca un alt
+  // rol ajunge aici, Postgres respinge oricum update-ul.
+  let preturiIncarcate = [];
+
+  async function loadPreturi() {
+      const body = document.getElementById('preturiBody');
+      const stare = document.getElementById('preturiStare');
+      body.innerHTML = '<tr><td colspan="3" style="color:var(--text-muted);">Se incarca...</td></tr>';
+      const {data, error} = await _supabase.from('preturi_produse')
+          .select('id_produs, nume, pret, sectiune')
+          .order('sectiune').order('nume');
+      if (error) {
+          body.innerHTML = '';
+          stare.textContent = 'Eroare la incarcarea preturilor: ' + error.message;
+          stare.style.color = 'var(--danger)';
+          return;
+      }
+      preturiIncarcate = data || [];
+      renderPreturi();
+  }
+
+  function renderPreturi() {
+      const filtru = (document.getElementById('cautaPret').value || '').trim().toLowerCase();
+      const body = document.getElementById('preturiBody');
+      const lista = preturiIncarcate.filter(p => !filtru || p.nume.toLowerCase().includes(filtru));
+      if (!lista.length) {
+          body.innerHTML = '<tr><td colspan="3" style="color:var(--text-muted);">Niciun produs.</td></tr>';
+          return;
+      }
+      body.innerHTML = lista.map(p => `
+        <tr>
+          <td>${escapeHTML(p.nume)}</td>
+          <td style="color:var(--text-muted);">${escapeHTML(p.sectiune)}</td>
+          <td>
+            <input type="number" step="0.01" min="0" max="9999"
+                   class="pret-input" data-id="${escapeHTML(p.id_produs)}"
+                   data-initial="${Number(p.pret).toFixed(2)}"
+                   value="${Number(p.pret).toFixed(2)}"
+                   style="width:110px; padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:'Space Mono',monospace;">
+          </td>
+        </tr>`).join('');
+  }
+
+  async function salveazaPreturi() {
+      const stare = document.getElementById('preturiStare');
+      const inputs = Array.from(document.querySelectorAll('.pret-input'));
+      const schimbate = [];
+
+      for (const el of inputs) {
+          const nou = parseFloat(el.value);
+          const vechi = parseFloat(el.dataset.initial);
+          if (isNaN(nou) || nou < 0 || nou > 9999) {
+              stare.textContent = 'Pret invalid la un produs. Foloseste un numar intre 0 si 9999.';
+              stare.style.color = 'var(--danger)';
+              el.focus();
+              return;
+          }
+          if (Math.abs(nou - vechi) > 0.001) schimbate.push({id: el.dataset.id, pret: Math.round(nou * 100) / 100});
+      }
+
+      if (!schimbate.length) {
+          stare.textContent = 'Nu ai schimbat niciun pret.';
+          stare.style.color = 'var(--text-muted)';
+          return;
+      }
+
+      if (!confirm(`Salvezi ${schimbate.length} pret(uri) modificate? Se aplica imediat comenzilor noi.`)) return;
+
+      stare.textContent = 'Se salveaza...';
+      stare.style.color = 'var(--text-muted)';
+
+      let esecuri = 0;
+      for (const s of schimbate) {
+          const {error} = await _supabase.from('preturi_produse')
+              .update({pret: s.pret, actualizat_la: new Date().toISOString()})
+              .eq('id_produs', s.id);
+          if (error) { esecuri++; console.error('pret', s.id, error.message); }
+      }
+
+      // Lasam urma in jurnalul de audit: cine a umblat la preturi si cand.
+      await logActivity('preturi_modificate', null, {
+          count: schimbate.length - esecuri,
+          produse: schimbate.slice(0, 20)
+      });
+
+      if (esecuri) {
+          stare.textContent = `${schimbate.length - esecuri} salvate, ${esecuri} au esuat. Doar directorul poate schimba preturile.`;
+          stare.style.color = 'var(--danger)';
+      } else {
+          stare.textContent = `✓ ${schimbate.length} pret(uri) actualizate.`;
+          stare.style.color = 'var(--success)';
+      }
+      await loadPreturi();
+  }
+
+  document.getElementById('btnSalveazaPreturi').addEventListener('click', salveazaPreturi);
+  document.getElementById('cautaPret').addEventListener('input', renderPreturi);
 
   async function loadFeedbacks() {
       const {data} = await _supabase.from('jurnal_activitate').select('*').eq('actiune', 'feedback_client').order('created_at', {ascending:false}).limit(50);
@@ -1395,13 +1574,16 @@
         
         const isAlert = o.produse.some(p => p.nume.includes('ALERTĂ'));
         if(userRole === 'ospatar') return isAlert || o.status === 'gata' || (currentTab === 'history' && (o.creat_de === currentUserEmail || o.preluat_de === currentUserEmail));
+        // In mod fara ospatari, barul preia si alertele de la mese.
         if(userRole === 'bar') return o.sectiune === 'bar' || (isAlert && o.status === 'noua');
         
         return o.sectiune === userRole;
     });
 
     if(currentTab === 'active') {
-        viewOrders = viewOrders.filter(o => o.status === 'noua' || (userRole === 'ospatar' && o.status === 'gata'));
+        const vedeGata = userRole === 'ospatar'
+              || (faraOspatari && (userRole === 'bar' || userRole === 'bucatarie'));
+        viewOrders = viewOrders.filter(o => o.status === 'noua' || (vedeGata && o.status === 'gata'));
     } else {
         viewOrders = viewOrders.filter(o => o.status === 'finalizata' || o.status === 'anulata');
         if(userRole === 'ospatar') {
@@ -1448,19 +1630,24 @@
       let footerHtml = '';
       
       if(currentTab === 'active' && userRole !== 'director') {
+          // Cu modul "fara ospatari" activ, barul si bucataria fac si pasul
+          // care altfel ar fi al ospatarului.
+          const potPreluaCaOspatar = userRole === 'ospatar'
+                || (faraOspatari && (userRole === 'bar' || userRole === 'bucatarie'));
+
           if (isAlert) {
-              if (userRole === 'ospatar') {
+              if (userRole === 'ospatar' || (faraOspatari && userRole === 'bar')) {
                   footerHtml = `<button class="btn-action btn-waiter-take" onclick="updateOrderStatus(${order.id}, 'finalizata')">🙋‍♂️ Preluat</button>`;
               } else {
                   footerHtml = `<div class="status-text" style="color:var(--blue); font-weight: 600;">Se asteapta ospatarul...</div>`;
               }
           } else {
-              if (userRole === 'bucatarie' || userRole === 'bar') {
+              if ((userRole === 'bucatarie' || userRole === 'bar') && order.status !== 'gata') {
                   footerHtml = `
                     <button class="btn-action btn-done" onclick="updateOrderStatus(${order.id}, 'gata')">✓ Gata</button>
                     <button class="btn-action btn-cancel" onclick="updateOrderStatus(${order.id}, 'anulata')">✕</button>
                   `;
-              } else if (userRole === 'ospatar' && order.status === 'gata') {
+              } else if (potPreluaCaOspatar && order.status === 'gata') {
                   footerHtml = `<button class="btn-action btn-done" style="background:var(--blue);" onclick="updateOrderStatus(${order.id}, 'finalizata')">🍽️ Servit</button>`;
               }
           }
