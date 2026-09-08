@@ -167,6 +167,49 @@ Fără prefix, coșul și masa s-ar amesteca între ele: adaugi două cafele la 
 treci la alt local și le găsești acolo. Prefixul se derivă automat din folder
 (`meniu:/m3:`), deci nu e nimic de configurat când adaugi un local nou.
 
+## Verificare inainte de lansare
+
+Rulata pe baza reala, cu rolurile reale. Ce a trecut:
+
+| Test | Rezultat |
+|---|---|
+| Comanda cu pret falsificat (5 lei in loc de 54) | salvata la **54 lei** |
+| Produs inventat, inexistent in meniu | respins |
+| Bar marcheaza „Gata" | permis |
+| Bar incearca sa schimbe totalul | respins |
+| Ospatar confirma bonul | respins (doar barul poate) |
+| Bar confirma bonul | permis |
+| Ospatar marcheaza „Servit" | permis |
+| Ospatar sterge comanda | niciun rand atins |
+| Director corecteaza totalul | permis |
+| Comanda la pachet | nume si telefon mutate in `contacte_takeaway` |
+| Client anonim citeste contactele | refuzat, nici grant nu are |
+| Alerta de la masa (cere nota) | acceptata, total 0 |
+| Impartire bar / bucatarie | doua comenzi, acelasi `grup_comanda` |
+
+Cele 4 job-uri cron ruleaza si raporteaza `succeeded`.
+
+## Ce a fost reparat la verificare
+
+**Nimeni nu putea adauga nimic in cos.** `id_produs` din baza e text, dar
+`onclick` il scria neghilimelat, deci ajungea numar; cautarea folosea `===`, iar
+`"1" !== 1`. Cu `menu.json` era numar si mergea — s-a rupt cand am mutat meniul
+in baza de date. Butonul „+" nu facea nimic, fara nicio eroare in consola.
+
+**Stergerea istoricului nu functiona.** Promptul cerea sa scrii `STERGE`, codul
+verifica `ELIMINAR`, iar mesajul de eroare era in spaniola.
+
+Plus ultimele texte spaniole din panoul de personal (harta orelor, raportul pe
+angajat, anuntul vocal pentru comenzile la pachet, starile meselor).
+
+## Un risc de productie ramas
+
+`index.html` si `dashboard.html` incarca biblioteca Supabase de pe un CDN
+(`cdn.jsdelivr.net`). Daca acel CDN e indisponibil, aplicatia nu porneste deloc —
+nici macar dashboard-ul instalat, pentru ca service worker-ul nu pune in cache
+fisiere de pe alt domeniu. Pentru un sistem care tine casa, merita descarcata
+biblioteca local, langa `config.js`. Nu am facut-o inca.
+
 ## Rolurile de personal
 
 `director`, `bar`, `bucatarie`, `ospatar`. Se acordă din `staff_roles`, tabelă

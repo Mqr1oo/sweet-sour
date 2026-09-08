@@ -746,7 +746,7 @@
   // ca imaginea să nu "sară" la fiecare refresh. Treapta 2 (dacă și aia eșuează):
   // poza generică de categorie, care nu mai poate da eroare.
   window.handleImgError = function(imgEl, id){
-    const item = allItems.find(i => i.imageNumber === id);
+    const item = allItems.find(i => String(i.imageNumber) === String(id));
     if(!item){ imgEl.onerror = null; return; }
 
     if(imgEl.dataset.stage !== 'lib-tried'){
@@ -1027,11 +1027,11 @@
             <div class="card-img-wrap">
               ${isEpuizat ? `<div class="badge-epuizat"><span>${t.badgeEpuizat}</span></div>` : ''}
               ${(item.tags||[]).includes('semnatura') ? `<div class="ribbon">${t.ribbonEsp}</div>` : ''}
-              <img src="images/${item.imageNumber}.webp" class="card-img" alt="${escapeHTML(loc.name)}" loading="lazy" onerror="handleImgError(this, ${item.imageNumber})">
+              <img src="${item.imagine || `images/${item.imageNumber}.webp`}" class="card-img" alt="${escapeHTML(loc.name)}" loading="lazy" onerror="handleImgError(this, '${item.imageNumber}')">
               <div class="card-qty-controls ${q>0?'has-items':''}">
-                <button class="c-qty-btn" onclick="appUpdateQty(${item.imageNumber}, -1)">−</button>
+                <button class="c-qty-btn" onclick="appUpdateQty('${item.imageNumber}', -1)">−</button>
                 <span class="c-qty-val" id="qty-${item.imageNumber}">${q}</span>
-                <button class="c-qty-btn" onclick="appUpdateQty(${item.imageNumber}, 1)">+</button>
+                <button class="c-qty-btn" onclick="appUpdateQty('${item.imageNumber}', 1)">+</button>
               </div>
             </div>
             <div class="card-body">
@@ -1055,7 +1055,7 @@
   }
 
   window.appUpdateQty = function(id, change) {
-      const item = allItems.find(i => i.imageNumber === id);
+      const item = allItems.find(i => String(i.imageNumber) === String(id));
       if(!item) return;
       updateQty(item, change);
 
@@ -1668,9 +1668,9 @@
                           // produse, deci supravietuieste reincarcarii de la sine.
                           // Curatam doar produsele scoase din meniu intre timp, ca
                           // sa nu ramana in cos ceva ce nu se mai poate comanda.
-                          const existente = new Set(allItems.map(i => i.imageNumber));
+                          const existente = new Set(allItems.map(i => String(i.imageNumber)));
                           for (const id of Object.keys(favoritesQty)) {
-                              if (!existente.has(id) && !existente.has(Number(id))) delete favoritesQty[id];
+                              if (!existente.has(String(id))) delete favoritesQty[id];
                           }
                           applyLanguage(currentLang);
                       } catch(e) { console.warn('Meniu live:', e); }

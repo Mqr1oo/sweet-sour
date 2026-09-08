@@ -443,7 +443,7 @@
 
       <div data-grup="sinteza" class="dash-panel">
          <h3>🔥 Harta orelor de varf</h3>
-         <p style="color:var(--text-muted); font-size:13px; margin-bottom:6px;">Número de pedidos por día de la semana y hora, de los últimos 60 días. Cuanto más oscuro, más movimiento — úsalo para decidir cuándo poner más personal.</p>
+         <p style="color:var(--text-muted); font-size:13px; margin-bottom:6px;">Numarul de comenzi pe zi a saptamanii si ora, din ultimele 60 de zile. Cu cat e mai inchis, cu atat a fost mai aglomerat — foloseste-l ca sa decizi cand suplimentezi personalul.</p>
          <div class="heatmap-wrap">
             <div id="heatmapContainer">Se incarca...</div>
          </div>
@@ -549,7 +549,7 @@
 
       <div data-grup="risc" class="dash-panel" style="border-color: var(--danger);">
           <h3 style="color: var(--danger);">🗑️ Zona de risc</h3>
-          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Sterge definitiv tot istoricul comenzilor finalizate si anuladas de Supabase. Esta acción no se puede deshacer. Los pedidos activos no se ven afectados.</p>
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Sterge definitiv din Supabase tot istoricul comenzilor finalizate si anulate. Actiunea nu poate fi anulata. Comenzile active nu sunt afectate.</p>
           <button id="btnWipeHistory" class="btn-action" style="display:none; background:rgba(239,68,68,0.15); color:var(--danger); border:1px solid rgba(239,68,68,0.4); width:100%;">🗑️ Sterge tot istoricul</button>
       </div>
     </div>
@@ -557,7 +557,7 @@
     <div id="meniuView" style="display: none;">
       <div class="dash-panel">
         <h3>📋 Trimite comanda rapida</h3>
-        <input type="text" id="meniuTableInput" class="table-filter" style="width:100%; margin-bottom:16px;" placeholder="Número de mesa (ej: 4)">
+        <input type="text" id="meniuTableInput" class="table-filter" style="width:100%; margin-bottom:16px;" placeholder="Numarul mesei (ej: 4)">
         <input type="text" id="meniuNoteInput" class="table-filter" style="width:100%; margin-bottom:16px;" placeholder="Nota para cocina / barra (ej: sin cebolla)...">
         <input type="text" id="meniuSearchInput" class="table-filter" style="width:100%; margin-bottom:16px;" placeholder="🔍 Cauta produs...">
 
@@ -796,7 +796,7 @@
       return ok;
     } catch (e) {
       console.error('activeazaNotificari:', e);
-      if (!silentios) alert('No se pudieron activar las notificaciones: ' + e.message);
+      if (!silentios) alert('Nu am putut activa notificarile: ' + e.message);
       return false;
     }
   }
@@ -886,9 +886,9 @@
           return 'mesa ' + String(order.mesa).replace('#', '');
       }
       if (userRole === 'bucatarie') {
-          return `pedido para llevar número ${order.id}`;
+          return `comanda la pachet, numarul ${order.id}`;
       }
-      return 'pedido para llevar: ' + String(order.mesa).replace('Tk:', '').trim();
+      return 'comanda la pachet: ' + String(order.mesa).replace('Tk:', '').trim();
   }
 
   async function speakOrderNotes(order) {
@@ -1237,9 +1237,9 @@
       let hasPendingPaymentAlert = ordersForTable.some(o => o.status === 'noua' && o.produse.some(p => p.nume.includes('ALERTĂ') && PAYMENT_ALERT_REGEX.test(p.nume)));
 
       if(hasHelpAlert || hasPendingPaymentAlert) {
-          if(hasHelpAlert && hasPendingPaymentAlert) return { status:'blue', label:'Ayuda + pidió la cuenta (sin confirmar)' };
+          if(hasHelpAlert && hasPendingPaymentAlert) return { status:'blue', label:'Ajutor + a cerut nota (neconfirmata)' };
           if(hasHelpAlert) return { status:'blue', label:'Necesita ayuda' };
-          return { status:'blue', label:'Pidió la cuenta (sin confirmar)' };
+          return { status:'blue', label:'A cerut nota (neconfirmata)' };
       }
 
       let confirmedPaymentOrders = ordersForTable.filter(o => o.status === 'finalizata' && o.confirmada_la && o.produse.some(p => p.nume.includes('ALERTĂ') && PAYMENT_ALERT_REGEX.test(p.nume)));
@@ -1372,7 +1372,7 @@
           addCard.className = 'add-table-card';
           addCard.textContent = '+';
           addCard.onclick = () => {
-              let numar = prompt('Número de la nueva mesa (ej: 12):');
+              let numar = prompt('Numarul mesei noi (ex: 12):');
               if(!numar || numar.trim() === '') return;
               numar = numar.trim();
               if(zone.mese.some(m => String(m.numar) === numar)) { alert('Ya existe una mesa con ese número.'); return; }
@@ -1761,7 +1761,7 @@
     updatePaymentAlertBadge();
   }
 
-  // Devuelve, para un pedido dado, si algún otro pedido del mismo grupo (mismo grup_comanda,
+  // Spune, pentru o comanda data, daca alta comanda din acelasi grup (acelasi grup_comanda,
   // adica partea de Bar sau cea de Bucatarie a ACELEIASI comenzi a clientului) a fost anulata.
   // Así el jefe ve enlazadas las dos partes: si cancelan la de bar, se nota también en la de cocina y viceversa.
   function getLinkedCancelledSibling(order) {
@@ -1810,7 +1810,7 @@
         return container.innerHTML = `
         <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 60px 20px;">
             <div style="font-size: 40px; margin-bottom: 10px; opacity: 0.5;">🍽️</div>
-            No hay ningún pedido aquí.
+            Nicio comanda aici.
         </div>`;
     }
     
@@ -2082,10 +2082,10 @@
       btnWipeHistoryEl.addEventListener('click', async () => {
           if(userRole !== 'director') return;
           const typed = prompt('Aceasta actiune va sterge DEFINITIV tot istoricul de comenzi (finalizate si anulate) din Supabase.\n\nScrie STERGE ca sa confirmi:');
-          if(typed !== 'ELIMINAR') { if(typed !== null) alert('Cancelado. No se ha escrito "ELIMINAR" exactamente.'); return; }
+          if(typed !== 'STERGE') { if(typed !== null) alert('Anulat. Nu ai scris exact "STERGE".'); return; }
 
           btnWipeHistoryEl.disabled = true;
-          btnWipeHistoryEl.textContent = 'Eliminando...';
+          btnWipeHistoryEl.textContent = 'Se sterge...';
           const { error } = await _supabase.from('comenzi').delete().in('status', ['finalizata', 'anulata']);
           btnWipeHistoryEl.disabled = false;
           btnWipeHistoryEl.textContent = '🗑️ Sterge tot istoricul';
@@ -2131,7 +2131,7 @@
                   }
               } else {
                   pendingBonCount++; 
-                  const responsabil = order.creat_de || order.preluat_de || 'desconocido';
+                  const responsabil = order.creat_de || order.preluat_de || 'necunoscut';
                   pendingByStaff[responsabil] = (pendingByStaff[responsabil] || 0) + 1;
               }
 
@@ -2183,8 +2183,8 @@
   }
 
   // --- REPORTE POR EMPLEADO + TASA DE CANCELACIÓN ---
-  // Agrupa por el empleado responsable de cada comanda (quien la creó, o quien la tomó/sirvió).
-  // Para cada uno calcula: nº de pedidos, ingresos generados (igual criterio que las stats generales:
+  // Grupeaza dupa angajatul responsabil de fiecare comanda (cine a creat-o, sau cine a preluat-o/servit-o).
+  // Pentru fiecare calculeaza: numar de comenzi, incasari generate (acelasi criteriu ca la statisticile generale:
   // finalizate, cu bon, care nu sunt gratuite), numarul de anulari si procentul de anulare din totalul gestionat.
   function renderStaffReport(cutoff) {
       const relevant = allOrders.filter(o => {
@@ -2193,20 +2193,20 @@
           return o.status === 'finalizata' || o.status === 'anulata';
       });
 
-      let staffMap = {}; // { email: { pedidos, ingresos, cancelados } }
+      let staffMap = {}; // { email: { comenzi, incasari, anulate } }
       relevant.forEach(o => {
           const staff = o.creat_de || o.preluat_de || 'Cliente (menú digital)';
-          if(!staffMap[staff]) staffMap[staff] = { pedidos: 0, ingresos: 0, cancelados: 0 };
-          staffMap[staff].pedidos++;
+          if(!staffMap[staff]) staffMap[staff] = { comenzi: 0, incasari: 0, anulate: 0 };
+          staffMap[staff].comenzi++;
           if(o.status === 'anulata') {
-              staffMap[staff].cancelados++;
+              staffMap[staff].anulate++;
           } else if(o.bon_scos && !o.comp_motiv) {
-              staffMap[staff].ingresos += Number(o.total);
+              staffMap[staff].incasari += Number(o.total);
           }
       });
 
       const tbody = document.getElementById('staffReportList');
-      const entries = Object.entries(staffMap).sort((a,b) => b[1].ingresos - a[1].ingresos);
+      const entries = Object.entries(staffMap).sort((a,b) => b[1].incasari - a[1].incasari);
 
       if(entries.length === 0) {
           tbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted); text-align:center; font-family:'Inter',sans-serif;">Nu exista date pentru aceasta perioada</td></tr>`;
@@ -2214,16 +2214,16 @@
       }
 
       tbody.innerHTML = entries.map(([staff, s]) => {
-          const rate = s.pedidos > 0 ? (s.cancelados / s.pedidos * 100) : 0;
+          const rate = s.comenzi > 0 ? (s.anulate / s.comenzi * 100) : 0;
           let rateClass = 'rate-ok';
           if(rate >= 20) rateClass = 'rate-bad';
           else if(rate >= 8) rateClass = 'rate-warn';
           return `
             <tr>
               <td class="name-col">${escapeHTML(staff)}</td>
-              <td>${s.pedidos}</td>
-              <td>${s.ingresos.toFixed(2)} lei</td>
-              <td>${s.cancelados}</td>
+              <td>${s.comenzi}</td>
+              <td>${s.incasari.toFixed(2)} lei</td>
+              <td>${s.anulate}</td>
               <td><span class="rate-pill ${rateClass}">${rate.toFixed(0)}%</span></td>
             </tr>
           `;
@@ -2233,7 +2233,7 @@
   // --- DETECTAREA ANULARILOR SUSPECTE (dupa "Gata") ---
   // Usa el jurnal_activitate (que registra cada cambio de estado) para reconstruir el historial
   // fiecarei comenzi si a detecta daca a trecut prin "gata" INAINTE de a fi "anulata".
-  // Ese patrón es la señal clásica de fraude: el producto salió de cocina/barra pero la comanda
+  // Tiparul asta e semnalul clasic de frauda: produsul a iesit din bucatarie/bar, dar comanda
   // se anuló en el sistema. Se atribuye al usuario que hizo el cambio a "anulata" (el log.utilizator
   // real al acelei actiuni, nu neaparat cel care a creat comanda).
   async function renderFraudList(cutoff) {
@@ -2363,10 +2363,10 @@
           const top3 = flat.slice(0,3);
 
           if(top3.length === 0) {
-              bestEl.innerHTML = 'Aún no hay suficientes pedidos históricos para calcular las horas punta.';
+              bestEl.innerHTML = 'Inca nu sunt destule comenzi in istoric ca sa putem calcula orele de varf.';
           } else {
-              bestEl.innerHTML = '📌 Momentos de más movimiento (recomendado reforzar personal): ' +
-                  top3.map(x => `<b>${dayNames[x.day]} ${String(x.h).padStart(2,'0')}:00h</b> (${x.v} pedidos)`).join(' · ');
+              bestEl.innerHTML = '📌 Cele mai aglomerate momente (merita personal in plus): ' +
+                  top3.map(x => `<b>${dayNames[x.day]} ${String(x.h).padStart(2,'0')}:00h</b> (${x.v} comenzi)`).join(' · ');
           }
       } catch(e) {
           container.innerHTML = '<span style="color:var(--text-muted); font-size:13px;">Eroare la calculul hartii orelor.</span>';
@@ -2445,7 +2445,7 @@
       }
 
       const items = Object.entries(meniuCart).map(([id, q]) => ({ item: fullMenu.find(i => i.imageNumber == id), q })).filter(x => x.item);
-      if(items.length === 0) { alert('Añade al menos un producto.'); return; }
+      if(items.length === 0) { alert('Adauga cel putin un produs.'); return; }
 
       const grupId = (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random()));
       const barItems = items.filter(x => (x.item.sectiune || 'bar') === 'bar');
@@ -2584,7 +2584,7 @@
               showBackgroundAlert(title, body);
           }
 
-          // Si se cancela un pedido, refrescamos las tarjetas activas para que la parte
+          // Daca o comanda e anulata, reimprospatam cardurile active ca partea
           // "hermana" (bar/cocina de la misma comanda) muestre el aviso enlazado al instante.
           if (p.new.status === 'anulata' && prevStatus !== 'anulata') {
               renderOrders();
