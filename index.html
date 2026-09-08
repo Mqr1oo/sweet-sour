@@ -43,9 +43,9 @@
   .venue:hover,.venue:focus-visible{transform:translateY(-2px); border-color:var(--brass); outline:none}
   .venue:active{transform:scale(.99)}
   .mark{
-    width:52px; height:52px; flex:0 0 52px; border-radius:13px;
+    width:56px; height:56px; flex:0 0 56px; border-radius:13px;
     display:grid; place-items:center; font-family:'Playfair Display',serif;
-    font-size:26px; font-weight:700; color:var(--ink);
+    font-size:26px; font-weight:700; color:var(--ink); overflow:hidden;
   }
   .meta{flex:1; min-width:0}
   .name{font-family:'Playfair Display',serif; font-size:1.32rem; margin:0 0 3px}
@@ -77,11 +77,13 @@
 
   <div class="list">
 
-    <a class="venue" href="./sweetandsour/">
-      <span class="mark" style="background:linear-gradient(140deg,#1a2340,#3d3020)">&amp;</span>
+    <a class="venue" href="./m3/">
+      <span class="mark" style="background:#000;border:1px solid rgba(255,255,255,.14);padding:6px">
+        <img src="./m3/icons/mark.png" alt="" style="width:100%;height:100%;object-fit:contain">
+      </span>
       <span class="meta">
-        <p class="name">Sweet &amp; Sour</p>
-        <p class="desc">Cocktail bar &amp; lounge. Cocktailuri, muzică la tonomat și seri lungi.</p>
+        <p class="name">M3 Coffee &amp; Lounge</p>
+        <p class="desc">Cafea de specialitate, mic dejun toată ziua și seri lungi. Grădina „Nicu Albu".</p>
       </span>
       <span class="arrow" aria-hidden="true">→</span>
     </a>

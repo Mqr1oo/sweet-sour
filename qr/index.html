@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Generator coduri QR pentru mese</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Space+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f1c; --card:#131a2e; --line:rgba(255,255,255,.09);
+    --ink:#f2ece0; --soft:#96a0bb; --brass:#e8a33d; --ok:#4ade80; --bad:#e0563c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:40px 20px 60px}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass);margin:0 0 10px;display:flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--brass)}
+  h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,2.5rem);margin:0 0 8px}
+  .sub{color:var(--soft);font-size:14px;margin:0 0 32px;max-width:60ch;line-height:1.6}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:20px}
+  .panel h2{font-size:15px;margin:0 0 16px;font-weight:700;letter-spacing:.01em}
+  .row{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  label{display:block;font-size:12px;color:var(--soft);margin-bottom:6px;font-weight:600}
+  input[type=text],input[type=url],textarea,select{
+    width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line);
+    background:var(--bg);color:var(--ink);font-family:inherit;font-size:14px;
+  }
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--brass)}
+  textarea{resize:vertical;min-height:70px;font-family:'Space Mono',monospace;font-size:13px}
+  .hint{font-size:11.5px;color:var(--soft);margin-top:6px;line-height:1.5}
+  .checks{display:flex;flex-wrap:wrap;gap:18px;margin-top:16px}
+  .check{display:flex;align-items:center;gap:8px;font-size:13.5px;cursor:pointer}
+  .check input{width:17px;height:17px;accent-color:var(--brass)}
+
+  .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  button{
+    padding:11px 18px;border-radius:10px;border:1px solid var(--line);cursor:pointer;
+    background:var(--card);color:var(--ink);font-family:inherit;font-size:13.5px;font-weight:600;
+    transition:transform .12s,border-color .15s;
+  }
+  button:hover{border-color:var(--brass)}
+  button:active{transform:scale(.98)}
+  button.primary{background:var(--brass);color:#16110a;border-color:var(--brass)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+
+  #stare{font-size:13px;min-height:20px;margin-top:14px;font-family:'Space Mono',monospace}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;margin-top:8px}
+  .item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+  .item .paper{background:#fff;border-radius:9px;padding:10px;display:block}
+  .item svg{display:block;width:100%;height:auto}
+  .item .dl{margin-top:10px;width:100%;padding:8px;font-size:12px}
+  .empty{color:var(--soft);font-size:14px;padding:34px 0;text-align:center}
+  footer{color:var(--soft);font-size:12px;text-align:center;padding:20px;font-family:'Space Mono',monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Unealtă internă</p>
+  <h1>Coduri QR pentru mese</h1>
+  <p class="sub">Generează câte un cod pentru fiecare masă. Clientul îl scanează și meniul se deschide cu masa deja completată, deci nu mai trebuie să scrie numărul și nu mai ajung comenzi la masa greșită. Descarci fiecare cod ca SVG, deci îl poți mări oricât fără să se pixeleze.</p>
+
+  <div class="panel">
+    <h2>1. Unde trimite codul</h2>
+    <div class="row">
+      <div>
+        <label for="baza">Adresa meniului</label>
+        <input type="url" id="baza" placeholder="https://domeniul-tau.ro/sweetandsour/" value="https://domeniul-tau.ro/sweetandsour/">
+        <p class="hint">Adresa la care e publicat meniul localului. Codul va duce la <code>...?mesa=4</code>.</p>
+      </div>
+      <div>
+        <label for="local">Numele localului</label>
+        <input type="text" id="local" placeholder="Sweet &amp; Sour" value="Sweet &amp; Sour">
+        <p class="hint">Apare scris pe fiecare cod.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>2. Mesele</h2>
+    <div class="row">
+      <div>
+        <label for="mese">Numerele meselor</label>
+        <textarea id="mese" placeholder="1, 2, 3, 5, 8&#10;sau: 1-12&#10;sau: Terasa1, Terasa2, Bar1">1-12</textarea>
+        <p class="hint">Separate prin virgulă sau linie nouă. Poți folosi intervale (<code>1-12</code>) și nume, nu doar cifre.</p>
+      </div>
+      <div>
+        <label for="eticheta">Cum scrie deasupra numărului</label>
+        <input type="text" id="eticheta" value="Masa">
+        <p class="hint">De exemplu „Masa", „Table" sau gol, dacă vrei doar numărul.</p>
+      </div>
+    </div>
+
+    <div class="checks">
+      <label class="check"><input type="checkbox" id="optNfc"> Adaugă simbol contactless (NFC)</label>
+      <label class="check"><input type="checkbox" id="optNume" checked> Scrie numele localului</label>
+      <label class="check"><input type="checkbox" id="optIndemn" checked> Scrie „Scanează pentru meniu"</label>
+      <label class="check"><input type="checkbox" id="optRama"> Chenar pentru tăiere</label>
+    </div>
+
+    <div class="btns">
+      <button class="primary" id="btnGen">Generează</button>
+      <button id="btnZip" disabled>⬇︎ Descarcă toate (SVG)</button>
+      <button id="btnPrint" disabled>🖨 Printează</button>
+    </div>
+    <div id="stare"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="gol">Completează datele și apasă „Generează".</div>
+</div>
+
+<footer>Codurile se generează în browserul tău. Nimic nu se trimite nicăieri.</footer>
+
+<script src="qrcode.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  var $ = function(id){ return document.getElementById(id); };
+  var stare = $('stare');
+  var carduri = [];
+
+  function spune(txt, culoare){
+    stare.textContent = txt;
+    stare.style.color = culoare || 'var(--soft)';
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  // "1-12, Bar1, Terasa2" -> ['1',...,'12','Bar1','Terasa2']
+  function parseMese(text){
+    var out = [];
+    text.split(/[,\n]/).forEach(function(bucata){
+      var t = bucata.trim();
+      if(!t) return;
+      var interval = t.match(/^(\d+)\s*-\s*(\d+)$/);
+      if(interval){
+        var a = parseInt(interval[1],10), b = parseInt(interval[2],10);
+        if(a > b){ var tmp = a; a = b; b = tmp; }
+        if(b - a > 400){ return; }          // plasa de siguranta
+        for(var i = a; i <= b; i++) out.push(String(i));
+      } else {
+        out.push(t);
+      }
+    });
+    // fara duplicate, ordinea pastrata
+    return out.filter(function(v,i){ return out.indexOf(v) === i; });
+  }
+
+  // Simbol contactless generic: trei arce concentrice, deschise spre dreapta.
+  // Nu folosim N-Mark-ul oficial NFC Forum, care e marca inregistrata.
+  function undeNfc(cx, cy, scale){
+    var s = '';
+    var deschidere = 52 * Math.PI / 180;   // +/- fata de orizontala
+    for(var i = 0; i < 3; i++){
+      var r = (7 + i*7) * scale;
+      var x1 = cx + r * Math.cos(-deschidere), y1 = cy + r * Math.sin(-deschidere);
+      var x2 = cx + r * Math.cos( deschidere), y2 = cy + r * Math.sin( deschidere);
+      s += '<path d="M ' + x1.toFixed(1) + ' ' + y1.toFixed(1) +
+           ' A ' + r.toFixed(1) + ' ' + r.toFixed(1) + ' 0 0 1 ' +
+           x2.toFixed(1) + ' ' + y2.toFixed(1) + '" fill="none" stroke="#111" stroke-width="' +
+           (2.6*scale).toFixed(1) + '" stroke-linecap="round"/>';
+    }
+    return s;
+  }
+
+  function faSvg(numar, cfg){
+    var url = cfg.baza + 'index.html?mesa=' + encodeURIComponent(numar);
+
+    var q = qrcode(0, 'M');            // versiune automata, corectie medie
+    q.addData(url);
+    q.make();
+
+    var n = q.getModuleCount();
+    var cell = 8, quiet = 4;           // zona linistita ceruta de standard
+    var qrPx = (n + quiet*2) * cell;
+
+    var W = qrPx;
+    var padSus = cfg.nume ? 46 : 14;
+    var padJos = 62 + (cfg.indemn ? 22 : 0) + (cfg.nfc ? 34 : 0);
+    var H = padSus + qrPx + padJos;
+
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="Cod QR pentru ' + esc(cfg.eticheta + ' ' + numar) + '">';
+    s += '<rect width="' + W + '" height="' + H + '" fill="#ffffff"/>';
+
+    if(cfg.rama){
+      s += '<rect x="6" y="6" width="' + (W-12) + '" height="' + (H-12) + '" fill="none" stroke="#d9d9d9" stroke-width="2" rx="14" stroke-dasharray="7 6"/>';
+    }
+
+    if(cfg.nume){
+      s += '<text x="' + (W/2) + '" y="30" text-anchor="middle" font-family="Georgia, \'Times New Roman\', serif" font-size="24" font-weight="700" fill="#111">' + esc(cfg.local) + '</text>';
+    }
+
+    // modulele codului
+    s += '<g fill="#111" transform="translate(' + (quiet*cell) + ',' + (padSus + quiet*cell) + ')">';
+    for(var r = 0; r < n; r++){
+      for(var c = 0; c < n; c++){
+        if(q.isDark(r, c)){
+          s += '<rect x="' + (c*cell) + '" y="' + (r*cell) + '" width="' + cell + '" height="' + cell + '"/>';
+        }
+      }
+    }
+    s += '</g>';
+
+    var y = padSus + qrPx + 40;
+    var text = (cfg.eticheta ? cfg.eticheta + ' ' : '') + numar;
+    s += '<text x="' + (W/2) + '" y="' + y + '" text-anchor="middle" font-family="Georgia, \'Times New Roman\', serif" font-size="36" font-weight="700" fill="#111">' + esc(text) + '</text>';
+
+    if(cfg.indemn){
+      y += 22;
+      s += '<text x="' + (W/2) + '" y="' + y + '" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#666">Scanează pentru meniu</text>';
+    }
+    if(cfg.nfc){
+      y += 34;
+      // grupul (unde + text) se centreaza ca un tot, ca sa nu iasa din card
+      var etichetaNfc = 'NFC';
+      var latText = 24;                     // aproximare la 15px, 3 litere spatiate
+      var latTotal = 30 + 8 + latText;
+      var xStart = W/2 - latTotal/2;
+      s += undeNfc(xStart, y - 5, 1.0);
+      s += '<text x="' + (xStart + 30 + 8) + '" y="' + y + '" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#111" letter-spacing="2">' + etichetaNfc + '</text>';
+    }
+
+    s += '</svg>';
+    return { svg: s, url: url };
+  }
+
+  function descarca(nume, svg){
+    var blob = new Blob([svg], {type: 'image/svg+xml;charset=utf-8'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = nume;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+  }
+
+  function slug(s){
+    return String(s).toLowerCase()
+      .replace(/[ăâà]/g,'a').replace(/[îì]/g,'i').replace(/[șş]/g,'s').replace(/[țţ]/g,'t')
+      .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'local';
+  }
+
+  function genereaza(){
+    if(typeof qrcode !== 'function'){
+      spune('Lipsește qrcode.js din același folder.', 'var(--bad)');
+      return;
+    }
+
+    var baza = $('baza').value.trim();
+    if(!/^https?:\/\//i.test(baza)){
+      spune('Adresa trebuie să înceapă cu http:// sau https://', 'var(--bad)');
+      $('baza').focus();
+      return;
+    }
+    if(baza.slice(-1) !== '/') baza += '/';
+
+    var mese = parseMese($('mese').value);
+    if(!mese.length){
+      spune('Nu ai scris nicio masă.', 'var(--bad)');
+      $('mese').focus();
+      return;
+    }
+    if(mese.length > 300){
+      spune('Prea multe mese (' + mese.length + '). Maxim 300 odată.', 'var(--bad)');
+      return;
+    }
+
+    var cfg = {
+      baza: baza,
+      local: $('local').value.trim() || 'Meniu',
+      eticheta: $('eticheta').value.trim(),
+      nfc: $('optNfc').checked,
+      nume: $('optNume').checked,
+      indemn: $('optIndemn').checked,
+      rama: $('optRama').checked
+    };
+
+    carduri = [];
+    var grid = $('grid');
+    grid.innerHTML = '';
+
+    mese.forEach(function(m){
+      var rez = faSvg(m, cfg);
+      var fisier = slug(cfg.local) + '-masa-' + slug(m) + '.svg';
+      carduri.push({ numar: m, svg: rez.svg, fisier: fisier });
+
+      var div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = '<span class="paper">' + rez.svg + '</span>' +
+                      '<button class="dl">⬇︎ SVG</button>';
+      div.querySelector('.dl').addEventListener('click', function(){
+        descarca(fisier, rez.svg);
+      });
+      grid.appendChild(div);
+    });
+
+    $('gol').style.display = 'none';
+    $('btnZip').disabled = false;
+    $('btnPrint').disabled = false;
+    spune(mese.length + ' coduri generate. Scanează unul cu telefonul înainte să le printezi pe toate.', 'var(--ok)');
+  }
+
+  $('btnGen').addEventListener('click', genereaza);
+
+  // Descarcarea in serie: browserele blocheaza descarcarile rapide una dupa
+  // alta, asa ca le distantam.
+  $('btnZip').addEventListener('click', function(){
+    if(!carduri.length) return;
+    spune('Se descarcă ' + carduri.length + ' fișiere... permite descărcările multiple dacă browserul întreabă.');
+    carduri.forEach(function(c, i){
+      setTimeout(function(){
+        descarca(c.fisier, c.svg);
+        if(i === carduri.length - 1) spune('Gata, ' + carduri.length + ' fișiere descărcate.', 'var(--ok)');
+      }, i * 260);
+    });
+  });
+
+  $('btnPrint').addEventListener('click', function(){ window.print(); });
+
+  ['baza','local','mese','eticheta'].forEach(function(id){
+    $(id).addEventListener('keydown', function(e){
+      if(e.key === 'Enter' && id !== 'mese'){ e.preventDefault(); genereaza(); }
+    });
+  });
+})();
+</script>
+
+<style media="print">
+  body{background:#fff}
+  .panel, .eyebrow, h1, .sub, footer, .empty, #stare, .dl{display:none !important}
+  .wrap{padding:0;max-width:none}
+  .grid{grid-template-columns:repeat(3,1fr);gap:10mm}
+  .item{border:none;background:none;padding:0;break-inside:avoid}
+  .item .paper{padding:0}
+</style>
+</body>
+</html>

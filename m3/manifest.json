@@ -1,6 +1,6 @@
 {
-  "name": "Skyfall — Panou personal",
-  "short_name": "Skyfall Staff",
+  "name": "M3 Coffee & Lounge — Panou personal",
+  "short_name": "M3 Staff",
   "description": "Panoul de personal: comenzi, sala, stoc si rapoarte. Aplicatie interna, nu meniul clientilor.",
   "start_url": "./dashboard.html",
   "scope": "./",

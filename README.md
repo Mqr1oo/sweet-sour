@@ -6,12 +6,12 @@ clienți + panou de personal) și **propriul proiect Supabase**, complet izolat.
 ```
 Platforma/
 ├─ index.html            pagina de start: lista localurilor
-├─ sweetandsour/         → domeniu.ro/sweetandsour
+├─ m3/                   → domeniu.ro/m3
 │  ├─ index.html         meniul clienților (RO / EN)
 │  ├─ dashboard.html     panoul de personal
 │  ├─ config.js          ⚠️ SINGURUL fișier care diferă între localuri
-│  ├─ vendor/qrcode.js   generator de coduri QR (MIT, local)
 │  ├─ manifest.json, sw.js, icons/, images/
+├─ qr/                   generator de coduri QR (unealtă separată)
 ├─ skyfall/              șablon gata de completat
 └─ supabase/             SQL + scripturi, comune tuturor localurilor
 ```
@@ -47,7 +47,7 @@ treilea local înseamnă plan Pro, 25 $/lună pentru toate.
 
 | Local | Proiect Supabase | Regiune |
 |---|---|---|
-| Sweet & Sour | `cjavzdnsebbkiiefigvi` | eu-central-1 |
+| M3 Coffee & Lounge | `cjavzdnsebbkiiefigvi` | eu-central-1 |
 | Skyfall | de creat | eu-central-1 recomandat |
 
 ## Meniul e în baza de date
@@ -68,16 +68,104 @@ coloana `ordine`. Adaugi o categorie nouă din dashboard și apare singură în 
 
 ## Coduri QR pentru mese
 
-Panoul directorului → **Coduri QR pentru mese**. Citește planul sălii, generează
-câte un cod pentru fiecare masă și le pune la print, 3 pe rând, fără meniul
-lateral. Codul deschide `.../sweetandsour/index.html?mesa=4`, deci clientul nu
-mai scrie numărul mesei și nu mai ajung comenzi la masa greșită.
+Unealtă separată, la `domeniu.ro/qr/`. Nu mai e în dashboard: e ceva ce faci o
+dată, la deschidere sau când mai adaugi mese, nu în timpul turei — n-avea ce
+căuta lângă comenzile active.
 
-Biblioteca e inclusă local (`vendor/qrcode.js`, MIT), nu de pe un CDN: barul
-trebuie să poată reprinta un cod și când pică internetul.
+Ce poate:
 
-Înainte să printezi 40 de coduri, scanează unul cu telefonul. Dacă adresa de bază
-e greșită, o afli acum, nu după ce le-ai lipit pe mese.
+- **Numere de masă** scrise ca listă (`1, 2, 5`), ca interval (`1-12`) sau ca
+  nume (`Terasa1`, `Bar2`). Le poți amesteca.
+- **Numele localului** scris pe fiecare cod.
+- **Descărcare SVG**, individual sau toate odată. SVG înseamnă că poți mări
+  codul la orice dimensiune fără să se pixeleze — de la autocolant de 5 cm la
+  panou de perete.
+- **Simbol contactless (NFC)** opțional, dacă pui și tag-uri NFC pe mese.
+- **Chenar punctat** pentru tăiere, și printare 3 pe rând.
+
+Totul se generează în browser. Nu trimite nimic nicăieri și merge fără internet
+odată încărcată pagina — utilă când trebuie să reprintezi un cod și netul e picat.
+
+Simbolul contactless e desenat generic (trei unde). Nu e N-Mark-ul oficial NFC
+Forum, care e marcă înregistrată.
+
+Codul duce la `.../m3/index.html?mesa=4`, deci clientul nu mai scrie
+numărul mesei și nu mai ajung comenzi la masa greșită.
+
+**Scanează un cod cu telefonul înainte să printezi 40.** Dacă adresa de bază e
+greșită, afli acum, nu după ce le-ai lipit pe mese.
+
+## Panoul directorului
+
+Era o coloană de 12 panouri stivuite, în ordinea în care fuseseră adăugate.
+Acum e împărțit în cinci secțiuni, grupate după ce faci:
+
+| Secțiune | Ce conține |
+|---|---|
+| **Sinteză** | încasări, comenzi servite, evoluție, harta orelor de vârf, top 5 produse |
+| **Meniu** | editorul de produse |
+| **Setări** | mod aglomerat, mod fără ospătari |
+| **Personal** | raport pe angajat, anulări suspecte, bonuri neconfirmate, păreri interne |
+| **Risc** | ștergerea istoricului |
+
+Graficele și rapoartele se calculează doar când deschizi secțiunea lor, nu toate
+odată la intrarea în panou.
+
+## Totul se actualizează instant
+
+Aplicația apela `.subscribe()` pe `comenzi`, `stoc_produse` și
+`jurnal_activitate` — dar publicația `supabase_realtime` era **goală**. Postgres
+nu trimitea niciun eveniment, iar tot ce părea „live" era de fapt polling la
+30–120 de secunde. Frontend-ul era scris corect; îi lipsea partea de bază de
+date.
+
+Am adăugat cele patru tabele în publicație și le-am pus `replica identity full`
+— fără asta, evenimentele de UPDATE și DELETE ajung doar cu cheia primară, iar
+codul care citește `p.new.actiune` primește câmpuri goale.
+
+Ce se propagă acum instant, pe toate telefoanele din tură:
+
+| Schimbare | Cine o vede imediat |
+|---|---|
+| Mod aglomerat pornit/oprit | clienții (banner) și tot personalul |
+| Mod fără ospătari | tot personalul, butoanele se schimbă pe loc |
+| Preț sau produs modificat | clienții care au meniul deschis |
+| Produs marcat epuizat | clienții |
+| Comandă nouă / schimbare de stare | barul, bucătăria, ospătarii |
+| Plan de sală modificat | tot personalul |
+
+Când meniul se schimbă sub un client care tocmai comanda, coșul lui rămâne
+intact; dispar doar produsele scoase din meniu între timp. Iar dacă directorul
+editează meniul chiar în acel moment, modificările lui nesalvate nu sunt
+suprascrise de actualizarea live.
+
+## Aplicatia instalabila e doar pentru personal
+
+`dashboard.html` e singurul care se instaleaza pe telefon: are `manifest.json`,
+service worker si notificari push. Se deschide de zeci de ori pe tura, deci merita
+sa porneasca instant si sa mearga si cand netul are sughituri.
+
+`index.html` — meniul clientilor — e un site obisnuit. Se deschide de la codul QR,
+se foloseste o data si se inchide. Nu are manifest, nu inregistreaza service
+worker, nu apare invitatia de instalare si nu ramane nimic in cache pe telefonul
+clientului.
+
+Un detaliu care conteaza: scope-ul unui service worker e folderul din care e
+inregistrat, deci cel al dashboard-ului acopera si meniul clientilor. L-am facut
+sa lase meniul sa treaca direct la retea — altfel un client ar fi putut vedea
+preturi vechi din cache.
+
+Meniul **nu** dezinstaleaza service worker-ul existent, desi ar parea curat sa o
+faca: `getRegistrations()` intoarce toate inregistrarile de pe origine, deci ar
+sterge-o si pe cea a dashboard-ului. Un barman care deschide meniul de pe
+telefonul lui si-ar taia singur notificarile push.
+
+## Un local, un prefix de stocare
+
+Toate localurile stau pe același domeniu, deci împart același `localStorage`.
+Fără prefix, coșul și masa s-ar amesteca între ele: adaugi două cafele la M3,
+treci la alt local și le găsești acolo. Prefixul se derivă automat din folder
+(`meniu:/m3:`), deci nu e nimic de configurat când adaugi un local nou.
 
 ## Rolurile de personal
 

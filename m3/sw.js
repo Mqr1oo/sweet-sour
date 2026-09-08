@@ -1,4 +1,4 @@
-const CACHE_NAME = 'skyfall-cache-v1';
+const CACHE_NAME = 'm3-cache-v1';
 
 // Cai RELATIVE: aplicatia e servita dintr-un subfolder (/MeniuSS/sweetsour/),
 // iar caile absolute ('/dashboard') dadeau 404 -> cache.addAll pica -> service
@@ -73,12 +73,12 @@ self.addEventListener('push', event => {
   let d = {};
   try { d = event.data ? event.data.json() : {}; } catch (e) { d = {}; }
 
-  const title = d.title || '🛎️ Skyfall';
+  const title = d.title || '🛎️ M3';
   const options = {
     body: d.body || 'Comanda noua',
     icon: './icons/icon-192.png',
     badge: './icons/icon-192.png',
-    tag: d.tag || 'skyfall',
+    tag: d.tag || 'm3',
     renotify: true,              // suna din nou chiar daca exista deja una cu acelasi tag
     requireInteraction: true,    // ramane pe ecran pana o atinge cineva
     vibrate: [400, 200, 400, 200, 800],
