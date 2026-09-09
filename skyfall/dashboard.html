@@ -287,6 +287,58 @@
   .dash-panel[data-grup], .stats-grid[data-grup]{display:none}
   .dash-panel[data-grup].adm-on{display:block}
   .stats-grid[data-grup].adm-on{display:grid}
+
+  /* Mese: verde sub 60 min, portocaliu la 90 (verifica), rosu peste 2h. */
+  .table-card.status-ok    { background: rgba(34,197,94,0.16);  border-color: var(--success) !important; }
+  .table-card.status-check { background: rgba(245,158,11,0.24); border-color: var(--warning) !important;
+                             animation: pulsCheck 2.2s ease-in-out infinite; }
+  .table-card.status-long  { background: rgba(239,68,68,0.26);  border-color: var(--danger) !important;
+                             animation: pulsLong 1.1s ease-in-out infinite; }
+  @keyframes pulsCheck { 0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.45)} 50%{box-shadow:0 0 0 9px rgba(245,158,11,0)} }
+  @keyframes pulsLong  { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.6)}  50%{box-shadow:0 0 0 11px rgba(239,68,68,0)} }
+  @media (prefers-reduced-motion: reduce){ .table-card.status-check,.table-card.status-long{animation:none} }
+
+  /* Bara de alerte pentru mese care asteapta prea mult */
+  #alerteMese{ display:none; margin-bottom:14px; }
+  #alerteMese.on{ display:block; }
+  .alerta-masa{
+    display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:12px;
+    margin-bottom:8px; font-size:13.5px; font-weight:600;
+  }
+  .alerta-masa.check{ background:rgba(245,158,11,.14); border:1px solid var(--warning); color:var(--text); }
+  .alerta-masa.long { background:rgba(239,68,68,.16);  border:1px solid var(--danger);  color:var(--text); }
+  .alerta-masa .min{ margin-left:auto; font-family:'Space Mono',monospace; opacity:.85; }
+
+  /* Formularul de produs */
+  #modalProdus{ position:fixed; inset:0; z-index:900; display:none;
+    background:rgba(0,0,0,.72); backdrop-filter:blur(6px);
+    align-items:center; justify-content:center; padding:16px; }
+  #modalProdus.on{ display:flex; }
+  #modalProdusBox{
+    background:var(--bg-card); border:1px solid var(--border); border-radius:20px;
+    padding:24px; width:100%; max-width:620px; max-height:88vh; overflow-y:auto;
+    animation:mpIn .24s cubic-bezier(.22,1,.36,1);
+  }
+  @keyframes mpIn{ from{opacity:0; transform:translateY(14px) scale(.985)} to{opacity:1; transform:none} }
+  #modalProdusBox h2{ margin:0 0 4px; font-size:19px; }
+  .mp-sub{ color:var(--text-muted); font-size:12.5px; margin:0 0 18px; line-height:1.5; }
+  .mp-req{ color:var(--danger); }
+  .mp-grid{ display:grid; grid-template-columns:1fr 1fr; gap:13px; }
+  .mp-full{ grid-column:1 / -1; }
+  .mp-f{ display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--text-muted); font-weight:600; }
+  .mp-f input, .mp-f select, .mp-f textarea{
+    padding:11px 13px; border-radius:10px; border:1px solid var(--border);
+    background:var(--bg); color:var(--text); font-family:inherit; font-size:14px; font-weight:400;
+  }
+  .mp-f input:focus, .mp-f select:focus, .mp-f textarea:focus{ outline:none; border-color:var(--accent); }
+  .mp-f input.gol, .mp-f textarea.gol, .mp-f select.gol{ border-color:var(--danger); }
+  .mp-f textarea{ resize:vertical; }
+  .mp-hint{ font-size:11px; font-weight:400; opacity:.75; }
+  .mp-check{ display:flex; align-items:center; gap:9px; font-size:13px; color:var(--text); cursor:pointer; }
+  .mp-check input{ width:17px; height:17px; accent-color:var(--accent); }
+  .mp-err{ color:var(--danger); font-size:13px; min-height:20px; margin:14px 0 4px; }
+  .mp-actiuni{ display:flex; align-items:center; gap:6px; }
+  @media (max-width:560px){ .mp-grid{ grid-template-columns:1fr; } #modalProdusBox{ padding:20px 16px; } }
 </style>
 </head>
 <body>
@@ -387,13 +439,15 @@
        </div>
        
        <div class="zone-tabs" id="zoneTabsContainer"></div>
+       <div id="alerteMese"></div>
+
        <div class="dash-panel">
          <div class="tables-grid" id="tablesGrid"></div>
          <div class="sala-legend">
             <span><i style="background:var(--bg); border:2px solid var(--border);"></i> Libera</span>
-            <span><i style="background:rgba(245,158,11,0.4); border:2px solid var(--warning);"></i> Ocupata</span>
-            <span><i style="background:rgba(239,68,68,0.4); border:2px solid var(--danger);"></i> Nota CONFIRMATA de ospatar</span>
-            <span><i style="background:rgba(168,85,247,0.4); border:2px solid var(--purple);"></i> Ocupata de foarte mult timp (+100 min)</span>
+            <span><i style="background:rgba(34,197,94,0.3); border:2px solid var(--success);"></i> Ocupata, sub 1h</span>
+            <span><i style="background:rgba(245,158,11,0.4); border:2px solid var(--warning);"></i> Peste 1h — trece un ospatar</span>
+            <span><i style="background:rgba(239,68,68,0.4); border:2px solid var(--danger);"></i> Peste 2h sau nota confirmata</span>
             <span><i style="background:rgba(59,130,246,0.4); border:2px solid var(--blue);"></i> Are nevoie de ajutor / a cerut nota</span>
          </div>
        </div>
@@ -610,6 +664,79 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modalProdus">
+  <div class="modal-box" id="modalProdusBox">
+    <h2 id="mpTitlu">Produs nou</h2>
+    <p class="mp-sub">Toate campurile marcate cu <span class="mp-req">*</span> sunt obligatorii. Clientul le vede pe toate.</p>
+
+    <div class="mp-grid">
+      <label class="mp-f mp-full">Nume (romana) <span class="mp-req">*</span>
+        <input type="text" id="mpNume" maxlength="60" placeholder="Ex: Flat White">
+      </label>
+
+      <label class="mp-f mp-full">Descriere (romana) <span class="mp-req">*</span>
+        <textarea id="mpDesc" maxlength="240" rows="2" placeholder="Ce e, pe scurt. Ce vede clientul sub nume."></textarea>
+        <span class="mp-hint" id="mpDescNr">0 / 240</span>
+      </label>
+
+      <label class="mp-f">Categorie <span class="mp-req">*</span>
+        <input type="text" id="mpCat" list="mpCatLista" placeholder="Ex: Espresso Bar">
+        <datalist id="mpCatLista"></datalist>
+      </label>
+
+      <label class="mp-f">Sectiune <span class="mp-req">*</span>
+        <select id="mpSect">
+          <option value="bar">bar</option>
+          <option value="bucatarie">bucatarie</option>
+        </select>
+      </label>
+
+      <label class="mp-f">Pret (lei) <span class="mp-req">*</span>
+        <input type="number" id="mpPret" step="0.01" min="0.01" max="9999" placeholder="16.00">
+      </label>
+
+      <label class="mp-f">Volum / gramaj <span class="mp-req">*</span>
+        <input type="text" id="mpVolum" maxlength="20" placeholder="Ex: 160 ml sau 250 g">
+      </label>
+
+      <label class="mp-f mp-full">Ingrediente <span class="mp-req">*</span>
+        <input type="text" id="mpIngr" placeholder="Separate prin virgula: Cafea, Lapte">
+      </label>
+
+      <label class="mp-f mp-full">Alergeni
+        <input type="text" id="mpAlerg" placeholder="Separate prin virgula. Lasa gol daca nu are.">
+        <span class="mp-hint">Obligatoriu prin lege daca produsul contine alergeni. Bifeaza mai jos daca chiar nu are.</span>
+      </label>
+
+      <label class="mp-check mp-full">
+        <input type="checkbox" id="mpFaraAlerg"> Produsul nu contine alergeni
+      </label>
+
+      <label class="mp-f">Nume in engleza <span class="mp-req">*</span>
+        <input type="text" id="mpNumeEn" maxlength="60" placeholder="Ex: Flat White">
+      </label>
+
+      <label class="mp-f">Descriere in engleza <span class="mp-req">*</span>
+        <input type="text" id="mpDescEn" maxlength="240" placeholder="Short description in English">
+      </label>
+
+      <label class="mp-check">
+        <input type="checkbox" id="mpSemn"> Semnatura casei (apare cu eticheta)
+      </label>
+      <label class="mp-check">
+        <input type="checkbox" id="mpActiv" checked> Activ (vizibil in meniu)
+      </label>
+    </div>
+
+    <div class="mp-err" id="mpEroare"></div>
+
+    <div class="mp-actiuni">
+      <button class="btn-primary" id="mpSalveaza" style="width:auto;padding:12px 22px;">Salveaza produsul</button>
+      <button id="mpRenunta" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font:inherit;padding:12px 16px;">Renunta</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function(){
   // Valorile vin din config.js, ca sa existe un singur loc de configurat.
@@ -646,7 +773,9 @@
   let autoFreedGuard = new Set(); 
 
   const AUTO_FREE_MINUTES = 15; 
-  const PURPLE_THRESHOLD_MINUTES = 100;
+  // Praguri de timp pentru mese, in minute de la ultima comanda.
+  const PRAG_VERIFICA_MIN = 60;    // portocaliu: trece un ospatar pe la masa
+  const PRAG_LUNG_MIN     = 120;   // rosu: masa sta de peste 2 ore
   const PAYMENT_ALERT_REGEX = /Efectivo|Tarjeta|Cash|Card|Esp[eè]ces|Carte/i;
   const HELP_ALERT_REGEX = /Ayuda|Help|Aide/i;
 
@@ -1223,6 +1352,99 @@
       });
   }
 
+
+  // --- Alerte pentru mesele care asteapta prea mult ----------------------
+  // Se recalculeaza la fiecare randare a salii si la fiecare minut, ca timpul
+  // sa curga si cand nu intra comenzi noi.
+  let alerteAnuntate = {};   // numar masa -> ultimul prag anuntat
+
+  function actualizeazaAlerteMese() {
+      const box = document.getElementById('alerteMese');
+      if (!box || !salaConfig || !salaConfig.zones) return;
+
+      const deVerificat = [], deUrgenta = [];
+      salaConfig.zones.forEach(z => (z.mese || []).forEach(m => {
+          const st = getTableStatus(m.numar);
+          if (st.status === 'check') deVerificat.push({nr: m.numar, min: st.minute});
+          if (st.status === 'long')  deUrgenta.push({nr: m.numar, min: st.minute});
+      }));
+
+      if (!deVerificat.length && !deUrgenta.length) {
+          box.classList.remove('on'); box.innerHTML = ''; return;
+      }
+      box.classList.add('on');
+      box.innerHTML =
+        deUrgenta.map(t => `<div class="alerta-masa long">🔴 Masa ${escapeHTML(t.nr)} sta de peste 2 ore fara comanda noua
+             <span class="min">${t.min} min</span></div>`).join('') +
+        deVerificat.map(t => `<div class="alerta-masa check">🟠 Masa ${escapeHTML(t.nr)} — treci pe la ea, poate mai vrea ceva
+             <span class="min">${t.min} min</span></div>`).join('');
+
+      // Sunet + notificare, o singura data per masa si per prag, ca sa nu
+      // tiuie continuu. Doar ospatarii si directorul sunt anuntati.
+      if (userRole === 'ospatar' || userRole === 'director') {
+          [...deUrgenta.map(t => ({...t, prag:'long'})),
+           ...deVerificat.map(t => ({...t, prag:'check'}))].forEach(t => {
+              if (alerteAnuntate[t.nr] === t.prag) return;
+              alerteAnuntate[t.nr] = t.prag;
+              if (t.prag === 'long') {
+                  sunetAlerta(3);
+                  rosteste(`Atentie, masa ${t.nr} sta de peste doua ore.`);
+              } else {
+                  sunetAlerta(1);
+                  rosteste(`Masa ${t.nr} asteapta. Treci pe la ea.`);
+              }
+          });
+      }
+      // masa revenita sub prag -> poate fi anuntata din nou mai tarziu
+      Object.keys(alerteAnuntate).forEach(nr => {
+          const inca = [...deVerificat, ...deUrgenta].some(t => String(t.nr) === String(nr));
+          if (!inca) delete alerteAnuntate[nr];
+      });
+  }
+
+  // Rosteste un mesaj scurt, in romana.
+  function rosteste(text) {
+      if (typeof isSoundOn !== 'undefined' && !isSoundOn) return;
+      if (!('speechSynthesis' in window)) return;
+      try {
+          const u = new SpeechSynthesisUtterance(text);
+          u.lang = 'ro-RO';
+          const voce = (window.speechSynthesis.getVoices() || [])
+                .find(v => (v.lang || '').toLowerCase().startsWith('ro'));
+          if (voce) u.voice = voce;
+          window.speechSynthesis.speak(u);
+      } catch(e) { /* fara voce daca browserul nu permite */ }
+  }
+
+  // Bip scurt, distinct de notificarea de comanda noua.
+  function sunetAlerta(repetari) {
+      if (typeof isSoundOn !== 'undefined' && !isSoundOn) return;
+      try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          for (let i = 0; i < repetari; i++) {
+              const o = ctx.createOscillator(), g = ctx.createGain();
+              o.connect(g); g.connect(ctx.destination);
+              o.frequency.value = repetari > 1 ? 880 : 620;
+              o.type = 'sine';
+              const t0 = ctx.currentTime + i * 0.28;
+              g.gain.setValueAtTime(0.0001, t0);
+              g.gain.exponentialRampToValueAtTime(0.25, t0 + 0.02);
+              g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22);
+              o.start(t0); o.stop(t0 + 0.24);
+          }
+      } catch(e) { /* fara sunet daca browserul nu permite */ }
+  }
+
+  // Timpul curge si fara comenzi noi, deci reevaluam din minut in minut.
+  setInterval(() => {
+      const sala = document.getElementById('mapView');
+      if (sala && sala.style.display === 'block' && typeof renderTablesGrid === 'function') {
+          renderTablesGrid();      // reia si alertele
+      } else {
+          actualizeazaAlerteMese();
+      }
+  }, 60000);
+
   function getTableStatus(tableNr) {
       const strNr = String(tableNr);
       const lastFreed = freedTables[strNr] || 0;
@@ -1249,10 +1471,20 @@
           return { status:'red', label: remainingMin > 0 ? `Nota confirmata · se elibereaza in ${remainingMin} min` : 'Nota confirmata · se elibereaza...' };
       }
 
-      let elapsedMin = (Date.now() - lastOrderTime) / 60000;
-      if(elapsedMin >= PURPLE_THRESHOLD_MINUTES) return { status:'purple', label:`Ocupata de foarte mult timp (+${PURPLE_THRESHOLD_MINUTES} min)` };
-      let isOld = elapsedMin > 30;
-      return isOld ? { status:'red', label:'Ocupata (de ceva vreme)' } : { status:'yellow', label:'Ocupata' };
+      // Trei praguri, masurate de la ultima comanda a mesei:
+      //   sub 60 min  -> verde, totul normal
+      //   60-120 min  -> portocaliu, un ospatar trebuie sa treaca pe la masa
+      //   peste 120   -> rosu, masa sta de prea mult timp fara sa comande nimic
+      const elapsedMin = (Date.now() - lastOrderTime) / 60000;
+      if (elapsedMin >= PRAG_LUNG_MIN) {
+          return { status:'long', minute: Math.round(elapsedMin),
+                   label:`Ocupata de peste ${Math.floor(PRAG_LUNG_MIN/60)}h — verifica masa` };
+      }
+      if (elapsedMin >= PRAG_VERIFICA_MIN) {
+          return { status:'check', minute: Math.round(elapsedMin),
+                   label:`${Math.round(elapsedMin)} min fara comanda — trece un ospatar` };
+      }
+      return { status:'ok', minute: Math.round(elapsedMin), label:'Ocupata' };
   }
 
   async function checkAutoFreeTables() {
@@ -1332,6 +1564,7 @@
   }
 
   function renderTablesGrid() {
+      actualizeazaAlerteMese();
       const grid = document.getElementById('tablesGrid');
       grid.innerHTML = '';
       const zone = getZoneObj(currentZone);
@@ -1355,7 +1588,7 @@
                       }
                       return;
                   }
-                  let newSeats = prompt(`Plazas en la mesa ${mesa.numar}:`, mesa.scaune);
+                  let newSeats = prompt(`Cate locuri are masa ${mesa.numar}?`, mesa.scaune);
                   if(newSeats !== null && !isNaN(parseInt(newSeats))) {
                       mesa.scaune = parseInt(newSeats);
                       renderTablesGrid();
@@ -1577,54 +1810,165 @@
           return;
       }
       const ed = e.target.closest('[data-editeaza]');
-      if (ed) deschideDetalii(+ed.dataset.editeaza);
+      if (ed) deschideFormular(+ed.dataset.editeaza);
   });
 
   document.getElementById('cautaProdus').addEventListener('input', renderMeniu);
 
-  document.getElementById('btnProdusNou').addEventListener('click', () => {
-      // id-ul trebuie sa fie unic si stabil: il derivam din cel mai mare existent
-      const maxId = meniu.reduce((m, p) => Math.max(m, parseInt(p.id_produs) || 0), 0);
-      const maxOrd = meniu.reduce((m, p) => Math.max(m, p.ordine || 0), 0);
-      meniu.push({
-          id_produs: String(maxId + 1), nume: 'Produs nou', descriere: '',
-          categorie: meniu.length ? meniu[meniu.length-1].categorie : 'Cocktailuri',
-          sectiune: 'bar', volum: '', ingrediente: [], alergeni: [],
-          pret: 0, pret_variabil: false, semnatura: false, activ: true,
-          ordine: maxOrd + 10, imagine: null, traduceri: {}, nume_variante: [],
-          _nou: true, _modificat: true
-      });
-      renderMeniu();
-      setMeniuStare('Produs adaugat. Completeaza-l si salveaza.', 'var(--warning)');
+  document.getElementById('btnProdusNou').addEventListener('click', () => deschideFormular(null));
+
+  function deschideFormular(i) {
+      mpIndex = i;
+      const p = (i === null) ? null : meniu[i];
+      const en = (p && p.traduceri && p.traduceri.en) || {};
+
+      document.getElementById('mpTitlu').textContent = p ? 'Editeaza produsul' : 'Produs nou';
+      const set = (id, v) => document.getElementById(id).value = (v === undefined || v === null) ? '' : v;
+      set('mpNume',   p ? p.nume : '');
+      set('mpDesc',   p ? p.descriere : '');
+      set('mpCat',    p ? p.categorie : '');
+      set('mpSect',   p ? p.sectiune : 'bar');
+      set('mpPret',   p && p.pret ? Number(p.pret).toFixed(2) : '');
+      set('mpVolum',  p ? p.volum : '');
+      set('mpIngr',   p ? (p.ingrediente || []).join(', ') : '');
+      set('mpAlerg',  p ? (p.alergeni || []).join(', ') : '');
+      set('mpNumeEn', en.nume || '');
+      set('mpDescEn', en.descriere || '');
+      document.getElementById('mpSemn').checked  = p ? !!p.semnatura : false;
+      document.getElementById('mpActiv').checked = p ? !!p.activ : true;
+      document.getElementById('mpFaraAlerg').checked =
+          !!(p && (!p.alergeni || p.alergeni.length === 0) && p.descriere);
+
+      // categoriile existente, ca sugestii — asa nu apar "Cafea" si "cafea"
+      const cats = [...new Set(meniu.map(x => x.categorie).filter(Boolean))].sort();
+      document.getElementById('mpCatLista').innerHTML =
+          cats.map(c => `<option value="${escapeHTML(c)}">`).join('');
+
+      document.getElementById('mpEroare').textContent = '';
+      document.querySelectorAll('#modalProdusBox .gol').forEach(el => el.classList.remove('gol'));
+      actualizeazaNrCaractere();
+      document.getElementById('modalProdus').classList.add('on');
+      setTimeout(() => document.getElementById('mpNume').focus(), 60);
+  }
+
+  function inchideFormular() {
+      document.getElementById('modalProdus').classList.remove('on');
+      mpIndex = null;
+  }
+
+  function actualizeazaNrCaractere() {
+      const t = document.getElementById('mpDesc');
+      document.getElementById('mpDescNr').textContent = `${t.value.length} / 240`;
+  }
+  document.getElementById('mpDesc').addEventListener('input', actualizeazaNrCaractere);
+
+  // Fara alergeni bifat -> campul se goleste si se blocheaza, ca sa nu ramana
+  // scris ceva ce contrazice bifa.
+  document.getElementById('mpFaraAlerg').addEventListener('change', (e) => {
+      const camp = document.getElementById('mpAlerg');
+      camp.disabled = e.target.checked;
+      if (e.target.checked) { camp.value = ''; camp.classList.remove('gol'); }
   });
 
-  function deschideDetalii(i) {
-      const p = meniu[i];
-      const en = (p.traduceri && p.traduceri.en) || {};
-      const nume = prompt('Nume (romana):', p.nume || ''); if (nume === null) return;
-      const desc = prompt('Descriere (romana):', p.descriere || ''); if (desc === null) return;
-      const vol  = prompt('Volum / gramaj (ex: 250 ml):', p.volum || ''); if (vol === null) return;
-      const ingr = prompt('Ingrediente, separate prin virgula:', (p.ingrediente||[]).join(', '));
-      if (ingr === null) return;
-      const alrg = prompt('Alergeni, separati prin virgula (gol daca nu are):', (p.alergeni||[]).join(', '));
-      if (alrg === null) return;
-      const enN  = prompt('Nume in engleza:', en.nume || nume); if (enN === null) return;
-      const enD  = prompt('Descriere in engleza:', en.descriere || ''); if (enD === null) return;
+  function salveazaFormular() {
+      const v = id => document.getElementById(id).value.trim();
+      const err = document.getElementById('mpEroare');
+      document.querySelectorAll('#modalProdusBox .gol').forEach(el => el.classList.remove('gol'));
+
+      const obligatorii = [
+          ['mpNume',   'Numele produsului'],
+          ['mpDesc',   'Descrierea'],
+          ['mpCat',    'Categoria'],
+          ['mpVolum',  'Volumul sau gramajul'],
+          ['mpIngr',   'Ingredientele'],
+          ['mpNumeEn', 'Numele in engleza'],
+          ['mpDescEn', 'Descrierea in engleza'],
+      ];
+      for (const [id, eticheta] of obligatorii) {
+          if (!v(id)) {
+              document.getElementById(id).classList.add('gol');
+              document.getElementById(id).focus();
+              err.textContent = eticheta + ' lipseste.';
+              return;
+          }
+      }
+
+      const pret = parseFloat(v('mpPret'));
+      if (isNaN(pret) || pret <= 0 || pret > 9999) {
+          document.getElementById('mpPret').classList.add('gol');
+          document.getElementById('mpPret').focus();
+          err.textContent = 'Pretul trebuie sa fie un numar intre 0.01 si 9999.';
+          return;
+      }
+
+      // Alergenii sunt obligatorii prin lege daca produsul are. Cerem o
+      // afirmatie explicita: ori ii listezi, ori bifezi ca nu are.
+      const faraAlerg = document.getElementById('mpFaraAlerg').checked;
+      if (!faraAlerg && !v('mpAlerg')) {
+          document.getElementById('mpAlerg').classList.add('gol');
+          document.getElementById('mpAlerg').focus();
+          err.textContent = 'Completeaza alergenii, sau bifeaza ca produsul nu contine.';
+          return;
+      }
 
       const lista = s => s.split(',').map(x => x.trim()).filter(Boolean);
-      p.nume = nume.trim(); p.descriere = desc.trim(); p.volum = vol.trim();
-      p.ingrediente = lista(ingr); p.alergeni = lista(alrg);
-      p.traduceri = Object.assign({}, p.traduceri, {
-          en: {nume: enN.trim(), descriere: enD.trim(),
-               ingrediente: (en.ingrediente || []), alergeni: p.alergeni}
+      const alergeni = faraAlerg ? [] : lista(v('mpAlerg'));
+      const numeRo = v('mpNume'), numeEn = v('mpNumeEn');
+
+      // nume duplicat -> serverul n-ar mai sti dupa ce pret sa recalculeze
+      const dubla = meniu.some((x, idx) => idx !== mpIndex &&
+            (x.nume || '').trim().toLowerCase() === numeRo.toLowerCase());
+      if (dubla) {
+          document.getElementById('mpNume').classList.add('gol');
+          err.textContent = `Mai exista un produs cu numele „${numeRo}”. Alege alt nume.`;
+          return;
+      }
+
+      let p;
+      if (mpIndex === null) {
+          const maxId  = meniu.reduce((m, x) => Math.max(m, parseInt(x.id_produs) || 0), 0);
+          const maxOrd = meniu.reduce((m, x) => Math.max(m, x.ordine || 0), 0);
+          p = { id_produs: String(maxId + 1), ordine: maxOrd + 10, imagine: null,
+                pret_variabil: false, nume_variante: [] };
+          meniu.push(p);
+      } else {
+          p = meniu[mpIndex];
+      }
+
+      p.nume        = numeRo;
+      p.descriere   = v('mpDesc');
+      p.categorie   = v('mpCat');
+      p.sectiune    = v('mpSect');
+      p.pret        = Math.round(pret * 100) / 100;
+      p.volum       = v('mpVolum');
+      p.ingrediente = lista(v('mpIngr'));
+      p.alergeni    = alergeni;
+      p.semnatura   = document.getElementById('mpSemn').checked;
+      p.activ       = document.getElementById('mpActiv').checked;
+      p.traduceri   = Object.assign({}, p.traduceri, {
+          en: { nume: numeEn, descriere: v('mpDescEn'),
+                ingrediente: (p.traduceri && p.traduceri.en && p.traduceri.en.ingrediente) || [],
+                alergeni: alergeni }
       });
-      // variantele de nume sunt cheia dupa care serverul recunoaste produsul
-      // daca lipseste id-ul, deci le tinem la zi automat
-      p.nume_variante = [...new Set([p.nume, enN].map(x => x.trim().toLowerCase()).filter(Boolean))];
+      // dupa aceste nume recunoaste serverul produsul cand lipseste id-ul
+      p.nume_variante = [...new Set([numeRo, numeEn].map(x => x.toLowerCase()))];
       p._modificat = true;
+
+      inchideFormular();
       renderMeniu();
-      setMeniuStare('Ai modificari nesalvate.', 'var(--warning)');
+      setMeniuStare('Produs pregatit. Apasa „Salveaza” ca sa il trimiti in meniu.', 'var(--warning)');
   }
+
+  document.getElementById('mpSalveaza').addEventListener('click', salveazaFormular);
+  document.getElementById('mpRenunta').addEventListener('click', inchideFormular);
+  document.getElementById('modalProdus').addEventListener('click', (e) => {
+      if (e.target.id === 'modalProdus') inchideFormular();
+  });
+  document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('modalProdus').classList.contains('on')) {
+          inchideFormular();
+      }
+  });
 
   async function salveazaMeniu() {
       const schimbate = meniu.filter(p => p._modificat);
@@ -1685,7 +2029,7 @@
               } else if (a === 'setari_busy') {
                   loadBusyMode();
               } else if (a === 'config_mese') {
-                  if (typeof renderTableMap === 'function') renderTableMap();
+                  if (typeof renderTablesGrid === 'function') renderTablesGrid();
               }
             })
         .subscribe();
@@ -2000,14 +2344,23 @@
                     ${isOff ? '🔴 AGOTADO' : '🟢 ACTIVO'}
                  </div>
               </div>
-              <label class="switch"><input type="checkbox" onchange="toggleStock('${item.imageNumber}', this.checked)" ${isOff ? 'checked' : ''}><span class="slider"></span></label>
+              <label class="switch"><input type="checkbox" onchange="toggleStock('${item.imageNumber}', this.checked, this)" ${isOff ? 'checked' : ''}><span class="slider"></span></label>
             </div>`;
       });
   }
 
-  window.toggleStock = async function(id, isEpuizat) { 
-      await _supabase.from('stoc_produse').upsert({ id_produs: id.toString(), epuizat: isEpuizat });
-      loadFullMenuForStock(); 
+  window.toggleStock = async function(id, isEpuizat, el) {
+      const { error } = await _supabase.from('stoc_produse')
+          .upsert({ id_produs: String(id), epuizat: isEpuizat }, { onConflict: 'id_produs' });
+      if (error) {
+          if (el) el.checked = !isEpuizat;   // punem butonul inapoi cum era
+          alert(userRole === 'ospatar'
+            ? 'Doar barul, bucataria si directorul pot bloca produse.'
+            : 'Nu s-a putut salva: ' + error.message);
+          return;
+      }
+      await logActivity('stoc_modificat', null, { id_produs: String(id), epuizat: isEpuizat });
+      loadFullMenuForStock();
   };
 
   document.getElementById('btnStatsToday').addEventListener('click', (e) => {
@@ -2622,5 +2975,7 @@
   checkAuth();
 })();
 </script>
+
+
 </body>
 </html>

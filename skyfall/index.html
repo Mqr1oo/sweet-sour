@@ -336,6 +336,113 @@
   .split-per-person-results { display:flex; flex-direction:column; gap:8px; margin-top: 16px; text-align: left; }
   .split-per-person-row { display:flex; justify-content:space-between; align-items:center; background: var(--bg-panel); border: 1px solid var(--paper-dim); border-radius: 10px; padding: 10px 14px; font-family:'Space Mono', monospace; font-size: 14px; }
   .split-per-person-row b { color: var(--brass-soft); }
+
+  /* ==================================================================
+     RAFINARE PE TELEFON
+     ================================================================== */
+
+  /* --- Tipografie: tracking-ul se schimba cu marimea, nu e o valoare fixa.
+         Titlurile mari strang literele, textul mic primeste aer. */
+  .hero-text h1{ letter-spacing:-0.022em; line-height:1.04; }
+  .cat-title, .category-section > h2{ letter-spacing:-0.015em; line-height:1.12; }
+  .c-name{ letter-spacing:-0.008em; line-height:1.22; }
+  .c-desc{ line-height:1.55; letter-spacing:0.002em; }
+  .meta-pill, .chip{ letter-spacing:0.015em; }
+
+  /* --- Raspuns la apasare, nu la eliberare. Feedback-ul apare in momentul
+         atingerii, altfel interfata pare moarta pe telefon. */
+  .chip, .c-qty-btn, .btn-submit, .btn-action, .global-fav-btn, .lang-pick-btn, .lang-option{
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .chip:active{ transform: scale(.96); transition: transform 90ms ease-out; }
+  .btn-submit:active, .btn-action:active{ transform: scale(.975); transition: transform 90ms ease-out; }
+  .global-fav-btn:active{ transform: scale(.96); transition: transform 90ms ease-out; }
+  .card:active{ transform: scale(.995); transition: transform 120ms ease-out; }
+
+  /* --- Zone de atins de minim 44px, cat un deget. */
+  .chip{ min-height:44px; display:inline-flex; align-items:center; }
+  .lang-btn, .lang-option{ min-height:44px; }
+
+  /* --- Materiale translucide: continutul curge pe sub bare, cu o muchie
+         luminoasa sus, ca lumina prinsa de material. */
+  .total-bar{
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border-top: 1px solid rgba(255,255,255,0.10);
+  }
+  .lang-btn{
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+  }
+
+  /* --- Cardurile: umbra mai adanca si o muchie fina sus, ca sa se desprinda
+         de fundal fara sa aiba nevoie de chenar gros. */
+  .card{
+    box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 10px 30px rgba(0,0,0,.34);
+  }
+
+  /* --- Bara de categorii: se poate trage cu degetul, cu oprire pe fiecare
+         chip si fara bara de scroll vizibila. */
+  .tag-filters{
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .tag-filters::-webkit-scrollbar{ display:none; }
+  .tag-filters .chip{ scroll-snap-align: center; }
+
+  /* --- Titlul categoriei ramane lipit sus cat derulezi prin ea, ca sa stii
+         mereu unde esti in meniu. */
+  @media (max-width: 700px){
+    .category-section > h2{
+      position: sticky; top: 0; z-index: 5;
+      padding: 12px 0 8px;
+      background: linear-gradient(to bottom, var(--bg-base) 72%, transparent);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+  }
+
+  /* --- Marginile sigure ale telefonului (crestatura, bara de jos). */
+  @supports (padding: max(0px)) {
+    .wrap{
+      padding-left: max(20px, env(safe-area-inset-left));
+      padding-right: max(20px, env(safe-area-inset-right));
+    }
+    .total-bar{ padding-bottom: max(14px, env(safe-area-inset-bottom)); }
+  }
+
+  /* --- Pe ecran ingust, cardurile respira mai mult si textul nu se inghesuie. */
+  @media (max-width: 430px){
+    .card{ border-radius: 18px; }
+    .c-name{ font-size: 1.06rem; }
+    .c-desc{ font-size: .875rem; }
+    .card-body{ padding: 15px 16px 17px; }
+    .hero-text h1{ font-size: clamp(1.9rem, 9vw, 2.6rem); }
+    .tag{ font-size: .92rem; }
+  }
+
+  /* --- Cine a cerut mai putina miscare primeste doar treceri de opacitate. */
+  @media (prefers-reduced-motion: reduce){
+    .chip:active, .btn-submit:active, .btn-action:active,
+    .global-fav-btn:active, .card:active{ transform:none; }
+    *{ animation-duration:.01ms !important; animation-iteration-count:1 !important;
+       transition-duration:.01ms !important; scroll-behavior:auto !important; }
+  }
+
+  /* --- Cine a cerut mai putina transparenta primeste suprafete solide. */
+  @media (prefers-reduced-transparency: reduce){
+    .total-bar, .lang-btn{ backdrop-filter:none; -webkit-backdrop-filter:none; background: var(--bg-card); }
+    .category-section > h2{ backdrop-filter:none; -webkit-backdrop-filter:none; background: var(--bg-base); }
+  }
+
+  /* --- Contrast marit: chenare definite in loc de suprafete difuze. */
+  @media (prefers-contrast: more){
+    .card{ border: 1px solid var(--ink-soft); }
+    .chip{ border-width: 2px; }
+  }
 </style>
 </head>
 <body>

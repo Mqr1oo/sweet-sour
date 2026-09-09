@@ -13,6 +13,7 @@ Platforma/
 │  ├─ config.js          ⚠️ SINGURUL fișier care diferă între localuri
 │  ├─ manifest.json, sw.js, icons/, images/
 ├─ qr/                   generator de coduri QR (unealtă separată)
+├─ exemplu/              demo de prezentare, fără backend
 ├─ skyfall/              șablon gata de completat
 └─ supabase/             SQL + scripturi, comune tuturor localurilor
 ```
@@ -220,6 +221,45 @@ biblioteca local, langa `config.js`. Nu am facut-o inca.
 (director), bar, cocina (bucatarie), camarero1-8 (ospatari). Rolurile sunt
 corecte, doar adresele au numele vechi. Daca vrei adrese noi, le creezi din
 consola si rulezi din nou atribuirea de roluri — cele vechi pot fi sterse dupa.
+
+## Demo pentru prezentări — `/exemplu/`
+
+Un meniu de demonstrație, la `domeniu.ro/exemplu/`. **Nu se conectează la niciun
+Supabase**: produsele vin dintr-un fișier local (`meniu-demo.json`, 15 produse),
+iar „Trimite comanda" arată că a funcționat fără să trimită nimic nicăieri.
+
+Poți da linkul oricui, fără logo și fără riscul ca cineva să bage o comandă de
+test în sistemul unui local real.
+
+## Mesele au acum trei praguri de timp
+
+Măsurate de la ultima comandă a mesei:
+
+| Timp | Culoare | Ce se întâmplă |
+|---|---|---|
+| sub 60 min | verde | normal, nimic |
+| 60–120 min | portocaliu, pulsează încet | alertă „trece un ospătar pe la ea", un bip |
+| peste 120 min | roșu, pulsează rapid | alertă urgentă, trei bipuri, anunț vocal |
+
+Deasupra planului sălii apare o bară cu mesele care așteaptă, cu minutele
+exacte. Alerta sonoră sună **o singură dată per masă și per prag**, ca să nu
+țiuie continuu; se resetează când masa revine sub prag. Doar ospătarii și
+directorul sunt anunțați.
+
+Timpul curge și când nu intră comenzi noi: sala se reevaluează din minut în minut.
+
+## Adăugarea unui produs e acum un formular
+
+Înainte erau șapte ferestre `prompt()` una după alta — dacă anulai a cincea,
+pierdeai tot, și nimic nu te obliga să completezi ceva.
+
+Acum e un formular cu validare, în care sunt **obligatorii**: nume, descriere,
+categorie, secțiune, preț, volum/gramaj, ingrediente, nume și descriere în
+engleză. Alergenii cer o afirmație explicită: ori îi listezi, ori bifezi „nu
+conține" — nu poți lăsa câmpul gol și trece mai departe.
+
+Verifică și numele duplicat: două produse cu același nume ar face serverul să nu
+mai știe după ce preț să recalculeze comanda.
 
 ## Rolurile de personal
 
