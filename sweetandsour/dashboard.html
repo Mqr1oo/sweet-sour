@@ -339,6 +339,25 @@
   .mp-err{ color:var(--danger); font-size:13px; min-height:20px; margin:14px 0 4px; }
   .mp-actiuni{ display:flex; align-items:center; gap:6px; }
   @media (max-width:560px){ .mp-grid{ grid-template-columns:1fr; } #modalProdusBox{ padding:20px 16px; } }
+
+  /* Traducere automata */
+  .mp-f-row{ display:flex; gap:6px; align-items:stretch; }
+  .mp-f-row input{ flex:1; min-width:0; }
+  .mp-retradu{
+    flex:0 0 auto; width:38px; border-radius:10px; border:1px solid var(--border);
+    background:var(--bg); color:var(--text-muted); cursor:pointer; font-size:16px;
+    display:flex; align-items:center; justify-content:center; transition:transform .15s, color .15s;
+  }
+  .mp-retradu:hover{ color:var(--accent); }
+  .mp-retradu:active{ transform: rotate(-40deg); }
+  .mp-retradu.spinning{ animation: mpSpin .7s linear infinite; color:var(--accent); }
+  @keyframes mpSpin{ to{ transform: rotate(360deg); } }
+  .mp-auto{
+    font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:.04em;
+    color: var(--accent); opacity:.85;
+  }
+  .mp-auto.manual{ color: var(--text-muted); }
+  @media (prefers-reduced-motion: reduce){ .mp-retradu.spinning{ animation:none; } }
 </style>
 </head>
 <body>
@@ -667,7 +686,7 @@
 <div class="modal-overlay" id="modalProdus">
   <div class="modal-box" id="modalProdusBox">
     <h2 id="mpTitlu">Produs nou</h2>
-    <p class="mp-sub">Toate campurile marcate cu <span class="mp-req">*</span> sunt obligatorii. Clientul le vede pe toate.</p>
+    <p class="mp-sub">Scrii in romana; engleza se completeaza singura cand ieși din camp. Campurile cu <span class="mp-req">*</span> sunt obligatorii. Clientul le vede pe toate.</p>
 
     <div class="mp-grid">
       <label class="mp-f mp-full">Nume (romana) <span class="mp-req">*</span>
@@ -712,12 +731,22 @@
         <input type="checkbox" id="mpFaraAlerg"> Produsul nu contine alergeni
       </label>
 
-      <label class="mp-f">Nume in engleza <span class="mp-req">*</span>
-        <input type="text" id="mpNumeEn" maxlength="60" placeholder="Ex: Flat White">
+      <label class="mp-f">
+        Nume in engleza
+        <span class="mp-auto" id="mpNumeEnAuto">se traduce automat</span>
+        <span class="mp-f-row">
+          <input type="text" id="mpNumeEn" maxlength="60" placeholder="Se completeaza automat din numele romanesc">
+          <button type="button" class="mp-retradu" id="mpRetraduNume" title="Retraduce">↻</button>
+        </span>
       </label>
 
-      <label class="mp-f">Descriere in engleza <span class="mp-req">*</span>
-        <input type="text" id="mpDescEn" maxlength="240" placeholder="Short description in English">
+      <label class="mp-f">
+        Descriere in engleza
+        <span class="mp-auto" id="mpDescEnAuto">se traduce automat</span>
+        <span class="mp-f-row">
+          <input type="text" id="mpDescEn" maxlength="240" placeholder="Se completeaza automat din descrierea romaneasca">
+          <button type="button" class="mp-retradu" id="mpRetraduDesc" title="Retraduce">↻</button>
+        </span>
       </label>
 
       <label class="mp-check">
@@ -1817,6 +1846,83 @@
 
   document.getElementById('btnProdusNou').addEventListener('click', () => deschideFormular(null));
 
+
+  // --- Traducere automata RO -> EN ----------------------------------------
+  // MyMemory e un serviciu public, fara cheie, cu o limita zilnica generoasa
+  // pentru volumul unui singur local. Daca e picat sau nu exista net,
+  // traducerea esueaza in liniste si folosim textul romanesc ca rezerva.
+  async function traduRoEn(text) {
+      const t = (text || '').trim();
+      if (!t) return '';
+      try {
+          const url = 'https://api.mymemory.translated.net/get?q=' +
+                      encodeURIComponent(t) + '&langpair=ro|en';
+          const r = await fetch(url);
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          const j = await r.json();
+          const trad = j && j.responseData && j.responseData.translatedText;
+          if (!trad || /MYMEMORY WARNING/i.test(trad)) return '';
+          // API-ul intoarce entitati HTML uneori (&#39; etc.) — le curatam
+          const tmp = document.createElement('textarea');
+          tmp.innerHTML = trad;
+          return tmp.value.trim();
+      } catch (e) {
+          console.warn('Traducere esuata:', e);
+          return '';
+      }
+  }
+
+  async function traduListaRoEn(items) {
+      if (!items || !items.length) return [];
+      const joined = items.join(' || ');
+      const trad = await traduRoEn(joined);
+      if (!trad) return items.slice();   // rezerva: pastram romana
+      return trad.split('||').map(s => s.trim()).filter(Boolean);
+  }
+
+  // Marcam un camp EN ca "editat manual" cand utilizatorul scrie chiar el in
+  // el — altfel auto-traducerea i-ar suprascrie corectura de fiecare data.
+  let mpEnManual = { nume: false, desc: false };
+
+  document.getElementById('mpNumeEn').addEventListener('input', () => { mpEnManual.nume = true; setAutoBadge('mpNumeEnAuto', false); });
+  document.getElementById('mpDescEn').addEventListener('input', () => { mpEnManual.desc = true; setAutoBadge('mpDescEnAuto', false); });
+
+  function setAutoBadge(id, auto) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.toggle('manual', !auto);
+      el.textContent = auto ? 'tradus automat' : 'editat manual';
+  }
+
+  async function autotraduCamp(sursaId, tintaId, badgeId, butonId, manualKey) {
+      if (mpEnManual[manualKey]) return;    // directorul a corectat-o deja, n-o atingem
+      const text = document.getElementById(sursaId).value;
+      if (!text.trim()) return;
+      const buton = document.getElementById(butonId);
+      if (buton) buton.classList.add('spinning');
+      const trad = await traduRoEn(text);
+      if (buton) buton.classList.remove('spinning');
+      if (mpEnManual[manualKey]) return;    // a apucat sa scrie cat asteptam raspunsul
+      const tinta = document.getElementById(tintaId);
+      tinta.value = trad || text;           // fara net -> punem romana, mai bine decat gol
+      tinta.classList.remove('gol');
+      setAutoBadge(badgeId, true);
+  }
+
+  document.getElementById('mpNume').addEventListener('blur', () =>
+      autotraduCamp('mpNume', 'mpNumeEn', 'mpNumeEnAuto', 'mpRetraduNume', 'nume'));
+  document.getElementById('mpDesc').addEventListener('blur', () =>
+      autotraduCamp('mpDesc', 'mpDescEn', 'mpDescEnAuto', 'mpRetraduDesc', 'desc'));
+
+  // Butonul ↻: fortez o noua traducere chiar daca a fost editata manual —
+  // util cand directorul vrea sa renunte la corectura lui si sa reia automat.
+  document.getElementById('mpRetraduNume').addEventListener('click', () => {
+      mpEnManual.nume = false; autotraduCamp('mpNume', 'mpNumeEn', 'mpNumeEnAuto', 'mpRetraduNume', 'nume');
+  });
+  document.getElementById('mpRetraduDesc').addEventListener('click', () => {
+      mpEnManual.desc = false; autotraduCamp('mpDesc', 'mpDescEn', 'mpDescEnAuto', 'mpRetraduDesc', 'desc');
+  });
+
   function deschideFormular(i) {
       mpIndex = i;
       const p = (i === null) ? null : meniu[i];
@@ -1834,6 +1940,12 @@
       set('mpAlerg',  p ? (p.alergeni || []).join(', ') : '');
       set('mpNumeEn', en.nume || '');
       set('mpDescEn', en.descriere || '');
+      // Un produs existent are deja o traducere: o tratam ca "manuala", ca sa
+      // n-o rescriem singuri peste ce a validat cineva deja. Un produs nou
+      // porneste netradus, deci se completeaza automat la iesirea din camp.
+      mpEnManual = { nume: !!en.nume, desc: !!en.descriere };
+      setAutoBadge('mpNumeEnAuto', !en.nume);
+      setAutoBadge('mpDescEnAuto', !en.descriere);
       document.getElementById('mpSemn').checked  = p ? !!p.semnatura : false;
       document.getElementById('mpActiv').checked = p ? !!p.activ : true;
       document.getElementById('mpFaraAlerg').checked =
@@ -1870,19 +1982,19 @@
       if (e.target.checked) { camp.value = ''; camp.classList.remove('gol'); }
   });
 
-  function salveazaFormular() {
+  async function salveazaFormular() {
       const v = id => document.getElementById(id).value.trim();
       const err = document.getElementById('mpEroare');
       document.querySelectorAll('#modalProdusBox .gol').forEach(el => el.classList.remove('gol'));
 
+      // Engleza NU mai e in lista de obligatorii scrise de mana: se traduce
+      // singura mai jos, chiar daca directorul n-a asteptat sa iasa din camp.
       const obligatorii = [
           ['mpNume',   'Numele produsului'],
           ['mpDesc',   'Descrierea'],
           ['mpCat',    'Categoria'],
           ['mpVolum',  'Volumul sau gramajul'],
           ['mpIngr',   'Ingredientele'],
-          ['mpNumeEn', 'Numele in engleza'],
-          ['mpDescEn', 'Descrierea in engleza'],
       ];
       for (const [id, eticheta] of obligatorii) {
           if (!v(id)) {
@@ -1913,7 +2025,20 @@
 
       const lista = s => s.split(',').map(x => x.trim()).filter(Boolean);
       const alergeni = faraAlerg ? [] : lista(v('mpAlerg'));
-      const numeRo = v('mpNume'), numeEn = v('mpNumeEn');
+      const numeRo = v('mpNume');
+
+      // Daca directorul a apasat "Salveaza" inainte sa iasa din campurile de
+      // engleza (deci n-a apucat sa se traduca la blur), traducem acum, o
+      // singura data, inainte sa continuam.
+      const btnSalv = document.getElementById('mpSalveaza');
+      const textOriginal = btnSalv.textContent;
+      if (!v('mpNumeEn') || !v('mpDescEn')) {
+          btnSalv.textContent = 'Se traduce...'; btnSalv.disabled = true;
+          if (!v('mpNumeEn')) await autotraduCamp('mpNume', 'mpNumeEn', 'mpNumeEnAuto', 'mpRetraduNume', 'nume');
+          if (!v('mpDescEn')) await autotraduCamp('mpDesc', 'mpDescEn', 'mpDescEnAuto', 'mpRetraduDesc', 'desc');
+          btnSalv.textContent = textOriginal; btnSalv.disabled = false;
+      }
+      const numeEn = v('mpNumeEn') || numeRo;
 
       // nume duplicat -> serverul n-ar mai sti dupa ce pret sa recalculeze
       const dubla = meniu.some((x, idx) => idx !== mpIndex &&
@@ -1945,10 +2070,18 @@
       p.alergeni    = alergeni;
       p.semnatura   = document.getElementById('mpSemn').checked;
       p.activ       = document.getElementById('mpActiv').checked;
+      // Ingredientele si alergenii se traduc mereu automat: n-are rost sa
+      // ceri directorului sa le scrie de doua ori, in doua limbi.
+      btnSalv.textContent = 'Se traduce...'; btnSalv.disabled = true;
+      const [ingredienteEn, alergeniEn] = await Promise.all([
+          traduListaRoEn(p.ingrediente),
+          traduListaRoEn(alergeni)
+      ]);
+      btnSalv.textContent = textOriginal; btnSalv.disabled = false;
+
       p.traduceri   = Object.assign({}, p.traduceri, {
-          en: { nume: numeEn, descriere: v('mpDescEn'),
-                ingrediente: (p.traduceri && p.traduceri.en && p.traduceri.en.ingrediente) || [],
-                alergeni: alergeni }
+          en: { nume: numeEn, descriere: v('mpDescEn') || p.descriere,
+                ingrediente: ingredienteEn, alergeni: alergeniEn }
       });
       // dupa aceste nume recunoaste serverul produsul cand lipseste id-ul
       p.nume_variante = [...new Set([numeRo, numeEn].map(x => x.toLowerCase()))];
@@ -1956,7 +2089,7 @@
 
       inchideFormular();
       renderMeniu();
-      setMeniuStare('Produs pregatit. Apasa „Salveaza” ca sa il trimiti in meniu.', 'var(--warning)');
+      setMeniuStare('Produs pregatit, tradus automat. Apasa „Salveaza” ca sa il trimiti in meniu.', 'var(--warning)');
   }
 
   document.getElementById('mpSalveaza').addEventListener('click', salveazaFormular);
