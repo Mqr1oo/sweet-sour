@@ -1,12 +1,12 @@
 {
-  "name": "M3 Coffee & Lounge — Panou personal",
-  "short_name": "M3 Staff",
+  "name": "Sweet & Sour — Panou personal",
+  "short_name": "Sweet & Sour Staff",
   "description": "Panoul de personal: comenzi, sala, stoc si rapoarte. Aplicatie interna, nu meniul clientilor.",
   "start_url": "./dashboard.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#0b0f1c",
+  "theme_color": "#0b0f1c",
   "orientation": "portrait",
   "lang": "ro",
   "icons": [

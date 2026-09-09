@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>M3 Coffee &amp; Lounge &mdash; POS &amp; Gestiune</title>
+<title>Sweet &amp; Sour &mdash; POS &amp; Gestiune</title>
 <meta name="robots" content="noindex, nofollow">
 
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0b0f1c">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <script>
   if ('serviceWorker' in navigator) {
@@ -22,9 +22,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #000000; --bg-card: #0e0e0e; --panel: rgba(14, 14, 14, 0.88); --border: rgba(255,255,255,0.10);
-    --accent: #c8a07a; --accent-hover: #e0c4aa; --accent-glow: rgba(200, 160, 122, 0.30);
-    --text: #f6f4f0; --text-muted: #8e8e8e;
+    --bg: #080b14; --bg-card: #131a2e; --panel: rgba(19, 26, 46, 0.85); --border: rgba(255,255,255,0.09);
+    --accent: #e8a33d; --accent-hover: #f7bd63; --accent-glow: rgba(232, 163, 61, 0.32);
+    --text: #f2ece0; --text-muted: #96a0bb;
     --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --blue: #3b82f6; --purple: #a855f7;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -293,7 +293,7 @@
 
 <div class="auth-overlay" id="authOverlay">
   <div class="auth-card">
-    <h2>M3 &middot; Panou personal</h2>
+    <h2>Sweet &amp; Sour &middot; Panou personal</h2>
     <p style="color: var(--text-muted); margin-bottom: 30px;">Autentificare personal</p>
     <form id="loginForm">
       <input type="email" id="emailInput" class="auth-input" placeholder="Email" required>
@@ -304,7 +304,7 @@
 </div>
 
 <aside>
-  <div class="brand"><img src="icons/logo.png" alt="M3" style="width:120px;height:auto;display:block"></div>
+  <div class="brand"><img src="icons/logo.png" alt="Sweet &amp; Sour" style="width:120px;height:auto;display:block"></div>
   
   <div class="nav-item active" id="navActive">
       <div class="nav-icon">🛎️</div>
@@ -355,7 +355,7 @@
     </div>
     
     <div class="mobile-brand-area">
-        <span class="mobile-brand"><img src="icons/logo.png" alt="M3" style="height:26px;width:auto;vertical-align:middle"></span>
+        <span class="mobile-brand"><img src="icons/logo.png" alt="Sweet &amp; Sour" style="height:26px;width:auto;vertical-align:middle"></span>
         <span class="mobile-user" id="mobileUserDisplay">...</span>
     </div>
     <button class="mobile-logout" id="btnMobileLogout">Iesire</button>
@@ -596,7 +596,7 @@
   <div class="modal" style="text-align: left;">
     <button class="modal-close" onclick="document.getElementById('privacyOverlay').classList.remove('open')">&times;</button>
     <h2>Politica interna de confidentialitate</h2>
-    <p style="font-size:14px; color: var(--text-muted); margin-top:10px;">Sistemul M3 Coffee &amp; Lounge gestioneaza date operationale. Numele si numerele de telefon colectate pentru comenzile la pachet se sterg automat din baza de date (Supabase) dupa 48 de ore.</p>
+    <p style="font-size:14px; color: var(--text-muted); margin-top:10px;">Sistemul Sweet &amp; Sour gestioneaza date operationale. Numele si numerele de telefon colectate pentru comenzile la pachet se sterg automat din baza de date (Supabase) dupa 48 de ore.</p>
   </div>
 </div>
 
@@ -852,7 +852,7 @@
         icon: 'icons/icon-192.png',
         badge: 'icons/icon-192.png',
         vibrate: [400, 200, 400, 200, 800],
-        tag: 'm3-alert',
+        tag: 'sweetsour-alert',
         renotify: true,
         requireInteraction: true
       }))
