@@ -7,6 +7,7 @@ clienți + panou de personal) și **propriul proiect Supabase**, complet izolat.
 Platforma/
 ├─ index.html            pagina de start: lista localurilor
 ├─ m3/                   → domeniu.ro/m3
+├─ sweetandsour/         → domeniu.ro/sweetandsour
 │  ├─ index.html         meniul clienților (RO / EN)
 │  ├─ dashboard.html     panoul de personal
 │  ├─ config.js          ⚠️ SINGURUL fișier care diferă între localuri
@@ -48,6 +49,7 @@ treilea local înseamnă plan Pro, 25 $/lună pentru toate.
 | Local | Proiect Supabase | Regiune |
 |---|---|---|
 | M3 Coffee & Lounge | `cjavzdnsebbkiiefigvi` | eu-central-1 |
+| Sweet & Sour | `wnwllyyhtkufcejzjeay` | eu-west-1 |
 | Skyfall | de creat | eu-central-1 recomandat |
 
 ## Meniul e în baza de date
@@ -209,6 +211,15 @@ angajat, anuntul vocal pentru comenzile la pachet, starile meselor).
 nici macar dashboard-ul instalat, pentru ca service worker-ul nu pune in cache
 fisiere de pe alt domeniu. Pentru un sistem care tine casa, merita descarcata
 biblioteca local, langa `config.js`. Nu am facut-o inca.
+
+## Conturi de personal
+
+**M3 Coffee & Lounge** (`@m3coffe.com`): director, bar, bucatarie, ospatar1-3.
+
+**Sweet & Sour** (`@alibretto.com`, mostenite din proiectul anterior): jefe
+(director), bar, cocina (bucatarie), camarero1-8 (ospatari). Rolurile sunt
+corecte, doar adresele au numele vechi. Daca vrei adrese noi, le creezi din
+consola si rulezi din nou atribuirea de roluri — cele vechi pot fi sterse dupa.
 
 ## Rolurile de personal
 
