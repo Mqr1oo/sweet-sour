@@ -1,0 +1,509 @@
+[
+ {
+  "id_produs": "1",
+  "nume": "Espresso",
+  "descriere": "Un shot scurt, din boabe prajite local.",
+  "categorie": "Cafea",
+  "sectiune": "bar",
+  "volum": "30 ml",
+  "ingrediente": [
+   "Cafea"
+  ],
+  "alergeni": [],
+  "pret": 9.0,
+  "semnatura": false,
+  "activ": true,
+  "ordine": 10,
+  "imagine": "images/1.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Espresso",
+    "descriere": "A short shot, from locally roasted beans.",
+    "ingrediente": [
+     "Cafea"
+    ],
+    "alergeni": []
+   }
+  }
+ },
+ {
+  "id_produs": "2",
+  "nume": "Cappuccino",
+  "descriere": "Espresso cu lapte aburit si spuma fina.",
+  "categorie": "Cafea",
+  "sectiune": "bar",
+  "volum": "180 ml",
+  "ingrediente": [
+   "Cafea",
+   "Lapte"
+  ],
+  "alergeni": [
+   "Lapte"
+  ],
+  "pret": 14.0,
+  "semnatura": false,
+  "activ": true,
+  "ordine": 20,
+  "imagine": "images/2.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Cappuccino",
+    "descriere": "Espresso with steamed milk and fine foam.",
+    "ingrediente": [
+     "Cafea",
+     "Lapte"
+    ],
+    "alergeni": [
+     "Lapte"
+    ]
+   }
+  }
+ },
+ {
+  "id_produs": "3",
+  "nume": "Flat White",
+  "descriere": "Mai mult espresso, mai putina spuma.",
+  "categorie": "Cafea",
+  "sectiune": "bar",
+  "volum": "160 ml",
+  "ingrediente": [
+   "Cafea",
+   "Lapte"
+  ],
+  "alergeni": [
+   "Lapte"
+  ],
+  "pret": 16.0,
+  "semnatura": true,
+  "activ": true,
+  "ordine": 30,
+  "imagine": "images/3.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Flat White",
+    "descriere": "More espresso, less foam.",
+    "ingrediente": [
+     "Cafea",
+     "Lapte"
+    ],
+    "alergeni": [
+     "Lapte"
+    ]
+   }
+  }
+ },
+ {
+  "id_produs": "4",
+  "nume": "Cold Brew",
+  "descriere": "Infuzat la rece 18 ore. Mai putin acid.",
+  "categorie": "Cafea",
+  "sectiune": "bar",
+  "volum": "300 ml",
+  "ingrediente": [
+   "Cafea",
+   "Apa"
+  ],
+  "alergeni": [],
+  "pret": 18.0,
+  "semnatura": false,
+  "activ": true,
+  "ordine": 40,
+  "imagine": "images/4.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Cold Brew",
+    "descriere": "Cold-steeped for 18 hours.",
+    "ingrediente": [
+     "Cafea",
+     "Apa"
+    ],
+    "alergeni": []
+   }
+  }
+ },
+ {
+  "id_produs": "5",
+  "nume": "Ceai la ceainic",
+  "descriere": "Negru, verde sau menta.",
+  "categorie": "Ceai & Racoritoare",
+  "sectiune": "bar",
+  "volum": "400 ml",
+  "ingrediente": [
+   "Ceai"
+  ],
+  "alergeni": [],
+  "pret": 11.0,
+  "semnatura": false,
+  "activ": true,
+  "ordine": 50,
+  "imagine": "images/5.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Pot of Tea",
+    "descriere": "Black, green or mint.",
+    "ingrediente": [
+     "Ceai"
+    ],
+    "alergeni": []
+   }
+  }
+ },
+ {
+  "id_produs": "6",
+  "nume": "Limonada casei",
+  "descriere": "Lamaie stoarsa pe loc, menta si sifon.",
+  "categorie": "Ceai & Racoritoare",
+  "sectiune": "bar",
+  "volum": "400 ml",
+  "ingrediente": [
+   "Lamaie",
+   "Menta",
+   "Zahar",
+   "Sifon"
+  ],
+  "alergeni": [],
+  "pret": 16.0,
+  "semnatura": true,
+  "activ": true,
+  "ordine": 60,
+  "imagine": "images/6.webp",
+  "traduceri": {
+   "en": {
+    "nume": "House Lemonade",
+    "descriere": "Lemons squeezed to order, mint and soda.",
+    "ingrediente": [
+     "Lamaie",
+     "Menta",
+     "Zahar",
+     "Sifon"
+    ],
+    "alergeni": []
+   }
+  }
+ },
+ {
+  "id_produs": "7",
+  "nume": "Apa minerala",
+  "descriere": "Plata sau carbogazoasa.",
+  "categorie": "Ceai & Racoritoare",
+  "sectiune": "bar",
+  "volum": "330 ml",
+  "ingrediente": [
+   "Apa minerala"
+  ],
+  "alergeni": [],
+  "pret": 8.0,
+  "semnatura": false,
+  "activ": true,
+  "ordine": 70,
+  "imagine": "images/7.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Mineral Water",
+    "descriere": "Still or sparkling.",
+    "ingrediente": [
+     "Apa minerala"
+    ],
+    "alergeni": []
+   }
+  }
+ },
+ {
+  "id_produs": "8",
+  "nume": "Suc natural de portocale",
+  "descriere": "Stors la comanda.",
+  "categorie": "Ceai & Racoritoare",
+  "sectiune": "bar",
+  "volum": "250 ml",
+  "ingrediente": [
+   "Portocale"
+  ],
+  "alergeni": [],
+  "pret": 14.0,
+  "semnatura": false,
+  "activ": true,
+  "ordine": 80,
+  "imagine": "images/8.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Fresh Orange Juice",
+    "descriere": "Squeezed to order.",
+    "ingrediente": [
+     "Portocale"
+    ],
+    "alergeni": []
+   }
+  }
+ },
+ {
+  "id_produs": "9",
+  "nume": "Croissant cu unt",
+  "descriere": "Copt in fiecare dimineata.",
+  "categorie": "Mic Dejun",
+  "sectiune": "bucatarie",
+  "volum": "80 g",
+  "ingrediente": [
+   "Faina",
+   "Unt",
+   "Drojdie"
+  ],
+  "alergeni": [
+   "Gluten",
+   "Lapte"
+  ],
+  "pret": 9.0,
+  "semnatura": false,
+  "activ": true,
+  "ordine": 90,
+  "imagine": "images/9.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Butter Croissant",
+    "descriere": "Baked every morning.",
+    "ingrediente": [
+     "Faina",
+     "Unt",
+     "Drojdie"
+    ],
+    "alergeni": [
+     "Gluten",
+     "Lapte"
+    ]
+   }
+  }
+ },
+ {
+  "id_produs": "10",
+  "nume": "Avocado toast",
+  "descriere": "Paine cu maia, avocado, ou posat si seminte.",
+  "categorie": "Mic Dejun",
+  "sectiune": "bucatarie",
+  "volum": "280 g",
+  "ingrediente": [
+   "Paine cu maia",
+   "Avocado",
+   "Ou",
+   "Seminte"
+  ],
+  "alergeni": [
+   "Gluten",
+   "Ou"
+  ],
+  "pret": 32.0,
+  "semnatura": true,
+  "activ": true,
+  "ordine": 100,
+  "imagine": "images/10.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Avocado Toast",
+    "descriere": "Sourdough, avocado, poached egg and seeds.",
+    "ingrediente": [
+     "Paine cu maia",
+     "Avocado",
+     "Ou",
+     "Seminte"
+    ],
+    "alergeni": [
+     "Gluten",
+     "Ou"
+    ]
+   }
+  }
+ },
+ {
+  "id_produs": "11",
+  "nume": "Iaurt cu granola",
+  "descriere": "Iaurt grecesc, granola de casa si fructe.",
+  "categorie": "Mic Dejun",
+  "sectiune": "bucatarie",
+  "volum": "300 g",
+  "ingrediente": [
+   "Iaurt",
+   "Granola",
+   "Fructe",
+   "Miere"
+  ],
+  "alergeni": [
+   "Lapte",
+   "Gluten"
+  ],
+  "pret": 24.0,
+  "semnatura": false,
+  "activ": true,
+  "ordine": 110,
+  "imagine": "images/11.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Yogurt with Granola",
+    "descriere": "Greek yogurt, house granola and fruit.",
+    "ingrediente": [
+     "Iaurt",
+     "Granola",
+     "Fructe",
+     "Miere"
+    ],
+    "alergeni": [
+     "Lapte",
+     "Gluten"
+    ]
+   }
+  }
+ },
+ {
+  "id_produs": "12",
+  "nume": "Cheesecake",
+  "descriere": "New York, cu sos de fructe de padure.",
+  "categorie": "Prajituri",
+  "sectiune": "bucatarie",
+  "volum": "150 g",
+  "ingrediente": [
+   "Branza",
+   "Biscuiti",
+   "Fructe de padure"
+  ],
+  "alergeni": [
+   "Lapte",
+   "Gluten",
+   "Ou"
+  ],
+  "pret": 22.0,
+  "semnatura": false,
+  "activ": true,
+  "ordine": 120,
+  "imagine": "images/12.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Cheesecake",
+    "descriere": "New York style, with berry sauce.",
+    "ingrediente": [
+     "Branza",
+     "Biscuiti",
+     "Fructe de padure"
+    ],
+    "alergeni": [
+     "Lapte",
+     "Gluten",
+     "Ou"
+    ]
+   }
+  }
+ },
+ {
+  "id_produs": "13",
+  "nume": "Tiramisu",
+  "descriere": "Reteta clasica, facut in casa.",
+  "categorie": "Prajituri",
+  "sectiune": "bucatarie",
+  "volum": "140 g",
+  "ingrediente": [
+   "Mascarpone",
+   "Piscoturi",
+   "Cafea"
+  ],
+  "alergeni": [
+   "Lapte",
+   "Gluten",
+   "Ou"
+  ],
+  "pret": 22.0,
+  "semnatura": false,
+  "activ": true,
+  "ordine": 130,
+  "imagine": "images/13.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Tiramisu",
+    "descriere": "Classic recipe, made in house.",
+    "ingrediente": [
+     "Mascarpone",
+     "Piscoturi",
+     "Cafea"
+    ],
+    "alergeni": [
+     "Lapte",
+     "Gluten",
+     "Ou"
+    ]
+   }
+  }
+ },
+ {
+  "id_produs": "14",
+  "nume": "Brownie",
+  "descriere": "Ciocolata neagra si nuci, servit cald.",
+  "categorie": "Prajituri",
+  "sectiune": "bucatarie",
+  "volum": "130 g",
+  "ingrediente": [
+   "Ciocolata",
+   "Unt",
+   "Nuci",
+   "Ou"
+  ],
+  "alergeni": [
+   "Gluten",
+   "Lapte",
+   "Ou"
+  ],
+  "pret": 20.0,
+  "semnatura": false,
+  "activ": true,
+  "ordine": 140,
+  "imagine": "images/14.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Brownie",
+    "descriere": "Dark chocolate and walnuts, served warm.",
+    "ingrediente": [
+     "Ciocolata",
+     "Unt",
+     "Nuci",
+     "Ou"
+    ],
+    "alergeni": [
+     "Gluten",
+     "Lapte",
+     "Ou"
+    ]
+   }
+  }
+ },
+ {
+  "id_produs": "15",
+  "nume": "Cartofi wedges",
+  "descriere": "Cartofi copti cu rozmarin si sos de usturoi.",
+  "categorie": "Snacks",
+  "sectiune": "bucatarie",
+  "volum": "150 g",
+  "ingrediente": [
+   "Cartofi",
+   "Rozmarin",
+   "Sos de usturoi"
+  ],
+  "alergeni": [
+   "Lapte",
+   "Ou"
+  ],
+  "pret": 18.0,
+  "semnatura": false,
+  "activ": true,
+  "ordine": 150,
+  "imagine": "images/15.webp",
+  "traduceri": {
+   "en": {
+    "nume": "Potato Wedges",
+    "descriere": "Baked potatoes with rosemary and garlic dip.",
+    "ingrediente": [
+     "Cartofi",
+     "Rozmarin",
+     "Sos de usturoi"
+    ],
+    "alergeni": [
+     "Lapte",
+     "Ou"
+    ]
+   }
+  }
+ }
+]

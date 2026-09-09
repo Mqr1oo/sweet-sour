@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Sweet &amp; Sour &mdash; Meniu digital</title>
-<meta name="description" content="Meniul digital Sweet &amp; Sour, cocktail bar &amp; lounge in Piatra Neamt.">
+<title>Meniu digital &mdash; demonstratie</title>
+<meta name="description" content="Meniul digital M3 Coffee &amp; Lounge, Piatra Neamt. Cafea de specialitate, mic dejun, prajituri si cocktailuri.">
 
-<meta name="theme-color" content="#0b0f1c">
+<meta name="theme-color" content="#000000">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <script>
   // Meniul clientilor NU e aplicatie instalabila: se deschide de la codul QR,
@@ -479,7 +479,7 @@
     <div class="hero-text">
       <p class="eyebrow" id="txtEyebrow">Meniu digital</p>
       <img id="heroLogo" src="" alt="" class="hero-logo" hidden>
-      <h1 id="txtTitle">Sweet &amp; Sour</h1>
+      <h1 id="txtTitle">Meniu digital</h1>
       <p class="tag" id="txtTagline"></p>
     </div>
   </div>
@@ -677,11 +677,11 @@
 
 <footer>
   <div class="wrap footer-inner">
-    <div class="brand">Sweet &amp; Sour</div>
+    <div class="brand">Meniu digital</div>
     <div class="footer-links">
         <button id="btnPrivacyPolicy">Politica de confidentialitate (GDPR)</button>
     </div>
-    <span id="txtFooterCopy">&copy; 2026 Sweet &amp; Sour</span>
+    <span id="txtFooterCopy">Demonstratie</span>
   </div>
 </footer>
 
@@ -709,7 +709,22 @@
 
   const SUPABASE_URL      = window.SS_CONFIG.SUPABASE_URL;
   const SUPABASE_ANON_KEY = window.SS_CONFIG.SUPABASE_KEY;
-  const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // In modul demo nu ne conectam nicaieri: punem un client fals, care raspunde
+  // cu liste goale. Asa nu trebuie modificat restul codului, si nicio comanda
+  // nu pleaca spre vreun local real.
+  const _supabase = CFG.DEMO ? (function(){
+      const gol = () => {
+          const p = Promise.resolve({ data: [], error: null });
+          const h = { get: (t,k) => k==='then' ? p.then.bind(p)
+                                 : k==='catch' ? p.catch.bind(p) : (() => new Proxy(()=>h, h)) };
+          return new Proxy(()=>h, h);
+      };
+      return {
+          from: gol,
+          channel: () => ({ on(){return this}, subscribe(){return this}, unsubscribe(){} }),
+          removeChannel(){}
+      };
+  })() : window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // Helper de protecție XSS - previne executarea de cod malițios trimis din exterior
   function escapeHTML(str) {
@@ -869,7 +884,7 @@
 
   const I18N = {
     ro: {
-      flag:'🇷🇴', code:'RO', eyebrow:'Meniu digital', title:'Sweet & Sour', tagline:'',
+      flag:'🇷🇴', code:'RO', eyebrow:'Meniu digital', title:'Meniu digital', tagline:'',
       allChip:'Toate', searchPlaceholder:'Cauta...', emptyState:'Niciun produs gasit.',
       totalLabel:'Total:', btnOrderBar:'Trimite comanda', trackerTitle:'Comanda ta',
       obLangTitle:'Bine ai venit!', obLangSubtitle:'Alege limba meniului',
@@ -896,7 +911,7 @@
         'otros':'Altele'
       },
       smartWaiter: '💳 Plata / Ajutor 🙋', smartCart: 'Comanda mea', splitTitle: 'Imparte nota', splitDesc: 'Calculeaza rapid cat are de platit fiecare.', sl1: 'Total cos:', sl2: 'Numar de persoane:', sl3: 'Bacsis (%):',
-      badgeEpuizat: 'Stoc epuizat', ribbonEsp: 'Semnatura casei',
+      badgeEpuizat: 'Stoc epuizat', ribbonEsp: 'Recomandarea casei',
       alertPayload: { cash: 'Nota (cash)', card: 'Nota (card)', help: 'Ajutor / Altceva' },
       privacyTitle: 'Politica de confidentialitate (GDPR)', privacyText: 'Colectam numele si numarul tau de telefon exclusiv pentru a gestiona comanda la pachet. Datele se sterg automat de pe serverele noastre in 48 de ore, conform GDPR.', privacyBtn: 'Politica de confidentialitate', gdprNote: 'Datele tale se sterg automat in 48h (GDPR).',
       privacyAllergensText: 'Precizare privind gramajele, valorile nutritionale si alergenii: gramajele, valorile calorice (kcal) si lista de ingrediente si alergeni afisate in acest meniu digital au caracter strict orientativ si informativ. Aceste date sunt introduse, actualizate si validate exclusiv de catre local, care raspunde singur de exactitatea si actualizarea lor, in conformitate cu Regulamentul (UE) nr. 1169/2011 privind informarea consumatorilor cu privire la produsele alimentare si cu restul legislatiei aplicabile in materie de siguranta alimentara si protectia consumatorului. Platforma care gazduieste si afiseaza acest meniu digital are exclusiv rolul de furnizor al instrumentului de vizualizare si comanda, nu intervine in prepararea, supravegherea sau verificarea continutului nutritional ori a alergenilor introdusi de local si este expres exonerata de raspundere pentru erori, omisiuni, variatii de reteta, contaminare incrucisata in bucatarie sau date neactualizate. Din cauza prepararii manuale, gramajele servite efectiv si valorile calorice pot varia fata de cele indicate. Recomandam insistent clientilor cu alergii, intolerante sau nevoi alimentare speciale sa anunte direct personalul inainte de a comanda, pentru informatii actualizate si personalizate.',
@@ -911,7 +926,7 @@
     },
 
     en: { 
-      flag:'🇬🇧', code:'EN', eyebrow:'Digital menu', title:'Sweet & Sour', tagline:'', 
+      flag:'🇬🇧', code:'EN', eyebrow:'Digital menu', title:'Meniu digital', tagline:'', 
       allChip:'All', searchPlaceholder:'Search...', emptyState:'No products found.', 
       totalLabel:'Total:', btnOrderBar:'Send Order', trackerTitle:'Your order',
       obLangTitle:'Welcome!', obLangSubtitle:'Choose your menu language', 
@@ -1564,7 +1579,14 @@
         });
       }
 
-      const { data, error } = await _supabase.from('comenzi').insert(payloads).select();
+      // In demonstratie nu scriem nicaieri: aratam doar ca a functionat.
+      let data, error;
+      if (CFG.DEMO) {
+          await new Promise(r => setTimeout(r, 500));
+          data = payloads.map((p, i) => ({ ...p, id: 900 + i })); error = null;
+      } else {
+          ({ data, error } = await _supabase.from('comenzi').insert(payloads).select());
+      }
       btn.textContent = t.sendOrderBtnText; btn.disabled = false;
 
       if (error) {
@@ -1594,7 +1616,9 @@
       
       const payloadText = t.alertPayload[tipKey] || tipKey;
       
-      await _supabase.from('comenzi').insert([{ mesa: mesa, sectiune: 'bar', total: 0, produse: [{nume: '🔔 ALERTĂ OSPĂTAR: ' + payloadText, cantitate: 1, pret_unitar: 0}] }]);
+      if (!CFG.DEMO) {
+        await _supabase.from('comenzi').insert([{ mesa: mesa, sectiune: 'bar', total: 0, produse: [{nume: '🔔 ALERTĂ OSPĂTAR: ' + payloadText, cantitate: 1, pret_unitar: 0}] }]);
+      }
       pendingReviewPrompt = (tipKey === 'cash' || tipKey === 'card');
       showCustomAlert("OK!", t.alertSent(mesa));
       callModal.classList.remove('open');
@@ -1710,6 +1734,12 @@
   }
 
   async function incarcaMeniu() {
+    if (CFG.DEMO) {
+      const r = await fetch(CFG.MENIU_DEMO);
+      allItems = (await r.json()).map(dbToItem);
+      rebuildCategoryOrder();
+      return allItems;
+    }
     const {data, error} = await _supabase.from('meniu_produse')
       .select('id_produs,nume,descriere,categorie,sectiune,volum,ingrediente,alergeni,pret,semnatura,ordine,imagine,traduceri')
       .eq('activ', true).order('ordine');
