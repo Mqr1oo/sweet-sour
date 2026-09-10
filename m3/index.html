@@ -885,14 +885,14 @@
       callCash:'💵 Vreau sa platesc (cash)', callCard:'💳 Vreau sa platesc (card)', callHelp:'🙋 Am nevoie de ajutor',
       alertSent:(m)=>`Am chemat ospatarul la masa ${m}!`,
       catNames:{
-        'Semnatura':'Semnatura casei',
+        'Espresso Bar':'Espresso Bar',
+        'Signature':'Semnatura casei',
+        'Cold Brew & Iced':'Cold Brew & Gheata',
+        'Ceai & Altele':'Ceai & Altele',
+        'Limonade & Racoritoare':'Limonade & Racoritoare',
         'Cocktailuri':'Cocktailuri',
-        'Shot-uri':'Shot-uri',
-        'Bere & Cidru':'Bere & cidru',
-        'Vinuri':'Vinuri & spumante',
-        'Cafea & Ceai':'Cafea & ceai',
-        'Racoritoare':'Racoritoare',
-        'Snacks':'Snacks',
+        'Mic Dejun':'Mic Dejun',
+        'Prajituri':'Prajituri',
         'otros':'Altele'
       },
       smartWaiter: '💳 Plata / Ajutor 🙋', smartCart: 'Comanda mea', splitTitle: 'Imparte nota', splitDesc: 'Calculeaza rapid cat are de platit fiecare.', sl1: 'Total cos:', sl2: 'Numar de persoane:', sl3: 'Bacsis (%):',
@@ -927,14 +927,14 @@
       callCash:'💵 I want to pay (Cash)', callCard:'💳 I want to pay (Card)', callHelp:'🙋‍♂️ I need help', 
       alertSent:(m)=>`The waiter has been called to table ${m}!`, 
       catNames:{
-        'Semnatura':'Signature',
+        'Espresso Bar':'Espresso Bar',
+        'Signature':'Signature',
+        'Cold Brew & Iced':'Cold Brew & Iced',
+        'Ceai & Altele':'Tea & More',
+        'Limonade & Racoritoare':'Lemonade & Soft Drinks',
         'Cocktailuri':'Cocktails',
-        'Shot-uri':'Shots',
-        'Bere & Cidru':'Beer & Cider',
-        'Vinuri':'Wine & Sparkling',
-        'Cafea & Ceai':'Coffee & Tea',
-        'Racoritoare':'Soft Drinks',
-        'Snacks':'Snacks',
+        'Mic Dejun':'Breakfast',
+        'Prajituri':'Desserts',
         'otros':'Other'
       }, 
       smartWaiter: '💳 Pay / Help 🙋‍♂️', smartCart: 'My Order', splitTitle: 'Split the bill', splitDesc: 'Quickly calculate how much each person pays.', sl1: 'Cart total:', sl2: 'Number of people:', sl3: 'Tip (%):',
@@ -1121,7 +1121,7 @@
       const items = filtered.filter(i => getMainCategory(i) === catKey);
       if(items.length === 0) return;
 
-      const catName = t.catNames[catKey] || t.catNames.otros;
+      const catName = t.catNames[catKey] || catKey;
       let html = `<section class="category-section"><h2>${catName}</h2><div class="grid">`;
       
       items.forEach(item => {
