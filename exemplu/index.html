@@ -884,7 +884,7 @@
 
   const I18N = {
     ro: {
-      flag:'🇷🇴', code:'RO', eyebrow:'Meniu digital', title:'Meniu digital', tagline:'',
+      flag:'🇷🇴', code:'RO', eyebrow:'Live in 2 minute', title:'Meniu Digital', tagline:'',
       allChip:'Toate', searchPlaceholder:'Cauta...', emptyState:'Niciun produs gasit.',
       totalLabel:'Total:', btnOrderBar:'Trimite comanda', trackerTitle:'Comanda ta',
       obLangTitle:'Bine ai venit!', obLangSubtitle:'Alege limba meniului',
@@ -900,13 +900,10 @@
       callCash:'💵 Vreau sa platesc (cash)', callCard:'💳 Vreau sa platesc (card)', callHelp:'🙋 Am nevoie de ajutor',
       alertSent:(m)=>`Am chemat ospatarul la masa ${m}!`,
       catNames:{
-        'Semnatura':'Semnatura casei',
-        'Cocktailuri':'Cocktailuri',
-        'Shot-uri':'Shot-uri',
-        'Bere & Cidru':'Bere & cidru',
-        'Vinuri':'Vinuri & spumante',
-        'Cafea & Ceai':'Cafea & ceai',
-        'Racoritoare':'Racoritoare',
+        'Cafea':'Cafea',
+        'Ceai & Racoritoare':'Ceai & Racoritoare',
+        'Mic Dejun':'Mic Dejun',
+        'Prajituri':'Prajituri',
         'Snacks':'Snacks',
         'otros':'Altele'
       },
@@ -926,7 +923,7 @@
     },
 
     en: { 
-      flag:'🇬🇧', code:'EN', eyebrow:'Digital menu', title:'Meniu digital', tagline:'', 
+      flag:'🇬🇧', code:'EN', eyebrow:'Live in 2 minutes', title:'Meniu Digital', tagline:'', 
       allChip:'All', searchPlaceholder:'Search...', emptyState:'No products found.', 
       totalLabel:'Total:', btnOrderBar:'Send Order', trackerTitle:'Your order',
       obLangTitle:'Welcome!', obLangSubtitle:'Choose your menu language', 
@@ -942,13 +939,10 @@
       callCash:'💵 I want to pay (Cash)', callCard:'💳 I want to pay (Card)', callHelp:'🙋‍♂️ I need help', 
       alertSent:(m)=>`The waiter has been called to table ${m}!`, 
       catNames:{
-        'Semnatura':'Signature',
-        'Cocktailuri':'Cocktails',
-        'Shot-uri':'Shots',
-        'Bere & Cidru':'Beer & Cider',
-        'Vinuri':'Wine & Sparkling',
-        'Cafea & Ceai':'Coffee & Tea',
-        'Racoritoare':'Soft Drinks',
+        'Cafea':'Coffee',
+        'Ceai & Racoritoare':'Tea & Soft Drinks',
+        'Mic Dejun':'Breakfast',
+        'Prajituri':'Desserts',
         'Snacks':'Snacks',
         'otros':'Other'
       }, 
@@ -1136,7 +1130,7 @@
       const items = filtered.filter(i => getMainCategory(i) === catKey);
       if(items.length === 0) return;
 
-      const catName = t.catNames[catKey] || t.catNames.otros;
+      const catName = t.catNames[catKey] || catKey;
       let html = `<section class="category-section"><h2>${catName}</h2><div class="grid">`;
       
       items.forEach(item => {

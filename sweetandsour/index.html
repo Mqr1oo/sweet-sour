@@ -1121,7 +1121,7 @@
       const items = filtered.filter(i => getMainCategory(i) === catKey);
       if(items.length === 0) return;
 
-      const catName = t.catNames[catKey] || t.catNames.otros;
+      const catName = t.catNames[catKey] || catKey;
       let html = `<section class="category-section"><h2>${catName}</h2><div class="grid">`;
       
       items.forEach(item => {
