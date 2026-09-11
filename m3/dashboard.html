@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ro" translate="no">
 <head>
 <meta charset="UTF-8">
+<meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>M3 Coffee &amp; Lounge &mdash; POS &amp; Gestiune</title>
 <meta name="robots" content="noindex, nofollow">
@@ -358,6 +359,25 @@
   }
   .mp-auto.manual{ color: var(--text-muted); }
   @media (prefers-reduced-motion: reduce){ .mp-retradu.spinning{ animation:none; } }
+
+  /* Bara de comenzi neacceptate — sta sus, peste tot, pana se apasa */
+  #barAcceptare{
+    position:sticky; top:0; z-index:400; display:none;
+    background:linear-gradient(90deg, rgba(239,68,68,.22), rgba(239,68,68,.10));
+    border:1px solid var(--danger); border-radius:14px;
+    padding:12px 14px; margin-bottom:14px;
+    animation: barPuls 1.1s ease-in-out infinite;
+  }
+  #barAcceptare.on{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  @keyframes barPuls{ 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)} 50%{box-shadow:0 0 0 10px rgba(239,68,68,0)} }
+  #barAcceptareText{ font-weight:700; font-size:14px; flex:1; min-width:180px; }
+  #btnAcceptaTot{
+    background:var(--danger); color:#fff; border:none; border-radius:10px;
+    padding:11px 20px; font-weight:700; font-size:14px; cursor:pointer;
+    font-family:inherit; min-height:44px;
+  }
+  #btnAcceptaTot:active{ transform:scale(.97); }
+  @media (prefers-reduced-motion: reduce){ #barAcceptare{ animation:none; } }
 </style>
 </head>
 <body>
@@ -442,6 +462,10 @@
   </div>
   
   <div class="content-area">
+      <div id="barAcceptare">
+        <span id="barAcceptareText"></span>
+        <button id="btnAcceptaTot">Am vazut, accept</button>
+      </div>
     <div id="ordersView" class="grid-comenzi"></div>
 
     <div id="mapView" style="display:none;">
@@ -526,6 +550,21 @@
             <span>Mai mult</span>
          </div>
          <div class="heatmap-best" id="heatmapBest"></div>
+      </div>
+
+      <div data-grup="setari" class="dash-panel">
+         <h3>🕐 Ora de inchidere a zilei</h3>
+         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <p style="color:var(--text-muted); font-size:13px; max-width:76%;">
+              La ora asta se elibereaza toate mesele si incepe o zi noua in
+              rapoarte. Daca inchizi la 3 dimineata, pune 3 — altfel comenzile
+              de dupa miezul noptii ajung pe ziua urmatoare si raportul de
+              seara arata gresit.
+            </p>
+            <select id="oraReset" style="padding:11px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px;">
+            </select>
+         </div>
+         <div id="oraResetStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
       </div>
 
       <div data-grup="setari" class="dash-panel" style="border-color: var(--warning);">
@@ -1071,8 +1110,172 @@
       } catch(e) { console.log('speakOrderNotes error:', e); }
   }
 
+
+
+  // --- Ora de inchidere a zilei -------------------------------------------
+  // Se tine in jurnal ca `setari_zi`, ca sa fie auditabila si citibila si din
+  // functiile cron din baza de date.
+  let oraResetCurenta = 0;
+
+  (function umpleOrele(){
+      const sel = document.getElementById('oraReset');
+      if (!sel) return;
+      for (let h = 0; h < 24; h++) {
+          const o = document.createElement('option');
+          o.value = String(h);
+          o.textContent = String(h).padStart(2,'0') + ':00';
+          sel.appendChild(o);
+      }
+  })();
+
+  async function loadOraReset() {
+      const {data} = await _supabase.from('jurnal_activitate')
+          .select('detalii, created_at')
+          .eq('actiune','setari_zi')
+          .order('created_at', {ascending:false}).limit(1);
+      const val = data && data[0] && data[0].detalii && data[0].detalii.oraReset;
+      oraResetCurenta = Number.isInteger(val) ? val : 0;
+      const sel = document.getElementById('oraReset');
+      if (sel) sel.value = String(oraResetCurenta);
+      const st = document.getElementById('oraResetStare');
+      if (st) st.textContent = `Ziua se inchide la ${String(oraResetCurenta).padStart(2,'0')}:00, ora Romaniei.`;
+  }
+
+  const selOra = document.getElementById('oraReset');
+  if (selOra) selOra.addEventListener('change', async (e) => {
+      const val = parseInt(e.target.value, 10);
+      const ok = await logActivity('setari_zi', null, { oraReset: val });
+      if (ok === false) {
+          e.target.value = String(oraResetCurenta);
+          alert('Nu s-a putut salva. Doar directorul poate schimba ora de inchidere.');
+          return;
+      }
+      await loadOraReset();
+  });
+
+  // --- Alarma pana la acceptare ------------------------------------------
+  // `neacceptate` tine id-urile comenzilor care au intrat dar pe care nimeni
+  // nu le-a confirmat inca. Cat timp lista nu e goala, bazaitul se repeta.
+  let neacceptate = new Map();     // id -> { mesa, la }
+  let alarmaTimer = null;
+  let audioCtx = null;
+
+  function ctxAudio() {
+      if (!audioCtx) {
+          try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+          catch(e) { return null; }
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+      return audioCtx;
+  }
+
+  // Bip scurt si clar. Se aude mereu, indiferent de butonul de sunet.
+  function bipScurt() {
+      const ctx = ctxAudio(); if (!ctx) return;
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type = 'sine'; o.frequency.setValueAtTime(980, ctx.currentTime);
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.55, ctx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+      o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.36);
+  }
+
+  // Bazait iritant: unda patrata, joasa, cu tremur. Facut sa deranjeze.
+  function bazait() {
+      const ctx = ctxAudio(); if (!ctx) return;
+      const durata = 1.5;
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      const lfo = ctx.createOscillator(), lfoG = ctx.createGain();
+      o.type = 'square'; o.frequency.setValueAtTime(220, ctx.currentTime);
+      lfo.type = 'square'; lfo.frequency.setValueAtTime(18, ctx.currentTime);
+      lfoG.gain.setValueAtTime(60, ctx.currentTime);
+      lfo.connect(lfoG); lfoG.connect(o.frequency);
+      o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.5, ctx.currentTime + 0.03);
+      g.gain.setValueAtTime(0.5, ctx.currentTime + durata - 0.08);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + durata);
+      o.start(ctx.currentTime); lfo.start(ctx.currentTime);
+      o.stop(ctx.currentTime + durata); lfo.stop(ctx.currentTime + durata);
+      if (navigator.vibrate) navigator.vibrate([300, 120, 300, 120, 500]);
+  }
+
+  function rostesteMasa(order) {
+      if (!('speechSynthesis' in window)) return;
+      try {
+          const takeaway = typeof isTakeawayMesa === 'function' && isTakeawayMesa(order.mesa);
+          const text = takeaway
+              ? `Comanda noua la pachet, numarul ${order.id}.`
+              : `Comanda noua, masa ${String(order.mesa).replace('#','')}.`;
+          const u = new SpeechSynthesisUtterance(text);
+          u.lang = 'ro-RO'; u.rate = 1.0;
+          const voce = (window.speechSynthesis.getVoices() || [])
+                .find(v => (v.lang || '').toLowerCase().startsWith('ro'));
+          if (voce) u.voice = voce;
+          window.speechSynthesis.speak(u);
+      } catch(e) {}
+  }
+
+  function actualizeazaBaraAcceptare() {
+      const bara = document.getElementById('barAcceptare');
+      if (!bara) return;
+      if (!neacceptate.size) {
+          bara.classList.remove('on');
+          if (alarmaTimer) { clearInterval(alarmaTimer); alarmaTimer = null; }
+          return;
+      }
+      const mese = [...neacceptate.values()].map(x => x.mesa);
+      document.getElementById('barAcceptareText').textContent =
+          neacceptate.size === 1
+            ? `Comanda noua — ${mese[0]}. Confirma ca ai vazut-o.`
+            : `${neacceptate.size} comenzi noi — ${mese.join(', ')}. Confirma ca le-ai vazut.`;
+      bara.classList.add('on');
+  }
+
+  // Porneste alarma pentru o comanda noua.
+  function alarmaComandaNoua(order) {
+      // Ospatarii nu primesc bazaitul: comenzile se duc la bar/bucatarie.
+      if (userRole === 'ospatar') return;
+
+      neacceptate.set(order.id, { mesa: `masa ${String(order.mesa).replace('#','')}`, la: Date.now() });
+      actualizeazaBaraAcceptare();
+
+      // 1. Bip + numarul mesei. Mereu, chiar daca sunetul e oprit.
+      bipScurt();
+      setTimeout(() => rostesteMasa(order), 420);
+
+      // 2. Bazaitul repetat, pana la acceptare. Asta respecta butonul de sunet.
+      if (!soundEnabled) return;
+      if (alarmaTimer) return;                 // deja suna pentru alta comanda
+      setTimeout(() => { if (neacceptate.size) bazait(); }, 1800);
+      alarmaTimer = setInterval(() => {
+          if (!neacceptate.size) { clearInterval(alarmaTimer); alarmaTimer = null; return; }
+          bazait();
+      }, 4000);
+  }
+
+  // Apasarea butonului opreste alarma si lasa urma in jurnal.
+  function accepta(ids) {
+      const lista = ids || [...neacceptate.keys()];
+      lista.forEach(id => neacceptate.delete(id));
+      actualizeazaBaraAcceptare();
+      if (!neacceptate.size && alarmaTimer) { clearInterval(alarmaTimer); alarmaTimer = null; }
+      if (lista.length) logActivity('comanda_acceptata', lista[0], { count: lista.length });
+  }
+  window.accepta = accepta;
+
+  document.addEventListener('DOMContentLoaded', () => {
+      const b = document.getElementById('btnAcceptaTot');
+      if (b) b.addEventListener('click', () => accepta());
+  });
+
   function playAlertAndVibrate(order) {
     try {
+      // Alarma care nu se opreste pana cineva confirma ca a vazut comanda.
+      const esteAlerta = JSON.stringify(order.produse || []).includes('ALERTĂ OSPĂTAR');
+      if (!esteAlerta && order.status === 'noua') alarmaComandaNoua(order);
+
       if (userRole === 'ospatar') {
           if (navigator.vibrate) navigator.vibrate([400, 200, 400, 200, 800]); 
           const title = '🔔 Alerta la masa / comanda gata';
@@ -1741,7 +1944,7 @@
 
       if (grup === 'sinteza')  { calculateDirectorStats(); renderHeatmap(); }
       if (grup === 'meniu')    { loadMeniu(); }
-      if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); }
+      if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); }
       if (grup === 'personal') { loadFeedbacks(); }
   }
 
