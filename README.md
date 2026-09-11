@@ -25,7 +25,9 @@ din prima, fără configurare: numele folderului **este** calea din URL.
 
 1. Copiezi folderul `skyfall/` și îl redenumești. Numele devine calea:
    `bistro/` → `domeniu.ro/bistro`.
-2. Creezi un proiect Supabase nou și rulezi `supabase/01_schema.sql`.
+2. Creezi un proiect Supabase nou și rulezi `supabase/01_schema.sql`, apoi
+   `supabase/04_comenzi_live.sql` (acceptare, modificări din mers, închiderea
+   zilei). Ambele sunt deja aplicate pe M3 și Sweet & Sour.
 3. Completezi `config.js` — URL, cheie publicabilă, nume, slogan, culori,
    link de recenzie Google.
 4. Creezi conturile de personal (`supabase/creeaza_conturi_staff.py`) și le dai
@@ -33,9 +35,12 @@ din prima, fără configurare: numele folderului **este** calea din URL.
 5. Adaugi produsele din dashboard → panoul directorului → Meniu.
 6. Adaugi localul în `index.html` (pagina de start) — un bloc `<a class="venue">`.
 
-`index.html`, `dashboard.html` și `sw.js` sunt **identice** la toate localurile.
-Tot ce e specific stă în `config.js`. Când repari ceva, copiezi cele trei fișiere
-peste tot, fără să te uiți ce ai personalizat unde.
+`index.html`, `dashboard.html` și `sw.js` sunt **aproape identice** la toate
+localurile: diferă doar titlul, culorile din `:root` ale panoului, numele din
+subsol și lista de categorii traduse. Tot restul stă în `config.js`. Când
+repari ceva, faci modificarea pe `m3/` și o aplici ca patch pe celelalte
+(`diff -u` + `patch`), apoi verifici cu `diff` că au rămas doar liniile
+specifice.
 
 ## Izolarea datelor
 
@@ -52,6 +57,130 @@ treilea local înseamnă plan Pro, 25 $/lună pentru toate.
 | M3 Coffee & Lounge | `cjavzdnsebbkiiefigvi` | eu-central-1 |
 | Sweet & Sour | `wnwllyyhtkufcejzjeay` | eu-west-1 |
 | Skyfall | de creat | eu-central-1 recomandat |
+
+## Comanda se acceptă, nu doar se face
+
+Fluxul unei comenzi are acum un pas în plus, la început:
+
+| Stare | Cine o pune | Ce vede clientul pe telefon |
+|---|---|---|
+| `noua` | intră singură | „Trimisă — așteaptă să fie văzută" |
+| `acceptata` | barul / bucătăria apasă **„Am văzut, accept"** | „Acceptată — am văzut comanda, urmează să vină" |
+| `gata` | barul / bucătăria apasă „Gata" | „Gata — vine acum la masă" |
+| `finalizata` | ospătarul apasă „Servit" | „Servită. Poftă bună!" |
+
+Starea stă în baza de date, nu pe telefon: când cineva acceptă de pe un
+dispozitiv, alarma se oprește pe toate.
+
+### Alarma de comandă nouă
+
+Cât timp există o comandă `noua` pentru rolul curent, telefonul **nu tace**:
+
+1. un bip scurt,
+2. vocea spune, în română, „Comandă nouă, masa 4" (sau „la pachet"),
+3. apoi un bâzâit continuu — undă pătrată, sirenă și tremur, trecute printr-un
+   compresor ca să iasă cât mai tare din difuzor — care ține **până apasă
+   cineva „Am văzut, accept"**, nu până se termină un sunet.
+
+Toate trei sună indiferent de butonul „Voce". Butonul (fostul „Sunet")
+controlează doar ce se mai spune după masă: bucătăria primește lista de
+produse, barul notele clientului. Bara roșie cu „Am văzut, accept" stă sus, în
+orice ecran al panoului, cât timp mai e ceva neacceptat; același buton e și pe
+fiecare card.
+
+Browserele pornesc sunetul doar după un gest al utilizatorului. Alarma se
+deblochează la prima atingere a ecranului și, dacă între timp a intrat o
+comandă, pornește atunci. Ospătarii nu primesc bâzâitul (comenzile nu sunt ale
+lor), dar primesc bip dublu și voce la cererile de la mese („Masa 4 cheamă
+ospătarul: nota, cash").
+
+### Clientul își poate scoate produse de pe telefon
+
+Din bara de stare (apăsată) se deschide **fișa comenzii**: ce a trimis, cu
+starea fiecărei părți (bar / bucătărie). Lângă fiecare produs e un „−": îl
+scoate pe loc, iar la bar cardul clipește galben și vocea spune „Masa 4 și-a
+modificat comanda: scos 1 Espresso". Dacă scoate tot, comanda se anulează, cu
+nota „Anulată de client, de pe telefon".
+
+Merge doar cât timp comanda e `noua` sau `acceptata`. Din momentul în care e
+`gata`, telefonul refuză și îl trimite la ospătar.
+
+Cum știe serverul că e comanda lui: la trimitere, telefonul generează un token
+aleator, îl păstrează în `sessionStorage` și trimite doar hash-ul SHA-256
+(`token_client_hash`). Funcția `client_modifica_comanda(id, token, produse)`
+verifică hash-ul și permite **doar scoateri și scăderi de cantitate** — nimic
+nou, niciun preț atins; totalul se recalculează din prețurile deja validate.
+Un client anonim poate citi comenzile ultimelor 2 ore (politica existentă),
+dar vede doar hash-ul, care nu se poate inversa.
+
+### Ospătarul modifică o comandă în timp real
+
+Clientul cheamă ospătarul și se răzgândește: pe orice card activ e un „✏️"
+care deschide editorul — scoți, adaugi din meniu (doar produse din aceeași
+secțiune), schimbi cantități, adaugi o notă. Salvarea trece prin
+`staff_modifica_comanda(id, produse)`: prețurile produselor noi vin din
+`meniu_produse`, cele deja comandate rămân la prețul de atunci, totalul se
+recalculează pe server. Jurnalul păstrează „înainte" și „după".
+
+Ospătarul vede acum și comenzile în lucru (mai șters, cu „acceptată, în
+lucru"), ca să știe ce așteaptă fiecare masă și să le poată modifica. Numărul
+de pe iconița „Comenzi" numără, pentru el, doar ce are de făcut: de dus la masă
+și cereri de la mese.
+
+Funcția pune un semnal tranzacțional (`app.modificare_permisa`) pe care
+`protect_comanda_update` îl respectă; orice alt UPDATE rămâne restricționat ca
+înainte.
+
+### Fișa comenzii împarte nota
+
+Tot din fișa comenzii: **„Împarte nota"** — în părți egale sau pe produs
+(fiecare plătește ce a comandat), cu bacșiș. Calculatorul e același cu cel din
+coș, doar că lucrează pe ce a fost comandat efectiv în vizita asta.
+
+## Ora la care se închide ziua
+
+Panoul șefului → Setări → **„Ora de închidere a zilei"**. La ora aleasă (ora
+României), o dată pe zi:
+
+- se eliberează toate mesele;
+- comenzile rămase deschise (`noua`, `acceptata`, `gata`) trec pe `expirata`:
+  nu apar în panou, în istoric sau în rapoarte, dar rămân în bază două zile;
+- alertele de la mese (notă, ajutor) se șterg.
+
+Tot de la ora asta începe „Azi" din panoul șefului și din exportul CSV: dacă
+localul închide la 3, comenzile de la 1 noaptea sunt ale serii, nu ale zilei
+următoare. „Luna aceasta" începe pe 1, la aceeași oră.
+
+Setarea e un rând `setari_zi` în jurnal, scris doar de director; cron-ul
+`curatare-miezul-noptii` (din 10 în 10 minute) o citește. Pe proiectul
+moștenit rulau încă job-urile vechi, în spaniolă, pe ora Madridului; le-am
+scos.
+
+## Ghidul interactiv
+
+Prima dată când cineva deschide meniul (pe telefon) sau panoul (pe fiecare
+rol), ecranul se întunecă și un reflector cade, pe rând, pe fiecare element:
+o bulă cu săgeată explică ce face. Se sare cu „Sari peste", se navighează cu
+săgețile tastaturii, se reia oricând din „Cum funcționează meniul?" (jos, în
+meniu) sau „❓ Ghid rapid" (panou). Pașii ale căror elemente nu există pentru
+rolul curent dispar singuri din numărătoare.
+
+Pentru panou, ghidul arată o comandă de exemplu și bara de acceptare chiar
+dacă nu e nicio comandă în acel moment. Pe telefon, butonul de notificări
+lipsea din antet (bara laterală e ascunsă sub 800 px) — acum e acolo, lângă
+„❓".
+
+## Nativ în română
+
+Panoul avea încă zeci de texte în spaniolă (bannerul de plată, stocul,
+ferestrele de alertă, zilele săptămânii din harta orelor, jurnalul, mesajele
+de eroare), iar meniul clienților pornea cu texte spaniole în HTML, până le
+înlocuia JavaScript-ul. Chrome le detecta și propunea traducerea din spaniolă.
+Totul e acum în română de la prima literă; meniul își schimbă și atributul
+`lang` când clientul alege engleza, iar panoul are `translate="no"`.
+
+Notele clientului nu se mai traduc în spaniolă înainte să fie citite cu voce
+tare.
 
 ## Meniul e în baza de date
 
@@ -186,6 +315,11 @@ Rulata pe baza reala, cu rolurile reale. Ce a trecut:
 | Ospatar sterge comanda | niciun rand atins |
 | Director corecteaza totalul | permis |
 | Comanda la pachet | nume si telefon mutate in `contacte_takeaway` |
+| Client scoate un produs de pe telefon (token corect) | total recalculat, jurnal `comanda_modificata_client` |
+| Client incearca sa adauge un produs / sa mareasca | respins |
+| Client modifica o comanda `gata` | respins („cheama ospatarul") |
+| Ospatar modifica o comanda (RPC, JWT de ospatar) | permis, total recalculat din meniu, jurnal cu inainte/dupa |
+| Client anonim apeleaza RPC-ul de personal | respins (fara EXECUTE) |
 | Client anonim citeste contactele | refuzat, nici grant nu are |
 | Alerta de la masa (cere nota) | acceptata, total 0 |
 | Impartire bar / bucatarie | doua comenzi, acelasi `grup_comanda` |
@@ -204,6 +338,9 @@ verifica `ELIMINAR`, iar mesajul de eroare era in spaniola.
 
 Plus ultimele texte spaniole din panoul de personal (harta orelor, raportul pe
 angajat, anuntul vocal pentru comenzile la pachet, starile meselor).
+
+**Numele si telefonul de la pachet nu apareau in panou.** Trigger-ul scrie in
+`mesa` „🥡 La pachet", dar codul care ataseaza contactele cauta „Takeaway".
 
 ## Un risc de productie ramas
 
