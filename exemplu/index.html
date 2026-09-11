@@ -1468,21 +1468,21 @@
       const t = I18N[currentLang];
       
       tracker.classList.add('show');
-      statText.textContent = '👨‍🍳 ' + (currentLang==='ro' ? 'Preluata de personal' : 'Order Received');
+      statText.textContent = '📨 ' + (currentLang==='ro' ? 'Trimisa la bar' : 'Sent to the bar');
       progress.style.width = '35%';
 
       _supabase.channel(`order_tracker_${id}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'comenzi', filter: `id=eq.${id}` }, p => {
           const s = p.new.status;
           if (s === 'gata' || s === 'in_lucru') {
-              statText.textContent = '🔥 ' + (currentLang==='ro' ? 'In preparare' : 'Preparing');
+              statText.textContent = '✅ ' + (currentLang==='ro' ? 'Acceptata — se pregateste' : 'Accepted — being prepared');
               progress.style.width = '70%';
           } else if (s === 'finalizata') {
               if(p.new.comp_motiv) {
                   statText.textContent = '🎁 GRATIS';
                   statText.style.color = '#fbbf24';
               } else {
-                  statText.textContent = '✅ ' + (currentLang==='ro' ? 'Gata' : 'Completed');
+                  statText.textContent = '🍽️ ' + (currentLang==='ro' ? 'Vine acum la masa' : 'On its way to your table');
               }
               progress.style.width = '100%';
               setTimeout(() => { 
