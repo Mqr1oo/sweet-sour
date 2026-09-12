@@ -409,6 +409,16 @@ buton spre politică), în limba browserului, fiindcă limba meniului nu e înc�
 aleasă; **2) limba**; **3) masa / la pachet** (sărit când pachetul e oprit).
 Bannerul de jos cu cookie nu mai există — se punea peste alegerea limbii.
 
+Ferestrele (modal) se deschid și se închid cu o tranziție reală (scală +
+blur), prin `@starting-style` și `transition-behavior: allow-discrete` pe
+`display`; înainte, `display:none → flex` omora orice tranziție și fereastra
+apărea brusc. Browserele vechi cad pe comportamentul de dinainte. Barele care
+apar singure (total, starea comenzii, butonul de ospătar) nu mai „sar" peste
+țintă — curbă fără depășire, fiindcă nu vine dintr-un gest cu inerție. Pe
+telefon `:hover` e dezactivat (cardul rămânea ridicat după atingere). Ținte
+de minimum 40 px la ✕ și la ±. O vibrație scurtă doar la comanda trimisă și
+la ospătarul chemat.
+
 ## Politica de confidențialitate și termenii
 
 Meniul are o politică completă, în 11 secțiuni, în română și engleză, generată
@@ -757,7 +767,8 @@ lui). În panou, `body.rol-manager` ascunde tot ce are `data-director`.
 
 **Zonele ospătarilor.** Fiecare ospătar își alege zonele de care răspunde
 (fereastra se deschide singură la prima intrare din zi, când sala are mai
-multe zone; apoi din butonul „📍 Zona mea"): rândul `zona_ospatar` din jurnal, citibil de tot
+multe zone — închisă fără alegere înseamnă „toate zonele" pe ziua aceea, ca
+să nu se tot deschidă; apoi din butonul „📍 Zona mea"): rândul `zona_ospatar` din jurnal, citibil de tot
 personalul, scris doar de conturile de ospătar. Comenzile din zona lui apar
 primele și îl anunță (bip, voce, vibrație); cele din alte zone rămân
 vizibile, mai șterse, cu „📍 Interior · Maria" (cine le acoperă), și le poate

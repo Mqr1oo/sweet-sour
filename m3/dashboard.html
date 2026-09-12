@@ -983,7 +983,7 @@
   <div class="modal" style="max-width:420px; text-align:left;">
     <button class="modal-close" id="zonaInchide">&times;</button>
     <h2 style="margin-bottom:4px;">📍 Zona mea</h2>
-    <p class="mp-sub">Alege zonele de care raspunzi in tura asta. Comenzile din ele apar primele si te anunta; cele din alte zone raman vizibile, mai sterse, si le poti lua daca e nevoie. Poti schimba oricand din „📍 Zona mea".</p>
+    <p class="mp-sub">Alege zonele de care raspunzi in tura asta. Comenzile din ele apar primele si te anunta; cele din alte zone raman vizibile, mai sterse, si le poti lua daca e nevoie. Daca inchizi fara sa alegi, azi raspunzi de toate zonele. Poti schimba oricand din „📍 Zona mea".</p>
     <div id="zonaLista" style="margin-top:12px;"></div>
     <div class="mp-actiuni">
       <button class="btn-primary" id="zonaSalveaza" style="width:auto;padding:12px 22px;">Salveaza</button>
@@ -2013,7 +2013,7 @@
         renderOrders();
         // prima intrare din zi a unui ospatar: isi alege zona si e in tura
         if (userRole === 'ospatar' && (salaConfig.zones || []).length > 1 && !zoneOspatari[currentUserEmail]) {
-            if (Tur.activ()) zonaDupaGhid = true; else deschideZona();
+            if (Tur.activ()) zonaDupaGhid = true; else deschideZona(true);
         }
     });
     if (userRole === 'ospatar') { document.getElementById('btnZona').style.display = 'block'; document.getElementById('btnZonaMobile').style.display = 'inline-flex'; }
@@ -3699,7 +3699,11 @@
       if (b) { b.textContent = `📍 Zona mea: ${text}`; b.classList.toggle('on', !!zoneMele.length); }
       if (m) { m.title = `Zona mea: ${text}`; m.classList.toggle('on', !!zoneMele.length); }
   }
-  function deschideZona() {
+  // `automat` = deschisa singura la prima intrare din zi. Daca ospatarul o
+  // inchide fara sa aleaga, azi raspunde de toate zonele si nu-l mai intrebam.
+  let zonaAutoDeschisa = false;
+  function deschideZona(automat) {
+      zonaAutoDeschisa = automat === true;
       const lista = document.getElementById('zonaLista');
       const zone = (salaConfig.zones || []).map(z => z.nume);
       lista.innerHTML = zone.length
@@ -3709,19 +3713,27 @@
   }
   function inchideZona() {
       document.getElementById('modalZona').classList.remove('open');
+      if (zonaAutoDeschisa) {
+          zonaAutoDeschisa = false;
+          if (!zoneOspatari[currentUserEmail]) {
+              zoneMele = []; afiseazaZona(); renderOrders();
+              logActivity('zona_ospatar', null, { zone: [] }).then(loadZoneOspatari);
+          }
+      }
       if (ghidDupaZona) { ghidDupaZona = false; pornesteGhidDashboard(false); }
   }
   async function salveazaZona(toate) {
       const alese = toate ? [] : [...document.querySelectorAll('#zonaLista input:checked')].map(i => i.value);
       zoneMele = alese;
+      zonaAutoDeschisa = false;   // a ales el, nu a inchis fara sa aleaga
       inchideZona();
       afiseazaZona(); renderOrders();
       const ok = await logActivity('zona_ospatar', null, { zone: alese });
       if (ok === false) alert('Nu s-a putut salva zona (doar contul de ospatar o poate alege).');
       loadZoneOspatari();
   }
-  document.getElementById('btnZona').addEventListener('click', deschideZona);
-  document.getElementById('btnZonaMobile').addEventListener('click', deschideZona);
+  document.getElementById('btnZona').addEventListener('click', () => deschideZona(false));
+  document.getElementById('btnZonaMobile').addEventListener('click', () => deschideZona(false));
   document.getElementById('zonaInchide').addEventListener('click', inchideZona);
   document.getElementById('modalZona').addEventListener('click', (e) => { if (e.target.id === 'modalZona') inchideZona(); });
   document.getElementById('zonaSalveaza').addEventListener('click', () => salveazaZona(false));
@@ -4946,7 +4958,7 @@
       if (!fortat && document.getElementById('modalZona').classList.contains('open')) { ghidDupaZona = true; return; }
       Tur.start(pasiGhidDashboard(), { laFinal() {
           try { localStorage.setItem(cheie, '1'); } catch(e) {}
-          if (zonaDupaGhid) { zonaDupaGhid = false; deschideZona(); }
+          if (zonaDupaGhid) { zonaDupaGhid = false; deschideZona(true); }
       } });
   }
 

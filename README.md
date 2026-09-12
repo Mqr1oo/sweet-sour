@@ -179,7 +179,8 @@ Același panou, dar cu ce-l privește pe el:
   Comenzile din zona lui apar primele și îl anunță; cele din alte zone rămân
   vizibile, mai șterse, cu „📍 Interior · Maria" (cine le acoperă) — și le
   poate lua oricând dacă e nevoie (colegul e la fumat). Zona i se cere
-  singură, la prima intrare din zi; o schimbă oricând din „📍 Zona mea".
+  singură, la prima intrare din zi (dacă închide fereastra fără să aleagă,
+  azi răspunde de toate zonele); o schimbă oricând din „📍 Zona mea".
 - **Tura se ține singură**: nu apasă nimic. Când intră în cont a intrat în
   tură; când se deconectează (sau la ora închiderii, când toată lumea iese
   automat) a ieșit. Directorul vede cine a fost în tură, cât, și pe ce zonă.
