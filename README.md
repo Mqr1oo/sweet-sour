@@ -55,8 +55,8 @@ Scanează codul QR de pe masă și îi apare meniul, în culorile localului.
   engleză — și gata, e în meniu. Un tur de 30 de secunde îi arată cum
   funcționează; îl poate sări.
 - **Meniul**: categorii, poze, descrieri, ingrediente, alergeni, prețuri.
-  Căutare. Produsele fără stoc apar tăiate, nu dispar pur și simplu — știe că
-  există dar nu sunt azi.
+  Căutare. Produsele terminate apar marcate „Stoc epuizat", nu dispar pur și
+  simplu — știe că există, dar nu sunt azi.
 - **⭐ Meniul e mereu cel adevărat.** Dacă directorul schimbă un preț sau
   bucătăria marchează un produs ca terminat, clienții care au meniul deschis
   văd schimbarea în aceeași secundă, fără să dea refresh.
@@ -333,7 +333,7 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
   volum, ingrediente, alergeni, descriere, traducere în engleză, poză,
   „semnătura casei", activ/inactiv.
 - **Stocul**: barul, bucătăria sau șefii blochează un produs terminat —
-  dispare pe loc de la clienți (apare tăiat), revine când îl deblochezi.
+  apare pe loc „Stoc epuizat" la clienți, revine când îl deblochezi.
 - Categoriile se fac singure din produse, în ordinea lor.
 - **Coduri QR**: un generator (separat) face codul fiecărei mese cu numele
   localului pe el, la orice dimensiune, gata de print.
