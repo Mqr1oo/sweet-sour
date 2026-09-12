@@ -419,6 +419,19 @@ telefon `:hover` e dezactivat (cardul rămânea ridicat după atingere). Ținte
 de minimum 40 px la ✕ și la ±. O vibrație scurtă doar la comanda trimisă și
 la ospătarul chemat.
 
+**Sticlă lichidă.** Stratul care plutește peste meniu (limba, mesele
+libere, căutarea, categoriile, ± de pe poză, bara de total, starea comenzii,
+butonul de ospătar, ferestrele) e un material translucid derivat din paleta
+localului prin `color-mix` pe `--bg-panel` / `--ink` / `--pink-main`, cu
+muchie luminoasă sus (`inset 0 1px 0`), umbră jos și blur mai adânc pe
+suprafețele mari. Nu mai există nuanțe fixe (`rgba(20,16,13,…)` etc.), deci
+arată la fel de bine pe negrul de la M3 și pe bleumarinul de la Sweet & Sour.
+Cardurile cu produse rămân opace (sunt conținut, nu bară); chenarele groase au
+devenit linii de păr. Textul pe sticlă e `--ink` la 82 %, nu gri șters.
+`prefers-reduced-transparency` face materialul mat, `prefers-contrast: more`
+pune muchii clare fără umbre. Tot blocul e la sfârșitul foii de stil, ca să
+câștige prin ordine.
+
 ## Politica de confidențialitate și termenii
 
 Meniul are o politică completă, în 11 secțiuni, în română și engleză, generată

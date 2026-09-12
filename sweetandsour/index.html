@@ -414,7 +414,7 @@
 
   /* --- Zone de atins de minim 44px, cat un deget. */
   .chip{ min-height:44px; display:inline-flex; align-items:center; }
-  .lang-btn, .lang-option{ min-height:44px; }
+  .lang-toggle-btn, .lang-option{ min-height:44px; }
 
   /* --- Materiale translucide: continutul curge pe sub bare, cu o muchie
          luminoasa sus, ca lumina prinsa de material. */
@@ -423,7 +423,7 @@
     -webkit-backdrop-filter: blur(22px) saturate(180%);
     border-top: 1px solid rgba(255,255,255,0.10);
   }
-  .lang-btn{
+  .lang-toggle-btn{
     backdrop-filter: blur(16px) saturate(160%);
     -webkit-backdrop-filter: blur(16px) saturate(160%);
   }
@@ -486,7 +486,7 @@
 
   /* --- Cine a cerut mai putina transparenta primeste suprafete solide. */
   @media (prefers-reduced-transparency: reduce){
-    .total-bar, .lang-btn{ backdrop-filter:none; -webkit-backdrop-filter:none; background: var(--bg-card); }
+    .total-bar, .lang-toggle-btn{ backdrop-filter:none; -webkit-backdrop-filter:none; background: var(--bg-card); }
     .category-section > h2{ backdrop-filter:none; -webkit-backdrop-filter:none; background: var(--bg-base); }
   }
 
@@ -494,6 +494,116 @@
   @media (prefers-contrast: more){
     .card{ border: 1px solid var(--ink-soft); }
     .chip{ border-width: 2px; }
+  }
+
+  /* ==================================================================
+     STICLA LICHIDA — stratul care pluteste peste meniu
+     Barele, butoanele si ferestrele sunt un material translucid, nu
+     placi opace: continutul curge pe sub ele, lumina prinde muchia de
+     sus, iar culoarea materialului se trage din paleta localului
+     (color-mix pe --bg-panel / --ink / --pink-main), ca sa arate la fel
+     de bine pe negrul de la M3 si pe bleumarinul de la Sweet & Sour.
+     Cardurile cu produse raman opace: sunt continut, nu bara.
+     ================================================================== */
+  :root{
+    --on-accent: #f6f0e6;
+    --on-brass:  #16110a;
+    --hairline:     color-mix(in srgb, var(--ink) 8%, transparent);
+    --glass:        color-mix(in srgb, var(--bg-panel) 58%, transparent);
+    --glass-strong: color-mix(in srgb, var(--bg-panel) 78%, transparent);
+    --glass-edge:      color-mix(in srgb, var(--ink) 22%, transparent);
+    --glass-edge-soft: color-mix(in srgb, var(--ink) 10%, transparent);
+    --glass-shade:     color-mix(in srgb, var(--bg-base) 45%, transparent);
+    --glass-shadow: 0 10px 30px color-mix(in srgb, var(--bg-base) 55%, transparent);
+    --tint:      color-mix(in srgb, var(--pink-main) 74%, transparent);
+    --tint-edge: color-mix(in srgb, var(--pink-bright) 48%, transparent);
+    --tint-glow: 0 8px 22px color-mix(in srgb, var(--pink-main) 40%, transparent);
+    --coral-soft: color-mix(in srgb, var(--coral) 55%, var(--ink));
+  }
+
+  /* materialul de baza: blur + saturatie, muchie luminoasa sus, umbra jos */
+  .lang-toggle-btn, .lang-menu-dropdown, .tables-badge, .tables-badge-list,
+  .search-box, .chip, .card-qty-controls, .global-fav-btn{
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(18px) saturate(170%);
+    backdrop-filter: blur(18px) saturate(170%);
+    border: 1px solid var(--glass-edge-soft);
+    box-shadow: inset 0 1px 0 var(--glass-edge), inset 0 -1px 0 var(--glass-shade), var(--glass-shadow);
+  }
+  /* suprafetele mari sunt „mai groase": blur mai adanc, umbra mai grea */
+  .total-bar, .tracker-widget, .modal{
+    background: var(--glass-strong);
+    -webkit-backdrop-filter: blur(28px) saturate(170%);
+    backdrop-filter: blur(28px) saturate(170%);
+    border: 1px solid var(--glass-edge-soft);
+    box-shadow: inset 0 1px 0 var(--glass-edge), 0 18px 50px color-mix(in srgb, var(--bg-base) 70%, transparent);
+  }
+  .total-bar{ border-left:0; border-right:0; border-bottom:0; }
+  .tracker-widget{ border-color: color-mix(in srgb, var(--pink-bright) 35%, transparent); box-shadow: inset 0 1px 0 var(--glass-edge), var(--tint-glow); }
+  .modal::before{ border-top-color: var(--hairline); }
+
+  /* textul pe sticla: mai plin, nu gri sters — se citeste pe orice fundal */
+  .chip, .tables-badge, .lang-toggle-btn{ color: color-mix(in srgb, var(--ink) 82%, transparent); font-weight:600; }
+  .tables-badge.badge-low{ border-color: var(--tint-edge); color: var(--ink); }
+  .tables-badge.badge-full{ border-color: var(--coral); background: color-mix(in srgb, var(--coral) 22%, var(--glass)); color: var(--ink); }
+  @keyframes pulseFull { 0% { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 0 color-mix(in srgb, var(--coral) 55%, transparent); } 70% { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 10px transparent; } 100% { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 0 transparent; } }
+
+  /* sticla colorata = actiunea principala; doar aici apare accentul plin */
+  .chip.active{ background: var(--tint); color: var(--on-accent); border-color: var(--tint-edge);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 38%, transparent), var(--tint-glow); }
+  .card-qty-controls.has-items{ border-color: var(--tint-edge); box-shadow: inset 0 1px 0 var(--glass-edge), var(--tint-glow); }
+  .card-qty-controls{ background: color-mix(in srgb, var(--bg-base) 55%, transparent); }   /* peste poza: mai inchis, ca sa se vada +/− */
+  .search-box:focus-within{ border-color: var(--tint-edge); box-shadow: inset 0 1px 0 var(--glass-edge), var(--tint-glow); }
+  .global-fav-btn{ border-color: var(--tint-edge); }
+  .global-fav-btn.are-cos{ background: var(--tint); color: var(--on-accent); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 38%, transparent), var(--tint-glow); }
+  .btn-order-bar, .btn-submit, .btn-cookie-accept, .split-mode-toggle button.active, .c-qty-btn:active{ color: var(--on-accent); }
+  .btn-submit{ box-shadow: var(--tint-glow); }
+  .btn-split-bill{ background: var(--glass); border:1px solid var(--glass-edge-soft); box-shadow: inset 0 1px 0 var(--glass-edge); }
+  .busy-banner, .ribbon{ color: var(--on-brass); }
+  .price{ background: color-mix(in srgb, var(--brass) 12%, transparent); border-color: color-mix(in srgb, var(--brass) 30%, transparent); }
+  .card-allergens .allergen-tag{ background: color-mix(in srgb, var(--coral) 14%, transparent); border-color: color-mix(in srgb, var(--coral) 40%, transparent); color: var(--coral-soft); }
+  .os-st-acceptata{ border-color: color-mix(in srgb, var(--brass) 50%, transparent); }
+  .os-st-anulata, .os-st-expirata{ color: var(--coral-soft); border-color: color-mix(in srgb, var(--coral) 50%, transparent); }
+  .os-del{ background: color-mix(in srgb, var(--coral) 14%, transparent); border-color: color-mix(in srgb, var(--coral) 45%, transparent); color: var(--coral-soft); }
+  .hero-parallax-bg{
+    background:
+      radial-gradient(ellipse 55% 50% at 85% -5%, color-mix(in srgb, var(--pink-main) 34%, transparent), transparent 62%),
+      radial-gradient(ellipse 38% 38% at 4% 4%,  color-mix(in srgb, var(--brass) 14%, transparent), transparent 65%),
+      radial-gradient(ellipse 45% 40% at 60% 90%, color-mix(in srgb, var(--pink-bright) 8%, transparent), transparent 70%);
+  }
+
+  /* contraste mai fine: chenarele groase devin linii de par, iar cardul se
+     desprinde de fundal prin lumina de pe muchie si umbra, nu prin rama */
+  .card{ border: 1px solid var(--hairline); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 6%, transparent), 0 10px 30px color-mix(in srgb, var(--bg-base) 60%, transparent); }
+  .card-meta .meta-pill{ background: color-mix(in srgb, var(--ink) 5%, transparent); border-color: var(--hairline); }
+  .category-section h2::after{ border-bottom-color: color-mix(in srgb, var(--ink) 14%, transparent); }
+  .total-header{ border-bottom-color: var(--hairline); }
+  .os-row, .split-product-row{ border-bottom-color: var(--hairline); }
+  .lang-option:hover{ background: color-mix(in srgb, var(--ink) 6%, transparent); }
+  .lang-menu-dropdown{ border-radius:14px; }
+  .tables-badge-list span{ background: color-mix(in srgb, var(--ink) 4%, transparent); border-left-color: var(--pink-bright); }
+  .modal-close{ background: var(--glass); border-color: var(--glass-edge-soft); box-shadow: inset 0 1px 0 var(--glass-edge); }
+  .input-table, .input-note, .split-person-select select{ background: color-mix(in srgb, var(--bg-base) 60%, transparent); border-color: var(--glass-edge-soft); }
+  .input-table:focus, .input-note:focus{ border-color: var(--tint-edge); }
+  .btn-waiter-option, .lang-pick-btn, .split-btn, .btn-cookie-info{ background: var(--glass); border:1px solid var(--glass-edge-soft); box-shadow: inset 0 1px 0 var(--glass-edge); }
+  .lang-pick-btn:active, .btn-waiter-option:active{ border-color: var(--tint-edge); }
+
+  /* mai putina transparenta: material mat, opac, cu aceleasi muchii */
+  @media (prefers-reduced-transparency: reduce){
+    .lang-toggle-btn, .lang-menu-dropdown, .tables-badge, .tables-badge-list, .search-box, .chip,
+    .card-qty-controls, .global-fav-btn, .total-bar, .tracker-widget, .modal, .modal-close,
+    .btn-waiter-option, .lang-pick-btn, .split-btn, .btn-cookie-info, .btn-split-bill{
+      -webkit-backdrop-filter:none !important; backdrop-filter:none !important; background: var(--bg-panel);
+    }
+    .chip.active, .global-fav-btn.are-cos{ background: var(--pink-main); }
+    .tables-badge.badge-full{ background: color-mix(in srgb, var(--coral) 30%, var(--bg-panel)); }
+  }
+  /* contrast marit: muchii clare, fara umbre difuze */
+  @media (prefers-contrast: more){
+    .lang-toggle-btn, .tables-badge, .search-box, .chip, .card-qty-controls, .global-fav-btn, .total-bar, .tracker-widget, .modal, .card{
+      border-color: var(--ink-soft); box-shadow:none;
+    }
+    .chip, .tables-badge, .lang-toggle-btn{ color: var(--ink); }
   }
 </style>
 </head>
@@ -1401,13 +1511,11 @@
           smartBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
                                 <span style="margin-left: 6px;">${t.smartCart} (${totalItems})</span>`;
           smartBtn.onclick = () => { activeFilter = 'favorites'; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); render(); window.scrollTo(0,0); };
-          smartBtn.style.background = 'var(--pink-main)';
-          smartBtn.style.color = 'white';
+          smartBtn.classList.add('are-cos');
       } else {
           smartBtn.innerHTML = `<span>${t.smartWaiter}</span>`;
           smartBtn.onclick = () => document.getElementById('callWaiterOverlay').classList.add('open');
-          smartBtn.style.background = 'rgba(18, 18, 18, 0.95)';
-          smartBtn.style.color = 'var(--ink)';
+          smartBtn.classList.remove('are-cos');
       }
   }
 
