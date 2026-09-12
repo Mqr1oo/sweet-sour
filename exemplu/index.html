@@ -299,8 +299,16 @@
   
   .gdpr-note { font-size: 12px; color: var(--coral); margin-top: -10px; margin-bottom: 20px; display: block; font-style: italic;}
 
-  #privacyOverlay .modal{ max-height: 78vh; overflow-y: auto; }
+  #privacyOverlay .modal{ max-height: 84vh; overflow-y: auto; max-width: 520px; }
   #privacyOverlay .modal p{ text-align: left; }
+  .pol-sect{ margin: 18px 0 0; text-align:left; }
+  .pol-sect h3{ font-size: 1rem; margin: 0 0 6px; color: var(--brass-soft); }
+  .pol-sect p{ font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; margin: 0 0 8px; }
+  .pol-sect p b{ color: var(--ink); font-weight: 600; }
+  .pol-h2{ margin: 28px 0 2px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); }
+  .pol-meta{ font-family:'Space Mono', monospace; font-size: 11px; color: var(--ink-soft); margin-top: 14px; text-align:left; }
+  .os-timp{ font-family:'Space Mono', monospace; font-size: 11px; color: var(--brass-soft); }
+  .os-timp.expirat{ color: var(--ink-soft); }
 
   .cookie-banner{ position: fixed; left:16px; right:16px; bottom: calc(88px + env(safe-area-inset-bottom)); max-width:480px; margin:0 auto; background: rgba(17, 14, 11, 0.92); backdrop-filter: blur(18px) saturate(160%); border:1.5px solid var(--pink-main); border-radius: var(--radius-md); padding:16px 18px; box-shadow: var(--shadow-warm); z-index:400; display:none; flex-direction:column; gap:12px; transform: translateY(140%); opacity:0; transition: transform .45s var(--ease-sheet), opacity .35s var(--ease-out); }
   .cookie-banner.show{ display:flex; transform: translateY(0); opacity:1; }
@@ -589,7 +597,7 @@
       <h2 id="obModeTitle">Cum vrei sa comanzi?</h2>
       <p id="obModeSubtitle">Alege o optiune ca sa continui.</p>
       <button class="btn-waiter-option" id="btnDineIn">🍹 Sunt la o masa</button>
-      <button class="btn-waiter-option" id="btnTakeaway">🥡 La pachet</button>
+      <button class="btn-waiter-option" id="btnTakeaway" style="display:none;">🥡 La pachet</button>
     </div>
   </div>
 </div>
@@ -727,11 +735,8 @@
   <div class="modal" style="text-align: left;">
     <button class="modal-close" onclick="document.getElementById('privacyOverlay').classList.remove('open')">&times;</button>
     <h2 id="privacyTitle">Politica de confidentialitate</h2>
-    <p id="privacyText" style="font-size:15px; color: var(--ink-soft); line-height: 1.5; margin-top: 10px;">Colectam numele si numarul tau de telefon exclusiv pentru a gestiona comanda la pachet. Datele se sterg automat de pe serverele noastre in 48 de ore, conform GDPR.</p>
-    <p id="privacyTextData" style="font-size:13px; color: var(--ink-soft); line-height: 1.55; margin-top: -8px; text-align:left;"></p>
-    <p id="privacyTextCookies" style="font-size:13px; color: var(--ink-soft); line-height: 1.55; margin-top: -8px; text-align:left;"></p>
-    <p id="privacyTextAllergens" style="font-size:13px; color: var(--ink-soft); line-height: 1.55; margin-top: -8px; text-align:left;"></p>
-    <button class="btn-submit" onclick="document.getElementById('privacyOverlay').classList.remove('open')" style="margin-top: 20px;">Inchide</button>
+    <div id="privacyBody"></div>
+    <button class="btn-submit" id="privacyCloseBtn" onclick="document.getElementById('privacyOverlay').classList.remove('open')" style="margin-top: 20px;">Inchide</button>
   </div>
 </div>
 
@@ -896,55 +901,21 @@
     };
   }
 
-  // --- FALLBACK IMAGINI (fără librării, fără API key) ---
-  // Poze generice de rezervă per categorie, folosite doar dacă imaginea locală
-  // ȘI căutarea pe Wikipedia eșuează amândouă. Cel puțin se potrivesc pe tip de mâncare.
-  const CATEGORY_FALLBACK_IMG = {
-    'Semnatura': 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=700&q=80&auto=format&fit=crop',
-    'Cocktailuri': 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=700&q=80&auto=format&fit=crop',
-    'Shot-uri': 'https://images.unsplash.com/photo-1569924995012-c4c706bfcd51?w=700&q=80&auto=format&fit=crop',
-    'Bere & Cidru': 'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=700&q=80&auto=format&fit=crop',
-    'Vinuri': 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=700&q=80&auto=format&fit=crop',
-    'Cafea & Ceai': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=700&q=80&auto=format&fit=crop',
-    'Racoritoare': 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=700&q=80&auto=format&fit=crop',
-    'Snacks': 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=700&q=80&auto=format&fit=crop',
-    'otros': 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=700&q=80&auto=format&fit=crop'
-  };
-
-  // Construiește tag-urile de căutare pentru librăria foto, din numele EN al produsului
-  // (curățat de diacritice/simboluri), plus cuvântul "drink" ca să rămână relevant pentru bar.
-  function buildPhotoTags(item){
-    const enName = (item.translations && item.translations.en && item.translations.en.name) || item.name;
-    const cleaned = enName
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // scoate accentele
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '')
-      .trim()
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 3) // max 3 cuvinte cheie, ca să rămână căutarea precisă
-      .join(',');
-    return cleaned ? `${cleaned},drink` : 'cocktail';
-  }
-
-  // Handler apelat din onerror al <img>. Treapta 1: o librărie foto dedicată mâncării
-  // (LoremFlickr — gratuită, fără cheie API, CORS ok) căutată după numele produsului.
-  // Parametrul "lock" fixează aceeași poză pentru același produs la fiecare încărcare,
-  // ca imaginea să nu "sară" la fiecare refresh. Treapta 2 (dacă și aia eșuează):
-  // poza generică de categorie, care nu mai poate da eroare.
-  window.handleImgError = function(imgEl, id){
-    const item = allItems.find(i => String(i.imageNumber) === String(id));
-    if(!item){ imgEl.onerror = null; return; }
-
-    if(imgEl.dataset.stage !== 'lib-tried'){
-      imgEl.dataset.stage = 'lib-tried';
-      const tags = buildPhotoTags(item);
-      imgEl.onerror = function(){ this.onerror = null; this.src = CATEGORY_FALLBACK_IMG[getMainCategory(item)] || CATEGORY_FALLBACK_IMG.otros; };
-      imgEl.src = `https://loremflickr.com/700/560/${tags}/all?lock=${item.imageNumber}`;
-      return;
-    }
+  // --- Poza lipsa: un placeholder desenat local -------------------------
+  // Inainte, o poza lipsa aducea o fotografie la intamplare de pe internet
+  // (LoremFlickr / Unsplash) — telefonul clientului trimitea adresa IP unor
+  // terti si pe card putea aparea orice. Acum apare un cadru neutru, generat
+  // aici, fara nicio cerere in afara.
+  const POZA_LIPSA = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">' +
+    '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a2239"/><stop offset="1" stop-color="#0b0f1c"/></linearGradient></defs>' +
+    '<rect width="400" height="300" fill="url(#g)"/>' +
+    '<g fill="none" stroke="#96a0bb" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".55">' +
+    '<path d="M130 120h120v60a40 40 0 0 1-40 40h-40a40 40 0 0 1-40-40z"/><path d="M250 135h18a22 22 0 0 1 0 44h-18"/>' +
+    '<path d="M160 95c0-12 10-12 10-24M190 95c0-12 10-12 10-24"/></g></svg>');
+  window.handleImgError = function(imgEl){
     imgEl.onerror = null;
-    imgEl.src = CATEGORY_FALLBACK_IMG[getMainCategory(item)] || CATEGORY_FALLBACK_IMG.otros;
+    imgEl.src = POZA_LIPSA;
   };
 
   const I18N = {
@@ -975,10 +946,67 @@
       smartWaiter: '💳 Plata / Ajutor 🙋', smartCart: 'Comanda mea', splitTitle: 'Imparte nota', splitDesc: 'Cum impartiti nota: in parti egale, sau fiecare plateste ce a comandat?', sl1: 'Total:', sl2: 'Numar de persoane:', sl3: 'Bacsis (%):', perPerson: '/ persoana',
       badgeEpuizat: 'Stoc epuizat', ribbonEsp: 'Recomandarea casei',
       alertPayload: { cash: 'Nota (cash)', card: 'Nota (card)', help: 'Ajutor / Altceva' },
-      privacyTitle: 'Politica de confidentialitate (GDPR)', privacyText: 'Colectam numele si numarul tau de telefon exclusiv pentru a gestiona comanda la pachet. Datele se sterg automat de pe serverele noastre in 48 de ore, conform GDPR.', privacyBtn: 'Politica de confidentialitate', gdprNote: 'Datele tale se sterg automat in 48h (GDPR).',
+      privacyTitle: 'Confidentialitate si termeni', privacyBtn: 'Confidentialitate si termeni (GDPR)', gdprNote: 'Datele tale se sterg automat in 48h (GDPR).', privacyClose: 'Inchide',
+      termsTitle: 'Termeni si conditii de utilizare',
+      politica: (op) => [
+        { h: '1. Cine prelucreaza datele', p: [
+          `<b>Operatorul</b> datelor tale — cel care decide de ce si cum sunt folosite — este localul: <b>${op.operator}</b>${op.adresa ? ', ' + op.adresa : ''}. Pentru orice intrebare legata de datele tale: <b>${op.contact}</b>.`,
+          `Meniul digital e pus la dispozitie de <b>${op.platforma}</b>, care actioneaza exclusiv ca <b>persoana imputernicita</b> (art. 28 GDPR): gazduieste si transmite comenzile in numele localului, pe baza instructiunilor lui, si nu foloseste datele in niciun scop propriu. Pentru probleme strict tehnice ale meniului: <b>${op.contactPlatforma}</b>.` ] },
+        { h: '2. Ce date prelucram', p: [
+          '<b>La masa:</b> numarul mesei, produsele comandate, mentiunile pe care le scrii si ora. Fara nume, fara cont, fara telefon.',
+          '<b>La pachet:</b> numele si numarul de telefon, doar ca sa te anuntam cand e gata comanda.',
+          '<b>Parerea ta:</b> nota (stele), textul scris si masa — doar daca alegi sa le trimiti.',
+          '<b>Tehnic:</b> un identificator aleator al comenzii, pastrat pe telefonul tau, ca doar tu sa-ti poti modifica comanda; in baza de date se pastreaza numai o amprenta (hash) a lui, care nu poate fi inversata. Adresa IP ajunge la furnizorii de gazduire, ca la orice site, in jurnalele lor tehnice.',
+          '<b>Ce NU facem:</b> nu cerem cont, nu citim locatia, nu folosim cookie-uri de urmarire sau de publicitate, nu facem profilare, nu vindem date si nu trimitem mesaje de marketing.' ] },
+        { h: '3. De ce si pe ce temei legal', p: [
+          'Executarea comenzii tale (art. 6 alin. 1 lit. b din GDPR); interesul legitim al localului de a tine evidenta comenzilor, de a preveni fraudele si de a rezolva reclamatiile (art. 6 alin. 1 lit. f); consimtamantul tau pentru parerea trimisa (art. 6 alin. 1 lit. a), pe care il poti retrage oricand cerand stergerea ei.' ] },
+        { h: '4. Cat timp le pastram', p: [
+          '<b>Comenzile:</b> se sterg automat la 2 zile dupa ce sunt inchise. <b>Numele si telefonul de la pachet:</b> 48 de ore. <b>Jurnalul de activitate</b> (ce s-a intamplat cu comanda, fara date personale de la masa): 30 de zile. <b>Parerile:</b> 30 de zile, apoi doar ca statistica, fara text.',
+          '<b>Pe telefonul tau:</b> masa si comenzile trimise raman pana inchizi meniul; limba, ghidul si consimtamantul raman pana stergi datele site-ului din browser.' ] },
+        { h: '5. Cui le transmitem', p: [
+          '<b>Supabase Inc.</b> — baza de date si transmisia in timp real, in centre de date din Uniunea Europeana. <b>Cloudflare Inc.</b> — livrarea paginilor. <b>Google LLC</b> — fonturile paginii (la incarcare, adresa ta IP ajunge la serverele Google Fonts).',
+          'Toti actioneaza ca persoane imputernicite, pe baza de contract, cu clauzele contractuale standard ale UE pentru orice transfer in afara Uniunii. Nimeni altcineva nu primeste datele tale si nu exista niciun transfer in scop comercial.' ] },
+        { h: '6. Cum le protejam', p: [
+          'Conexiune criptata (HTTPS). Comenzile pot fi citite doar de personalul autentificat, fiecare pe rolul lui, prin reguli aplicate direct in baza de date. Comanda ta poate fi modificata de pe telefon doar cu identificatorul tau secret, verificat pe server. Fiecare actiune a personalului se scrie intr-un jurnal. Stergerea datelor e automata, nu depinde de cineva.' ] },
+        { h: '7. Drepturile tale', p: [
+          'Ai dreptul de acces, rectificare, stergere („dreptul de a fi uitat"), restrictionare a prelucrarii, portabilitate, opozitie si retragerea consimtamantului. Spune-i personalului sau scrie la <b>' + op.contact + '</b>; raspundem in cel mult 30 de zile.',
+          'Daca nu esti multumit, te poti adresa Autoritatii Nationale de Supraveghere a Prelucrarii Datelor cu Caracter Personal (ANSPDCP), B-dul G-ral Gheorghe Magheru 28-30, Bucuresti — <b>www.dataprotection.ro</b>.' ] },
+        { h: '8. Stocarea locala din browser', p: [
+          'Nu folosim cookie-uri. Pagina tine pe telefonul tau, fara sa trimita nicaieri: <b>limba</b> aleasa; <b>produsele din cos</b> (pana trimiti comanda); <b>masa si modul</b> (la masa / la pachet) pe durata vizitei; <b>comenzile trimise</b> si identificatorul lor secret, pe durata vizitei; <b>consimtamantul si ghidul</b>, ca sa nu ti le mai aratam. Le stergi oricand din setarile browserului (datele site-ului).' ] },
+        { h: '9. Minori', p: [
+          'Meniul poate fi rasfoit de oricine e la masa; nu cerem varsta si nu colectam intentionat date de la copii. Comanda la pachet (nume si telefon) e destinata adultilor.' ] },
+        { h: '10. Gramaje, valori nutritionale si alergeni', p: [ op.alergeni ] },
+        { h: '11. Actualizari', p: [
+          'Politica se actualizeaza cand se schimba serviciul; versiunea in vigoare e intotdeauna cea de aici. <b>Ultima actualizare: 12 septembrie 2026.</b>' ] }
+      ],
+      termeni: (op) => [
+        { h: '1. Partile si rolul fiecareia', p: [
+          `Acest meniu digital („Aplicatia") este un instrument tehnic furnizat de <b>${op.platforma}</b> („Platforma"). Produsele afisate sunt vandute, preparate si servite de local: <b>${op.operator}</b>${op.adresa ? ', ' + op.adresa : ''} („Localul").`,
+          'Orice comanda trimisa prin Aplicatie este un contract <b>exclusiv intre tine si Local</b>. Platforma nu este parte la acest contract, nu vinde, nu prepara, nu manipuleaza si nu livreaza produse si nu incaseaza bani. Folosind Aplicatia, accepti acesti termeni.' ] },
+        { h: '2. Ce face si ce nu face Platforma', p: [
+          'Platforma afiseaza meniul asa cum l-a introdus Localul si transmite comanda de la telefonul tau la bar sau bucatarie. Atat.',
+          'Platforma <b>nu</b> stabileste preturi, <b>nu</b> scrie si <b>nu</b> verifica denumirile, descrierile, pozele, gramajele, ingredientele, valorile nutritionale sau alergenii, <b>nu</b> supravegheaza prepararea si <b>nu</b> emite bonuri fiscale. Toate acestea sunt introduse, actualizate si garantate <b>exclusiv de Local</b>.' ] },
+        { h: '3. Alergeni, intolerante, ingrediente', p: [
+          '<b>Informatiile despre alergeni si ingrediente afisate in Aplicatie sunt furnizate exclusiv de Local, au caracter orientativ si pot fi incomplete sau neactualizate.</b> Retetele se pot schimba, iar in bucatarie exista risc de contaminare incrucisata.',
+          '<b>Daca ai o alergie, o intoleranta sau o restrictie alimentara, esti obligat sa anunti direct personalul Localului inainte de a comanda.</b> Nu te baza pe Aplicatie pentru decizii legate de sanatate. Raspunderea pentru informarea corecta a consumatorilor (Regulamentul (UE) nr. 1169/2011, HG 106/2002 si legislatia privind siguranta alimentelor) si pentru orice reactie alergica, imbolnavire sau alt prejudiciu legat de produsele consumate <b>apartine integral si exclusiv Localului</b>.' ] },
+        { h: '4. Raspunderea Localului', p: [
+          'Localul raspunde singur si integral pentru: continutul si exactitatea meniului (preturi, descrieri, poze, gramaje, kcal, alergeni); calitatea, siguranta, temperatura si igiena produselor; respectarea normelor sanitar-veterinare, HACCP, de protectie a consumatorului (ANPC) si fiscale, inclusiv emiterea bonului fiscal; timpul de pregatire si de servire; comportamentul personalului; corectitudinea notei de plata si a restului; disponibilitatea produselor; orice reclamatie legata de produse sau de serviciu.' ] },
+        { h: '5. Excluderea raspunderii Platformei', p: [
+          'In limita maxima permisa de lege, Platforma <b>nu raspunde</b> pentru: alergeni, ingrediente, calitatea sau siguranta alimentelor si bauturilor; erori, omisiuni sau informatii neactualizate introduse de Local; preturi, nota de plata, rest, bon fiscal sau orice disputa financiara cu Localul; intarzieri, comenzi pierdute, gresite sau neonorate din cauza Localului; intreruperi ale internetului, ale telefonului tau sau ale serviciilor terte (gazduire, baza de date); daune indirecte, pierderi de profit sau de timp.',
+          'Aplicatia este oferita „ca atare". Platforma nu garanteaza functionarea neintrerupta si isi rezerva dreptul de a o modifica sau suspenda. Daca, in ciuda celor de mai sus, o instanta ar retine o raspundere a Platformei fata de tine, aceasta este limitata la valoarea comenzii in cauza. Nimic din acesti termeni nu limiteaza drepturile pe care ti le da legea in calitate de consumator si nici raspunderea pentru dol sau culpa grava.' ] },
+        { h: '6. Comenzi, modificari, anulari, plata', p: [
+          `Comanda devine ferma cand Localul o accepta. Poti scoate produse de pe telefon in fereastra de modificare afisata in fisa comenzii (implicit 5 minute de la trimitere); dupa, doar personalul o mai poate schimba. Localul poate anula o comanda (de ex. produs epuizat) — motivul iti apare pe telefon. Plata se face la Local, in modalitatile acceptate de el; Platforma nu proceseaza plati si nu pastreaza date de card. Impartirea notei din Aplicatie este doar un calcul orientativ.` ] },
+        { h: '7. Utilizare corecta', p: [
+          'Foloseste Aplicatia doar pentru comenzi reale, de la masa la care te afli. Sunt interzise comenzile in gluma, comenzile trimise pe numarul altei mese, cererile repetate abuzive sau orice incercare de a interfera cu functionarea Aplicatiei. Raspunzi pentru comenzile trimise de pe telefonul tau. Localul poate refuza sau anula comenzile abuzive si poate cere despagubiri pentru produsele deja preparate. Alcoolul nu se serveste minorilor; personalul poate cere un act de identitate.' ] },
+        { h: '8. Reclamatii si solutionarea disputelor', p: [
+          `Reclamatiile privind produsele, preturile, serviciul sau nota se adreseaza <b>Localului</b> (${op.operator}${op.contact !== op.contactPlatforma ? ', ' + op.contact : ''}). Pentru probleme tehnice ale Aplicatiei: <b>${op.contactPlatforma}</b>.`,
+          'Ca si consumator, te poti adresa Autoritatii Nationale pentru Protectia Consumatorilor (<b>anpc.ro</b>) sau platformei europene de solutionare online a litigiilor (<b>ec.europa.eu/odr</b>).' ] },
+        { h: '9. Proprietate intelectuala', p: [
+          'Software-ul, designul si codul Aplicatiei apartin Platformei. Denumirile, descrierile, pozele si marca Localului apartin Localului. Nu le poti copia, extrage sau refolosi fara acordul scris al titularului.' ] },
+        { h: '10. Legea aplicabila si actualizari', p: [
+          'Acesti termeni sunt guvernati de legea romana. Litigiile se solutioneaza pe cale amiabila, iar in lipsa, de instantele competente din Romania, fara a afecta drepturile tale de consumator. Termenii se pot actualiza; versiunea in vigoare e cea afisata aici. <b>Ultima actualizare: 12 septembrie 2026.</b>' ] }
+      ],
       privacyAllergensText: 'Precizare privind gramajele, valorile nutritionale si alergenii: gramajele, valorile calorice (kcal) si lista de ingrediente si alergeni afisate in acest meniu digital au caracter strict orientativ si informativ. Aceste date sunt introduse, actualizate si validate exclusiv de catre local, care raspunde singur de exactitatea si actualizarea lor, in conformitate cu Regulamentul (UE) nr. 1169/2011 privind informarea consumatorilor cu privire la produsele alimentare si cu restul legislatiei aplicabile in materie de siguranta alimentara si protectia consumatorului. Platforma care gazduieste si afiseaza acest meniu digital are exclusiv rolul de furnizor al instrumentului de vizualizare si comanda, nu intervine in prepararea, supravegherea sau verificarea continutului nutritional ori a alergenilor introdusi de local si este expres exonerata de raspundere pentru erori, omisiuni, variatii de reteta, contaminare incrucisata in bucatarie sau date neactualizate. Din cauza prepararii manuale, gramajele servite efectiv si valorile calorice pot varia fata de cele indicate. Recomandam insistent clientilor cu alergii, intolerante sau nevoi alimentare speciale sa anunte direct personalul inainte de a comanda, pentru informatii actualizate si personalizate.',
-      privacyTextData: 'Operator si temei legal: operatorul datelor este localul insusi (' + (window.SS_CONFIG.NUME || '') + '), care prelucreaza datele tale cu caracter personal (nume si telefon, la comenzile la pachet; recenzii, daca trimiti) in temeiul executarii relatiei contractuale/precontractuale necesare gestionarii comenzii si al interesului legitim de a imbunatati serviciul. Pastrare: datele comenzilor la pachet se sterg automat de pe serverele noastre in maximum 48 de ore; recenziile se pastreaza anonimizat, in scop statistic. Destinatari: pentru functionarea tehnica folosim ca persoana imputernicita Supabase Inc., care gazduieste baza de date, fara transferuri catre terti in scopuri comerciale. Drepturi: poti exercita oricand drepturile de acces, rectificare, stergere, opozitie, restrictionare a prelucrarii si portabilitate, adresandu-te personalului localului, si poti depune plangere la Autoritatea Nationala de Supraveghere a Prelucrarii Datelor cu Caracter Personal (www.dataprotection.ro) daca este cazul.',
-      privacyTextCookies: 'Cookie-uri si stocare locala: acest meniu digital nu foloseste cookie-uri de publicitate sau de urmarire in scopuri comerciale. Folosim stocarea locala a browserului (localStorage/sessionStorage), necesara tehnic pentru functionarea de baza a meniului, in urmatoarele scopuri: retinerea limbii alese, salvarea temporara a produselor adaugate in comanda (cos/favorite) si retinerea mesei sau a modului de comanda (la masa / la pachet) pe durata vizitei. Aceste informatii raman doar pe dispozitivul tau, nu se transmit catre serverele noastre decat la confirmarea comenzii si le poti sterge oricand din setarile de navigare ale browserului.',
       cookieBannerText: 'Folosim stocarea locala a browserului, necesara tehnic, ca sa retinem limba, masa si produsele din comanda ta. Nu folosim cookie-uri de publicitate sau de urmarire. Daca navighezi mai departe, esti de acord cu utilizarea lor.', cookieAcceptBtn: 'Accept si continui', cookieInfoBtn: 'Mai multe',
       busyBanner: '🔥 Barul are comenzi multe acum. Timpii de asteptare sunt putin mai mari decat de obicei.',
       fbTitle: 'Cum a fost la noi?', fbPlaceholder: 'Ce am putea imbunatati?', fbBtn: 'Trimite parerea', fbThanks: 'Multumim ca ne ajuti sa fim mai buni!', fbGoogle: 'Super! Ne-ar ajuta enorm o recenzie pe Google.', fbGoogleBtn: 'Lasa recenzie pe Google', fbDirectTitle: 'Multumim de vizita!', tablesFree: 'mese libere', tablesFull: 'Nicio masa libera', tablesFor: 'locuri',
@@ -987,15 +1015,19 @@
       cartItemsLabel: 'produse alese', emptyCartHint: 'Nu ai ales nimic inca.',
       // starea comenzii (bara de sus) si fisa comenzii
       stNoua: '📨 Trimisa — asteapta sa fie vazuta', stAcceptata: '✅ Acceptata — am vazut comanda, urmeaza sa vina',
-      stGata: '🍽️ Gata — vine acum la masa', stServita: '✔️ Servita. Pofta buna!', stAnulata: '❌ Anulata',
-      stScurt: { noua:'trimisa', acceptata:'acceptata', gata:'gata', finalizata:'servita', anulata:'anulata', expirata:'inchisa', in_lucru:'in lucru' },
+      stGata: '✅ Acceptata — vine acum la masa', stServita: '✔️ Preluata. Pofta buna!', stAnulata: '❌ Anulata',
+      // fara ospatari: cine pregateste o si aduce, deci nu mai exista „gata"
+      stFaraOspBautura: '🍹 Acceptata — bautura vine din moment in moment', stFaraOspMancare: '🍳 Acceptata — mancarea se pregateste, vine in cateva minute',
+      stFaraOspMixt: '✅ Acceptata — bauturile vin din moment in moment, mancarea in cateva minute',
+      osTimp: (mm, ss) => `se mai poate modifica ${mm}:${ss}`, osTimpNoua: 'se poate modifica pana e acceptata', osTimpExpirat: (m) => `fereastra de ${m} min a trecut`,
+      stScurt: { noua:'trimisa', acceptata:'acceptata', gata:'acceptata', finalizata:'preluata', anulata:'anulata', expirata:'inchisa', in_lucru:'in lucru' }, osMotiv: 'Motiv',
       trackerHint: 'Apasa: vezi comanda · scoate ceva · imparte nota',
       osTitle: 'Comanda ta', osSubTable: (m)=>`Masa ${m}`, osSubTakeaway: 'La pachet', osTotalLabel: 'Total comandat:', osSplitBtn: '➗ Imparte nota',
-      osHintEditable: 'Ai gresit ceva? Apasa − langa produs si dispare pe loc si de la bar. Se poate cat timp comanda nu e inca in pregatire.',
-      osHintLocked: 'Comanda e in pregatire sau servita. Pentru modificari, cheama ospatarul — el o poate schimba pe loc.',
+      osHintEditable: (m) => `Ai gresit ceva? Apasa − langa produs si dispare pe loc si de la bar. Ai ${m} minute de la trimitere (pana e acceptata, oricat).`,
+      osHintLocked: 'Comanda nu mai poate fi modificata de pe telefon. Cheama ospatarul — el o poate schimba pe loc.',
       sectBar: '🍸 Bar', sectKitchen: '🍳 Bucatarie', removeOne: 'Scoate o bucata',
       removeConfirm: (n)=>`Scoti „${n}” din comanda? Barul afla pe loc.`, removeLastConfirm: (n)=>`„${n}” e ultimul produs: comanda se anuleaza. Continui?`,
-      osErrTitle: 'Nu s-a putut', osErrLocked: 'Comanda e deja in pregatire si nu mai poate fi modificata de pe telefon. Cheama ospatarul.',
+      osErrTitle: 'Nu s-a putut', osErrLocked: 'Comanda nu mai poate fi modificata de pe telefon. Cheama ospatarul.',
       tablePrompt: 'Numarul mesei:', errSend: 'Nu s-a putut trimite comanda: ',
       helpLink: 'Cum functioneaza meniul?',
       turBtn: { next:'Urmatorul →', prev:'Inapoi', skip:'Sari peste', done:'Gata ✓' },
@@ -1007,7 +1039,7 @@
         { t:'Categorii', x:'Sau treci direct la o categorie. Bara se trage cu degetul.' },
         { t:'Adauga in comanda', x:'Apasa + ca sa pui un produs in comanda si − ca sa-l scoti. Numarul din mijloc e cate bucati ai ales.' },
         { t:'Comanda ta si ospatarul', x:'Cand ai ales ceva, butonul asta iti arata comanda si de aici o trimiti. Cand nu ai nimic in cos, de aici chemi ospatarul: ceri nota (cash sau card) sau ajutor.' },
-        { t:'Starea comenzii', x:'Dupa ce trimiti, sus apare starea: trimisa → acceptata (barul a vazut-o, urmeaza sa vina) → gata → servita. Apasa pe ea ca sa vezi ce ai comandat, sa scoti ceva daca ai gresit sau sa imparti nota intre voi.' },
+        { t:'Starea comenzii', x:'Dupa ce trimiti, sus apare starea: trimisa → acceptata (barul a vazut-o, urmeaza sa vina) → preluata. Apasa pe ea ca sa vezi ce ai comandat, sa scoti ceva daca ai gresit (ai 5 minute) sau sa imparti nota intre voi.' },
         { t:'Asta e tot', x:'Pofta buna! Daca ai nevoie de ceva, cheama ospatarul din butonul de jos.' }
       ]
     },
@@ -1039,10 +1071,67 @@
       smartWaiter: '💳 Pay / Help 🙋‍♂️', smartCart: 'My Order', splitTitle: 'Split the bill', splitDesc: 'How do you split the bill: equal parts, or everyone pays what they ordered?', sl1: 'Total:', sl2: 'Number of people:', sl3: 'Tip (%):', perPerson: '/ person',
       badgeEpuizat: 'Sold Out', ribbonEsp: 'Signature',
       alertPayload: { cash: 'Bill (Cash)', card: 'Bill (Card)', help: 'Help / Other' },
-      privacyTitle: 'Privacy Policy (GDPR)', privacyText: 'We collect your name and phone number solely to manage your takeaway order. Data is automatically deleted from our servers within 48 hours in compliance with GDPR.', privacyBtn: 'Privacy Policy', gdprNote: 'Your data will be auto-deleted in 48h (GDPR).',
+      privacyTitle: 'Privacy and Terms', privacyBtn: 'Privacy and Terms (GDPR)', gdprNote: 'Your data will be auto-deleted in 48h (GDPR).', privacyClose: 'Close',
+      termsTitle: 'Terms and Conditions of Use',
+      politica: (op) => [
+        { h: '1. Who processes your data', p: [
+          `The <b>controller</b> of your data — the one deciding why and how it is used — is the venue: <b>${op.operator}</b>${op.adresa ? ', ' + op.adresa : ''}. For any question about your data: <b>${op.contact}</b>.`,
+          `The digital menu is provided by <b>${op.platforma}</b>, acting solely as a <b>processor</b> (Art. 28 GDPR): it hosts and transmits orders on the venue's behalf and instructions, and never uses the data for its own purposes. For strictly technical issues with the menu: <b>${op.contactPlatforma}</b>.` ] },
+        { h: '2. What data we process', p: [
+          '<b>At the table:</b> your table number, the items you order, the notes you write and the time. No name, no account, no phone.',
+          '<b>Takeaway:</b> your name and phone number, only so we can tell you when the order is ready.',
+          '<b>Your feedback:</b> the rating (stars), the text and the table — only if you choose to send them.',
+          '<b>Technical:</b> a random order identifier kept on your phone, so that only you can change your order; the database stores only a one-way fingerprint (hash) of it. Your IP address reaches the hosting providers, as with any website, in their technical logs.',
+          '<b>What we do NOT do:</b> no account, no location, no tracking or advertising cookies, no profiling, no selling of data, no marketing messages.' ] },
+        { h: '3. Why, and on what legal basis', p: [
+          'Fulfilling your order (Art. 6(1)(b) GDPR); the venue\'s legitimate interest in keeping order records, preventing fraud and handling complaints (Art. 6(1)(f)); your consent for the feedback you send (Art. 6(1)(a)), which you can withdraw at any time by asking for it to be deleted.' ] },
+        { h: '4. How long we keep it', p: [
+          '<b>Orders:</b> deleted automatically 2 days after they are closed. <b>Takeaway name and phone:</b> 48 hours. <b>Activity log</b> (what happened to the order, no personal data from the table): 30 days. <b>Feedback:</b> 30 days, then statistics only, without the text.',
+          '<b>On your phone:</b> table and sent orders stay until you close the menu; language, guide and consent stay until you clear the site data in your browser.' ] },
+        { h: '5. Who receives it', p: [
+          '<b>Supabase Inc.</b> — database and real-time delivery, in data centres within the European Union. <b>Cloudflare Inc.</b> — page delivery. <b>Google LLC</b> — page fonts (when the page loads, your IP address reaches Google Fonts servers).',
+          'All of them act as processors under contract, with the EU standard contractual clauses for any transfer outside the Union. Nobody else receives your data and there is no transfer for commercial purposes.' ] },
+        { h: '6. How we protect it', p: [
+          'Encrypted connection (HTTPS). Orders can be read only by signed-in staff, each within their role, through rules enforced directly in the database. Your order can be changed from your phone only with your secret identifier, verified on the server. Every staff action is written to a log. Deletion is automatic, not up to anyone.' ] },
+        { h: '7. Your rights', p: [
+          'You have the right of access, rectification, erasure ("right to be forgotten"), restriction of processing, portability, objection and withdrawal of consent. Tell the staff or write to <b>' + op.contact + '</b>; we answer within 30 days.',
+          'If you are not satisfied, you can contact the Romanian supervisory authority (ANSPDCP), B-dul G-ral Gheorghe Magheru 28-30, Bucharest — <b>www.dataprotection.ro</b> — or the authority in your own country.' ] },
+        { h: '8. Local storage in your browser', p: [
+          'We use no cookies. The page keeps on your phone, without sending it anywhere: your <b>language</b>; the <b>items in your cart</b> (until you send the order); your <b>table and mode</b> (dine-in / takeaway) for the visit; the <b>orders you sent</b> and their secret identifier, for the visit; the <b>consent and guide</b> flags, so we don\'t show them again. You can clear them at any time from your browser settings (site data).' ] },
+        { h: '9. Minors', p: [
+          'Anyone at the table may browse the menu; we do not ask for age and do not knowingly collect data from children. Takeaway ordering (name and phone) is meant for adults.' ] },
+        { h: '10. Weights, nutritional values and allergens', p: [ op.alergeni ] },
+        { h: '11. Updates', p: [
+          'This policy is updated whenever the service changes; the version in force is always the one shown here. <b>Last updated: 12 September 2026.</b>' ] }
+      ],
+      termeni: (op) => [
+        { h: '1. The parties and their roles', p: [
+          `This digital menu (the "App") is a technical tool provided by <b>${op.platforma}</b> (the "Platform"). The products shown are sold, prepared and served by the venue: <b>${op.operator}</b>${op.adresa ? ', ' + op.adresa : ''} (the "Venue").`,
+          'Any order sent through the App is a contract <b>exclusively between you and the Venue</b>. The Platform is not a party to it, does not sell, prepare, handle or deliver products and does not collect money. By using the App you accept these terms.' ] },
+        { h: '2. What the Platform does and does not do', p: [
+          'The Platform displays the menu as entered by the Venue and transmits your order from your phone to the bar or kitchen. That is all.',
+          'The Platform does <b>not</b> set prices, does <b>not</b> write or verify names, descriptions, photos, weights, ingredients, nutritional values or allergens, does <b>not</b> supervise preparation and does <b>not</b> issue fiscal receipts. All of these are entered, updated and guaranteed <b>exclusively by the Venue</b>.' ] },
+        { h: '3. Allergens, intolerances, ingredients', p: [
+          '<b>Allergen and ingredient information shown in the App is provided exclusively by the Venue, is indicative only and may be incomplete or out of date.</b> Recipes may change and cross-contact can occur in the kitchen.',
+          '<b>If you have an allergy, an intolerance or a dietary restriction, you must tell the Venue staff directly before ordering.</b> Do not rely on the App for health-related decisions. Responsibility for correctly informing consumers (Regulation (EU) No 1169/2011 and applicable food-safety law) and for any allergic reaction, illness or other harm related to the products consumed <b>lies entirely and exclusively with the Venue</b>.' ] },
+        { h: '4. The Venue\'s responsibility', p: [
+          'The Venue alone is fully responsible for: the content and accuracy of the menu (prices, descriptions, photos, weights, kcal, allergens); the quality, safety, temperature and hygiene of the products; compliance with food-safety, HACCP, consumer-protection and tax rules, including issuing the fiscal receipt; preparation and service times; staff conduct; the correctness of the bill and change; product availability; any complaint about products or service.' ] },
+        { h: '5. Exclusion of the Platform\'s liability', p: [
+          'To the fullest extent permitted by law, the Platform is <b>not liable</b> for: allergens, ingredients, the quality or safety of food and drinks; errors, omissions or outdated information entered by the Venue; prices, the bill, change, fiscal receipts or any financial dispute with the Venue; delays, lost, wrong or unfulfilled orders caused by the Venue; outages of the internet, of your phone or of third-party services (hosting, database); indirect damages, loss of profit or of time.',
+          'The App is provided "as is". The Platform does not guarantee uninterrupted operation and may modify or suspend it. Should a court nevertheless find the Platform liable towards you, that liability is limited to the value of the order concerned. Nothing in these terms limits your statutory consumer rights or liability for fraud or gross negligence.' ] },
+        { h: '6. Orders, changes, cancellations, payment', p: [
+          `An order becomes firm once the Venue accepts it. You can remove items from your phone within the change window shown in your order sheet (5 minutes from sending by default); after that only the staff can change it. The Venue may cancel an order (e.g. item sold out) — the reason appears on your phone. Payment is made to the Venue, by the means it accepts; the Platform does not process payments and stores no card data. The bill-splitting feature is an indicative calculation only.` ] },
+        { h: '7. Fair use', p: [
+          'Use the App only for real orders from the table you are sitting at. Prank orders, orders sent under another table\'s number, repeated abusive requests or any attempt to interfere with the App are prohibited. You are responsible for orders sent from your phone. The Venue may refuse or cancel abusive orders and may claim compensation for products already prepared. Alcohol is not served to minors; staff may ask for ID.' ] },
+        { h: '8. Complaints and disputes', p: [
+          `Complaints about products, prices, service or the bill go to the <b>Venue</b> (${op.operator}${op.contact !== op.contactPlatforma ? ', ' + op.contact : ''}). For technical problems with the App: <b>${op.contactPlatforma}</b>.`,
+          'As a consumer you may contact the Romanian National Authority for Consumer Protection (<b>anpc.ro</b>) or the EU online dispute resolution platform (<b>ec.europa.eu/odr</b>).' ] },
+        { h: '9. Intellectual property', p: [
+          'The App\'s software, design and code belong to the Platform. The Venue\'s names, descriptions, photos and brand belong to the Venue. You may not copy, extract or reuse them without the owner\'s written consent.' ] },
+        { h: '10. Governing law and updates', p: [
+          'These terms are governed by Romanian law. Disputes are settled amicably or, failing that, by the competent courts of Romania, without affecting your consumer rights. The terms may be updated; the version in force is the one shown here. <b>Last updated: 12 September 2026.</b>' ] }
+      ],
       privacyAllergensText: 'Notice regarding weights, nutritional values and allergens: the weights, calorie (kcal) values, and the list of ingredients and allergens shown in this digital menu are provided for guidance and informational purposes only. This information is entered, updated, and validated exclusively by the establishment (the restaurant), which is solely responsible for its accuracy and for keeping it up to date, in accordance with EU Regulation No. 1169/2011 on the provision of food information to consumers and any other applicable food-safety and consumer-protection regulations. The technology platform hosting and displaying this digital menu acts solely as the provider of the display and ordering tool; it does not take part in preparing, supervising, or verifying the nutritional or allergen content entered by the establishment, and is therefore expressly released from any liability arising from errors, omissions, recipe variations, cross-contact in the kitchen, or outdated information. Because dishes are prepared by hand, the actual weight served and calorie values may vary from those indicated. Customers with allergies, intolerances, or special dietary needs are strongly advised to inform staff directly before ordering, to receive current, personalized information.',
-      privacyTextData: 'Data controller and legal basis: the data controller is the establishment itself (' + (window.SS_CONFIG.NUME || '') + '), which processes your personal data (name and phone number, for takeaway orders; reviews, if you submit any) on the legal basis of performing the contractual/pre-contractual relationship needed to manage your order and its legitimate interest in improving the service. Retention: takeaway order data is automatically deleted from our servers within a maximum of 48 hours; reviews are kept in anonymized form for statistical purposes. Recipients: for technical operation we use Supabase Inc. as data processor, which hosts the database; we do not share your data with third parties for commercial purposes. Rights: you may exercise your rights of access, rectification, erasure, objection, restriction of processing, and portability at any time by contacting the establishment staff, and you may lodge a complaint with your national data protection authority if you consider it necessary.',
-      privacyTextCookies: 'Cookies and local storage: this digital menu does not use advertising or tracking cookies for commercial purposes. We use browser local storage (localStorage/sessionStorage), technically necessary for the menu\'s basic operation, for the following purposes: remembering your selected language, temporarily saving the items added to your order (cart/favorites), and keeping track of your table or ordering mode (dine-in/takeaway) during your visit. This information is stored only on your own device, is not transmitted to our servers except when you confirm your order, and can be deleted at any time by clearing your browser\'s browsing data.',
       cookieBannerText: 'We use browser local storage, technically necessary, to remember your language, your table and the items in your order. We do not use advertising or tracking cookies. By continuing to browse you accept its use.', cookieAcceptBtn: 'Accept and continue', cookieInfoBtn: 'More info',
       busyBanner: '🔥 The bar is very busy right now. Waiting times are slightly longer than usual.',
       fbTitle: 'How was your evening?', fbPlaceholder: 'What can we improve?', fbBtn: 'Send Feedback', fbThanks: 'Thank you for your feedback!', fbGoogle: 'Great! We would love a review on Google.', fbGoogleBtn: 'Leave Google Review', fbDirectTitle: 'Thanks for visiting us!', tablesFree: 'tables free', tablesFull: 'No tables free', tablesFor: 'seats',
@@ -1050,15 +1139,18 @@
       splitModeEqual: 'Equal parts', splitModeProduct: 'By product', splitProductHint: 'Assign each product to a person.', personLabel: 'Person',
       cartItemsLabel: 'items selected', emptyCartHint: 'You haven\'t picked anything yet.',
       stNoua: '📨 Sent — waiting to be seen', stAcceptata: '✅ Accepted — we\'ve seen your order, it\'s on its way',
-      stGata: '🍽️ Ready — coming to your table now', stServita: '✔️ Served. Enjoy!', stAnulata: '❌ Cancelled',
-      stScurt: { noua:'sent', acceptata:'accepted', gata:'ready', finalizata:'served', anulata:'cancelled', expirata:'closed', in_lucru:'in progress' },
+      stGata: '✅ Accepted — coming to your table now', stServita: '✔️ Delivered. Enjoy!', stAnulata: '❌ Cancelled',
+      stFaraOspBautura: '🍹 Accepted — your drinks are on their way', stFaraOspMancare: '🍳 Accepted — your food is being prepared, a few minutes',
+      stFaraOspMixt: '✅ Accepted — drinks any moment now, food in a few minutes',
+      osTimp: (mm, ss) => `can still be changed for ${mm}:${ss}`, osTimpNoua: 'can be changed until accepted', osTimpExpirat: (m) => `the ${m}-minute window has passed`,
+      stScurt: { noua:'sent', acceptata:'accepted', gata:'accepted', finalizata:'delivered', anulata:'cancelled', expirata:'closed', in_lucru:'in progress' }, osMotiv: 'Reason',
       trackerHint: 'Tap: see your order · remove something · split the bill',
       osTitle: 'Your order', osSubTable: (m)=>`Table ${m}`, osSubTakeaway: 'Takeaway', osTotalLabel: 'Ordered total:', osSplitBtn: '➗ Split the bill',
-      osHintEditable: 'Made a mistake? Tap − next to the item and it disappears from the bar instantly. Possible until the order goes into preparation.',
-      osHintLocked: 'The order is being prepared or has been served. For changes, call the waiter — they can edit it on the spot.',
+      osHintEditable: (m) => `Made a mistake? Tap − next to the item and it disappears from the bar instantly. You have ${m} minutes from sending (until accepted, no limit).`,
+      osHintLocked: 'The order can no longer be changed from your phone. Call the waiter — they can edit it on the spot.',
       sectBar: '🍸 Bar', sectKitchen: '🍳 Kitchen', removeOne: 'Remove one',
       removeConfirm: (n)=>`Remove "${n}" from your order? The bar is notified instantly.`, removeLastConfirm: (n)=>`"${n}" is the last item: the order will be cancelled. Continue?`,
-      osErrTitle: 'Not possible', osErrLocked: 'The order is already being prepared and can no longer be changed from your phone. Please call the waiter.',
+      osErrTitle: 'Not possible', osErrLocked: 'The order can no longer be changed from your phone. Please call the waiter.',
       tablePrompt: 'Table number:', errSend: 'The order could not be sent: ',
       helpLink: 'How does the menu work?',
       turBtn: { next:'Next →', prev:'Back', skip:'Skip', done:'Done ✓' },
@@ -1070,7 +1162,7 @@
         { t:'Categories', x:'Or jump straight to a category. The bar scrolls sideways.' },
         { t:'Add to your order', x:'Tap + to add an item and − to remove it. The number in the middle is how many you picked.' },
         { t:'Your order and the waiter', x:'Once you\'ve picked something, this button shows your order and sends it. When your cart is empty, this is where you call the waiter: ask for the bill (cash or card) or for help.' },
-        { t:'Order status', x:'After sending, the status appears at the top: sent → accepted (the bar has seen it, it\'s coming) → ready → served. Tap it to see what you ordered, remove something if you made a mistake, or split the bill.' },
+        { t:'Order status', x:'After you send it, the status shows at the top: sent → accepted (the bar has seen it, it\'s on its way) → delivered. Tap it to see what you ordered, remove something if you made a mistake (you have 5 minutes) or split the bill between you.' },
         { t:'That\'s it', x:'Enjoy! If you need anything, call the waiter from the button at the bottom.' }
       ]
     },
@@ -1145,10 +1237,8 @@
 
     document.getElementById('btnPrivacyPolicy').textContent = t.privacyBtn;
     document.getElementById('privacyTitle').textContent = t.privacyTitle;
-    document.getElementById('privacyText').textContent = t.privacyText;
-    document.getElementById('privacyTextData').textContent = t.privacyTextData;
-    document.getElementById('privacyTextCookies').textContent = t.privacyTextCookies;
-    document.getElementById('privacyTextAllergens').textContent = t.privacyAllergensText;
+    document.getElementById('privacyCloseBtn').textContent = t.privacyClose;
+    randeazaPolitica();
     document.getElementById('txtGdprNote').textContent = t.gdprNote;
     document.getElementById('cookieBannerText').textContent = t.cookieBannerText;
     document.getElementById('btnCookieAccept').textContent = t.cookieAcceptBtn;
@@ -1176,6 +1266,28 @@
     try {
         if(typeof renderTablesBadge === 'function') renderTablesBadge();
     } catch(e) { }
+  }
+
+  // Politica de confidentialitate si termenii, pe sectiuni, cu datele din
+  // config.js: localul (OPERATOR, ADRESA, EMAIL_GDPR) e operatorul de date si
+  // vanzatorul; platforma (PLATFORMA, EMAIL_PLATFORMA) e doar furnizorul
+  // instrumentului. Daca lipsesc, cad pe numele localului / texte generice.
+  function randeazaPolitica() {
+    const t = I18N[currentLang] || I18N.ro;
+    const en = currentLang === 'en';
+    const contact = escapeHTML(CFG.EMAIL_GDPR || (en ? 'the venue staff' : 'personalul localului'));
+    const op = {
+      operator: escapeHTML(CFG.OPERATOR || CFG.NUME || ''),
+      adresa:   escapeHTML(CFG.ADRESA || ''),
+      contact,
+      platforma: escapeHTML(CFG.PLATFORMA || (en ? 'the platform provider' : 'furnizorul platformei')),
+      contactPlatforma: escapeHTML(CFG.EMAIL_PLATFORMA || '') || contact,
+      alergeni: escapeHTML(t.privacyAllergensText)
+    };
+    const sectiuni = (lista) => lista.map(sec =>
+      `<div class="pol-sect"><h3>${sec.h}</h3>${sec.p.map(x => `<p>${x}</p>`).join('')}</div>`).join('');
+    document.getElementById('privacyBody').innerHTML =
+      sectiuni(t.politica(op)) + `<h2 class="pol-h2">${t.termsTitle}</h2>` + sectiuni(t.termeni(op));
   }
 
   const langBtn = document.getElementById('langToggleBtn');
@@ -1604,6 +1716,26 @@
       document.getElementById('busyBanner').style.display = isBusy ? 'block' : 'none';
   }
 
+  // Setari ale localului pe care le vede si telefonul clientului: modul fara
+  // ospatari (schimba textele de stare) si fereastra de modificare.
+  let faraOspatariClient = false;
+  let fereastraMinuteClient = 5;
+  function aplicaSetari(rows) {
+      const vazute = new Set();
+      (rows || []).forEach(r => {
+          if (vazute.has(r.actiune)) return;   // cel mai nou primul
+          vazute.add(r.actiune);
+          const d = r.detalii || {};
+          if (r.actiune === 'setari_busy') applyBusyState(!!d.isBusy);
+          if (r.actiune === 'setari_ospatari') faraOspatariClient = !!d.faraOspatari;
+          if (r.actiune === 'setari_modificare') { const m = parseInt(d.minute, 10); fereastraMinuteClient = m > 0 ? m : 5; }
+          // comenzile la pachet apar doar daca localul le-a pornit
+          if (r.actiune === 'setari_pachet') document.getElementById('btnTakeaway').style.display = d.activ ? '' : 'none';
+      });
+      actualizeazaTracker();
+      if (document.getElementById('orderSheetOverlay').classList.contains('open')) randeazaFisaComanda();
+  }
+
   // --- Comenzile trimise in vizita asta -----------------------------------
   // Raman in sessionStorage cat e deschis meniul: clientul le vede apasand pe
   // bara de stare, poate scoate produse (cat timp nu sunt in pregatire) si
@@ -1666,7 +1798,19 @@
           finalizata: [t.stServita, '100%'],
           anulata:    [t.stAnulata, '100%']
       };
-      statText.textContent = harta[st][0];
+      let text = harta[st][0];
+      // fara ospatari nu exista „gata": cine pregateste o si aduce, deci ii
+      // spunem clientului doar ca vine — bautura imediat, mancarea in cateva minute
+      if (faraOspatariClient && (st === 'acceptata' || st === 'gata')) {
+          const vii = comenziSesiune.filter(c => !['anulata', 'expirata', 'finalizata'].includes(c.status));
+          const areBar = vii.some(c => c.sectiune !== 'bucatarie'), areBuc = vii.some(c => c.sectiune === 'bucatarie');
+          text = areBar && areBuc ? t.stFaraOspMixt : areBuc ? t.stFaraOspMancare : t.stFaraOspBautura;
+      }
+      if (st === 'anulata') {
+          const motive = [...new Set(comenziSesiune.filter(c => c.status === 'anulata' && c.motiv_anulare).map(c => c.motiv_anulare))];
+          if (motive.length) text += ' — ' + motive.join('; ');
+      }
+      statText.textContent = text;
       progress.style.width = harta[st][1];
       statText.style.color = st === 'anulata' ? 'var(--coral)' : '';
       progress.style.background = st === 'anulata' ? 'var(--coral)' : '';
@@ -1685,6 +1829,8 @@
       const laSchimbare = (p) => {
           const c = comenziSesiune.find(x => x.id === p.new.id); if (!c) return;
           c.status = p.new.status; c.produse = p.new.produse; c.total = p.new.total;
+          if (p.new.created_at) c.created_at = p.new.created_at;
+          if (p.new.motiv_anulare !== undefined) c.motiv_anulare = p.new.motiv_anulare;
           if (c.status === 'expirata') comenziSesiune = comenziSesiune.filter(x => x.id !== c.id);
           salveazaComenziSesiune(); actualizeazaTracker();
           if (document.getElementById('orderSheetOverlay').classList.contains('open')) randeazaFisaComanda();
@@ -1700,6 +1846,14 @@
       } catch(e) { console.warn('Urmarire comenzi:', e); }
   }
 
+  // Cand telefonul revine din blocare, legatura live poate fi moarta:
+  // reincarcam starea comenzilor si setarile din baza.
+  document.addEventListener('visibilitychange', () => {
+      if (document.hidden) return;
+      if (comenziSesiune.length) reiaComenziSesiune();
+      checkSettings();
+  });
+
   // La deschidere: comenzile din sesiune se reincarca din baza (clientul a
   // dat refresh sau a inchis si a redeschis meniul intre timp).
   async function reiaComenziSesiune() {
@@ -1709,7 +1863,7 @@
       try {
           const ids = comenziSesiune.map(c => c.id);
           const { data } = await _supabase.from('comenzi')
-              .select('id,status,produse,total,mesa,created_at,sectiune').in('id', ids);
+              .select('id,status,produse,total,mesa,created_at,sectiune,motiv_anulare').in('id', ids);
           const gasite = new Map((data || []).map(r => [r.id, r]));
           comenziSesiune = comenziSesiune.filter(c => gasite.has(c.id)).map(c => Object.assign(c, gasite.get(c.id)))
               .filter(c => c.status !== 'expirata');
@@ -1758,9 +1912,18 @@
       [...comenziSesiune].sort((a, b) => new Date(a.created_at) - new Date(b.created_at)).forEach(c => {
           const st = c.status;
           const inchisa = ['anulata', 'expirata'].includes(st);
-          const poateSterge = ['noua', 'acceptata'].includes(st) && !!c.token && !CFG.DEMO;
+          // aceeasi regula ca pe server: pana e acceptata oricand, apoi doar in
+          // fereastra — chiar daca barul a apasat intre timp „gata"
+          const sec = Math.round(fereastraMinuteClient * 60 - (Date.now() - new Date(c.created_at).getTime()) / 1000);
+          const inFereastra = st === 'noua' || ((st === 'acceptata' || st === 'gata') && sec > 0);
+          const poateSterge = inFereastra && !!c.token && !CFG.DEMO;
           const ora = new Date(c.created_at).toLocaleTimeString(currentLang === 'en' ? 'en-GB' : 'ro-RO', { hour: '2-digit', minute: '2-digit' });
-          html += `<div class="os-grup"><div class="os-head"><span>${c.sectiune === 'bucatarie' ? t.sectKitchen : t.sectBar} · ${ora}</span><span class="os-st os-st-${escapeHTML(st)}">${escapeHTML(t.stScurt[st] || st)}</span></div>`;
+          let timp = '';
+          if (st === 'noua') timp = `<span class="os-timp">${t.osTimpNoua}</span>`;
+          else if (st === 'acceptata' || st === 'gata') timp = sec > 0
+              ? `<span class="os-timp" data-os-timp="${c.id}">${t.osTimp(Math.floor(sec / 60), String(sec % 60).padStart(2, '0'))}</span>`
+              : `<span class="os-timp expirat">${t.osTimpExpirat(fereastraMinuteClient)}</span>`;
+          html += `<div class="os-grup"><div class="os-head"><span>${c.sectiune === 'bucatarie' ? t.sectKitchen : t.sectBar} · ${ora}</span><span class="os-st os-st-${escapeHTML(st)}">${escapeHTML(t.stScurt[st] || st)}</span></div>${timp ? `<div class="os-head" style="margin-top:-2px;">${timp}</div>` : ''}${st === 'anulata' && c.motiv_anulare ? `<div class="os-row os-note">${escapeHTML(t.osMotiv)}: ${escapeHTML(c.motiv_anulare)}</div>` : ''}`;
           (c.produse || []).forEach((p, i) => {
               if (p.cantitate > 0) {
                   const suma = Number(p.pret_unitar) * p.cantitate;
@@ -1775,12 +1938,27 @@
       list.innerHTML = html || `<p>${t.emptyCartHint}</p>`;
       document.getElementById('osTotal').textContent = total.toFixed(2) + ' ' + CFG.MONEDA;
       document.getElementById('osSplitBtn').style.display = total > 0 ? 'block' : 'none';
-      document.getElementById('osHint').textContent =
-          comenziSesiune.some(c => ['noua', 'acceptata'].includes(c.status)) ? t.osHintEditable : t.osHintLocked;
+      const vreunaModificabila = comenziSesiune.some(c => c.status === 'noua'
+          || ((c.status === 'acceptata' || c.status === 'gata') && Date.now() - new Date(c.created_at).getTime() < fereastraMinuteClient * 60000));
+      document.getElementById('osHint').textContent = vreunaModificabila ? t.osHintEditable(fereastraMinuteClient) : t.osHintLocked;
   }
 
+  // numaratoarea inversa din fisa, cat e deschisa
+  setInterval(() => {
+      if (!orderSheet.classList.contains('open')) return;
+      const t = I18N[currentLang] || I18N.ro;
+      let expirata = false;
+      document.querySelectorAll('[data-os-timp]').forEach(el => {
+          const c = comenziSesiune.find(x => String(x.id) === el.dataset.osTimp); if (!c) return;
+          const sec = Math.round(fereastraMinuteClient * 60 - (Date.now() - new Date(c.created_at).getTime()) / 1000);
+          if (sec <= 0) { expirata = true; return; }
+          el.textContent = t.osTimp(Math.floor(sec / 60), String(sec % 60).padStart(2, '0'));
+      });
+      if (expirata) randeazaFisaComanda();   // dispar butoanele „−"
+  }, 1000);
+
   // Scoate o bucata dintr-un produs. Serverul verifica token-ul, refuza daca
-  // e deja in pregatire si, daca n-a mai ramas nimic, anuleaza comanda.
+  // a trecut fereastra si, daca n-a mai ramas nimic, anuleaza comanda.
   document.getElementById('osList').addEventListener('click', async (e) => {
       const b = e.target.closest('.os-del'); if (!b || b.disabled) return;
       const t = I18N[currentLang] || I18N.ro;
@@ -1797,9 +1975,10 @@
       document.querySelectorAll('.os-del').forEach(x => x.disabled = true);
       const { data, error } = await _supabase.rpc('client_modifica_comanda', { p_id: c.id, p_token: c.token, p_produse: payload });
       if (error) {
-          randeazaFisaComanda();
-          const blocata = /pregatire|modificata/i.test(error.message || '');
+          const blocata = /pregatire|modificata|minute/i.test(error.message || '');
           showCustomAlert(t.osErrTitle, blocata && currentLang === 'en' ? t.osErrLocked : (error.message || t.osErrLocked));
+          // starea de pe server e cea buna: o reluam, ca butoanele sa dispara
+          reiaComenziSesiune().then(randeazaFisaComanda);
           return;
       }
       c.status = data.status; c.produse = data.produse; c.total = data.total;
@@ -2005,8 +2184,10 @@
 
   async function checkSettings() {
       try {
-          const {data} = await _supabase.from('jurnal_activitate').select('detalii').eq('actiune', 'setari_busy').order('created_at', {ascending:false}).limit(1);
-          applyBusyState(data && data.length > 0 && data[0].detalii ? !!data[0].detalii.isBusy : false);
+          const {data} = await _supabase.from('jurnal_activitate').select('actiune, detalii')
+              .in('actiune', ['setari_busy', 'setari_ospatari', 'setari_modificare', 'setari_pachet'])
+              .order('created_at', {ascending:false}).limit(60);
+          if (data) aplicaSetari(data);
       } catch(e) {}
   }
 
@@ -2100,7 +2281,7 @@
                   .on('postgres_changes', { event: '*', schema: 'public', table: 'comenzi' }, () => refreshTablesStatus())
                   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'jurnal_activitate' }, p => {
                       if(p.new.actiune === 'mesa_liberada' || p.new.actiune === 'config_mese') refreshTablesStatus();
-                      if(p.new.actiune === 'setari_busy') applyBusyState(p.new.detalii && !!p.new.detalii.isBusy);
+                      if(['setari_busy','setari_ospatari','setari_modificare','setari_pachet'].includes(p.new.actiune)) aplicaSetari([p.new]);
                   }).subscribe();
 
                 // Meniul se schimba sub clienti fara sa dea refresh: daca

@@ -24,6 +24,19 @@ window.SS_CONFIG = {
   LOGO:      '',
   GOOGLE_REVIEW: '',
 
+  // --- Protectia datelor (apar in politica de confidentialitate din meniu) ---
+  // Denumirea legala a firmei care opereaza localul, adresa sediului si o
+  // adresa de email la care clientii isi pot exercita drepturile GDPR.
+  // Daca raman goale, politica foloseste numele localului si „personalul localului".
+  OPERATOR:   '',
+  ADRESA:     '',
+  EMAIL_GDPR: '',
+  // Cine pune la dispozitie meniul digital (firma ta). Apare in termeni si
+  // in politica, ca furnizor al instrumentului — nu ca vanzator al
+  // produselor. Contactul e doar pentru probleme tehnice.
+  PLATFORMA:       '',
+  EMAIL_PLATFORMA: '',
+
   CULORI: {
     '--bg-base':'#101013','--bg-card':'#1a1a1f','--bg-panel':'#202027','--bg-elevated':'#2a2a32',
     '--ink':'#f4f2ee','--ink-soft':'#9a9aa4','--pink-main':'#3a3a46','--pink-bright':'#c9c2b4',

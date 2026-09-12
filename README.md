@@ -26,8 +26,11 @@ din prima, fără configurare: numele folderului **este** calea din URL.
 1. Copiezi folderul `skyfall/` și îl redenumești. Numele devine calea:
    `bistro/` → `domeniu.ro/bistro`.
 2. Creezi un proiect Supabase nou și rulezi `supabase/01_schema.sql`, apoi
-   `supabase/04_comenzi_live.sql` (acceptare, modificări din mers, închiderea
-   zilei). Ambele sunt deja aplicate pe M3 și Sweet & Sour.
+   `04_comenzi_live.sql` (acceptare, modificări din mers, închiderea zilei) și
+   `05_fereastra_modificare.sql` (fereastra de modificare, setări citibile de
+   clienți) și `06_anulari_bonuri_pachet.sql` (motiv obligatoriu la anulare,
+   bonul pe numele barmanului, comenzi la pachet opționale). Toate sunt deja
+   aplicate pe M3 și Sweet & Sour.
 3. Completezi `config.js` — URL, cheie publicabilă, nume, slogan, culori,
    link de recenzie Google.
 4. Creezi conturile de personal (`supabase/creeaza_conturi_staff.py`) și le dai
@@ -78,11 +81,17 @@ Cât timp există o comandă `noua` pentru rolul curent, telefonul **nu tace**:
 
 1. un bip scurt,
 2. vocea spune, în română, „Comandă nouă, masa 4" (sau „la pachet"),
-3. apoi un bâzâit continuu — undă pătrată, sirenă și tremur, trecute printr-un
-   compresor ca să iasă cât mai tare din difuzor — care ține **până apasă
-   cineva „Am văzut, accept"**, nu până se termină un sunet.
+3. apoi o alarmă continuă — un „ding-dong" pe două note, undă triunghiulară,
+   cu pauză între bătăi; se aude clar în bar fără să zgârie urechea — care
+   ține **până apasă cineva „Am văzut, accept"**, nu până se termină un sunet.
 
-Toate trei sună indiferent de butonul „Voce". Butonul (fostul „Sunet")
+Masa se spune **o singură dată**: o comandă cu bar și bucătărie vine ca două
+rânduri și, fără asta, vocea zicea „masa patru" de două ori la rând. Textul
+vorbit e cu diacritice („Comandă nouă, masa 4", „Masa 4 cheamă ospătarul"),
+altfel vocea îl pronunța strâmb. **Directorul nu primește alarma**: pe
+telefonul lui doar bipul scurt și bara de acceptare.
+
+Toate sună indiferent de butonul „Voce". Butonul (fostul „Sunet")
 controlează doar ce se mai spune după masă: bucătăria primește lista de
 produse, barul notele clientului. Bara roșie cu „Am văzut, accept" stă sus, în
 orice ecran al panoului, cât timp mai e ceva neacceptat; același buton e și pe
@@ -131,11 +140,135 @@ Funcția pune un semnal tranzacțional (`app.modificare_permisa`) pe care
 `protect_comanda_update` îl respectă; orice alt UPDATE rămâne restricționat ca
 înainte.
 
+### Fereastra de modificare
+
+Cine poate schimba o comandă și când (regula e aplicată pe server, în cele
+două funcții RPC; interfața doar o arată):
+
+| Cine | Cât timp |
+|---|---|
+| clientul, de pe telefon | cât e `noua` (nimeni n-a văzut-o); apoi **N minute de la trimitere**, chiar dacă barul a apăsat între timp „Gata"; niciodată după `finalizata` |
+| ospătarul | cât e `noua`; apoi N minute de la trimitere |
+| barul / bucătăria (cei care o pregătesc), directorul | oricând, cât e deschisă |
+
+N e „Fereastra de modificare" din Șef → Setări (3/5/10/15/30 min, implicit 5),
+rând `setari_modificare` în jurnal, scris doar de director. Pe card apare
+„✏️ se mai poate modifica 3:20" (se reîmprospătează la 10 s); în fișa
+comenzii clientul are aceeași numărătoare, la secundă, iar butoanele „−"
+dispar când expiră.
+
+### Modul fără ospătari, fără „Gata" și „Servit"
+
+Când nu e nimeni pe sală, cel care pregătește o și duce, deci nu mai are rost
+un pas „gata" separat. Cu **Mod fără ospătari** pornit, barul și bucătăria au
+pe card doar: „Am văzut, accept" → **„Preluată"** (la pachet: „Ridicată"),
+care închide comanda direct în `finalizata`. Clientul nu mai vede „gata": după
+acceptare vede „🍹 Acceptată — băutura vine din moment în moment", „🍳 …
+mâncarea se pregătește, vine în câteva minute", sau ambele, după ce a comandat.
+
+Cu ospătari, pasul `gata` rămâne în panou (așa află ospătarul când să vină să
+o ia), dar clientul nu-l vede ca „gata": vede „✅ Acceptată — vine acum la
+masă", apoi „✔️ Preluată. Poftă bună!" în loc de „Servită".
+
+Ca telefonul clientului să știe modul, `setari_ospatari`, `setari_modificare`
+și `setari_pachet` au devenit citibile de clienții anonimi (alături de
+`config_mese`, `setari_busy`, `mesa_liberada`).
+
+### Anularea cere mereu un motiv
+
+Când personalul apasă ✕, panoul cere un motiv de **minim 5 litere** și nu
+merge mai departe fără el. Regula e și în baza de date
+(`protect_comanda_update`): o anulare fără motiv e refuzată chiar dacă cineva
+ocolește ecranul. Motivul stă în `comenzi.motiv_anulare`, în jurnal pe numele
+celui care a anulat, pe cardul din Istoric, în „Anulări suspecte" și **pe
+telefonul clientului** („❌ Anulată — Nu mai avem ceai verde"). Odată scris nu
+se mai schimbă (doar directorul poate).
+
+### Bonul rămâne pe numele barmanului
+
+„Confirmă bonul" din Istoric cere o confirmare cu totalul, iar serverul scrie
+singur `bon_scos_de` și `bon_scos_la` (ce trimite ecranul e ignorat). Bifa
+**nu se mai poate scoate de la bar** — dacă e o greșeală, o scoate directorul,
+și rămâne în jurnal. Cardul arată „🧾 Bon confirmat de bar la 21:14", iar în
+panoul directorului există „Bonuri confirmate (pe barman)": câte și cât, pe
+fiecare cont, lângă „Bonuri neconfirmate".
+
+### Comenzile la pachet sunt opționale
+
+Șef → Setări → „Comenzi la pachet", implicit **oprit**: clientul vede la
+început doar „Sunt la o masă". Pornit, apare și „La pachet" (nume și telefon,
+șterse după 48 h). Rând `setari_pachet` în jurnal, scris doar de director.
+
 ### Fișa comenzii împarte nota
 
 Tot din fișa comenzii: **„Împarte nota"** — în părți egale sau pe produs
 (fiecare plătește ce a comandat), cu bacșiș. Calculatorul e același cu cel din
 coș, doar că lucrează pe ce a fost comandat efectiv în vizita asta.
+
+## Fiecare masă cu timerul ei
+
+În Sala, fiecare masă ocupată arată „⏱ 1h 05m" — de când e ocupată (prima
+comandă de după ultima eliberare) și, dacă diferă, de când a comandat ultima
+dată. Se reîmprospătează din minut în minut. Atingând masa, fereastra arată
+amândouă valorile în clar.
+
+### A cerut nota: mov, 15 minute, apoi liberă
+
+Din clipa în care clientul cere nota, masa devine **mov** și pe card apare o
+numărătoare inversă la secundă, „💳 12:34": are 15 minute să plătească și să
+plece, apoi masa se eliberează singură (`mesa_liberada` automat, ca la
+eliberarea manuală). Nu contează dacă ospătarul a apucat să confirme plata —
+timpul curge de la cerere. Cererea de notă **neconfirmată** rămâne în lista de
+comenzi și în bara „mese vor să plătească" și după eliberare, ca să nu dispară
+fără s-o fi văzut cineva; ajutorul și cererile confirmate se curăță.
+
+La verificare am găsit și reparat: alertele de ajutor în română („Ajutor /
+Altceva") nu erau recunoscute de panou — regexul știa doar `Help`/`Ayuda`.
+
+## Ce se întâmplă când pică legătura
+
+Legătura „live" cu baza (websocket) moare fără să anunțe când telefonul stă
+blocat sau când netul are sughițuri. Panoul se apără în patru feluri:
+
+- când ecranul revine (`visibilitychange`) și când revine netul (`online`),
+  reîncarcă tot din bază;
+- oricum, din minut în minut, cât e vizibil;
+- canalul realtime, când se reconectează, cere din nou totul;
+- comenzile `noua` apărute între timp sunt anunțate ca și cum ar fi intrat
+  atunci (bip, masă, bâzâit).
+
+Fără net apare o bară galbenă sus. Meniul clientului face același lucru la
+revenirea ecranului: reîncarcă starea comenzilor și setările.
+
+## Politica de confidențialitate și termenii
+
+Meniul are o politică completă, în 11 secțiuni, în română și engleză, generată
+din `config.js`: cine e operatorul (localul: `OPERATOR`, `ADRESA`,
+`EMAIL_GDPR` — dacă lipsesc, cade pe numele localului și „personalul
+localului") și cine e persoana împuternicită (platforma: `PLATFORMA`,
+`EMAIL_PLATFORMA`, doar pentru probleme tehnice), ce date se
+prelucrează și ce **nu** (fără cont, locație, urmărire, profilare, marketing),
+temeiul legal pe articole, duratele reale de păstrare (comenzi 2 zile,
+contacte la pachet 48 h, jurnal 30 de zile), împuterniciții (Supabase — UE,
+Cloudflare, Google Fonts — cu menționarea IP-ului), măsurile de protecție,
+drepturile și ANSPDCP, tabelul stocării locale, minori, alergeni, data
+actualizării. Completează câmpurile din `config.js` înainte de deschidere.
+
+Sub politică, în același ecran, sunt **Termenii și condițiile** (10 secțiuni,
+RO/EN), scriși ca să separe clar rolurile: platforma e furnizor de instrument,
+localul e vânzătorul. Contractul de vânzare e exclusiv între client și local;
+localul răspunde singur de meniu, prețuri, gramaje, **alergeni**, siguranța și
+calitatea alimentelor, bon fiscal, personal, notă; platforma nu răspunde
+pentru niciuna dintre acestea, iar clientul cu alergii e obligat să anunțe
+personalul înainte de a comanda. Mai sunt: utilizarea corectă (comenzi reale,
+de la masa ta), reclamații (local / ANPC / ODR), proprietate intelectuală,
+legea română. E un text solid, dar nu ține loc de avocat: înainte de a-l pune
+în fața clienților, dă-l unui jurist să-l valideze pentru firma ta.
+
+Am scos pozele de rezervă de pe internet (LoremFlickr / Unsplash): o poză
+lipsă aducea o fotografie la întâmplare de pe alt site și trimitea IP-ul
+clientului unui terț. Acum apare un cadru neutru desenat local. Panoul de
+personal are și el un paragraf despre ce se reține despre angajați.
 
 ## Ora la care se închide ziua
 

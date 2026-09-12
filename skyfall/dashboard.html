@@ -174,6 +174,7 @@
   .table-card.status-red { border-color: var(--danger); background: rgba(239, 68, 68, 0.16); box-shadow: 0 0 16px rgba(239,68,68,0.35), inset 0 0 12px rgba(239,68,68,0.15); animation: pulseRed 2s infinite; }
   .table-card.status-purple { border-color: var(--purple); background: rgba(168, 85, 247, 0.18); box-shadow: 0 0 16px rgba(168,85,247,0.4), inset 0 0 12px rgba(168,85,247,0.18); animation: pulsePurple 2s infinite; }
   .table-card.status-blue { border-color: var(--blue); background: rgba(59, 130, 246, 0.16); box-shadow: inset 0 0 12px rgba(59,130,246,0.2); }
+  .table-card.status-purple .t-timp { color:#e9d5ff; font-size:12px; }
   .table-card.editing-mode { border-style: dashed; }
   .table-card .t-del { position: absolute; top: 4px; right: 6px; font-size: 13px; color: var(--danger); font-weight: 900; display: none; }
   .table-card.editing-mode .t-del { display: block; }
@@ -400,6 +401,18 @@
   @media (prefers-reduced-motion: reduce){ .order-card.neacceptata, .order-card.modificata{ animation:none; } }
   @media (max-width:800px){ .btn-accept{ font-size:14px; padding:12px 8px; } .btn-edit, .btn-cancel{ width:50px; } }
 
+  /* Fara conexiune: bara galbena sus, pana revine netul */
+  #offlineBar{ display:none; background:rgba(245,158,11,.18); border-bottom:1px solid var(--warning); color:#fcd34d;
+    text-align:center; padding:9px 14px; font-weight:700; font-size:13px; flex-shrink:0; }
+  #offlineBar.on{ display:block; }
+  /* Timerul fiecarei mese din sala */
+  .table-card .t-timp{ font-family:'Space Mono',monospace; font-size:11px; font-weight:700; color:var(--text); opacity:.9; margin-top:2px; }
+  .table-card.status-free .t-timp{ display:none; }
+  @media (max-width:800px){ .table-card .t-timp{ font-size:10px; } }
+  /* Cat mai poate fi modificata (ospatar / client) */
+  .fereastra{ font-size:11px; color:var(--text-muted); font-family:'Space Mono',monospace; }
+  .fereastra.expirata{ color:var(--danger); }
+
   /* Butoane din antetul de telefon (notificari, ghid) */
   .mobile-actions{ display:none; align-items:center; gap:8px; }
   .btn-ico{ background:rgba(255,255,255,.06); border:1px solid var(--border); color:var(--text); border-radius:100px;
@@ -527,6 +540,7 @@
     </div>
   </header>
 
+  <div id="offlineBar">⚠️ Fara conexiune la internet — comenzile nu se actualizeaza. Se reia singur cand revine netul.</div>
   <div id="paymentAlertBanner" class="payment-alert-banner" style="display:none;">
       💳 <span id="paymentAlertCount">0</span> mese vor sa plateasca — apasa ca sa vezi
   </div>
@@ -565,8 +579,9 @@
             <span><i style="background:var(--bg); border:2px solid var(--border);"></i> Libera</span>
             <span><i style="background:rgba(34,197,94,0.3); border:2px solid var(--success);"></i> Ocupata, sub 1h</span>
             <span><i style="background:rgba(245,158,11,0.4); border:2px solid var(--warning);"></i> Peste 1h — trece un ospatar</span>
-            <span><i style="background:rgba(239,68,68,0.4); border:2px solid var(--danger);"></i> Peste 2h sau nota confirmata</span>
-            <span><i style="background:rgba(59,130,246,0.4); border:2px solid var(--blue);"></i> Are nevoie de ajutor / a cerut nota</span>
+            <span><i style="background:rgba(239,68,68,0.4); border:2px solid var(--danger);"></i> Peste 2h fara comanda</span>
+            <span><i style="background:rgba(168,85,247,0.4); border:2px solid var(--purple);"></i> A cerut nota — 15 min sa plateasca, apoi se elibereaza singura</span>
+            <span><i style="background:rgba(59,130,246,0.4); border:2px solid var(--blue);"></i> Are nevoie de ajutor</span>
          </div>
        </div>
     </div>
@@ -659,6 +674,27 @@
          <div id="oraResetStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
       </div>
 
+      <div data-grup="setari" class="dash-panel">
+         <h3>✏️ Fereastra de modificare</h3>
+         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <p style="color:var(--text-muted); font-size:13px; max-width:76%;">
+              Cate minute dupa trimitere mai poate fi modificata o comanda de
+              client (de pe telefon) si de ospatar. Cat timp nimeni n-a
+              acceptat-o, se poate oricum; dupa, doar pana expira fereastra —
+              chiar daca barul a apasat deja „Gata". Barul, bucataria si
+              directorul o pot modifica oricand cat e deschisa.
+            </p>
+            <select id="fereastraMin" style="padding:11px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px;">
+              <option value="3">3 minute</option>
+              <option value="5">5 minute</option>
+              <option value="10">10 minute</option>
+              <option value="15">15 minute</option>
+              <option value="30">30 minute</option>
+            </select>
+         </div>
+         <div id="fereastraStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+      </div>
+
       <div data-grup="setari" class="dash-panel" style="border-color: var(--warning);">
          <h3 style="color: var(--warning);">🔥 Ore de varf (avertizare bar)</h3>
          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
@@ -671,15 +707,30 @@
          <h3 style="color: var(--blue);">🙋 Mod fara ospatari</h3>
          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <p style="color:var(--text-muted); font-size:13px; max-width:80%;">
-              Cand nu e niciun ospatar in tura, activeaza asta. Comenzile nu mai
-              asteapta pasul „ospatar”: barul si bucataria vad direct butonul
-              „Servit” dupa ce marcheaza „Gata”, iar cererile de la mese (nota,
-              ajutor) ajung direct la bar. Se opreste singur cand revine tura
-              normala — nu uita sa-l stingi.
+              Cand nu e niciun ospatar in tura, activeaza asta. Dispar pasii
+              „Gata” si „Servit”: barul si bucataria apasa „Am vazut, accept”,
+              pregatesc si duc la masa, apoi inchid comanda cu un singur buton,
+              „Preluata”. Clientul vede „acceptata — bautura vine din moment in
+              moment / mancarea se pregateste”, apoi „preluata”. Cu ospatari,
+              pasul „Gata” ramane: asa afla ospatarul cand sa vina s-o ia.
+              Cererile de la mese (nota, ajutor) ajung direct la bar. Nu se
+              opreste singur — nu uita sa-l stingi cand revine tura normala.
             </p>
             <label class="switch"><input type="checkbox" id="toggleFaraOspatari"><span class="slider"></span></label>
          </div>
          <div id="faraOspatariStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+      </div>
+
+      <div data-grup="setari" class="dash-panel">
+         <h3>🥡 Comenzi la pachet</h3>
+         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <p style="color:var(--text-muted); font-size:13px; max-width:80%;">
+              Oprit: clientul vede in meniu doar „Sunt la o masa”. Pornit: apare
+              si „La pachet” (cu nume si telefon, sterse dupa 48 de ore).
+            </p>
+            <label class="switch"><input type="checkbox" id="toggleComenziPachet"><span class="slider"></span></label>
+         </div>
+         <div id="comenziPachetStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
       </div>
 
       <div data-grup="meniu" class="dash-panel" style="border-color: var(--accent);">
@@ -751,6 +802,12 @@
           <ul class="top-list" id="pendingByStaffList"></ul>
       </div>
 
+      <div data-grup="personal" class="dash-panel">
+          <h3>🧾 Bonuri confirmate (pe barman)</h3>
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Cine a confirmat ce bon si la ce ora ramane scris pe comanda si in jurnal. Barmanul nu poate scoate bifa inapoi; daca e o greseala, o scoti tu din Istoric.</p>
+          <ul class="top-list" id="bonuriByStaffList"></ul>
+      </div>
+
       <div data-grup="risc" class="dash-panel" style="border-color: var(--danger);">
           <h3 style="color: var(--danger);">🗑️ Zona de risc</h3>
           <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Sterge definitiv din Supabase tot istoricul comenzilor finalizate si anulate. Actiunea nu poate fi anulata. Comenzile active nu sunt afectate.</p>
@@ -801,6 +858,7 @@
     <button class="modal-close" onclick="document.getElementById('privacyOverlay').classList.remove('open')">&times;</button>
     <h2>Politica interna de confidentialitate</h2>
     <p style="font-size:14px; color: var(--text-muted); margin-top:10px;">Sistemul Skyfall gestioneaza date operationale. Numele si numerele de telefon colectate pentru comenzile la pachet se sterg automat din baza de date (Supabase) dupa 48 de ore.</p>
+    <p style="font-size:13px; color: var(--text-muted); margin-top:10px; line-height:1.5;">Despre tine, ca membru al personalului: adresa de email a contului si fiecare actiune facuta din panou (acceptare, „Gata", „Servit", anulare cu motivul scris, confirmarea bonului, modificare de comanda, schimbari de setari) se scriu in jurnalul de activitate, cu ora exacta, si sunt vizibile directorului. Jurnalul se pastreaza 30 de zile. Daca activezi notificarile, adresa tehnica a abonamentului push (fara continut personal) se pastreaza pana te deconectezi sau pana o revoci din telefon. Comenzile finalizate se sterg dupa 2 zile. Datele stau in centre de date din Uniunea Europeana (Supabase).</p>
   </div>
 </div>
 
@@ -958,8 +1016,8 @@
   // Praguri de timp pentru mese, in minute de la ultima comanda.
   const PRAG_VERIFICA_MIN = 60;    // portocaliu: trece un ospatar pe la masa
   const PRAG_LUNG_MIN     = 120;   // rosu: masa sta de peste 2 ore
-  const PAYMENT_ALERT_REGEX = /Efectivo|Tarjeta|Cash|Card|Esp[eè]ces|Carte/i;
-  const HELP_ALERT_REGEX = /Ayuda|Help|Aide/i;
+  const PAYMENT_ALERT_REGEX = /Efectivo|Tarjeta|Cash|Card|Esp[eè]ces|Carte|Nota \(|Bill \(/i;
+  const HELP_ALERT_REGEX = /Ayuda|Help|Aide|Ajutor/i;
 
   const searchDesc = document.getElementById('tableFilterInputDesc');
   const searchMob = document.getElementById('tableFilterInputMob');
@@ -1289,6 +1347,48 @@
       await loadOraReset();
   });
 
+  // --- Fereastra de modificare --------------------------------------------
+  // Cate minute dupa trimitere mai pot modifica clientul (de pe telefon) si
+  // ospatarul o comanda. Regula e aplicata pe server; aici doar o afisam.
+  let fereastraMinute = 5;
+
+  async function loadFereastra() {
+      const {data} = await _supabase.from('jurnal_activitate')
+          .select('detalii, created_at')
+          .eq('actiune', 'setari_modificare')
+          .order('created_at', {ascending:false}).limit(1);
+      const val = data && data[0] && data[0].detalii && parseInt(data[0].detalii.minute, 10);
+      fereastraMinute = val > 0 ? val : 5;
+      const sel = document.getElementById('fereastraMin');
+      if (sel) sel.value = String([3,5,10,15,30].includes(fereastraMinute) ? fereastraMinute : 5);
+      const st = document.getElementById('fereastraStare');
+      if (st) st.textContent = `Clientul si ospatarul mai pot modifica ${fereastraMinute} minute dupa trimitere.`;
+      return fereastraMinute;
+  }
+  const selFer = document.getElementById('fereastraMin');
+  if (selFer) selFer.addEventListener('change', async (e) => {
+      const val = parseInt(e.target.value, 10);
+      const ok = await logActivity('setari_modificare', null, { minute: val });
+      if (ok === false) {
+          e.target.value = String(fereastraMinute);
+          alert('Nu s-a putut salva. Doar directorul poate schimba fereastra.');
+          return;
+      }
+      await loadFereastra();
+      renderOrders();
+  });
+
+  // Cate secunde mai are o comanda in fereastra (negativ = expirata).
+  function secundeRamase(order) {
+      return Math.round(fereastraMinute * 60 - (Date.now() - new Date(order.created_at).getTime()) / 1000);
+  }
+  function textFereastra(order) {
+      if (order.status === 'noua') return 'se poate modifica pana e acceptata';
+      const sec = secundeRamase(order);
+      if (sec <= 0) return `fereastra de ${fereastraMinute} min a trecut`;
+      return `se mai poate modifica ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+  }
+
   // --- Alarma pana la acceptare ------------------------------------------
   // O comanda e „neacceptata" cat timp sta in starea `noua`. Starea e in baza,
   // nu pe telefon: cand cineva apasa „Am vazut, accept" pe un dispozitiv,
@@ -1334,44 +1434,40 @@
       }
   }
 
-  // Bazait continuu: unda patrata joasa plus una taioasa, cu sirena si tremur,
-  // trecute printr-un compresor ca sa iasa cat mai tare din difuzorul
-  // telefonului. Facut sa deranjeze pana e oprit.
+  // Alarma continua: un „ding-dong" pe doua note, in unda triunghiulara, cu
+  // pauza intre bataile clopotelului. Se aude clar in bar, dar nu zgarie
+  // urechea. Nu se opreste singura — tine pana apasa cineva „accept".
+  // Directorul nu primeste bazaitul: pe telefonul lui doar bipul scurt.
   function pornesteBazait() {
-      if (bazaitNoduri) return;
+      if (bazaitNoduri || userRole === 'director') return;
       const ctx = ctxAudio(); if (!ctx) return;
       try {
-          const comp = ctx.createDynamicsCompressor();
-          comp.threshold.value = -30; comp.knee.value = 10; comp.ratio.value = 12;
-          comp.attack.value = 0.003; comp.release.value = 0.1;
-          const master = ctx.createGain(); master.gain.value = 1.0;
-          comp.connect(master); master.connect(ctx.destination);
-
-          const o1 = ctx.createOscillator(); o1.type = 'square';   o1.frequency.value = 230;
-          const o2 = ctx.createOscillator(); o2.type = 'sawtooth'; o2.frequency.value = 920;
-          const g1 = ctx.createGain(); g1.gain.value = 0.6;
-          const g2 = ctx.createGain(); g2.gain.value = 0.25;
-          // sirena: frecventa sare intre doua note, de 5 ori pe secunda
-          const sirena = ctx.createOscillator(); sirena.type = 'square'; sirena.frequency.value = 5;
-          const sirG1 = ctx.createGain(); sirG1.gain.value = 90;
-          const sirG2 = ctx.createGain(); sirG2.gain.value = 240;
-          sirena.connect(sirG1); sirG1.connect(o1.frequency);
-          sirena.connect(sirG2); sirG2.connect(o2.frequency);
-          // tremur rapid, ca un interfon
-          const trem = ctx.createOscillator(); trem.type = 'square'; trem.frequency.value = 16;
-          const tremG = ctx.createGain(); tremG.gain.value = 0.5;
-          const tremBase = ctx.createGain(); tremBase.gain.value = 0.5;
-          trem.connect(tremG); tremG.connect(tremBase.gain);
-          o1.connect(g1); o2.connect(g2); g1.connect(tremBase); g2.connect(tremBase); tremBase.connect(comp);
-          [o1, o2, sirena, trem].forEach(n => n.start());
+          const master = ctx.createGain(); master.gain.value = 0.45;
+          master.connect(ctx.destination);
+          const o1 = ctx.createOscillator(); o1.type = 'triangle'; o1.frequency.value = 784;   // sol5
+          const o2 = ctx.createOscillator(); o2.type = 'triangle'; o2.frequency.value = 659;   // mi5
+          const g1 = ctx.createGain(); g1.gain.value = 0;
+          const g2 = ctx.createGain(); g2.gain.value = 0;
+          o1.connect(g1); o2.connect(g2); g1.connect(master); g2.connect(master);
+          o1.start(); o2.start();
+          // ding (sol) - dong (mi) - pauza, la fiecare 1.6 secunde
+          const bate = () => {
+              const t = ctx.currentTime;
+              g1.gain.cancelScheduledValues(t); g2.gain.cancelScheduledValues(t);
+              g1.gain.setValueAtTime(0.0001, t); g1.gain.exponentialRampToValueAtTime(1, t + 0.02); g1.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+              g2.gain.setValueAtTime(0.0001, t + 0.4); g2.gain.exponentialRampToValueAtTime(1, t + 0.42); g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.95);
+          };
+          bate();
+          const ritm = setInterval(bate, 1600);
           bazaitNoduri = { opreste() {
-              [o1, o2, sirena, trem].forEach(n => { try { n.stop(); } catch(e) {} });
+              clearInterval(ritm);
+              [o1, o2].forEach(n => { try { n.stop(); } catch(e) {} });
               try { master.disconnect(); } catch(e) {}
           } };
-      } catch(e) { console.warn('Bazait:', e); }
+      } catch(e) { console.warn('Alarma:', e); }
       if (navigator.vibrate) {
-          try { navigator.vibrate([600, 200, 600, 200, 600]); } catch(e) {}
-          vibratieTimer = setInterval(() => { try { navigator.vibrate([600, 200, 600, 200, 600]); } catch(e) {} }, 2400);
+          try { navigator.vibrate([300, 150, 300]); } catch(e) {}
+          vibratieTimer = setInterval(() => { try { navigator.vibrate([300, 150, 300]); } catch(e) {} }, 3200);
       }
   }
 
@@ -1422,6 +1518,10 @@
   function etichetaMasaVorbita(o) {
       return isTakeawayMesa(o.mesa) ? 'la pachet' : 'masa ' + String(o.mesa).replace('#', '');
   }
+  // Numele scurt al unui cont (partea dinaintea @), pentru carduri si rapoarte.
+  function numeScurt(email) {
+      return String(email || '').split('@')[0];
+  }
 
   // Comenzile pentru care rolul curent trebuie sa apese „accept".
   function alarmaPentruMine(o) {
@@ -1463,23 +1563,32 @@
       const parti = [];
       if (userRole === 'bucatarie') {
           const items = (order.produse || []).filter(p => p.cantitate > 0)
-              .map(p => (p.cantitate === 1 ? 'o bucata ' : p.cantitate + ' bucati ') + p.nume);
+              .map(p => (p.cantitate === 1 ? 'o bucată ' : p.cantitate + ' bucăți ') + p.nume);
           if (items.length) parti.push(items.join(', '));
       }
       (order.produse || []).filter(p => p.cantitate === 0 && String(p.nume).startsWith('📝'))
-          .forEach(n => { const t = String(n.nume).replace('📝', '').trim(); if (t) parti.push('Nota: ' + t); });
+          .forEach(n => { const t = String(n.nume).replace('📝', '').trim(); if (t) parti.push('Notă: ' + t); });
       return parti.join('. ');
   }
 
-  // Bip, masa, apoi bazaitul — pentru fiecare comanda noua care ma priveste.
+  // Bip, masa, apoi alarma — pentru fiecare comanda noua care ma priveste.
+  // Masa se spune o singura data: o comanda cu bar si bucatarie vine ca doua
+  // randuri, si nu vrem „masa patru" de doua ori la rand. Textul vorbit e cu
+  // diacritice, ca vocea sa-l pronunte corect.
+  const meseAnuntate = {};
   function anuntaComandaNoua(order) {
       if (!alarmaPentruMine(order)) return;
+      const cheie = String(order.mesa);
+      const acum = Date.now();
+      if (meseAnuntate[cheie] && acum - meseAnuntate[cheie] < 20000) { sincronizeazaAlarma(); return; }
+      meseAnuntate[cheie] = acum;
+      if (userRole === 'director') { bipScurt(1); sincronizeazaAlarma(); return; }
       opresteBazait();                  // ca sa se auda bipul si masa
       voceOcupata = true;
       bipScurt(1);
       const text = isTakeawayMesa(order.mesa)
-          ? 'Comanda noua, la pachet.'
-          : `Comanda noua, masa ${String(order.mesa).replace('#', '')}.`;
+          ? 'Comandă nouă, la pachet.'
+          : `Comandă nouă, masa ${String(order.mesa).replace('#', '')}.`;
       setTimeout(() => rosteste(text, () => {
           if (soundEnabled && (userRole === 'bucatarie' || userRole === 'bar')) {
               const detalii = detaliiVorbite(order);
@@ -1511,7 +1620,7 @@
               bipScurt(2);
               const ce = String((order.produse[0] && order.produse[0].nume) || '')
                   .replace('🔔 ALERTĂ OSPĂTAR:', '').replace('ALERTĂ OSPĂTAR:', '').trim();
-              setTimeout(() => rosteste(`Masa ${String(order.mesa).replace('#', '')} cheama ospatarul. ${ce}`), 700);
+              setTimeout(() => rosteste(`Masa ${String(order.mesa).replace('#', '')} cheamă ospătarul. ${ce}`), 700);
               if (navigator.vibrate) { try { navigator.vibrate([400, 200, 400, 200, 800]); } catch(e) {} }
           }
           if (userRole === 'ospatar') {
@@ -1628,10 +1737,12 @@
     loadFaraOspatari().then(() => renderOrders());
     loadFaraBucatarie().then(() => { renderOrders(); sincronizeazaAlarma(); });
     loadOraReset().then(() => { if (currentTab === 'admin') calculateDirectorStats(); });
+    loadFereastra().then(() => renderOrders());
+    loadComenziPachet();
     if(userRole === 'director') loadFeedbacks();
 
     subscribeRealtime();
-    setInterval(updateTimersUI, 30000);
+    setInterval(updateTimersUI, 10000);
 
     // prima intrare pe acest dispozitiv, pe rolul asta: ghidul porneste singur
     setTimeout(() => pornesteGhidDashboard(false), 1400);
@@ -1826,7 +1937,7 @@
               alerteAnuntate[t.nr] = t.prag;
               if (t.prag === 'long') {
                   sunetAlerta(3);
-                  rosteste(`Atentie, masa ${t.nr} sta de peste doua ore.`);
+                  rosteste(`Atenție, masa ${t.nr} stă de peste două ore.`);
               } else {
                   sunetAlerta(1);
                   rosteste(`Masa ${t.nr} asteapta. Treci pe la ea.`);
@@ -1880,20 +1991,23 @@
       let lastOrderTime = Math.max(...ordersForTable.map(o => new Date(o.created_at).getTime()));
 
       let hasHelpAlert = ordersForTable.some(o => o.status === 'noua' && o.produse.some(p => p.nume.includes('ALERTĂ') && HELP_ALERT_REGEX.test(p.nume)));
-      let hasPendingPaymentAlert = ordersForTable.some(o => o.status === 'noua' && o.produse.some(p => p.nume.includes('ALERTĂ') && PAYMENT_ALERT_REGEX.test(p.nume)));
 
-      if(hasHelpAlert || hasPendingPaymentAlert) {
-          if(hasHelpAlert && hasPendingPaymentAlert) return { status:'blue', label:'Ajutor + a cerut nota (neconfirmata)' };
-          if(hasHelpAlert) return { status:'blue', label:'Are nevoie de ajutor' };
-          return { status:'blue', label:'A cerut nota (neconfirmata)' };
-      }
+      // de cand e ocupata masa (prima comanda de dupa ultima eliberare) si de
+      // cand a comandat ultima data — fiecare masa isi are timerul ei
+      const firstOrderTime = Math.min(...ordersForTable.map(o => new Date(o.created_at).getTime()));
+      const minuteOcupata = Math.round((Date.now() - firstOrderTime) / 60000);
+      const minuteUltima  = Math.round((Date.now() - lastOrderTime) / 60000);
 
-      let confirmedPaymentOrders = ordersForTable.filter(o => o.status === 'finalizata' && o.confirmada_la && o.produse.some(p => p.nume.includes('ALERTĂ') && PAYMENT_ALERT_REGEX.test(p.nume)));
-      if(confirmedPaymentOrders.length > 0) {
-          let lastConfirmTime = Math.max(...confirmedPaymentOrders.map(o => new Date(o.confirmada_la).getTime()));
-          let remainingMin = Math.max(0, Math.ceil(AUTO_FREE_MINUTES - (Date.now() - lastConfirmTime) / 60000));
-          return { status:'red', label: remainingMin > 0 ? `Nota confirmata · se elibereaza in ${remainingMin} min` : 'Nota confirmata · se elibereaza...' };
+      // A cerut nota: din clipa aia are 15 minute sa plateasca si sa plece,
+      // apoi masa se elibereaza singura. Culoare mov si numaratoare inversa
+      // pe card, indiferent daca ospatarul a apucat sa confirme plata sau nu.
+      const termen = termenEliberare(ordersForTable);
+      if (termen) {
+          const confirmata = ordersForTable.some(o => o.status === 'finalizata' && o.confirmada_la && esteCerereNota(o));
+          return { status:'purple', termen, minute: minuteUltima, ocupata: minuteOcupata,
+                   label: (confirmata ? 'Nota confirmata' : 'A cerut nota') + ` · se elibereaza in ${formatSecunde(termen)}` + (hasHelpAlert ? ' · cere si ajutor' : '') };
       }
+      if(hasHelpAlert) return { status:'blue', label:'Are nevoie de ajutor', minute: minuteUltima, ocupata: minuteOcupata };
 
       // Trei praguri, masurate de la ultima comanda a mesei:
       //   sub 60 min  -> verde, totul normal
@@ -1901,14 +2015,30 @@
       //   peste 120   -> rosu, masa sta de prea mult timp fara sa comande nimic
       const elapsedMin = (Date.now() - lastOrderTime) / 60000;
       if (elapsedMin >= PRAG_LUNG_MIN) {
-          return { status:'long', minute: Math.round(elapsedMin),
+          return { status:'long', minute: Math.round(elapsedMin), ocupata: minuteOcupata,
                    label:`Ocupata de peste ${Math.floor(PRAG_LUNG_MIN/60)}h — verifica masa` };
       }
       if (elapsedMin >= PRAG_VERIFICA_MIN) {
-          return { status:'check', minute: Math.round(elapsedMin),
+          return { status:'check', minute: Math.round(elapsedMin), ocupata: minuteOcupata,
                    label:`${Math.round(elapsedMin)} min fara comanda — trece un ospatar` };
       }
-      return { status:'ok', minute: Math.round(elapsedMin), label:'Ocupata' };
+      return { status:'ok', minute: Math.round(elapsedMin), ocupata: minuteOcupata, label:`Ocupata de ${formatMinute(minuteOcupata)}` };
+  }
+
+  function esteCerereNota(o) {
+      return (o.produse || []).some(p => p.nume && p.nume.includes('ALERTĂ') && PAYMENT_ALERT_REGEX.test(p.nume));
+  }
+  // Momentul (ms) la care masa se elibereaza singura: 15 minute de la ultima
+  // cerere de nota (in asteptare sau confirmata). null daca n-a cerut nota.
+  function termenEliberare(ordersForTable) {
+      const cereri = ordersForTable.filter(o => (o.status === 'noua' || o.status === 'finalizata') && esteCerereNota(o));
+      if (!cereri.length) return null;
+      return Math.max(...cereri.map(o => new Date(o.created_at).getTime())) + AUTO_FREE_MINUTES * 60000;
+  }
+  // „12:34" (minute:secunde) pana la un termen
+  function formatSecunde(termen) {
+      const s = Math.max(0, Math.round((termen - Date.now()) / 1000));
+      return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
   }
 
   async function checkAutoFreeTables() {
@@ -1917,22 +2047,33 @@
 
       for(const tableNr of strKeys) {
           const lastFreed = freedTables[tableNr] || 0;
-          let confirmedOrders = allOrders.filter(o => String(o.mesa) === tableNr && o.status === 'finalizata' && o.confirmada_la &&
-              new Date(o.confirmada_la).getTime() > lastFreed &&
-              o.produse.some(p => p.nume.includes('ALERTĂ') && PAYMENT_ALERT_REGEX.test(p.nume)));
-          if(confirmedOrders.length === 0) continue;
-
-          let lastConfirmTime = Math.max(...confirmedOrders.map(o => new Date(o.confirmada_la).getTime()));
-          const elapsedMin = (Date.now() - lastConfirmTime) / 60000;
-          const guardKey = tableNr + ':' + lastConfirmTime;
-          if(elapsedMin >= AUTO_FREE_MINUTES && !autoFreedGuard.has(guardKey)) {
+          const aleMesei = allOrders.filter(o => String(o.mesa) === tableNr && o.status !== 'anulata' && new Date(o.created_at).getTime() > lastFreed);
+          const termen = termenEliberare(aleMesei);
+          if (!termen) continue;
+          const guardKey = tableNr + ':' + termen;
+          if (Date.now() >= termen && !autoFreedGuard.has(guardKey)) {
               autoFreedGuard.add(guardKey);
               await logActivity('mesa_liberada', null, { mesa: tableNr, automat: true });
               freedTables[tableNr] = Date.now();
-              cleanupTableAlerts(tableNr);
+              // cererea de nota neconfirmata ramane in lista, sa nu dispara
+              // fara s-o fi vazut cineva; ce e confirmat sau ajutor se curata
+              cleanupTableAlerts(tableNr, true);
           }
       }
   }
+
+  // Numaratoarea inversa de pe cardurile mov (secunda cu secunda) si
+  // eliberarea automata cand ajunge la zero.
+  setInterval(() => {
+      const carduri = document.querySelectorAll('.table-card [data-termen]');
+      let expirat = false;
+      carduri.forEach(el => {
+          const termen = Number(el.dataset.termen);
+          el.textContent = '💳 ' + formatSecunde(termen);
+          if (Date.now() >= termen) expirat = true;
+      });
+      if (expirat) checkAutoFreeTables().then(() => { if (currentTab === 'map') renderTablesGrid(); updateMapBadge(); });
+  }, 1000);
 
   async function freeTableManually(tableNr) {
       await logActivity('mesa_liberada', null, { mesa: String(tableNr), automat: false });
@@ -1943,12 +2084,13 @@
       cleanupTableAlerts(tableNr);
   }
 
-  async function cleanupTableAlerts(tableNr) {
+  async function cleanupTableAlerts(tableNr, pastreazaNotaNeconfirmata) {
       const strNr = String(tableNr);
       try {
           const toDelete = allOrders.filter(o => String(o.mesa) === strNr &&
               o.produse.some(p => p.nume.includes('ALERTĂ')) &&
-              (o.status === 'finalizata' || o.status === 'noua'));
+              (o.status === 'finalizata' || o.status === 'noua') &&
+              !(pastreazaNotaNeconfirmata && o.status === 'noua' && esteCerereNota(o)));
           if(toDelete.length === 0) return;
           const ids = toDelete.map(o => o.id);
           const { error } = await _supabase.from('comenzi').delete().in('id', ids);
@@ -1987,6 +2129,12 @@
       if(fullMsg) fullMsg.style.display = freeCount === 0 ? 'inline' : 'none';
   }
 
+  // „42m" sau „1h 05m"
+  function formatMinute(m) {
+      m = Math.max(0, Math.round(m));
+      return m < 60 ? `${m}m` : `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}m`;
+  }
+
   function renderTablesGrid() {
       actualizeazaAlerteMese();
       const grid = document.getElementById('tablesGrid');
@@ -1998,10 +2146,17 @@
           const st = getTableStatus(mesa.numar);
           let card = document.createElement('div');
           card.className = `table-card status-${st.status === 'free' ? 'free' : st.status} ${isEditingMap ? 'editing-mode' : ''}`;
+          // fiecare masa ocupata isi arata timerul: de cand sta si de cand a
+          // comandat ultima data (se reimprospateaza din minut in minut)
+          // a cerut nota: numaratoarea inversa pana se elibereaza singura
+          const timp = st.status === 'free' ? '' : st.termen
+              ? `<div class="t-timp" title="ocupata de ${formatMinute(st.ocupata)} · ${escapeHTML(st.label)}">⏱ ${formatMinute(st.ocupata)}</div><div class="t-timp" data-termen="${st.termen}">💳 ${formatSecunde(st.termen)}</div>`
+              : `<div class="t-timp" title="ocupata de ${formatMinute(st.ocupata)} · ultima comanda acum ${formatMinute(st.minute)}">⏱ ${formatMinute(st.ocupata)}${st.minute >= 10 && st.minute !== st.ocupata ? ` · ${formatMinute(st.minute)}` : ''}</div>`;
           card.innerHTML = `
              ${isEditingMap ? `<span class="t-del" data-action="del">✕</span>` : ''}
              <div class="t-num">${escapeHTML(mesa.numar)}</div>
              <div class="t-seats">🪑 ${escapeHTML(mesa.scaune)}</div>
+             ${timp}
           `;
           card.onclick = (e) => {
               if(isEditingMap) {
@@ -2047,7 +2202,8 @@
 
   function openTableAction(tableNr, statusInfo) {
       document.getElementById('taTitle').textContent = `Masa ${tableNr}`;
-      document.getElementById('taStatus').textContent = statusInfo.label;
+      document.getElementById('taStatus').textContent = statusInfo.label +
+          (statusInfo.status !== 'free' ? ` · ocupata de ${formatMinute(statusInfo.ocupata)}, ultima comanda acum ${formatMinute(statusInfo.minute)}` : '');
       const canFree = (userRole === 'director' || userRole === 'ospatar' || userRole === 'bar');
       const freeBtn = document.getElementById('taFreeTable');
       const viewBtn = document.getElementById('taViewOrders');
@@ -2091,6 +2247,33 @@
       }
       return faraOspatari;
   }
+
+  // Comenzi la pachet: implicit oprite. Clientul citeste aceeasi setare si
+  // ascunde butonul „La pachet" cand e oprita.
+  let comenziPachet = false;
+  async function loadComenziPachet() {
+      const {data} = await _supabase.from('jurnal_activitate')
+          .select('detalii, created_at')
+          .eq('actiune', 'setari_pachet')
+          .order('created_at', {ascending:false}).limit(1);
+      comenziPachet = !!(data && data[0] && data[0].detalii && data[0].detalii.activ);
+      const box = document.getElementById('toggleComenziPachet');
+      if (box) box.checked = comenziPachet;
+      const stare = document.getElementById('comenziPachetStare');
+      if (stare) stare.textContent = comenziPachet ? '● pornit — clientii pot comanda la pachet' : '○ oprit — doar la masa';
+      return comenziPachet;
+  }
+  const togglePachet = document.getElementById('toggleComenziPachet');
+  if (togglePachet) togglePachet.addEventListener('change', async (e) => {
+      const val = e.target.checked;
+      const ok = await logActivity('setari_pachet', null, { activ: val });
+      if (ok === false) {
+          e.target.checked = !val;
+          alert('Nu s-a putut salva. Doar directorul poate schimba setarea.');
+          return;
+      }
+      await loadComenziPachet();
+  });
 
   async function loadBusyMode() {
       const {data} = await _supabase.from('jurnal_activitate').select('detalii').eq('actiune', 'setari_busy').order('created_at', {ascending:false}).limit(1);
@@ -2136,7 +2319,7 @@
 
       if (grup === 'sinteza')  { calculateDirectorStats(); renderHeatmap(); }
       if (grup === 'meniu')    { loadMeniu(); }
-      if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); }
+      if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); }
       if (grup === 'personal') { loadFeedbacks(); }
   }
 
@@ -2560,6 +2743,10 @@
                   loadBusyMode();
               } else if (a === 'setari_zi') {
                   loadOraReset().then(() => { if (currentTab === 'admin') calculateDirectorStats(); });
+              } else if (a === 'setari_modificare') {
+                  loadFereastra().then(() => renderOrders());
+              } else if (a === 'setari_pachet') {
+                  loadComenziPachet();
               } else if (a === 'config_mese') {
                   if (typeof renderTablesGrid === 'function') renderTablesGrid();
               }
@@ -2628,16 +2815,45 @@
     return orders;
   }
 
+  let primaIncarcare = true;
   async function loadOrders() {
     const { data, error } = await _supabase.from('comenzi').select('*').order('created_at', { ascending: false }).limit(500);
     if(error) console.error("Error loading orders:", error);
     if(data) {
+      // comenzi aparute cat n-am avut legatura (telefon blocat, net picat):
+      // le anuntam ca si cum ar fi intrat acum
+      const stiute = new Set(allOrders.map(o => o.id));
+      const vechi = new Map(allOrders.map(o => [o.id, o]));
+      const noi = primaIncarcare ? [] : data.filter(o => !stiute.has(o.id) && o.status === 'noua');
       allOrders = await attachTakeawayContacts(data);
+      // pastram semnele de „modificata" pana expira singure
+      allOrders.forEach(o => { const v = vechi.get(o.id); if (v && v._modificataLa) { o._modificataLa = v._modificataLa; o._modificareText = v._modificareText; o._modificareDe = v._modificareDe; } });
+      primaIncarcare = false;
       renderOrders(); if (currentTab === 'map') renderTablesGrid(); updateMapBadge();
+      noi.forEach(o => {
+          const isAlert = esteAlerta(o);
+          if (userRole === 'director' || o.sectiune === userRole || (userRole === 'bar' && faraBucatarie)
+              || (isAlert && (userRole === 'ospatar' || userRole === 'bar'))) playAlertAndVibrate(o);
+      });
       sincronizeazaAlarma();
     }
     updatePaymentAlertBadge();
   }
+
+  // Legatura „live" se poate pierde fara sa afle nimeni (telefon blocat, net
+  // cazut, websocket inchis de browser). Cand ecranul revine sau netul se
+  // intoarce, si oricum din minut in minut, reincarcam totul din baza.
+  function resincronizeaza() {
+      if (!currentUserEmail) return;
+      loadOrders(); loadFreedTables();
+      loadFaraOspatari().then(() => renderOrders());
+      loadFaraBucatarie().then(() => renderOrders());
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) resincronizeaza(); });
+  window.addEventListener('online',  () => { document.getElementById('offlineBar').classList.remove('on'); resincronizeaza(); });
+  window.addEventListener('offline', () => { document.getElementById('offlineBar').classList.add('on'); });
+  if (navigator.onLine === false) document.getElementById('offlineBar').classList.add('on');
+  setInterval(() => { if (!document.hidden) resincronizeaza(); }, 60000);
 
   // Spune, pentru o comanda data, daca alta comanda din acelasi grup (acelasi grup_comanda,
   // adica partea de Bar sau cea de Bucatarie a ACELEIASI comenzi a clientului) a fost anulata.
@@ -2751,15 +2967,23 @@
           } else if (userRole === 'bucatarie' || userRole === 'bar') {
               // noua -> „Am vazut, accept" (opreste alarma, anunta clientul)
               // acceptata -> „Gata" (o preia ospatarul)
+              // Fara ospatari: nu mai exista „Gata" si „Servit" separat — cine o
+              // pregateste o si duce, si inchide comanda cu un singur buton.
+              const btnDusa = `<button class="btn-action btn-done" style="background:var(--success);" onclick="updateOrderStatus(${order.id}, 'finalizata')">${isTakeawayMesa(order.mesa) ? '✓ Ridicata' : '✓ Preluata'}</button>`;
               if (order.status === 'noua') {
                   footerHtml = `<button class="btn-action btn-accept" onclick="acceptaComanda(${order.id})">✓ Am vazut, accept</button>${btnEdit}${btnAnuleaza}`;
+              } else if (faraOspatari) {
+                  footerHtml = btnDusa + btnEdit + btnAnuleaza;
               } else if (order.status === 'acceptata') {
                   footerHtml = `<button class="btn-action btn-done" onclick="updateOrderStatus(${order.id}, 'gata')">✓ Gata</button>${btnEdit}${btnAnuleaza}`;
               } else if (potPreluaCaOspatar && order.status === 'gata') {
                   footerHtml = btnServit + btnEdit;
               }
           } else if (userRole === 'ospatar') {
-              footerHtml = order.status === 'gata' ? btnServit + btnEdit : btnEditLat;
+              // in fereastra poate modifica; dupa, doar barul / directorul
+              const inFereastra = order.status === 'noua' || secundeRamase(order) > 0;
+              const btnEditOsp = inFereastra ? btnEditLat : `<div class="status-text fereastra expirata">✏️ ${textFereastra(order)} — cere barului sau sefului</div>`;
+              footerHtml = order.status === 'gata' ? btnServit + (inFereastra ? btnEdit : '') : btnEditOsp;
           } else if (userRole === 'director') {
               footerHtml = order.status === 'noua'
                   ? `<button class="btn-action btn-accept" onclick="acceptaComanda(${order.id})">✓ Am vazut, accept</button>${btnEdit}`
@@ -2769,18 +2993,21 @@
           let statusColor = order.status === 'finalizata' ? 'var(--success)' : (order.status === 'anulata' ? 'var(--danger)' : 'var(--warning)');
           let statusText = `<div class="status-text" style="color:${statusColor}; font-weight: 700;">${escapeHTML(order.status.toUpperCase())}</div>`;
 
-          if(userRole === 'bar' && !isAlert && order.status === 'finalizata') {
-              let isChecked = order.bon_scos ? 'checked' : '';
-              let checkedClass = order.bon_scos ? 'checked' : '';
-              let bonLabel = order.bon_scos ? '🧾 Bon tiparit' : '🧾 Confirma bonul';
+          const bonInfo = order.bon_scos
+              ? `🧾 Bon confirmat${order.bon_scos_de ? ' de ' + escapeHTML(numeScurt(order.bon_scos_de)) : ''}${order.bon_scos_la ? ' la ' + new Date(order.bon_scos_la).toLocaleTimeString('ro-RO', {hour:'2-digit', minute:'2-digit'}) : ''}`
+              : '';
+          if((userRole === 'bar' || userRole === 'director') && !isAlert && order.status === 'finalizata') {
+              // barul confirma o singura data (bifa ramane pe numele lui);
+              // directorul o poate scoate, daca a fost o greseala
+              const poateSchimba = !order.bon_scos || userRole === 'director';
               footerHtml = `
-                <label class="bon-check ${checkedClass}" onclick="event.preventDefault(); toggleBon(${order.id}, ${!order.bon_scos});">
-                   <input type="checkbox" ${isChecked} tabindex="-1">
-                   ${bonLabel}
+                <label class="bon-check ${order.bon_scos ? 'checked' : ''}" ${poateSchimba ? `onclick="event.preventDefault(); toggleBon(${order.id}, ${!order.bon_scos});"` : 'style="cursor:default;"'}>
+                   <input type="checkbox" ${order.bon_scos ? 'checked' : ''} tabindex="-1">
+                   ${order.bon_scos ? bonInfo : '🧾 Confirma bonul'}
                 </label>
               `;
-          } else if (userRole === 'director' && !isAlert && order.status === 'finalizata') {
-              footerHtml = `<div class="status-text" style="color:${order.bon_scos ? 'var(--success)' : 'var(--warning)'}; font-weight: 700;">${order.bon_scos ? '🧾 Bon tiparit' : '⚠️ Bon in asteptare (bar)'}</div>`;
+          } else if (order.status === 'anulata') {
+              footerHtml = `<div class="status-text" style="color:var(--danger); font-weight: 700;">❌ ANULATA${order.motiv_anulare ? ` — <span style="font-weight:500;">${escapeHTML(order.motiv_anulare)}</span>` : ''}</div>`;
           } else {
               footerHtml = statusText;
           }
@@ -2808,8 +3035,10 @@
       let pill = '';
       if (currentTab === 'active' && !isAlert) {
           pill = order.status === 'noua'      ? `<br><span class="stare-pill noua">● neacceptata</span>`
-               : order.status === 'acceptata' ? `<br><span class="stare-pill acceptata">● acceptata, in lucru</span>`
+               : order.status === 'acceptata' ? `<br><span class="stare-pill acceptata">● ${faraOspatari ? 'acceptata — se pregateste si se duce' : 'acceptata, in lucru'}</span>`
                : order.status === 'gata'      ? `<br><span class="stare-pill gata">● gata, de dus la masa</span>` : '';
+          // cat mai poate fi modificata de client / ospatar (regula e pe server)
+          if (activa) pill += `<br><span class="fereastra${(order.status !== 'noua' && secundeRamase(order) <= 0) ? ' expirata' : ''}" data-fereastra="${order.id}">✏️ ${textFereastra(order)}</span>`;
       }
       let modifHtml = '';
       if (order._modificataLa && Date.now() - order._modificataLa < 5 * 60000 && activa) {
@@ -2852,6 +3081,13 @@
               card.classList.remove('warning', 'danger');
               if(diffMin >= 15) card.classList.add('danger');
               else if(diffMin >= 8) card.classList.add('warning');
+
+              const fer = card.querySelector('[data-fereastra]');
+              const o = fer && allOrders.find(x => String(x.id) === fer.dataset.fereastra);
+              if (fer && o) {
+                  fer.textContent = '✏️ ' + textFereastra(o);
+                  fer.classList.toggle('expirata', o.status !== 'noua' && secundeRamase(o) <= 0);
+              }
           });
       }
       checkAutoFreeTables();
@@ -2860,13 +3096,31 @@
       if(currentTab === 'map') renderTablesGrid();
   }
 
+  // Anularea cere mereu un motiv (minim 5 litere). Ramane pe comanda, in
+  // jurnal pe numele celui care a anulat, si il vede si clientul pe telefon.
+  // Serverul refuza anularea fara motiv, deci nu se poate sari peste.
+  function cereMotivAnulare(order) {
+      let motiv = '';
+      while (true) {
+          const r = prompt(`Anulezi comanda de la ${etichetaMasaVorbita(order)}.\nScrie motivul (minim 5 litere) — ramane in jurnal, pe numele tau:`, motiv);
+          if (r === null) return null;
+          motiv = r.trim();
+          if (motiv.replace(/[^\p{L}]/gu, '').length >= 5) return motiv.slice(0, 200);
+          alert('Motivul trebuie sa aiba cel putin 5 litere.');
+      }
+  }
+
   window.updateOrderStatus = async function(id, status) {
       const order = allOrders.find(o => o.id === id);
       if (status === 'acceptata') opresteBazait();
-      if (status === 'anulata' && order && !esteAlerta(order)
-          && !confirm(`Anulezi comanda de la ${etichetaMasaVorbita(order)}?`)) return;
       const updatePayload = { status };
-      if((status === 'finalizata') && userRole === 'ospatar') updatePayload.preluat_de = currentUserEmail;
+      if (status === 'anulata' && order && !esteAlerta(order)) {
+          const motiv = cereMotivAnulare(order);
+          if (motiv === null) return;
+          updatePayload.motiv_anulare = motiv;
+      }
+      // cine o inchide ramane pe comanda (ospatarul, sau barul in modul fara ospatari)
+      if (status === 'finalizata' && (userRole === 'ospatar' || !(order && order.preluat_de))) updatePayload.preluat_de = currentUserEmail;
 
       const isPaymentAlert = order && order.produse.some(p => p.nume.includes('ALERTĂ') && PAYMENT_ALERT_REGEX.test(p.nume));
       if(status === 'finalizata' && userRole === 'ospatar' && isPaymentAlert) {
@@ -2882,20 +3136,30 @@
           updateMapBadge();
           updatePaymentAlertBadge();
           sincronizeazaAlarma();
-          logActivity(status === 'anulata' ? 'pedido_cancelado' : 'estado_cambiado', id, { status, mesa: order ? order.mesa : null, productos: order ? order.produse : null, sectiune: order ? order.sectiune : null, grup_comanda: order ? order.grup_comanda : null });
+          logActivity(status === 'anulata' ? 'pedido_cancelado' : 'estado_cambiado', id, { status, mesa: order ? order.mesa : null, productos: order ? order.produse : null, sectiune: order ? order.sectiune : null, grup_comanda: order ? order.grup_comanda : null, motivo: updatePayload.motiv_anulare || undefined });
       }
   };
 
+  // Barul confirma bonul; serverul scrie cine si cand. Bifa nu se mai scoate
+  // de la bar — daca s-a gresit, o scoate directorul, si ramane in jurnal.
   window.toggleBon = async function(id, newState) {
-      if(userRole !== 'bar') return;
+      if(userRole !== 'bar' && userRole !== 'director') return;
       const order = allOrders.find(o => o.id === id);
-      const ids = (order && order.grup_comanda) ? allOrders.filter(o => o.grup_comanda === order.grup_comanda).map(o => o.id) : [id];
-      const { error } = await _supabase.from('comenzi').update({ bon_scos: newState }).in('id', ids);
-      if(!error) {
-          ids.forEach(oid => { const idx = allOrders.findIndex(o => o.id === oid); if(idx !== -1) allOrders[idx].bon_scos = newState; });
-          renderOrders();
-          logActivity('ticket_confirmado', id, { bon_scos: newState, mesa: order ? order.mesa : null });
+      if (!order) return;
+      const ids = order.grup_comanda ? allOrders.filter(o => o.grup_comanda === order.grup_comanda).map(o => o.id) : [id];
+      if (!newState) {
+          if (userRole !== 'director') { alert('Bonul confirmat ramane pe numele tau. Daca e o greseala, spune-i directorului.'); return; }
+          if (!confirm(`Scoti confirmarea bonului de la ${etichetaMasaVorbita(order)}? Ramane in jurnal.`)) return;
+      } else {
+          const total = ids.reduce((s, oid) => { const o = allOrders.find(x => x.id === oid); return s + Number(o && o.total || 0); }, 0);
+          if (!confirm(`Confirmi ca ai scos bonul pentru ${etichetaMasaVorbita(order)} (${total.toFixed(2)} lei)?\nRamane scris pe numele tau si nu se mai poate scoate de la bar.`)) return;
       }
+      const { data, error } = await _supabase.from('comenzi').update({ bon_scos: newState }).in('id', ids).select('id,bon_scos,bon_scos_de,bon_scos_la');
+      if (error) { alert('Nu s-a putut salva: ' + error.message); return; }
+      (data || []).forEach(r => { const idx = allOrders.findIndex(o => o.id === r.id); if(idx !== -1) Object.assign(allOrders[idx], r); });
+      renderOrders();
+      if (currentTab === 'admin') calculateDirectorStats();
+      logActivity('ticket_confirmado', id, { bon_scos: newState, mesa: order.mesa, total: order.total });
   };
 
   async function loadFullMenuForStock() {
@@ -3053,7 +3317,7 @@
 
   function calculateDirectorStats() {
       const istoric = allOrders.filter(o => o.status === 'finalizata' && !esteAlerta(o));
-      let total = 0, kitchenTotal = 0, pendingBonCount = 0, productCounts = {}, pendingByStaff = {};
+      let total = 0, kitchenTotal = 0, pendingBonCount = 0, productCounts = {}, pendingByStaff = {}, bonuriByStaff = {};
 
       const cutoff = statsMode === 'today' ? inceputZi() : inceputLuna();
 
@@ -3065,6 +3329,9 @@
               const val = Number(order.total);
               
               if (order.bon_scos) {
+                  const barman = numeScurt(order.bon_scos_de) || 'necunoscut';
+                  if (!bonuriByStaff[barman]) bonuriByStaff[barman] = { n: 0, suma: 0 };
+                  bonuriByStaff[barman].n++; bonuriByStaff[barman].suma += order.comp_motiv ? 0 : val;
                   if(!order.comp_motiv) { 
                       total += val; 
                       kitchenTotal += val; 
@@ -3122,6 +3389,13 @@
       const sortedPending = Object.entries(pendingByStaff).sort((a,b) => b[1]-a[1]);
       if(sortedPending.length === 0) pendingListEl.innerHTML = '<li class="top-item" style="color:var(--text-muted);">Niciun bon in asteptare 👍</li>';
       sortedPending.forEach(([n, c]) => pendingListEl.innerHTML += `<li class="top-item"><span class="top-name">${escapeHTML(n)}</span><span class="badge-count" style="margin-left:0; background: ${c>=3?'var(--danger)':'var(--warning)'}; color: white;">${c}</span></li>`);
+
+      const bonuriEl = document.getElementById('bonuriByStaffList');
+      if (bonuriEl) {
+          const lista = Object.entries(bonuriByStaff).sort((a, b) => b[1].n - a[1].n);
+          bonuriEl.innerHTML = lista.length ? '' : '<li class="top-item" style="color:var(--text-muted);">Niciun bon confirmat in perioada asta</li>';
+          lista.forEach(([n, v]) => bonuriEl.innerHTML += `<li class="top-item"><span class="top-name">${escapeHTML(n)} <span style="color:var(--text-muted); font-size:12px;">· ${v.suma.toFixed(2)} lei</span></span><span class="badge-count" style="margin-left:0; background: var(--success); color: white;">${v.n}</span></li>`);
+      }
 
       renderStaffReport(cutoff);
       renderFraudList(cutoff);
@@ -3234,7 +3508,7 @@
               return `
                 <div class="fraud-item">
                   <div class="fi-top"><span>Masa ${escapeHTML(s.mesa)} · Comanda #${escapeHTML(s.comandaId)}</span><span>${t}</span></div>
-                  <div class="fi-meta">Marcata "Gata" la ${tGata} de ${escapeHTML(s.gataEntry.utilizator)} → Anulata la ${t.split(' ').pop()} de <b>${escapeHTML(s.anulataEntry.utilizator)}</b> ${s.sectiune ? '· ' + escapeHTML(s.sectiune) : ''}</div>
+                  <div class="fi-meta">Marcata "Gata" la ${tGata} de ${escapeHTML(s.gataEntry.utilizator)} → Anulata la ${t.split(' ').pop()} de <b>${escapeHTML(s.anulataEntry.utilizator)}</b> ${s.sectiune ? '· ' + escapeHTML(s.sectiune) : ''}${s.anulataEntry.detalii.motivo ? ` · motiv: „${escapeHTML(s.anulataEntry.detalii.motivo)}"` : ''}</div>
                 </div>
               `;
           }).join('');
@@ -3446,7 +3720,7 @@
       const actionLabels = { 
           pedido_cancelado: '<span style="color:var(--danger)">❌ Anulata</span>', 
           estado_cambiado: '<span style="color:var(--success)">🔄 Stare</span>', 
-          ticket_confirmado: '<span style="color:var(--text)">🧾 Confirmat</span>', 
+          ticket_confirmado: '<span style="color:var(--text)">🧾 Bon</span>', 
           pedido_gratis: '<span style="color:var(--warning)">🎁 Gratis</span>', 
           pedido_creado_camarero: '<span style="color:var(--blue)">📋 Meniu nou</span>',
           config_mese: '<span style="color:var(--warning)">🗺️ Editare sala</span>',
@@ -3462,6 +3736,8 @@
           setari_ospatari: '<span style="color:var(--warning)">🙋 Mod fara ospatari</span>',
           setari_bucatarie: '<span style="color:var(--warning)">🍳 Bucatarie</span>',
           setari_zi: '<span style="color:var(--warning)">🕐 Ora de inchidere</span>',
+          setari_modificare: '<span style="color:var(--warning)">✏️ Fereastra de modificare</span>',
+          setari_pachet: '<span style="color:var(--warning)">🥡 Comenzi la pachet</span>',
           meniu_modificat: '<span style="color:var(--accent)">🍸 Meniu modificat</span>',
           stoc_modificat: '<span style="color:var(--warning)">📦 Stoc</span>'
       };
@@ -3479,6 +3755,9 @@
               if (log.actiune === 'setari_ospatari') detText += log.detalii.faraOspatari ? '(pornit)' : '(oprit)';
               if (log.actiune === 'setari_bucatarie') detText += log.detalii.faraBucatarie ? '(inchisa)' : '(deschisa)';
               if (log.actiune === 'setari_zi') detText += `ziua se inchide la ${String(log.detalii.oraReset).padStart(2,'0')}:00`;
+              if (log.actiune === 'setari_modificare') detText += `${log.detalii.minute} minute`;
+              if (log.actiune === 'setari_pachet') detText += log.detalii.activ ? '(pornite)' : '(oprite)';
+              if (log.actiune === 'ticket_confirmado') detText += log.detalii.bon_scos ? `bon confirmat${log.detalii.total != null ? ' · ' + Number(log.detalii.total).toFixed(2) + ' lei' : ''}` : 'confirmarea bonului scoasa';
               if (log.actiune === 'mesa_liberada') detText += log.detalii.automat ? '(automat)' : '(manual)';
               if (log.actiune === 'estado_cambiado' && log.detalii.status) detText += `→ ${escapeHTML(log.detalii.status)} `;
               if (log.actiune === 'curatare_miezul_noptii') detText += `${escapeHTML(log.detalii.data || '')} · ${log.detalii.comenzi_expirate || 0} comenzi ramase deschise, expirate`;
@@ -3500,6 +3779,7 @@
       }).join('');
   }
 
+  let canalIntrerupt = false;
   function subscribeRealtime() {
       const channel = _supabase.channel('public:comenzi');
       
@@ -3551,7 +3831,7 @@
                   && JSON.stringify(p.new.produse || []).includes('Anulata de client')
                   && (alarmaPentruMine(p.new) || userRole === 'ospatar')) {
                   bipScurt(2);
-                  setTimeout(() => rosteste(`Atentie, ${etichetaMasaVorbita(p.new)} a anulat comanda de pe telefon.`), 700);
+                  setTimeout(() => rosteste(`Atenție, ${etichetaMasaVorbita(p.new)} a anulat comanda de pe telefon.`), 700);
               }
               renderOrders();
               if (currentTab === 'map') renderTablesGrid();
@@ -3586,7 +3866,11 @@
           updatePaymentAlertBadge();
           sincronizeazaAlarma();
       })
-      .subscribe();
+      .subscribe((stare) => {
+          // dupa o reconectare, ce s-a intamplat intre timp se ia din baza
+          if (stare === 'SUBSCRIBED' && canalIntrerupt) { canalIntrerupt = false; resincronizeaza(); }
+          else if (stare !== 'SUBSCRIBED') canalIntrerupt = true;
+      });
 
       const salaChannel = _supabase.channel('public:jurnal_sala');
       salaChannel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'jurnal_activitate' }, p => {
@@ -3901,7 +4185,7 @@
           titlu: 'Cardul unei comenzi',
           text: rol === 'ospatar'
             ? 'Cand barul o marcheaza „Gata", apare butonul „Servit": apasa-l dupa ce ai dus-o la masa. ✏️ deschide comanda ca sa scoti, sa adaugi sau sa schimbi cantitati, daca clientul s-a razgandit — barul vede pe loc.'
-            : '„Am vazut, accept" opreste alarma si anunta clientul. „Gata" cand e facuta — o preia ospatarul. ✏️ modifica produsele daca clientul s-a razgandit. ✕ anuleaza. Daca clientul scoate ceva de pe telefon, cardul clipeste galben si telefonul iti spune ce s-a schimbat.',
+            : '„Am vazut, accept" opreste alarma si anunta clientul. „Gata" cand e facuta — o preia ospatarul. ✏️ modifica produsele daca clientul s-a razgandit. ✕ anuleaza — cere mereu un motiv, care ramane in jurnal pe numele tau. Daca clientul scoate ceva de pe telefon, cardul clipeste galben si telefonul iti spune ce s-a schimbat.',
           inainte() { switchTab('active'); cardDemoGhid(true); },
           dupa() { cardDemoGhid(false); } });
       if (rol === 'bar' || rol === 'bucatarie') {
@@ -3909,13 +4193,13 @@
               text: 'Cu vocea pornita, telefonul citeste cu voce tare ' + (rol === 'bucatarie' ? 'produsele si ' : '') + 'notele clientului la fiecare comanda. Alarma de comanda noua suna oricum, chiar daca vocea e oprita.' });
       }
       pasi.push({ el: '#navMap', titlu: 'Sala',
-          text: 'Planul meselor. Verde: ocupata de curand. Portocaliu: peste o ora fara comanda noua, treci pe la ea. Rosu: peste doua ore. Albastru: a cerut nota sau ajutor. Atinge o masa ca sa-i vezi comenzile sau s-o eliberezi.' });
+          text: 'Planul meselor, fiecare cu timerul ei: de cand e ocupata si de cand a comandat ultima data. Verde: ocupata de curand. Portocaliu: peste o ora fara comanda noua, treci pe la ea. Rosu: peste doua ore. Albastru: a cerut nota sau ajutor. Atinge o masa ca sa-i vezi comenzile sau s-o eliberezi.' });
       pasi.push({ el: '#navMeniu', titlu: 'Meniu — comanda rapida',
           text: 'Trimiti o comanda in numele clientului, direct la bar sau la bucatarie. Ajunge acolo exact ca una de pe telefon.' });
       pasi.push({ el: '#navStock', titlu: 'Stoc',
           text: 'S-a terminat ceva? Il blochezi de aici si dispare pe loc din meniul clientilor. Il deblochezi cand revine.' });
       pasi.push({ el: '#navHistory', titlu: 'Istoric',
-          text: rol === 'bar' ? 'Comenzile terminate si anulate. Tot aici confirmi, pentru fiecare, ca ai scos bonul.' : 'Comenzile terminate si anulate.' });
+          text: rol === 'bar' ? 'Comenzile terminate si anulate. Tot aici confirmi, pentru fiecare, ca ai scos bonul: ramane pe numele tau, cu ora, si nu se mai poate scoate de la bar.' : 'Comenzile terminate si anulate.' });
       pasi.push({ el: '#navAdmin', titlu: 'Panoul sefului',
           text: 'Incasari si grafice, editorul de meniu, setari (ora la care se inchide ziua, bucatarie inchisa, mod fara ospatari), rapoarte pe angajat si anulari suspecte.' });
       pasi.push({ el: '#navJurnal', titlu: 'Jurnal',
