@@ -345,6 +345,27 @@ fără s-o fi văzut cineva; ajutorul și cererile confirmate se curăță.
 La verificare am găsit și reparat: alertele de ajutor în română („Ajutor /
 Altceva") nu erau recunoscute de panou — regexul știa doar `Help`/`Ayuda`.
 
+### Nota mesei, de la calculatorul central
+
+Clientul nu apasă mereu „Vreau să plătesc" pe telefon: îi zice unui ospătar
+— nu neapărat celui din zona lui (al lui e la fumat). Atunci oricine din
+personal deschide masa în **Sala** (sau o caută în bara de căutare) și vede
+**tot ce a consumat de când e ocupată**, adică de la ultima eliberare:
+totalul, câte comenzi, produsele adunate („2× Espresso, 1× Paste"), zona și
+ospătarul care o acoperă — o „notă a mesei", ca să nu se încurce ospătarii
+între ei. Comenzile anulate nu intră în total.
+
+Tot de acolo, „💵 Nota — cash" / „💳 Nota — card" pune cererea de notă în
+locul clientului: un rând `ALERTĂ OSPĂTAR: Nota (cash) — cerută verbal, pusă
+de ospatar2`, care merge pe drumul normal — sună la bar, apare pe telefoanele
+ospătarilor cu totalul mesei, produsele și restul de dat, iar cine scoate
+nota apasă **„Preluat"** pe ea. Din clipa cererii masa e mov și se eliberează
+singură după 15 minute, sau barul o eliberează pe loc din Sala după ce nota
+a fost scoasă. Dacă masa are deja o cerere de notă, fereastra o arată (când
+și de cine a fost scoasă) și nu lasă să se pună alta. Cardul cererii de notă
+arată acum totalul și consumul mesei și la bar și la manager, nu doar la
+ospătar.
+
 ## Ce se întâmplă când pică legătura
 
 Legătura „live" cu baza (websocket) moare fără să anunțe când telefonul stă

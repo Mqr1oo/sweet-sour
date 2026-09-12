@@ -423,6 +423,11 @@
   .an-nume:has(input:checked){ border-color:var(--danger); background:rgba(239,68,68,.14); color:#fff; }
   .an-cod{ font-family:'Space Mono',monospace; font-size:24px; letter-spacing:.35em; text-align:center; width:100%; padding:12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); }
   .cod-luna{ font-family:'Space Mono',monospace; font-size:36px; font-weight:700; letter-spacing:.3em; color:var(--warning); text-align:center; padding:14px; border:1px dashed var(--warning); border-radius:12px; margin:8px 0; user-select:all; }
+  /* nota mesei, in fereastra mesei si pe cardul cererii de nota */
+  .ta-nota{ text-align:left; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin-bottom:12px; font-size:13px; line-height:1.5; }
+  .ta-nota b{ font-size:20px; font-family:'Space Mono',monospace; color:var(--success); display:block; margin-bottom:4px; }
+  .ta-nota .ta-linii{ color:var(--text-muted); font-size:12.5px; }
+  .nota-masa{ font-size:12px; color:var(--text-muted); line-height:1.45; margin-top:8px; padding-top:8px; border-top:1px dashed var(--border); }
   /* zonele ospatarilor: comenzile din alta zona raman vizibile, dar mai sterse */
   .order-card.alta-zona{ opacity:.55; }
   .order-card.alta-zona:hover, .order-card.alta-zona:active{ opacity:.9; }
@@ -918,7 +923,15 @@
   <div class="modal" style="max-width:360px; text-align:center;">
     <button class="modal-close" onclick="document.getElementById('tableActionOverlay').classList.remove('open')">&times;</button>
     <h2 id="taTitle" style="margin-bottom:6px;">Masa</h2>
-    <p id="taStatus" style="color:var(--text-muted); margin-bottom:20px; font-size:14px;">—</p>
+    <p id="taStatus" style="color:var(--text-muted); margin-bottom:12px; font-size:14px;">—</p>
+    <div id="taNota" class="ta-nota" style="display:none;"></div>
+    <div id="taCereNota" style="display:none; margin-bottom:10px;">
+      <div class="an-eticheta" style="text-align:left;">Clientul a cerut nota verbal? Pune cererea aici:</div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-action btn-waiter-take" style="flex:1;" id="taNotaCash">💵 Nota — cash</button>
+        <button class="btn-action btn-waiter-take" style="flex:1;" id="taNotaCard">💳 Nota — card</button>
+      </div>
+    </div>
     <button class="btn-action btn-done" style="width:100%; margin-bottom:10px;" id="taViewOrders">👀 Vezi comenzile</button>
     <button class="btn-action" style="width:100%; background:rgba(16,185,129,0.15); color:var(--success); border:1px solid rgba(16,185,129,0.3);" id="taFreeTable">🔓 Elibereaza masa acum</button>
   </div>
@@ -2410,16 +2423,79 @@
       updatePaymentAlertBadge();
   }
 
+  // --- Nota mesei, din panou ---------------------------------------------
+  // Clientul nu apasa mereu „Vreau sa platesc" pe telefon: ii zice unui
+  // ospatar — nu neaparat al zonei lui. Oricine din personal deschide masa
+  // (Sala) sau cardul cererii si vede TOT ce s-a consumat la masa de cand e
+  // ocupata (de la ultima eliberare): total, comenzi, produse. De aici se
+  // poate pune si cererea de nota (cash / card), care merge pe drumul normal:
+  // apare la bar si la ospatari, cine o scoate apasa „Preluat", masa devine
+  // mov si se elibereaza singura in 15 minute (sau barul o elibereaza pe loc).
+  function comenzileMesei(mesa) {
+      const strNr = String(mesa), lastFreed = freedTables[strNr] || 0;
+      return allOrders.filter(o => String(o.mesa) === strNr && !esteAlerta(o) && !['anulata', 'expirata'].includes(o.status)
+                                && new Date(o.created_at).getTime() > lastFreed)
+                      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  }
+  // „de la 19:12 · 3 comenzi · 2× Espresso, 1× Limonada"
+  function rezumatMasa(mesa) {
+      const lista = comenzileMesei(mesa);
+      if (!lista.length) return null;
+      const produse = {};
+      lista.forEach(o => (o.produse || []).forEach(p => { if (p.cantitate > 0) produse[p.nume] = (produse[p.nume] || 0) + p.cantitate; }));
+      const deLa = new Date(lista[0].created_at).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+      return { total: totalMasa(mesa), comenzi: lista.length, deLa,
+               linii: Object.entries(produse).map(([n, q]) => `${q}× ${n}`) };
+  }
+  function cerereNotaMasa(mesa) {
+      const strNr = String(mesa), lastFreed = freedTables[strNr] || 0;
+      return allOrders.find(o => String(o.mesa) === strNr && esteCerereNota(o) && o.status !== 'anulata'
+                                 && new Date(o.created_at).getTime() > lastFreed) || null;
+  }
+  async function cereNotaDinPanou(tableNr, cum) {
+      const existenta = cerereNotaMasa(tableNr);
+      if (existenta) { alert(`Masa ${tableNr} are deja o cerere de nota (${new Date(existenta.created_at).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}).`); return; }
+      const text = `🔔 ALERTĂ OSPĂTAR: Nota (${cum}) — ceruta verbal, pusa de ${numeScurt(currentUserEmail)}`;
+      const { error } = await _supabase.from('comenzi').insert([{
+          mesa: String(tableNr), sectiune: 'bar', total: 0, creat_de: currentUserEmail,
+          produse: [{ nume: text, cantitate: 1, pret_unitar: 0 }]
+      }]);
+      if (error) { alert('Nu s-a putut pune cererea: ' + error.message); return; }
+      document.getElementById('tableActionOverlay').classList.remove('open');
+      switchTab('active');
+      searchDesc.value = String(tableNr); searchMob.value = String(tableNr);
+      renderOrders();
+  }
+
   function openTableAction(tableNr, statusInfo) {
       document.getElementById('taTitle').textContent = `Masa ${tableNr}`;
       document.getElementById('taStatus').textContent = statusInfo.label +
-          (statusInfo.status !== 'free' ? ` · ocupata de ${formatMinute(statusInfo.ocupata)}, ultima comanda acum ${formatMinute(statusInfo.minute)}` : '');
+          (statusInfo.status !== 'free' ? (/^Ocupata de/.test(statusInfo.label) ? '' : ` · ocupata de ${formatMinute(statusInfo.ocupata)}`) + ` · ultima comanda acum ${formatMinute(statusInfo.minute)}` : '');
       const canFree = (userRole === 'manager' || userRole === 'ospatar' || userRole === 'bar');
       const freeBtn = document.getElementById('taFreeTable');
       const viewBtn = document.getElementById('taViewOrders');
 
       viewBtn.style.display = statusInfo.status === 'free' ? 'none' : 'flex';
       freeBtn.style.display = (statusInfo.status !== 'free' && canFree) ? 'flex' : 'none';
+
+      // nota mesei: tot ce a consumat de cand e ocupata, ca oricine sa poata scoate nota
+      const nota = document.getElementById('taNota'), cere = document.getElementById('taCereNota');
+      const rez = statusInfo.status === 'free' ? null : rezumatMasa(tableNr);
+      if (rez) {
+          const ceruta = cerereNotaMasa(tableNr);
+          const zona = zonaMesei(tableNr);
+          const acopera = zona ? cineAcopera(zona) : [];
+          nota.innerHTML = `<b>${rez.total.toFixed(2)} lei</b>de la ${rez.deLa} · ${rez.comenzi} ${rez.comenzi === 1 ? 'comanda' : 'comenzi'}` +
+              (zona ? ` · 📍 ${escapeHTML(zona)}${acopera.length ? ' (' + escapeHTML(acopera.join(', ')) + ')' : ''}` : '') +
+              `<div class="ta-linii">${escapeHTML(rez.linii.join(', '))}</div>` +
+              (ceruta ? `<div class="ta-linii" style="color:var(--purple); margin-top:6px;">🧾 Nota ceruta la ${new Date(ceruta.created_at).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}${ceruta.status === 'finalizata' ? ', scoasa de ' + escapeHTML(numeScurt(ceruta.preluat_de || '')) : ' — asteapta sa fie scoasa'}</div>` : '');
+          nota.style.display = 'block';
+          cere.style.display = (canFree && !ceruta) ? 'block' : 'none';
+      } else {
+          nota.style.display = 'none'; cere.style.display = 'none';
+      }
+      document.getElementById('taNotaCash').onclick = () => cereNotaDinPanou(tableNr, 'cash');
+      document.getElementById('taNotaCard').onclick = () => cereNotaDinPanou(tableNr, 'card');
 
       viewBtn.onclick = () => {
           searchDesc.value = tableNr; searchMob.value = tableNr;
@@ -3176,10 +3252,14 @@
       const btnEdit = `<button class="btn-action btn-edit" title="Modifica comanda" onclick="deschideEditComanda(${order.id})">✏️</button>`;
       const btnEditLat = `<button class="btn-action" style="flex:1; background:rgba(255,255,255,.06); border:1px solid var(--border); color:var(--text);" onclick="deschideEditComanda(${order.id})">✏️ Modifica comanda</button>`;
       const btnAnuleaza = `<button class="btn-action btn-cancel" title="Anuleaza (cu motiv; ramane in istoric)" onclick="deschideAnulare(${order.id})">✕</button>`;
-      // ospatarul si barul (in modul fara ospatari) socotesc restul de dat
-      const restHtml = (isAlert && esteCerereNota(order) && (userRole === 'ospatar' || (userRole === 'bar' && faraOspatari)))
-          ? `<div class="rest-calc">Total masa: <b style="color:var(--text)">${totalMasa(order.mesa).toFixed(2)} lei</b> · Primit <input type="number" inputmode="decimal" step="0.5" min="0" data-rest="${order.id}" value="${restIntrodus[order.id] || ''}" placeholder="lei"> → Rest: <b data-rest-out="${order.id}">${textRest(order.id, totalMasa(order.mesa))}</b></div>`
-          : '';
+      // cererea de nota arata tot ce a consumat masa de cand e ocupata — la
+      // ospatar, la bar (calculatorul central) si la manager — plus restul de dat
+      let restHtml = '';
+      if (isAlert && esteCerereNota(order) && (userRole === 'ospatar' || userRole === 'bar' || userRole === 'manager')) {
+          const rez = rezumatMasa(order.mesa);
+          restHtml = `<div class="rest-calc">Total masa: <b style="color:var(--text)">${totalMasa(order.mesa).toFixed(2)} lei</b> · Primit <input type="number" inputmode="decimal" step="0.5" min="0" data-rest="${order.id}" value="${restIntrodus[order.id] || ''}" placeholder="lei"> → Rest: <b data-rest-out="${order.id}">${textRest(order.id, totalMasa(order.mesa))}</b></div>`
+              + (rez ? `<div class="nota-masa">de la ${rez.deLa} · ${rez.comenzi} ${rez.comenzi === 1 ? 'comanda' : 'comenzi'}: ${escapeHTML(rez.linii.join(', '))}</div>` : '');
+      }
 
       if(currentTab === 'active') {
           // Cu modul "fara ospatari" activ, barul si bucataria fac si pasul
@@ -3530,7 +3610,6 @@
   }
   // „📍 Terasa · Maria" pe card — de la ce zona e masa si cine o acopera
   function zonaLine(order) {
-      if (esteAlerta(order) && userRole !== 'ospatar') return '';
       const z = zonaMesei(order.mesa); if (!z) return '';
       const cine = cineAcopera(z);
       const aMea = userRole === 'ospatar' && zoneMele.length && zoneMele.includes(z);
@@ -4776,7 +4855,7 @@
                 : 'Pornita: auzi masa si motivul la fiecare anulare facuta de personal. Oprita: doar sunetul.' });
       }
       pasi.push({ el: '#navMap', titlu: 'Sala',
-          text: 'Planul meselor, fiecare cu timerul ei: de cand e ocupata si de cand a comandat ultima data. Verde: ocupata de curand. Portocaliu: peste o ora fara comanda noua, treci pe la ea. Rosu: peste doua ore. Albastru: a cerut nota sau ajutor. Atinge o masa ca sa-i vezi comenzile sau s-o eliberezi.' });
+          text: 'Planul meselor, fiecare cu timerul ei: de cand e ocupata si de cand a comandat ultima data. Verde: ocupata de curand. Portocaliu: peste o ora fara comanda noua, treci pe la ea. Rosu: peste doua ore. Mov: a cerut nota. Atinge o masa: vezi totul de la ea de cand e ocupata (total, comenzi, produse), pui cererea de nota daca clientul a cerut-o verbal, sau o eliberezi.' });
       pasi.push({ el: '#navMeniu', titlu: 'Meniu — comanda rapida',
           text: 'Trimiti o comanda in numele clientului, direct la bar sau la bucatarie. Ajunge acolo exact ca una de pe telefon.' });
       pasi.push({ el: '#navStock', titlu: 'Stoc',
