@@ -288,6 +288,9 @@
   /* Panourile marcate se arata doar in sectiunea lor. Nu le impachetam intr-un
      container: punem grupul direct pe panou, ca sa nu schimbam structura HTML. */
   .dash-panel[data-grup], .stats-grid[data-grup]{display:none}
+  /* managerul nu vede ce e doar al directorului (RLS-ul refuza oricum scrierea) */
+  body.rol-manager [data-director], body.rol-manager .adm-tab[data-grup="personal"],
+  body.rol-manager .adm-tab[data-grup="risc"], body.rol-manager .adm-tab[data-grup="meniu"]{ display:none !important; }
   .dash-panel[data-grup].adm-on{display:block}
   .stats-grid[data-grup].adm-on{display:grid}
 
@@ -362,35 +365,6 @@
   .mp-auto.manual{ color: var(--text-muted); }
   @media (prefers-reduced-motion: reduce){ .mp-retradu.spinning{ animation:none; } }
 
-  /* Bara de comenzi neacceptate — sta sus, peste tot, pana se apasa */
-  #barAcceptare{
-    position:sticky; top:0; z-index:400; display:none;
-    background:linear-gradient(90deg, rgba(239,68,68,.22), rgba(239,68,68,.10));
-    border:1px solid var(--danger); border-radius:14px;
-    padding:12px 14px; margin-bottom:14px;
-    animation: barPuls 1.1s ease-in-out infinite;
-  }
-  #barAcceptare.on{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-  @keyframes barPuls{ 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)} 50%{box-shadow:0 0 0 10px rgba(239,68,68,0)} }
-  #barAcceptareText{ font-weight:700; font-size:14px; flex:1; min-width:180px; }
-  #barCereri{ position:sticky; top:0; z-index:399; display:none; margin-bottom:14px; }
-  #barCereri.on{ display:block; }
-  .cerere-card{ background:linear-gradient(90deg, rgba(168,85,247,.22), rgba(168,85,247,.08)); border:1px solid var(--purple); border-radius:14px; padding:12px 14px; margin-bottom:8px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; animation: barPuls 1.4s ease-in-out infinite; }
-  .cerere-card .ce-text{ flex:1; min-width:200px; font-size:14px; line-height:1.4; }
-  .cerere-card .ce-text b{ font-size:15px; }
-  .cerere-card .ce-meta{ font-size:12px; color:var(--text-muted); font-family:'Space Mono',monospace; }
-  .cerere-card button{ border:none; border-radius:10px; padding:11px 18px; font-weight:700; font-size:14px; cursor:pointer; min-height:44px; }
-  .cerere-card .ce-da{ background:var(--danger); color:#fff; }
-  .cerere-card .ce-nu{ background:rgba(255,255,255,.08); color:var(--text); border:1px solid var(--border); }
-  .cerere-pending{ color:var(--purple); font-weight:700; font-size:13px; }
-  .cerere-respinsa{ background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.35); color:var(--danger); border-radius:10px; padding:8px 10px; font-size:13px; margin-top:8px; }
-  #btnAcceptaTot{
-    background:var(--danger); color:#fff; border:none; border-radius:10px;
-    padding:11px 20px; font-weight:700; font-size:14px; cursor:pointer;
-    font-family:inherit; min-height:44px;
-  }
-  #btnAcceptaTot:active{ transform:scale(.97); }
-  @media (prefers-reduced-motion: reduce){ #barAcceptare{ animation:none; } }
 
   /* Starea comenzii pe card: neacceptata (rosu), acceptata (galben), gata (verde) */
   .stare-pill{ display:inline-flex; align-items:center; gap:6px; font-family:'Space Mono',monospace;
@@ -434,12 +408,21 @@
 
   /* Editorul de comanda (ospatar / bar) */
   #modalEditComanda .modal{ max-width:540px; text-align:left; max-height:90vh; overflow-y:auto; }
-  #modalAnulare .modal{ max-width:440px; text-align:left; }
+  #modalAnulare .modal{ max-width:460px; text-align:left; max-height:92vh; overflow-y:auto; }
+  .an-eticheta{ font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin:14px 0 6px; font-weight:700; }
+  .an-nume-lista{ display:flex; flex-wrap:wrap; gap:8px; }
+  .an-nume{ position:relative; border:1px solid var(--border); border-radius:100px; padding:9px 14px; font-size:14px; cursor:pointer; background:rgba(255,255,255,.04); min-height:40px; display:inline-flex; align-items:center; }
+  .an-nume input{ position:absolute; opacity:0; width:0; height:0; }
+  .an-nume:has(input:checked){ border-color:var(--danger); background:rgba(239,68,68,.14); color:#fff; }
+  .an-camera{ margin-top:12px; display:flex; gap:12px; align-items:center; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:12px; padding:10px; }
+  .an-camera video{ width:96px; height:72px; object-fit:cover; border-radius:8px; background:#000; transform:scaleX(-1); flex:none; }
+  .an-camera div{ font-size:13px; color:var(--text-muted); line-height:1.4; }
+  .ore-zile{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:8px; }
+  .ore-zile label{ display:flex; align-items:center; justify-content:space-between; gap:8px; border:1px solid var(--border); border-radius:10px; padding:6px 6px 6px 12px; font-size:13px; }
+  .ore-zile select{ padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:14px; min-height:40px; }
   .an-motiv{ display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:10px; margin-bottom:8px; cursor:pointer; font-size:14px; }
   .an-motiv:has(input:checked){ border-color:var(--danger); background:rgba(239,68,68,.08); }
   .an-motiv input{ accent-color:var(--danger); width:18px; height:18px; }
-  .an-cod{ font-family:'Space Mono',monospace; font-size:22px; letter-spacing:.3em; text-align:center; width:100%; padding:12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); }
-  .cod-zi{ font-family:'Space Mono',monospace; font-size:34px; font-weight:700; letter-spacing:.25em; color:var(--warning); text-align:center; padding:14px; border:1px dashed var(--warning); border-radius:12px; margin:8px 0; }
   .rest-calc{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px; font-size:13px; color:var(--text-muted); }
   .rest-calc input{ width:90px; padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:'Space Mono',monospace; font-size:14px; }
   .rest-calc b{ font-family:'Space Mono',monospace; font-size:15px; color:var(--success); }
@@ -497,8 +480,6 @@
       <input type="password" id="passwordInput" class="auth-input" placeholder="Parola" required>
       <button type="submit" class="btn-primary">Intra</button>
     </form>
-    <button id="btnLoginPasskey" class="btn-primary" style="display:none; margin-top:12px; background:rgba(255,255,255,.08); border:1px solid var(--border); color:var(--text);">🔐 Intra cu Face ID / amprenta</button>
-    <p id="loginPasskeyInfo" style="display:none; color:var(--text-muted); font-size:12px; margin-top:10px; line-height:1.5;">Pentru ospatari, manager si director, dupa ce ai adaugat o data amprenta din panou. Barul si bucataria intra cu parola.</p>
   </div>
 </div>
 
@@ -543,7 +524,6 @@
     <button id="btnNotificari" class="btn-notif">🔕 Activeaza notificarile</button>
     <button id="btnGhid" class="btn-notif">❓ Ghid rapid (cum functioneaza)</button>
     <button id="btnTura" class="btn-notif btn-tura">🕒 Intru in tura</button>
-    <button id="btnPasskey" class="btn-notif" style="display:none;">🔐 Adauga Face ID / amprenta pe telefonul asta</button>
     <div style="margin-top:10px;"><a href="#" onclick="document.getElementById('privacyOverlay').classList.add('open')" style="color:var(--text-muted); font-size:11px; text-decoration:underline;">Politica de confidentialitate</a></div>
   </div>
 </aside>
@@ -552,7 +532,7 @@
   <header>
     <h2 class="page-title" id="pageTitle">Comenzi active</h2>
     <div class="header-actions">
-        <button id="btnToggleSound" class="btn-sound-toggle" title="Citeste cu voce tare produsele si notele. Alarma de comanda noua suna oricum.">🔇 Voce: OFF</button>
+        <button id="btnToggleSound" class="btn-sound-toggle" title="Pornita: spune masa la fiecare comanda si cerere. Oprita: doar bipuri si alarma.">🔇 Voce: OFF</button>
         <input type="text" id="tableFilterInputDesc" class="table-filter" placeholder="🔍 Cauta masa / la pachet...">
     </div>
     
@@ -579,10 +559,6 @@
   </div>
   
   <div class="content-area">
-      <div id="barAcceptare">
-        <span id="barAcceptareText"></span>
-        <button id="btnAcceptaTot">✓ Am vazut, accept</button>
-      </div>
     <div id="ordersView" class="grid-comenzi"></div>
 
     <div id="mapView" style="display:none;">
@@ -646,7 +622,7 @@
 
       <div class="stats-grid" data-grup="sinteza">
         <div class="stat-card"><div class="stat-label">Incasari (bonuri)</div><div class="stat-val" id="statRevenue">0 lei</div></div>
-        <div class="stat-card"><div class="stat-label">Comenzi servite</div><div class="stat-val" id="statCount">0</div></div>
+        <div class="stat-card"><div class="stat-label">Comenzi finalizate</div><div class="stat-val" id="statCount">0</div></div>
         <div class="stat-card" style="border-color: rgba(245,158,11,0.3);"><div class="stat-label">⚠️ Fara bon</div><div class="stat-val alert" id="statPendingBon">0</div></div>
         <div class="stat-card"><div class="stat-label">Bucatarie / bar</div><div class="stat-val" id="statKitchen">0 lei</div></div>
       </div>
@@ -670,7 +646,7 @@
          <div class="heatmap-best" id="heatmapBest"></div>
       </div>
 
-      <div data-grup="setari" class="dash-panel" style="border-color: var(--danger);">
+      <div data-grup="setari" class="dash-panel" data-director style="border-color: var(--danger);">
          <h3 style="color: var(--danger);">🍳 Inchide bucataria</h3>
          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <p style="color:var(--text-muted); font-size:13px; max-width:78%;">
@@ -686,23 +662,21 @@
          <div id="faraBucatarieStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
       </div>
 
-      <div data-grup="setari" class="dash-panel">
-         <h3>🕐 Ora de inchidere a zilei</h3>
-         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-            <p style="color:var(--text-muted); font-size:13px; max-width:76%;">
-              La ora asta se reseteaza tot pentru ziua urmatoare: se elibereaza
-              toate mesele, comenzile ramase deschise se inchid, iar „Azi" din
-              rapoarte incepe de aici. Daca inchizi la 3 dimineata, pune 3 —
-              altfel comenzile de dupa miezul noptii ajung pe ziua urmatoare si
-              raportul de seara arata gresit.
-            </p>
-            <select id="oraReset" style="padding:11px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px;">
-            </select>
-         </div>
+      <div data-grup="setari" class="dash-panel" data-director>
+         <h3>🕐 Ora de inchidere, pe zile</h3>
+         <p style="color:var(--text-muted); font-size:13px; margin-bottom:12px;">
+           La ora asta se reseteaza tot pentru ziua urmatoare: se elibereaza
+           toate mesele, comenzile ramase deschise se inchid, iar „Azi" din
+           rapoarte incepe de aici. Ora e a zilei in care ai deschis: daca
+           vineri inchizi la 4 dimineata (adica sambata), pui 04:00 la vineri.
+           Altfel comenzile de dupa miezul noptii ajung pe ziua urmatoare si
+           raportul de seara arata gresit.
+         </p>
+         <div class="ore-zile" id="oreZile"></div>
          <div id="oraResetStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
       </div>
 
-      <div data-grup="setari" class="dash-panel">
+      <div data-grup="setari" class="dash-panel" data-director>
          <h3>✏️ Fereastra de modificare</h3>
          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
             <p style="color:var(--text-muted); font-size:13px; max-width:76%;">
@@ -731,11 +705,11 @@
          </div>
       </div>
       
-      <div data-grup="setari" class="dash-panel" style="border-color: var(--blue);">
+      <div data-grup="setari" class="dash-panel" data-director style="border-color: var(--blue);">
          <h3 style="color: var(--blue);">🙋 Mod fara ospatari</h3>
          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <p style="color:var(--text-muted); font-size:13px; max-width:80%;">
-              Cu ospatari (oprit): barul si bucataria apasa „Am vazut, accept”,
+              Cu ospatari (oprit): barul si bucataria apasa „Accepta”,
               apoi „Gata” — comanda se inchide, iar telefonul ospatarului
               bipaie si spune masa, ca sa vina s-o ia. Fara ospatari (pornit):
               cine pregateste o si duce, si inchide cu „Preluata”. Clientul
@@ -749,12 +723,22 @@
       </div>
 
       <div data-grup="personal" class="dash-panel">
+          <h3>👥 Angajati (numele pentru anulari)</h3>
+          <p style="color:var(--text-muted); font-size:13px; margin-bottom:12px;">Scrie cate un nume pe rand. Cand cineva anuleaza o comanda, isi alege numele de aici si i se face o poza — asa stii exact cine a fost, chiar daca barul foloseste un singur cont.</p>
+          <textarea id="angajatiText" rows="6" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:14px; line-height:1.5; resize:vertical;" placeholder="Andrei&#10;Maria&#10;Ionut"></textarea>
+          <div style="display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap;">
+            <button class="btn-primary" style="width:auto; padding:10px 16px;" id="btnSalveazaAngajati">💾 Salveaza lista</button>
+            <span id="angajatiStare" style="font-size:12px; color:var(--text-muted); font-family:'Space Mono',monospace;"></span>
+          </div>
+      </div>
+
+      <div data-grup="personal" class="dash-panel">
           <h3>🕒 Ture azi</h3>
           <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Cine a apasat „Intru in tura" / „Ies din tura" si cat a stat. Doar informativ — nu inlocuieste pontajul oficial.</p>
           <ul class="top-list" id="tureAziList"></ul>
       </div>
 
-      <div data-grup="setari" class="dash-panel">
+      <div data-grup="setari" class="dash-panel" data-director>
          <h3>🥡 Comenzi la pachet</h3>
          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <p style="color:var(--text-muted); font-size:13px; max-width:80%;">
@@ -819,7 +803,7 @@
 
       <div data-grup="personal" class="dash-panel" style="border-color: var(--danger);">
           <h3 style="color: var(--danger);">❌ Anulari: cine, cand, de ce</h3>
-          <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Fiecare anulare din perioada selectata, cu motivul si cu cine a facut-o. Cele de la bar si ospatari au trecut prin codul zilei; se vad si incercarile cu cod gresit.</p>
+          <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Fiecare anulare din perioada selectata: cine (numele ales + contul), cand, de ce, si poza facuta in momentul anularii, daca dispozitivul avea camera. Pozele se sterg dupa 30 de zile.</p>
           <div id="fraudList"><span style="color:var(--text-muted); font-size:13.5px;">Se analizeaza istoricul...</span></div>
       </div>
 
@@ -891,7 +875,7 @@
     <button class="modal-close" onclick="document.getElementById('privacyOverlay').classList.remove('open')">&times;</button>
     <h2>Politica interna de confidentialitate</h2>
     <p style="font-size:14px; color: var(--text-muted); margin-top:10px;">Sistemul Skyfall gestioneaza date operationale. Numele si numerele de telefon colectate pentru comenzile la pachet se sterg automat din baza de date (Supabase) dupa 48 de ore.</p>
-    <p style="font-size:13px; color: var(--text-muted); margin-top:10px; line-height:1.5;">Despre tine, ca membru al personalului: adresa de email a contului si fiecare actiune facuta din panou (acceptare, „Gata", „Servit", anulare cu motivul scris, confirmarea bonului, modificare de comanda, schimbari de setari) se scriu in jurnalul de activitate, cu ora exacta, si sunt vizibile directorului. Jurnalul se pastreaza 30 de zile. Daca activezi notificarile, adresa tehnica a abonamentului push (fara continut personal) se pastreaza pana te deconectezi sau pana o revoci din telefon. Comenzile finalizate se sterg dupa 2 zile. Daca adaugi Face ID / amprenta, telefonul tau pastreaza cheia; serverul primeste doar o cheie publica si semnaturi — nu vede si nu stocheaza fata sau amprenta. Daca apesi „Intru / ies din tura”, orele raman in jurnal. Datele stau in centre de date din Uniunea Europeana (Supabase).</p>
+    <p style="font-size:13px; color: var(--text-muted); margin-top:10px; line-height:1.5;">Despre tine, ca membru al personalului: adresa de email a contului si fiecare actiune facuta din panou (acceptare, „Gata" / „Preluata", anulare cu motivul si numele ales, confirmarea bonului, modificare de comanda, schimbari de setari) se scriu in jurnalul de activitate, cu ora exacta, si sunt vizibile directorului. Jurnalul se pastreaza 30 de zile. Daca activezi notificarile, adresa tehnica a abonamentului push (fara continut personal) se pastreaza pana te deconectezi sau pana o revoci din telefon. Comenzile finalizate se sterg dupa 2 zile. Daca anulezi o comanda, alegi numele tau din lista si, daca dispozitivul are camera, se face o poza cu tine in momentul anularii; numele, motivul si poza raman 30 de zile in istoricul directorului, ca dovada cine a anulat. Daca apesi „Intru / ies din tura”, orele raman in jurnal. Datele stau in centre de date din Uniunea Europeana (Supabase).</p>
   </div>
 </div>
 
@@ -932,14 +916,22 @@
     <button class="modal-close" id="anInchide">&times;</button>
     <h2 style="margin-bottom:4px; color:var(--danger);">Anulezi comanda?</h2>
     <p class="mp-sub" id="anSub"></p>
+    <div class="an-eticheta">De ce?</div>
     <div id="anMotive"></div>
     <input type="text" id="anAltMotiv" class="table-filter" style="width:100%; display:none; margin-top:4px;" placeholder="Scrie motivul (minim 5 litere)" maxlength="200">
+    <div class="an-eticheta">Cine anuleaza?</div>
+    <div id="anNume" class="an-nume-lista"></div>
+    <input type="text" id="anNumeAlt" class="table-filter" style="width:100%; display:none; margin-top:8px;" placeholder="Numele tau" maxlength="60">
+    <div class="an-camera" id="anCamera">
+      <video id="anVideo" autoplay playsinline muted></video>
+      <div id="anCameraText">📷 Se porneste camera...</div>
+    </div>
     <div class="mp-err" id="anEroare"></div>
     <div class="mp-actiuni">
       <button class="btn-primary" id="anConfirma" style="width:auto;padding:12px 22px;background:var(--danger);">Anuleaza comanda</button>
       <button id="anRenunta" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font:inherit;padding:12px 16px;">Renunta</button>
     </div>
-    <p class="mp-sub" id="anHint" style="margin:12px 0 0;">Se anuleaza pe loc. Motivul si numele tau raman in istoricul directorului, iar clientul vede motivul pe telefon.</p>
+    <p class="mp-sub" id="anHint" style="margin:12px 0 0;">Se anuleaza pe loc. Motivul, numele si poza raman in istoricul directorului; clientul vede pe telefon cine a anulat si de ce.</p>
   </div>
 </div>
 
@@ -1031,7 +1023,7 @@
   // Valorile vin din config.js, ca sa existe un singur loc de configurat.
   const SUPABASE_URL      = window.SS_CONFIG.SUPABASE_URL;
   const SUPABASE_ANON_KEY = window.SS_CONFIG.SUPABASE_KEY;
-  const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { experimental: { passkey: true } } });
+  const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // Helper de protecție XSS - previne executarea de cod malițios trimis din exterior
   function escapeHTML(str) {
@@ -1056,7 +1048,9 @@
   let meniuCart = {};
   let meniuSearchTerm = '';
   
-  let soundEnabled = false;
+  // Vocea: pornita implicit, starea ramane pe dispozitiv. Cu vocea oprita
+  // raman doar bipurile si alarma — nu se mai spune masa, nici cererile.
+  let soundEnabled = (function(){ try { return localStorage.getItem('voce') !== 'off'; } catch(e) { return true; } })();
 
   let salaConfig = { zones: [ { nume: "Salonul principal", mese: [] } ] };
   let currentZone = "Salonul principal";
@@ -1080,28 +1074,27 @@
       return (window.innerWidth <= 800 ? searchMob.value : searchDesc.value).toLowerCase();
   }
   
+
+
+  function aplicaVoceUI() {
+      const text = soundEnabled ? '🔊 Voce: ON' : '🔇 Voce: OFF';
+      ['btnToggleSound', 'btnToggleSoundMobile'].forEach(id => {
+          const b = document.getElementById(id); if (!b) return;
+          b.textContent = text; b.classList.toggle('on', soundEnabled);
+      });
+  }
   function initSoundToggle() {
       const toggleFn = () => {
           soundEnabled = !soundEnabled;
-          const btnDesc = document.getElementById('btnToggleSound');
-          const btnMob = document.getElementById('btnToggleSoundMobile');
-          
-          if (soundEnabled) {
-              const htmlStr = '🔊 Voce: ON';
-              btnDesc.innerHTML = htmlStr; btnMob.innerHTML = htmlStr;
-              btnDesc.classList.add('on'); btnMob.classList.add('on');
-              if ('speechSynthesis' in window) {
-                  const unlockMsg = new SpeechSynthesisUtterance('');
-                  window.speechSynthesis.speak(unlockMsg);
-              }
-          } else {
-              const htmlStr = '🔇 Voce: OFF';
-              btnDesc.innerHTML = htmlStr; btnMob.innerHTML = htmlStr;
-              btnDesc.classList.remove('on'); btnMob.classList.remove('on');
-          }
+          try { localStorage.setItem('voce', soundEnabled ? 'on' : 'off'); } catch(e) {}
+          aplicaVoceUI();
+          try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch(e) {}
+          if (soundEnabled) rosteste('Vocea e pornită.', null, 3000, true);
+          else bipScurt(1);
       };
       document.getElementById('btnToggleSound').addEventListener('click', toggleFn);
       document.getElementById('btnToggleSoundMobile').addEventListener('click', toggleFn);
+      aplicaVoceUI();
   }
   initSoundToggle();
 
@@ -1351,53 +1344,61 @@
       const ok = await logActivity('setari_bucatarie', null, { faraBucatarie: val });
       if (ok === false) {
           e.target.checked = !val;
-          alert('Nu s-a putut salva. Doar directorul sau managerul poate inchide bucataria.');
+          alert('Nu s-a putut salva. Doar directorul poate inchide bucataria.');
           return;
       }
       await loadFaraBucatarie();
       renderOrders();
   });
 
-  // --- Ora de inchidere a zilei -------------------------------------------
-  // Se tine in jurnal ca `setari_zi`, ca sa fie auditabila si citibila si din
-  // functiile cron din baza de date.
+  // --- Ora de inchidere a zilei, pe zile ale saptamanii --------------------
+  // Se tine in jurnal ca `setari_zi`, citita si de cron-ul din baza: `zile` =
+  // 7 ore (index 0 = duminica, ca in JavaScript), `oraReset` = rezerva pentru
+  // zilele fara ora. Ora e a zilei in care s-a deschis: „vineri la 4"
+  // inseamna sambata dimineata la 4.
+  const ZILE_SAPT = ['Duminica', 'Luni', 'Marti', 'Miercuri', 'Joi', 'Vineri', 'Sambata'];
   let oraResetCurenta = 0;
+  let oreZile = [0, 0, 0, 0, 0, 0, 0];
 
   (function umpleOrele(){
-      const sel = document.getElementById('oraReset');
-      if (!sel) return;
-      for (let h = 0; h < 24; h++) {
-          const o = document.createElement('option');
-          o.value = String(h);
-          o.textContent = String(h).padStart(2,'0') + ':00';
-          sel.appendChild(o);
-      }
+      const cont = document.getElementById('oreZile');
+      if (!cont) return;
+      const optiuni = Array.from({ length: 24 }, (_, h) => `<option value="${h}">${String(h).padStart(2, '0')}:00</option>`).join('');
+      cont.innerHTML = [1, 2, 3, 4, 5, 6, 0].map(z => `<label>${ZILE_SAPT[z]} <select data-zi="${z}">${optiuni}</select></label>`).join('');
+      cont.addEventListener('change', async (e) => {
+          const sel = e.target.closest('select[data-zi]'); if (!sel) return;
+          const zi = Number(sel.dataset.zi);
+          const noi = oreZile.slice(); noi[zi] = parseInt(sel.value, 10);
+          const ok = await logActivity('setari_zi', null, { oraReset: noi[new Date().getDay()], zile: noi });
+          if (ok === false) {
+              sel.value = String(oreZile[zi]);
+              alert('Nu s-a putut salva. Doar directorul poate schimba ora de inchidere.');
+              return;
+          }
+          await loadOraReset();
+          if (currentTab === 'admin') calculateDirectorStats();
+      });
   })();
+
+  function oraInchidere(zi) { return Number.isInteger(oreZile[zi]) ? oreZile[zi] : oraResetCurenta; }
 
   async function loadOraReset() {
       const {data} = await _supabase.from('jurnal_activitate')
           .select('detalii, created_at')
           .eq('actiune','setari_zi')
           .order('created_at', {ascending:false}).limit(1);
-      const val = data && data[0] && data[0].detalii && data[0].detalii.oraReset;
-      oraResetCurenta = Number.isInteger(val) ? val : 0;
-      const sel = document.getElementById('oraReset');
-      if (sel) sel.value = String(oraResetCurenta);
+      const d = (data && data[0] && data[0].detalii) || {};
+      oraResetCurenta = Number.isInteger(d.oraReset) ? d.oraReset : 0;
+      oreZile = Array.from({ length: 7 }, (_, i) => (Array.isArray(d.zile) && Number.isInteger(d.zile[i])) ? d.zile[i] : oraResetCurenta);
+      document.querySelectorAll('#oreZile select[data-zi]').forEach(sel => { sel.value = String(oreZile[Number(sel.dataset.zi)]); });
       const st = document.getElementById('oraResetStare');
-      if (st) st.textContent = `Ziua se inchide la ${String(oraResetCurenta).padStart(2,'0')}:00, ora Romaniei.`;
-  }
-
-  const selOra = document.getElementById('oraReset');
-  if (selOra) selOra.addEventListener('change', async (e) => {
-      const val = parseInt(e.target.value, 10);
-      const ok = await logActivity('setari_zi', null, { oraReset: val });
-      if (ok === false) {
-          e.target.value = String(oraResetCurenta);
-          alert('Nu s-a putut salva. Doar directorul sau managerul poate schimba ora de inchidere.');
-          return;
+      if (st) {
+          const laFel = oreZile.every(h => h === oreZile[0]);
+          st.textContent = laFel
+            ? `Ziua se inchide la ${String(oreZile[0]).padStart(2, '0')}:00 in fiecare zi, ora Romaniei.`
+            : 'Ore diferite: ' + [1, 2, 3, 4, 5, 6, 0].map(z => `${ZILE_SAPT[z].slice(0, 2)} ${String(oreZile[z]).padStart(2, '0')}:00`).join(' · ');
       }
-      await loadOraReset();
-  });
+  }
 
   // --- Fereastra de modificare --------------------------------------------
   // Cate minute dupa trimitere mai pot modifica clientul (de pe telefon) si
@@ -1423,7 +1424,7 @@
       const ok = await logActivity('setari_modificare', null, { minute: val });
       if (ok === false) {
           e.target.value = String(fereastraMinute);
-          alert('Nu s-a putut salva. Doar directorul sau managerul poate schimba fereastra.');
+          alert('Nu s-a putut salva. Doar directorul poate schimba fereastra.');
           return;
       }
       await loadFereastra();
@@ -1443,13 +1444,13 @@
 
   // --- Alarma pana la acceptare ------------------------------------------
   // O comanda e „neacceptata" cat timp sta in starea `noua`. Starea e in baza,
-  // nu pe telefon: cand cineva apasa „Am vazut, accept" pe un dispozitiv,
+  // nu pe telefon: cand cineva apasa „Accepta" pe cardul ei, pe un dispozitiv,
   // alarma se opreste pe toate, iar clientul vede pe telefon ca a fost vazuta
   // si ca urmeaza sa vina.
   //
-  // Ce se aude la o comanda noua — mereu, indiferent de butonul de voce:
-  //   1) un bip scurt,  2) „Comanda noua, masa 4",  3) un bazait continuu,
-  //   urat, care tine pana apasa cineva „accept". Nu se opreste singur.
+  // Ce se aude la o comanda noua: 1) un bip scurt, 2) „Comanda noua, masa 4"
+  // (doar cu vocea pornita), 3) un ding-dong continuu, care tine pana apasa
+  // cineva „Accepta". Nu se opreste singur.
   let audioCtx = null;
   let bazaitNoduri = null;        // oscilatoarele pornite, cat timp suna
   let vibratieTimer = null;
@@ -1544,8 +1545,9 @@
   }
 
   // Rosteste un text in romana; `dupa` se apeleaza cand a terminat (sau dupa
-  // cel mult `maxMs`, daca browserul nu vorbeste deloc).
-  function rosteste(text, dupa, maxMs) {
+  // cel mult `maxMs`, daca browserul nu vorbeste deloc). Cu vocea oprita nu
+  // spune nimic (doar `fortat` trece peste, pentru anunturile obligatorii).
+  function rosteste(text, dupa, maxMs, fortat) {
       const serie = ++voceSerie;
       let gata = false;
       const termina = () => {
@@ -1553,7 +1555,7 @@
           if (serie === voceSerie) voceOcupata = false;
           if (dupa) dupa();
       };
-      if (!('speechSynthesis' in window)) { termina(); return; }
+      if (!('speechSynthesis' in window) || (!soundEnabled && !fortat)) { termina(); return; }
       try {
           const u = new SpeechSynthesisUtterance(text);
           u.lang = 'ro-RO'; u.rate = 1.0; u.volume = 1;
@@ -1593,21 +1595,9 @@
   // schimbare in `allOrders`.
   function sincronizeazaAlarma() {
       const lista = comenziNeacceptate();
-      actualizeazaBaraAcceptare(lista);
       if (!lista.length) { opresteBazait(); return; }
       if (voceOcupata) return;          // porneste cand termina de vorbit
       pornesteBazait();
-  }
-
-  function actualizeazaBaraAcceptare(lista) {
-      const bara = document.getElementById('barAcceptare');
-      if (!bara || bara.dataset.demo) return;
-      if (!lista.length) { bara.classList.remove('on'); return; }
-      const mese = lista.map(etichetaMasaVorbita);
-      document.getElementById('barAcceptareText').textContent = lista.length === 1
-          ? `Comanda noua — ${mese[0]}. Apasa ca sa confirmi ca ai vazut-o.`
-          : `${lista.length} comenzi noi — ${mese.join(', ')}. Apasa ca sa confirmi ca le-ai vazut.`;
-      bara.classList.add('on');
   }
 
   // Ce mai spune vocea dupa masa, doar cu butonul „Voce" pornit: bucataria
@@ -1662,7 +1652,6 @@
       sincronizeazaAlarma();
   }
   window.acceptaComanda = (id) => acceptaComenzi([id]);
-  document.getElementById('btnAcceptaTot').addEventListener('click', () => acceptaComenzi());
 
   // Sunetul cererilor de la mese (nota, ajutor): trei note care coboara —
   // altfel decat comanda noua, ca barul sa stie fara sa se uite.
@@ -1805,32 +1794,6 @@
   document.getElementById('btnTura').addEventListener('click', comutaTura);
   document.getElementById('btnTuraMobile').addEventListener('click', comutaTura);
 
-  // --- Face ID / amprenta (passkey) --------------------------------------
-  // Doar pentru ospatari si director: barul si bucataria intra cu parola, de
-  // pe calculator. Telefonul nu trimite nicaieri amprenta sau fata: pastreaza
-  // el cheia, iar serverul primeste doar o semnatura — n-are ce date biometrice
-  // sa stocheze. Trebuie activat in Supabase (Authentication -> Passkeys).
-  const arePasskey = !!(window.PublicKeyCredential && _supabase.auth.registerPasskey && _supabase.auth.signInWithPasskey);
-  if (arePasskey) {
-      const bl = document.getElementById('btnLoginPasskey'), inf = document.getElementById('loginPasskeyInfo');
-      bl.style.display = 'block'; inf.style.display = 'block';
-      bl.addEventListener('click', async () => {
-          bl.disabled = true;
-          try {
-              const { data, error } = await _supabase.auth.signInWithPasskey();
-              if (error) { alert('Nu a mers: ' + error.message + (error.code === 'passkey_disabled' ? ' (passkey-urile nu sunt pornite in Supabase)' : '')); return; }
-              if (data && data.user) await startSession(data.user.email);
-          } catch(e) { alert('Nu a mers: ' + (e.message || e)); }
-          finally { bl.disabled = false; }
-      });
-      document.getElementById('btnPasskey').addEventListener('click', async () => {
-          if (!confirm('Adaugi Face ID / amprenta pe telefonul asta pentru contul tau? Data viitoare intri fara parola.')) return;
-          const { data, error } = await _supabase.auth.registerPasskey();
-          if (error) { alert('Nu s-a putut adauga: ' + error.message); return; }
-          alert('Gata. Data viitoare apasa „Intra cu Face ID / amprenta"' + (data && data.friendly_name ? ` (${data.friendly_name})` : '') + '.');
-      });
-  }
-
   const logoutFn = async () => { await _supabase.auth.signOut(); location.reload(); };
   document.getElementById('btnLogout').addEventListener('click', logoutFn);
   document.getElementById('btnMobileLogout').addEventListener('click', logoutFn);
@@ -1852,7 +1815,7 @@
         document.getElementById('navStock').style.display = 'flex';
     }
 
-    const showSound = (userRole === 'bar' || userRole === 'bucatarie');
+    const showSound = (userRole === 'bar' || userRole === 'bucatarie' || userRole === 'ospatar' || userRole === 'manager');
     document.getElementById('btnToggleSound').style.display = showSound ? 'inline-flex' : 'none';
     document.getElementById('btnToggleSoundMobile').style.display = showSound ? 'block' : 'none';
 
@@ -1870,8 +1833,11 @@
         document.getElementById('btnDeleteZone').style.display = 'inline-flex';
         if (userRole === 'director') document.getElementById('btnWipeHistory').style.display = 'inline-flex';
         if (userRole === 'director') document.getElementById('feedbackPanel').style.display = 'block';
-        // managerul lucreaza, dar jurnalul, datele personalului si stergerea istoricului raman ale directorului
-        if (userRole === 'manager') document.querySelectorAll('.adm-tab[data-grup="personal"], .adm-tab[data-grup="risc"]').forEach(b => b.style.display = 'none');
+        // managerul lucreaza, dar meniul, jurnalul, datele personalului, stergerea
+        // istoricului si setarile grele (bucatarie, fereastra, pachet, fara
+        // ospatari, ora de inchidere, angajati) raman ale directorului; el
+        // schimba doar ora de varf si harta meselor. Regula e si in RLS.
+        if (userRole === 'manager') document.body.classList.add('rol-manager');
     }
     
     if(userRole === 'ospatar' || userRole === 'manager') { document.getElementById('navMeniu').style.display = 'flex'; }
@@ -1888,8 +1854,8 @@
     loadOraReset().then(() => { if (currentTab === 'admin') calculateDirectorStats(); });
     loadFereastra().then(() => renderOrders());
     loadComenziPachet();
+    loadAngajati();
     incarcaTura();
-    if (arePasskey && (userRole === 'ospatar' || esteConducere())) document.getElementById('btnPasskey').style.display = 'block';
     if(esteConducere()) loadFeedbacks();
 
     subscribeRealtime();
@@ -2420,7 +2386,7 @@
       const ok = await logActivity('setari_pachet', null, { activ: val });
       if (ok === false) {
           e.target.checked = !val;
-          alert('Nu s-a putut salva. Doar directorul sau managerul poate schimba setarea.');
+          alert('Nu s-a putut salva. Doar directorul poate schimba setarea.');
           return;
       }
       await loadComenziPachet();
@@ -2444,7 +2410,7 @@
       const ok = await logActivity('setari_ospatari', null, { faraOspatari: val });
       if (ok === false) {
           e.target.checked = !val;
-          alert('Nu s-a putut salva. Doar directorul sau managerul poate schimba setarea.');
+          alert('Nu s-a putut salva. Doar directorul poate schimba setarea.');
           return;
       }
       await loadFaraOspatari();
@@ -2471,7 +2437,7 @@
       if (grup === 'sinteza')  { calculateDirectorStats(); renderHeatmap(); }
       if (grup === 'meniu')    { loadMeniu(); }
       if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); }
-      if (grup === 'personal') { loadFeedbacks(); }
+      if (grup === 'personal') { loadFeedbacks(); loadAngajati(); }
   }
 
   document.getElementById('admTabs').addEventListener('click', (e) => {
@@ -2481,7 +2447,8 @@
 
   // --- Editor de meniu (director) ---------------------------------------
   // Sursa unica de adevar: tabela `meniu_produse`. Scrierea e permisa doar
-  // directorului, prin politica RLS "scrie meniu director".
+  // directorului, prin politica RLS "scrie meniu director" (managerul nu
+  // vede editorul si nici n-ar putea salva).
   let meniu = [];        // randurile din baza
   let meniuSters = [];   // id-uri marcate pentru stergere la salvare
 
@@ -2898,6 +2865,8 @@
                   loadFereastra().then(() => renderOrders());
               } else if (a === 'setari_pachet') {
                   loadComenziPachet();
+              } else if (a === 'setari_angajati') {
+                  loadAngajati();
               } else if (a === 'config_mese') {
                   if (typeof renderTablesGrid === 'function') renderTablesGrid();
               }
@@ -3126,24 +3095,24 @@
                   footerHtml = `<div class="status-text" style="color:var(--blue); font-weight: 600;">Se asteapta ospatarul...</div>`;
               }
           } else if (userRole === 'bucatarie' || userRole === 'bar') {
-              // noua -> „Am vazut, accept" (opreste alarma, anunta clientul)
+              // noua -> „Accepta" (opreste alarma, anunta clientul)
               // acceptata -> „Gata": comanda se inchide, ospatarul e anuntat sa
               // vina s-o ia. Fara ospatari: „Preluata" (cine pregateste o si duce).
-              // Anuleaza doar barul (cu codul zilei); bucataria cere barului.
+              // Anuleaza doar barul (cu motiv si nume); bucataria cere barului.
               const inchide = `<button class="btn-action btn-done" style="background:var(--success);" onclick="updateOrderStatus(${order.id}, 'finalizata')">${faraOspatari ? (isTakeawayMesa(order.mesa) ? '✓ Ridicata' : '✓ Preluata') : '✓ Gata'}</button>`;
               const anul = userRole === 'bar' ? btnAnuleaza : '';
               if (order.status === 'noua') {
-                  footerHtml = `<button class="btn-action btn-accept" onclick="acceptaComanda(${order.id})">✓ Am vazut, accept</button>${btnEdit}${anul}`;
+                  footerHtml = `<button class="btn-action btn-accept" onclick="acceptaComanda(${order.id})">✓ Accepta</button>${btnEdit}${anul}`;
               } else if (order.status === 'acceptata' || order.status === 'gata') {
                   footerHtml = inchide + btnEdit + anul;
               }
           } else if (userRole === 'ospatar') {
               if (gataDeDus(order)) {
                   const de = order.finalizata_la ? Math.round((Date.now() - new Date(order.finalizata_la).getTime()) / 60000) : 0;
-                  footerHtml = `<div class="status-text" style="color:var(--blue); font-weight:700;">🍽️ Gata — du-o la masa${de >= 1 ? ` (de ${de} min)` : ''}</div>`;
+                  footerHtml = `<div class="status-text" style="color:var(--blue); font-weight:700; flex:1;">🍽️ Gata — du-o la masa${de >= 1 ? ` (de ${de} min)` : ''}</div>${btnAnuleaza}`;
               } else {
-                  // in fereastra poate modifica; dupa, doar barul / directorul.
-                  // Anulare oricand cat e deschisa, cu motiv si codul zilei.
+                  // in fereastra poate modifica; dupa, doar barul / managerul.
+                  // Anulare oricand, cu motiv si nume.
                   const inFereastra = order.status === 'noua' || secundeRamase(order) > 0;
                   const btnEditOsp = inFereastra ? btnEditLat : `<div class="status-text fereastra expirata" style="flex:1;">✏️ ${textFereastra(order)} — cere barului sau sefului</div>`;
                   footerHtml = btnEditOsp + btnAnuleaza;
@@ -3165,16 +3134,17 @@
               // barul confirma o singura data (bifa ramane pe numele lui);
               // managerul o poate scoate, daca a fost o greseala
               const poateSchimba = !order.bon_scos || userRole === 'manager';
+              // ✕ si aici: un retur dupa ce comanda a fost dusa la masa
               footerHtml = `
                 <label class="bon-check ${order.bon_scos ? 'checked' : ''}" ${poateSchimba ? `onclick="event.preventDefault(); toggleBon(${order.id}, ${!order.bon_scos});"` : 'style="cursor:default;"'}>
                    <input type="checkbox" ${order.bon_scos ? 'checked' : ''} tabindex="-1">
                    ${order.bon_scos ? bonInfo : '🧾 Confirma bonul'}
-                </label>
+                </label>${btnAnuleaza}
               `;
           } else if (userRole === 'director' && !isAlert && order.status === 'finalizata') {
               footerHtml = `<div class="status-text" style="color:${order.bon_scos ? 'var(--success)' : 'var(--warning)'}; font-weight: 700;">${bonInfo || '⚠️ Bon in asteptare (bar)'}</div>`;
           } else if (order.status === 'anulata') {
-              footerHtml = `<div class="status-text" style="color:var(--danger); font-weight: 700;">❌ ANULATA${order.motiv_anulare ? ` — <span style="font-weight:500;">${escapeHTML(order.motiv_anulare)}</span>` : ''}</div>`;
+              footerHtml = `<div class="status-text" style="color:var(--danger); font-weight: 700;">❌ ANULATA${order.anulat_de ? ` de ${escapeHTML(order.anulat_de)}` : ''}${order.motiv_anulare ? ` — <span style="font-weight:500;">${escapeHTML(order.motiv_anulare)}</span>` : ''}</div>`;
           } else {
               footerHtml = statusText;
           }
@@ -3266,47 +3236,176 @@
   }
 
   // --- Anularea -----------------------------------------------------------
-  // Barul, ospatarul si managerul anuleaza pe loc, cu motiv din lista (sau
-  // scris, minim 5 litere). Serverul (`anuleaza_comanda`) scrie in jurnal
-  // cine, cand si de ce; directorul le vede pe toate in „Anulari". Clientul
-  // vede motivul pe telefon. Directorul nu anuleaza — doar observa.
+  // Barul, ospatarul si managerul anuleaza pe loc — si o comanda deja
+  // preluata (retur). Aleg motivul si numele lor din lista pusa de director
+  // (contul de bar e comun, deci numele spune cine a fost), iar daca
+  // dispozitivul are camera se face o poza in momentul anularii. Serverul
+  // (`anuleaza_comanda`) scrie in jurnal cine, cand, de ce, cu poza;
+  // directorul le vede in „Anulari". Clientul vede pe telefon numele si
+  // motivul. Directorul nu anuleaza — doar observa.
   const MOTIVE_ANULARE = [
       'Clientul s-a razgandit', 'Produs epuizat', 'Comanda gresita (masa sau produs)',
-      'Clientul a plecat', 'Timp de asteptare prea mare', 'Greseala la bar / bucatarie', 'Alt motiv'
+      'Clientul a plecat', 'Timp de asteptare prea mare', 'Greseala la bar / bucatarie',
+      'Retur: produsul nu a fost bun', 'Alt motiv'
   ];
-  let anComanda = null;
-  window.deschideAnulare = function(id) {
-      anComanda = allOrders.find(o => o.id === id); if (!anComanda) return;
-      document.getElementById('anSub').textContent = `${etichetaMasaVorbita(anComanda).replace(/^m/, 'M')} · ${(anComanda.produse || []).filter(p => p.cantitate > 0).map(p => p.cantitate + '× ' + p.nume).join(', ')}. Motivul ramane in jurnal, pe numele tau, si il vede si clientul.`;
-      document.getElementById('anMotive').innerHTML = MOTIVE_ANULARE.map((m, i) =>
-          `<label class="an-motiv"><input type="radio" name="anMotiv" value="${escapeHTML(m)}" ${i === 0 ? 'checked' : ''}> ${escapeHTML(m)}</label>`).join('');
-      document.getElementById('anAltMotiv').style.display = 'none';
-      document.getElementById('anAltMotiv').value = '';
-      document.getElementById('anEroare').textContent = '';
-      document.getElementById('modalAnulare').classList.add('open');
-  };
+  const CHEIE_NUME_ANULARE = 'anulare:nume';
+  let anComanda = null, anStream = null;
+
+  function numeAnulareSalvat() { try { return localStorage.getItem(CHEIE_NUME_ANULARE) || ''; } catch(e) { return ''; } }
+  function randeazaNumeAnulare() {
+      const lista = document.getElementById('anNume'), alt = document.getElementById('anNumeAlt');
+      const salvat = numeAnulareSalvat();
+      if (!angajati.length) {
+          lista.innerHTML = '<span style="font-size:13px; color:var(--text-muted);">Directorul n-a pus inca lista de angajati (Sef → Personal). Scrie-ti numele:</span>';
+          alt.style.display = 'block'; alt.value = salvat; return;
+      }
+      const altul = !!salvat && !angajati.includes(salvat);
+      lista.innerHTML = angajati.map(n =>
+          `<label class="an-nume"><input type="radio" name="anNume" value="${escapeHTML(n)}" ${n === salvat ? 'checked' : ''}>${escapeHTML(n)}</label>`).join('')
+          + `<label class="an-nume"><input type="radio" name="anNume" value="__alt" ${altul ? 'checked' : ''}>Alt nume…</label>`;
+      alt.style.display = altul ? 'block' : 'none';
+      alt.value = altul ? salvat : '';
+  }
+  function numeAles() {
+      const ales = document.querySelector('input[name="anNume"]:checked');
+      if (!angajati.length || (ales && ales.value === '__alt')) return document.getElementById('anNumeAlt').value.trim();
+      return ales ? ales.value : '';
+  }
   function motivAles() {
       const ales = document.querySelector('input[name="anMotiv"]:checked');
       let motiv = ales ? ales.value : '';
       if (motiv === 'Alt motiv') motiv = document.getElementById('anAltMotiv').value.trim();
       return motiv;
   }
+
+  // Camera din fata, pornita cat e deschisa fereastra; se anunta si cu voce.
+  async function pornesteCameraAnulare() {
+      const txt = document.getElementById('anCameraText'), video = document.getElementById('anVideo');
+      opresteCameraAnulare();
+      video.style.display = 'none';
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          txt.textContent = '📷 Dispozitivul asta nu are camera disponibila: anularea se scrie fara poza, pe numele ales.';
+          return;
+      }
+      txt.textContent = '📷 Se porneste camera...';
+      try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
+          if (!anComanda) { stream.getTracks().forEach(t => t.stop()); return; }   // s-a inchis intre timp
+          anStream = stream;
+          video.srcObject = stream; video.style.display = 'block';
+          txt.textContent = '📷 Camera e pornita. Cand apesi „Anuleaza comanda", se face o poza cu tine, ca sa se confirme numele ales. Ramane in istoricul directorului.';
+          rosteste('Atenție: camera este pornită. La anulare se face o poză, pentru a confirma numele.', null, 8000, true);
+      } catch(e) {
+          anStream = null;
+          txt.textContent = '📷 Camera nu e permisa pe dispozitivul asta: anularea se scrie fara poza, pe numele ales.';
+      }
+  }
+  function opresteCameraAnulare() {
+      if (anStream) { anStream.getTracks().forEach(t => { try { t.stop(); } catch(e) {} }); anStream = null; }
+      const video = document.getElementById('anVideo'); if (video) video.srcObject = null;
+  }
+  // Poza din camera: jpeg mic (max 480 px), urcat in bucket-ul privat
+  // `anulari`, pe care il vede doar directorul. Daca nu se poate, anularea
+  // merge mai departe fara poza.
+  async function pozaAnulare(idComanda) {
+      if (!anStream) return null;
+      try {
+          const video = document.getElementById('anVideo');
+          if (!video.videoWidth) return null;
+          const c = document.createElement('canvas');
+          const scala = Math.min(1, 480 / video.videoWidth);
+          c.width = Math.round(video.videoWidth * scala); c.height = Math.round(video.videoHeight * scala);
+          c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
+          const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.7));
+          if (!blob) return null;
+          const d = new Date();
+          const cale = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}/${idComanda}-${d.getTime()}.jpg`;
+          const { error } = await _supabase.storage.from('anulari').upload(cale, blob, { contentType: 'image/jpeg', upsert: false });
+          if (error) { console.warn('Poza anulare:', error.message); return null; }
+          return cale;
+      } catch(e) { console.warn('Poza anulare:', e); return null; }
+  }
+
+  window.deschideAnulare = function(id) {
+      anComanda = allOrders.find(o => o.id === id); if (!anComanda) return;
+      const produse = (anComanda.produse || []).filter(p => p.cantitate > 0).map(p => p.cantitate + '× ' + p.nume).join(', ');
+      document.getElementById('anSub').textContent = `${etichetaMasaVorbita(anComanda).replace(/^m/, 'M')} · ${produse}${anComanda.status === 'finalizata' ? ' · deja preluata (retur)' : ''}`;
+      document.getElementById('anMotive').innerHTML = MOTIVE_ANULARE.map((m, i) =>
+          `<label class="an-motiv"><input type="radio" name="anMotiv" value="${escapeHTML(m)}" ${i === 0 ? 'checked' : ''}> ${escapeHTML(m)}</label>`).join('');
+      document.getElementById('anAltMotiv').style.display = 'none';
+      document.getElementById('anAltMotiv').value = '';
+      randeazaNumeAnulare();
+      document.getElementById('anEroare').textContent = '';
+      const btn = document.getElementById('anConfirma'); btn.disabled = false; btn.textContent = 'Anuleaza comanda';
+      document.getElementById('modalAnulare').classList.add('open');
+      pornesteCameraAnulare();
+  };
+  function inchideAnulare() {
+      anComanda = null;
+      opresteCameraAnulare();
+      document.getElementById('modalAnulare').classList.remove('open');
+  }
+  document.getElementById('anInchide').addEventListener('click', inchideAnulare);
+  document.getElementById('anRenunta').addEventListener('click', inchideAnulare);
+  document.getElementById('modalAnulare').addEventListener('click', (e) => { if (e.target.id === 'modalAnulare') inchideAnulare(); });
+  document.getElementById('anMotive').addEventListener('change', () => {
+      const ales = document.querySelector('input[name="anMotiv"]:checked');
+      const alt = document.getElementById('anAltMotiv');
+      alt.style.display = (ales && ales.value === 'Alt motiv') ? 'block' : 'none';
+      if (alt.style.display === 'block') alt.focus();
+  });
+  document.getElementById('anNume').addEventListener('change', () => {
+      const ales = document.querySelector('input[name="anNume"]:checked');
+      const alt = document.getElementById('anNumeAlt');
+      alt.style.display = (ales && ales.value === '__alt') ? 'block' : 'none';
+      if (alt.style.display === 'block') alt.focus();
+  });
   document.getElementById('anConfirma').addEventListener('click', async () => {
       if (!anComanda) return;
       const err = document.getElementById('anEroare');
-      const motiv = motivAles();
+      const motiv = motivAles(), nume = numeAles();
       if (motiv.replace(/[^\p{L}]/gu, '').length < 5) { err.textContent = 'Scrie un motiv de cel putin 5 litere.'; return; }
+      if (nume.replace(/[^\p{L}]/gu, '').length < 2) { err.textContent = 'Alege numele tau din lista (sau scrie-l).'; return; }
       const btn = document.getElementById('anConfirma'); btn.disabled = true; err.textContent = '';
+      const id = anComanda.id;
       try {
-          const { data, error } = await _supabase.rpc('anuleaza_comanda', { p_id: anComanda.id, p_motiv: motiv, p_cod: null });
+          btn.textContent = anStream ? '📷 Se face poza...' : 'Se anuleaza...';
+          const poza = await pozaAnulare(id);
+          const { data, error } = await _supabase.rpc('anuleaza_comanda', { p_id: id, p_motiv: motiv, p_nume: nume, p_poza: poza });
           if (error) { err.textContent = error.message; return; }
           if (!data || data.ok === false) { err.textContent = (data && data.eroare) || 'Nu s-a putut anula.'; return; }
-          const idx = allOrders.findIndex(o => o.id === anComanda.id);
-          if (idx !== -1) Object.assign(allOrders[idx], { status: 'anulata', motiv_anulare: data.motiv_anulare });
+          try { localStorage.setItem(CHEIE_NUME_ANULARE, nume); } catch(e) {}
+          const idx = allOrders.findIndex(o => o.id === id);
+          if (idx !== -1) Object.assign(allOrders[idx], { status: 'anulata', motiv_anulare: data.motiv_anulare, anulat_de: data.anulat_de });
           inchideAnulare();
           renderOrders(); updateMapBadge(); updatePaymentAlertBadge(); sincronizeazaAlarma();
           if (currentTab === 'admin') calculateDirectorStats();
-      } finally { btn.disabled = false; }
+      } finally { btn.disabled = false; btn.textContent = 'Anuleaza comanda'; }
+  });
+
+  // --- Angajatii (numele pentru anulari) ------------------------------------
+  // Directorul scrie numele echipei (Sef → Personal); la anulare, cine
+  // anuleaza isi alege numele din lista. Sta in jurnal ca `setari_angajati`,
+  // citita de tot personalul, scrisa doar de director.
+  let angajati = [];
+  async function loadAngajati() {
+      const { data } = await _supabase.from('jurnal_activitate').select('detalii, created_at')
+          .eq('actiune', 'setari_angajati').order('created_at', { ascending: false }).limit(1);
+      const lista = data && data[0] && data[0].detalii && data[0].detalii.nume;
+      angajati = Array.isArray(lista) ? lista.map(n => String(n).trim()).filter(Boolean) : [];
+      const ta = document.getElementById('angajatiText');
+      if (ta && document.activeElement !== ta) ta.value = angajati.join('\n');
+      const st = document.getElementById('angajatiStare');
+      if (st) st.textContent = angajati.length ? `${angajati.length} nume in lista` : 'Lista e goala: la anulare, fiecare isi scrie numele de mana.';
+      return angajati;
+  }
+  const btnAngajati = document.getElementById('btnSalveazaAngajati');
+  if (btnAngajati) btnAngajati.addEventListener('click', async () => {
+      const nume = [...new Set(document.getElementById('angajatiText').value.split('\n').map(x => x.trim()).filter(Boolean))].slice(0, 60);
+      const ok = await logActivity('setari_angajati', null, { nume });
+      if (ok === false) { alert('Nu s-a putut salva. Doar directorul poate schimba lista de angajati.'); return; }
+      await loadAngajati();
+      const st = document.getElementById('angajatiStare'); if (st) st.textContent += ' · salvat ✓';
   });
 
   // Restul de dat, pe cardul cererii de nota (ospatar / bar fara ospatari)
@@ -3515,22 +3614,36 @@
       });
   }
 
-    // „Azi" incepe la ora de inchidere aleasa de director, nu la miezul noptii:
+  // „Azi" incepe la ora de inchidere aleasa de director, nu la miezul noptii:
   // daca localul inchide la 3, comenzile de la 1 noaptea sunt tot ale serii.
+  // Ziua „de lucru" a unui moment: dupa-amiaza e ziua calendaristica;
+  // dimineata e inca ziua de ieri, daca ieri se inchide dupa miezul noptii
+  // si n-a trecut inca ora aia.
+  function ziLucru(ts) {
+      const d = new Date(ts);
+      const zi = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      if (d.getHours() >= 12) return zi;
+      const ieri = new Date(zi); ieri.setDate(ieri.getDate() - 1);
+      const h = oraInchidere(ieri.getDay());
+      return (h < 12 && d.getHours() < h) ? ieri : zi;
+  }
+  // momentul la care se inchide ziua de lucru `zi` (Date la miezul noptii)
+  function sfarsitZi(zi) {
+      const h = oraInchidere(zi.getDay());
+      const s = new Date(zi); s.setHours(h, 0, 0, 0);
+      if (h < 12) s.setDate(s.getDate() + 1);
+      return s;
+  }
   function inceputZi() {
-      const n = new Date();
-      const s = new Date(n.getFullYear(), n.getMonth(), n.getDate(), oraResetCurenta, 0, 0, 0);
-      if (n < s) s.setDate(s.getDate() - 1);
-      return s.getTime();
+      const azi = ziLucru(new Date());
+      const ieri = new Date(azi); ieri.setDate(ieri.getDate() - 1);
+      return Math.min(sfarsitZi(ieri).getTime(), Date.now());
   }
   function inceputLuna() {
-      const n = new Date();
-      const s = new Date(n.getFullYear(), n.getMonth(), 1, oraResetCurenta, 0, 0, 0);
-      if (n < s) s.setMonth(s.getMonth() - 1);
-      return s.getTime();
+      const azi = ziLucru(new Date());
+      const ultimaLunaTrecuta = new Date(azi.getFullYear(), azi.getMonth(), 0);
+      return Math.min(sfarsitZi(ultimaLunaTrecuta).getTime(), Date.now());
   }
-  // ziua „de lucru" a unei comenzi, pentru gruparea pe zile din grafic
-  function ziLucru(ts) { return new Date(new Date(ts).getTime() - oraResetCurenta * 3600000); }
 
   function calculateDirectorStats() {
       const istoric = allOrders.filter(o => o.status === 'finalizata' && !esteAlerta(o));
@@ -3697,51 +3810,71 @@
   // Tiparul asta e semnalul clasic de frauda: produsul a iesit din bucatarie/bar, dar comanda
   // s-a anulat in sistem. Se atribuie utilizatorului care a facut trecerea la "anulata" (log.utilizator
   // real al acelei actiuni, nu neaparat cel care a creat comanda).
+  // Pozele de la anulari: link semnat la cerere (bucket privat); cele mai
+  // vechi de 30 de zile se sterg cand directorul deschide lista.
+  window.vedePozaAnulare = async function(cale, btn) {
+      btn.disabled = true;
+      const { data, error } = await _supabase.storage.from('anulari').createSignedUrl(cale, 300);
+      btn.disabled = false;
+      if (error || !data || !data.signedUrl) { alert('Poza nu mai exista (se sterge dupa 30 de zile).'); return; }
+      const img = document.createElement('img');
+      img.src = data.signedUrl; img.alt = 'Poza de la anulare';
+      img.style.cssText = 'max-width:100%; width:240px; border-radius:10px; margin-top:8px; display:block;';
+      btn.replaceWith(img);
+  };
+  let pozeCuratate = false;
+  async function curataPozeVechi() {
+      if (pozeCuratate || userRole !== 'director') return;
+      pozeCuratate = true;
+      try {
+          const prag = Date.now() - 30 * 86400000;
+          const { data: foldere } = await _supabase.storage.from('anulari').list('', { limit: 100 });
+          const vechi = [];
+          for (const f of (foldere || [])) {
+              if (!/^\d{4}-\d{2}$/.test(f.name)) continue;
+              const { data: fisiere } = await _supabase.storage.from('anulari').list(f.name, { limit: 1000 });
+              (fisiere || []).forEach(x => { if (x.created_at && new Date(x.created_at).getTime() < prag) vechi.push(f.name + '/' + x.name); });
+          }
+          if (vechi.length) await _supabase.storage.from('anulari').remove(vechi);
+      } catch(e) { console.warn('Curatare poze:', e); }
+  }
+
   async function renderFraudList(cutoff) {
       const listEl = document.getElementById('fraudList');
+      curataPozeVechi();
       try {
           const { data: logs, error } = await _supabase.from('jurnal_activitate')
             .select('*')
-            .in('actiune', ['pedido_cancelado', 'comanda_anulata_client', 'cod_anulare_gresit', 'anulare_respinsa'])
+            .in('actiune', ['pedido_cancelado', 'comanda_anulata_client'])
             .gte('created_at', new Date(cutoff).toISOString())
             .order('created_at', { ascending: false })
             .limit(300);
           if(error || !logs) { listEl.innerHTML = '<span style="color:var(--text-muted); font-size:13.5px;">Nu am putut incarca istoricul.</span>'; return; }
-
-          const anulari = logs.filter(l => l.actiune === 'pedido_cancelado' || l.actiune === 'comanda_anulata_client');
-          const gresite = logs.filter(l => l.actiune === 'cod_anulare_gresit');
-          const respinse = logs.filter(l => l.actiune === 'anulare_respinsa');
-          let byStaff = {};
-          anulari.forEach(l => { byStaff[l.utilizator] = (byStaff[l.utilizator] || 0) + 1; });
-
-          if(!anulari.length && !gresite.length) {
+          if(!logs.length) {
               listEl.innerHTML = '<span style="color:var(--success); font-size:13.5px;">✅ Nicio anulare in aceasta perioada.</span>';
               return;
           }
-          const summaryHtml = `<div style="margin-bottom:12px; font-size:13px; color:var(--text-muted);">Total: <b style="color:var(--danger)">${anulari.length}</b> anulari` +
-              (Object.keys(byStaff).length ? ' · ' + Object.entries(byStaff).sort((a,b)=>b[1]-a[1]).map(([u,c]) => `${escapeHTML(numeScurt(u))} (${c})`).join(', ') : '') +
-              (gresite.length ? ` · <b style="color:var(--danger)">${gresite.length}</b> incercari cu cod gresit` : '') +
-              (respinse.length ? ` · <b style="color:var(--warning)">${respinse.length}</b> respinse de manager` : '') + `</div>`;
+          const cineScurt = (l) => l.actiune === 'comanda_anulata_client' ? 'clientul' : ((l.detalii || {}).nume || numeScurt(l.utilizator));
+          let byStaff = {};
+          logs.forEach(l => { const c = cineScurt(l); byStaff[c] = (byStaff[c] || 0) + 1; });
+          const summaryHtml = `<div style="margin-bottom:12px; font-size:13px; color:var(--text-muted);">Total: <b style="color:var(--danger)">${logs.length}</b> anulari · ` +
+              Object.entries(byStaff).sort((a,b)=>b[1]-a[1]).map(([u,c]) => `${escapeHTML(u)} (${c})`).join(', ') + `</div>`;
 
           listEl.innerHTML = summaryHtml + logs.slice(0, 40).map(l => {
               const t = new Date(l.created_at).toLocaleString('ro-RO', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
               const d = l.detalii || {};
-              if (l.actiune === 'cod_anulare_gresit') {
-                  return `<div class="fraud-item" style="opacity:.8;"><div class="fi-top"><span>Masa ${escapeHTML(d.mesa || '—')} · cod gresit</span><span>${t}</span></div>
-                          <div class="fi-meta">${escapeHTML(numeScurt(l.utilizator))} a incercat sa anuleze cu un cod gresit</div></div>`;
-              }
-              if (l.actiune === 'anulare_respinsa') {
-                  return `<div class="fraud-item" style="border-left-color:var(--warning); background:rgba(245,158,11,.06);"><div class="fi-top" style="color:var(--warning);"><span>Masa ${escapeHTML(d.mesa || '—')} · respinsa</span><span>${t}</span></div>
-                          <div class="fi-meta">${escapeHTML(numeScurt(d.cerut_de || ''))} a cerut anularea („${escapeHTML(d.motivo || '')}"), <b>${escapeHTML(numeScurt(l.utilizator))}</b> a respins-o</div></div>`;
-              }
               const cine = l.actiune === 'comanda_anulata_client' ? 'clientul, de pe telefon'
-                         : d.aprobata_de ? `<b>${escapeHTML(numeScurt(d.cerut_de || l.utilizator))}</b> (${escapeHTML(d.rol_cerere || d.rol || '')}), aprobata de <b>${escapeHTML(numeScurt(d.aprobata_de))}</b>`
-                         : `<b>${escapeHTML(numeScurt(l.utilizator))}</b>${d.rol ? ' (' + escapeHTML(d.rol) + ')' : ''}${d.cod_validat ? ' · cu codul zilei' : ''}`;
+                         : `<b>${escapeHTML(d.nume || numeScurt(l.utilizator))}</b>${d.nume ? ' · contul ' + escapeHTML(numeScurt(l.utilizator)) : ''}${d.rol ? ' (' + escapeHTML(d.rol) + ')' : ''}`;
               const produse = Array.isArray(d.productos) ? d.productos.filter(p => p.cantitate > 0).map(p => `${p.cantitate}× ${p.nume}`).join(', ')
                             : Array.isArray(d.sterse) ? d.sterse.map(x => `${x.scos}× ${x.nume}`).join(', ') : '';
+              const retur = d.status_inainte === 'finalizata' ? ` · <span style="color:var(--warning)">retur — era deja preluata${d.bon_scos ? ', cu bon confirmat' : ''}</span>` : '';
+              const poza = d.poza && /^[0-9-]+\/[0-9-]+\.jpg$/.test(d.poza)
+                  ? `<button class="btn-action" style="margin-top:8px; font-size:12px; padding:8px 12px; border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text);" onclick="vedePozaAnulare('${d.poza}', this)">📷 Vezi poza</button>`
+                  : (l.actiune === 'pedido_cancelado' ? `<div class="fi-meta" style="opacity:.7;">fara poza (camera indisponibila sau refuzata)</div>` : '');
               return `<div class="fraud-item">
-                  <div class="fi-top"><span>Masa ${escapeHTML(d.mesa || '—')}${l.comanda_id ? ' · Comanda #' + escapeHTML(l.comanda_id) : ''}</span><span>${t}</span></div>
-                  <div class="fi-meta">Anulata de ${cine}${d.motivo ? ` · motiv: „${escapeHTML(d.motivo)}"` : ''}${produse ? ' · ' + escapeHTML(produse) : ''}</div>
+                  <div class="fi-top"><span>Masa ${escapeHTML(d.mesa || '—')}${l.comanda_id ? ' · Comanda #' + escapeHTML(l.comanda_id) : ''}${d.total != null ? ' · ' + Number(d.total).toFixed(2) + ' lei' : ''}</span><span>${t}</span></div>
+                  <div class="fi-meta">Anulata de ${cine}${d.motivo ? ` · motiv: „${escapeHTML(d.motivo)}"` : ''}${produse ? ' · ' + escapeHTML(produse) : ''}${retur}</div>
+                  ${poza}
                 </div>`;
           }).join('');
       } catch(e) {
@@ -3970,10 +4103,7 @@
           setari_zi: '<span style="color:var(--warning)">🕐 Ora de inchidere</span>',
           setari_modificare: '<span style="color:var(--warning)">✏️ Fereastra de modificare</span>',
           setari_pachet: '<span style="color:var(--warning)">🥡 Comenzi la pachet</span>',
-          cod_anulare_gresit: '<span style="color:var(--danger)">🔐 Cod de anulare gresit</span>',
-          anulare_ceruta: '<span style="color:var(--purple)">⛔ Cerere de anulare</span>',
-          anulare_respinsa: '<span style="color:var(--warning)">⛔ Anulare respinsa</span>',
-          cod_anulare_nou: '<span style="color:var(--warning)">🔐 Cod de anulare nou</span>',
+          setari_angajati: '<span style="color:var(--warning)">👥 Lista de angajati</span>',
           tura_start: '<span style="color:var(--success)">🕒 A intrat in tura</span>',
           tura_stop: '<span style="color:var(--text-muted)">🕒 A iesit din tura</span>',
           meniu_modificat: '<span style="color:var(--accent)">🍸 Meniu modificat</span>',
@@ -3992,11 +4122,14 @@
               if (log.actiune === 'setari_busy') detText += log.detalii.isBusy ? '(pornit)' : '(oprit)';
               if (log.actiune === 'setari_ospatari') detText += log.detalii.faraOspatari ? '(pornit)' : '(oprit)';
               if (log.actiune === 'setari_bucatarie') detText += log.detalii.faraBucatarie ? '(inchisa)' : '(deschisa)';
-              if (log.actiune === 'setari_zi') detText += `ziua se inchide la ${String(log.detalii.oraReset).padStart(2,'0')}:00`;
+              if (log.actiune === 'setari_zi') detText += Array.isArray(log.detalii.zile)
+                  ? 'ore de inchidere: ' + [1, 2, 3, 4, 5, 6, 0].map(z => `${ZILE_SAPT[z].slice(0, 2)} ${String(log.detalii.zile[z]).padStart(2, '0')}`).join(', ')
+                  : `ziua se inchide la ${String(log.detalii.oraReset).padStart(2,'0')}:00`;
               if (log.actiune === 'setari_modificare') detText += `${log.detalii.minute} minute`;
               if (log.actiune === 'setari_pachet') detText += log.detalii.activ ? '(pornite)' : '(oprite)';
               if (log.actiune === 'tura_stop' && log.detalii.ore != null) detText += `${log.detalii.ore} ore`;
-              if (log.actiune === 'pedido_cancelado' && log.detalii.rol) detText += `· ${escapeHTML(log.detalii.rol)} `;
+              if (log.actiune === 'pedido_cancelado') detText += `· ${escapeHTML(log.detalii.nume || '')}${log.detalii.rol ? ' (' + escapeHTML(log.detalii.rol) + ')' : ''}${log.detalii.status_inainte === 'finalizata' ? ' · retur' : ''}${log.detalii.poza ? ' · 📷' : ''} `;
+              if (log.actiune === 'setari_angajati') detText += Array.isArray(log.detalii.nume) ? log.detalii.nume.map(escapeHTML).join(', ') : '';
               if (log.actiune === 'ticket_confirmado') detText += log.detalii.bon_scos ? `bon confirmat${log.detalii.total != null ? ' · ' + Number(log.detalii.total).toFixed(2) + ' lei' : ''}` : 'confirmarea bonului scoasa';
               if (log.actiune === 'mesa_liberada') detText += log.detalii.automat ? '(automat)' : '(manual)';
               if (log.actiune === 'estado_cambiado' && log.detalii.status) detText += `→ ${escapeHTML(log.detalii.status)} `;
@@ -4077,8 +4210,8 @@
               if (p.new.status === 'anulata' && prevStatus !== 'anulata' && userRole === 'manager'
                   && !JSON.stringify(p.new.produse || []).includes('Anulata de client') && !esteAlerta(p.new)) {
                   sunetCerere();
-                  setTimeout(() => rosteste(`${etichetaMasaVorbita(p.new).replace(/^m/, 'M')}, comandă anulată. ${p.new.motiv_anulare || ''}`), 750);
-                  showBackgroundAlert('❌ Comanda anulata', `${etichetaMasaVorbita(p.new)}: ${p.new.motiv_anulare || ''}`);
+                  setTimeout(() => rosteste(`${etichetaMasaVorbita(p.new).replace(/^m/, 'M')}, comandă anulată${p.new.anulat_de ? ' de ' + p.new.anulat_de : ''}. ${p.new.motiv_anulare || ''}`), 750);
+                  showBackgroundAlert('❌ Comanda anulata', `${etichetaMasaVorbita(p.new)}${p.new.anulat_de ? ', ' + p.new.anulat_de : ''}: ${p.new.motiv_anulare || ''}`);
               }
               renderOrders();
               if (currentTab === 'map') renderTablesGrid();
@@ -4409,7 +4542,7 @@
           <div class="o-time"><span class="time-elapsed">1 min</span><span>${ora}</span></div></div>
         <ul class="o-items"><li><span class="qty">2x</span> <span>Espresso</span></li><li><span class="qty">1x</span> <span>Limonada</span></li>
           <li style="color:var(--warning); font-weight:600; font-style:italic; font-size:14px;">📝 fara zahar</li></ul>
-        <div class="o-foot" style="margin-top:16px;"><button class="btn-action btn-accept">✓ Am vazut, accept</button>
+        <div class="o-foot" style="margin-top:16px;"><button class="btn-action btn-accept">✓ Accepta</button>
           <button class="btn-action btn-edit">✏️</button><button class="btn-action btn-cancel">✕</button></div>`;
       document.getElementById('ordersView').prepend(d);
   }
@@ -4423,30 +4556,23 @@
           text: rol === 'ospatar'
             ? 'Aici vezi comenzile gata de dus la masa si cererile de la mese (nota, ajutor). Comenzile in lucru apar si ele, mai sters, ca sa stii ce asteapta fiecare masa.'
             : 'Aici intra comenzile de la clienti si de la ospatari, in timp real. Numarul de pe iconita arata cate sunt active.' });
-      if (rol === 'bar' || rol === 'bucatarie') {
-          pasi.push({ el: '#barAcceptare', titlu: 'Alarma de comanda noua',
-              text: 'Cand intra o comanda, telefonul bipaie, spune masa si apoi bazaie fara oprire pana apesi „Am vazut, accept". Suna oricum, chiar daca vocea e oprita. Clientul vede pe telefon ca ai acceptat-o si ca urmeaza sa vina.',
-              inainte() {
-                  const b = document.getElementById('barAcceptare'); b.dataset.demo = '1';
-                  document.getElementById('barAcceptareText').textContent = 'Comanda noua — masa 4. Apasa ca sa confirmi ca ai vazut-o.';
-                  b.classList.add('on');
-              },
-              dupa() { const b = document.getElementById('barAcceptare'); delete b.dataset.demo; b.classList.remove('on'); sincronizeazaAlarma(); } });
-      }
       pasi.push({ el: () => document.getElementById('cardDemoGhid') || document.querySelector('#ordersView .order-card') || document.getElementById('ordersView'),
           titlu: 'Cardul unei comenzi',
           text: rol === 'ospatar'
-            ? 'Cand barul apasa „Gata", telefonul bipaie si spune masa: du-o la masa. Cardul ramane albastru cateva minute, apoi dispare singur. Daca clientul vrea sa schimbe ceva dupa ce comanda a fost acceptata, te cheama la masa: ✏️ deschide comanda ca sa scoti, sa adaugi sau sa schimbi cantitati — barul vede pe loc; ✕ o anuleaza, cu motiv. Motivul si numele tau raman in istoricul directorului.'
+            ? 'Cand barul apasa „Gata", telefonul bipaie si spune masa: du-o la masa. Cardul ramane albastru cateva minute, apoi dispare singur. Daca clientul vrea sa schimbe ceva dupa ce comanda a fost acceptata, te cheama la masa: ✏️ deschide comanda ca sa scoti, sa adaugi sau sa schimbi cantitati — barul vede pe loc; ✕ o anuleaza (si ca retur, dupa ce a fost dusa), cu motiv, numele tau si o poza. Raman in istoricul directorului.'
             : rol === 'director'
-            ? 'Tu doar observi: nu esti anuntat de comenzi, nu le confirmi, nu le modifici si nu le anulezi. Vezi in timp real ce se intampla, iar in Sef ai incasarile, rapoartele, jurnalul, anularile (cine, cand, de ce) si setarile.'
+            ? 'Tu doar observi: nu esti anuntat de comenzi, nu le confirmi, nu le modifici si nu le anulezi. Vezi in timp real ce se intampla, iar in Sef ai incasarile, rapoartele, jurnalul, anularile (cine, cand, de ce, cu poza), lista de angajati si setarile.'
             : rol === 'manager'
-            ? 'Tu nu esti anuntat de comenzi noi, dar afli pe loc de fiecare anulare facuta de bar sau ospatari, cu motivul. ✏️ modifica orice comanda, ✕ anuleaza, scoti confirmarea unui bon gresit. Jurnalul, datele personalului si stergerea istoricului raman ale directorului.'
-            : '„Am vazut, accept" opreste alarma si anunta clientul. „Gata" cand e facuta: comanda se inchide si ospatarul e anuntat sa vina s-o ia. ✏️ modifica produsele daca clientul s-a razgandit. ✕ anuleaza, cu motiv — ramane in istoricul directorului pe numele tau. Daca clientul scoate ceva de pe telefon (poate doar pana accepti), cardul clipeste galben si telefonul iti spune ce s-a schimbat.',
+            ? 'Tu nu esti anuntat de comenzi noi, dar afli pe loc de fiecare anulare facuta de bar sau ospatari, cu numele si motivul. ✏️ modifica orice comanda, ✕ anuleaza, scoti confirmarea unui bon gresit, pornesti „ora de varf" si aranjezi sala. Meniul, bucataria inchisa, fereastra, pachetul, modul fara ospatari, ora de inchidere, jurnalul si datele personalului raman ale directorului.'
+            : 'Cand intra o comanda, telefonul bipaie, spune masa (cu vocea pornita) si apoi suna ding-dong pana apesi „Accepta" — asa clientul afla ca ai vazut-o. „Gata" cand e facuta: comanda se inchide si ospatarul e anuntat sa vina s-o ia (fara ospatari: „Preluata", cand ai dus-o). ✏️ modifica produsele daca clientul s-a razgandit. ✕ anuleaza, cu motiv, numele tau si o poza — raman in istoricul directorului. Daca clientul scoate ceva de pe telefon (poate doar pana accepti), cardul clipeste galben si telefonul iti spune ce s-a schimbat.',
           inainte() { switchTab('active'); cardDemoGhid(true); },
           dupa() { cardDemoGhid(false); } });
-      if (rol === 'bar' || rol === 'bucatarie') {
+      if (rol !== 'director') {
           pasi.push({ el: mobil ? '#btnToggleSoundMobile' : '#btnToggleSound', titlu: 'Voce',
-              text: 'Cu vocea pornita, telefonul citeste cu voce tare ' + (rol === 'bucatarie' ? 'produsele si ' : '') + 'notele clientului la fiecare comanda. Alarma de comanda noua suna oricum, chiar daca vocea e oprita.' });
+              text: rol === 'bar' || rol === 'bucatarie'
+                ? 'Pornita: telefonul spune masa la fiecare comanda noua si la fiecare cerere (nota, ajutor)' + (rol === 'bucatarie' ? ', plus produsele' : ', plus notele clientului') + '. Oprita: doar bipul si alarma ding-dong, fara voce. Butonul tine minte ce ai ales.'
+                : rol === 'ospatar' ? 'Pornita: cand barul apasa „Gata", telefonul spune masa. Oprita: doar bipul si vibratia.'
+                : 'Pornita: auzi masa si motivul la fiecare anulare facuta de personal. Oprita: doar sunetul.' });
       }
       pasi.push({ el: '#navMap', titlu: 'Sala',
           text: 'Planul meselor, fiecare cu timerul ei: de cand e ocupata si de cand a comandat ultima data. Verde: ocupata de curand. Portocaliu: peste o ora fara comanda noua, treci pe la ea. Rosu: peste doua ore. Albastru: a cerut nota sau ajutor. Atinge o masa ca sa-i vezi comenzile sau s-o eliberezi.' });
@@ -4457,7 +4583,9 @@
       pasi.push({ el: '#navHistory', titlu: 'Istoric',
           text: rol === 'bar' ? 'Comenzile terminate si anulate. Tot aici confirmi, pentru fiecare, ca ai scos bonul: ramane pe numele tau, cu ora, si nu se mai poate scoate de la bar.' : 'Comenzile terminate si anulate.' });
       pasi.push({ el: '#navAdmin', titlu: 'Panoul sefului',
-          text: 'Incasari si grafice, editorul de meniu, setari (ora la care se inchide ziua, bucatarie inchisa, mod fara ospatari), rapoarte pe angajat si anulari suspecte.' });
+          text: rol === 'manager'
+            ? 'Incasari si grafice, „ora de varf" si stocul. Restul setarilor si rapoartele pe oameni sunt la director.'
+            : 'Incasari si grafice, editorul de meniu, setari (ora de inchidere pe zile, bucatarie inchisa, fereastra de modificare, pachet, mod fara ospatari), lista de angajati, rapoarte pe angajat si anularile — cu poza.' });
       pasi.push({ el: '#navJurnal', titlu: 'Jurnal',
           text: 'Fiecare actiune, cu ora si cine a facut-o — inclusiv ce au scos clientii din comenzi de pe telefon.' });
       pasi.push({ el: mobil ? '#btnNotificariMobile' : '#btnNotificari', titlu: 'Notificari',

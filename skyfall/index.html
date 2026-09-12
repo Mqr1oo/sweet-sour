@@ -225,9 +225,15 @@
   .btn-order-bar { background: var(--pink-main); color: #f6f0e6; font-size: 15px; }
   .btn-split-bill { background: var(--bg-panel); color: var(--ink); border: 1.5px solid var(--paper-dim); flex: 0 0 46px; font-size: 17px; }
 
-  .tracker-widget { position: fixed; top: calc(12px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%) translateY(-30px) scale(0.94); width: 84%; max-width: 340px; background: rgba(20,16,13,0.92); backdrop-filter: blur(16px) saturate(160%); border: 1.5px solid var(--pink-main); border-radius: var(--radius-md); padding: 11px 14px; box-shadow: 0 8px 28px rgba(47, 63, 107, 0.3); z-index: 9999; transition: transform 0.45s var(--ease-sheet), opacity 0.35s var(--ease-out); opacity: 0; visibility: hidden; pointer-events: none; }
+  .tracker-widget { position: fixed; top: calc(12px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%) translateY(-30px) scale(0.94); width: 84%; max-width: 340px; background: rgba(20,16,13,0.92); backdrop-filter: blur(16px) saturate(160%); border: 1.5px solid var(--pink-main); border-radius: var(--radius-md); padding: 11px 14px; box-shadow: 0 8px 28px rgba(47, 63, 107, 0.3); z-index: 250; transition: transform 0.45s var(--ease-sheet), opacity 0.35s var(--ease-out); opacity: 0; visibility: hidden; pointer-events: none; }
   .tracker-widget.show { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; visibility: visible; pointer-events: auto; }
   .tracker-widget{ cursor:pointer; }
+  /* cat e afisata, antetul face loc sub ea: limba si mesele nu raman acoperite */
+  body.are-tracker .top-actions{ top: calc(var(--tracker-h, 90px) + 26px + env(safe-area-inset-top)); }
+  body.are-tracker .hero{ padding-top: calc(var(--tracker-h, 90px) + 90px + env(safe-area-inset-top)); }
+  body.are-tracker.e-busy .busy-banner{ padding-top: calc(var(--tracker-h, 90px) + 26px + env(safe-area-inset-top)); }
+  body.are-tracker.e-busy .top-actions{ top: 20px; }
+  body.are-tracker.e-busy .hero{ padding-top: 85px; }
   .tracker-widget:active{ transform: translateX(-50%) scale(0.97); transition-duration:.1s; }
   .t-hint{ font-family:'Space Mono', monospace; font-size:10.5px; color:var(--ink-soft); margin-top:7px; letter-spacing:.02em; text-align:center; }
   .t-head { display: flex; justify-content: space-between; align-items: flex-start; font-size: 12px; margin-bottom: 7px; font-weight: 700; gap: 8px; }
@@ -308,7 +314,7 @@
   .os-timp{ font-family:'Space Mono', monospace; font-size: 11px; color: var(--brass-soft); }
   .os-timp.expirat{ color: var(--ink-soft); }
 
-  .cookie-banner{ position: fixed; left:16px; right:16px; bottom: calc(88px + env(safe-area-inset-bottom)); max-width:480px; margin:0 auto; background: rgba(17, 14, 11, 0.92); backdrop-filter: blur(18px) saturate(160%); border:1.5px solid var(--pink-main); border-radius: var(--radius-md); padding:16px 18px; box-shadow: var(--shadow-warm); z-index:400; display:none; flex-direction:column; gap:12px; transform: translateY(140%); opacity:0; transition: transform .45s var(--ease-sheet), opacity .35s var(--ease-out); }
+  .cookie-banner{ position: fixed; left:16px; right:16px; bottom: calc(88px + env(safe-area-inset-bottom)); max-width:480px; margin:0 auto; background: rgba(17, 14, 11, 0.92); backdrop-filter: blur(18px) saturate(160%); border:1.5px solid var(--pink-main); border-radius: var(--radius-md); padding:16px 18px; box-shadow: var(--shadow-warm); z-index:290; display:none; flex-direction:column; gap:12px; transform: translateY(140%); opacity:0; transition: transform .45s var(--ease-sheet), opacity .35s var(--ease-out); }
   .cookie-banner.show{ display:flex; transform: translateY(0); opacity:1; }
   .cookie-banner p{ margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.45; }
   .cookie-banner-actions{ display:flex; gap:10px; }
@@ -1008,11 +1014,11 @@
       stFaraOspBautura: '🍹 Acceptata — bautura vine din moment in moment', stFaraOspMancare: '🍳 Acceptata — mancarea se pregateste, vine in cateva minute',
       stFaraOspMixt: '✅ Acceptata — bauturile vin din moment in moment, mancarea in cateva minute',
       osTimp: (mm, ss) => `se mai poate modifica ${mm}:${ss}`, osTimpNoua: 'se poate modifica pana e acceptata', osTimpExpirat: (m) => `fereastra de ${m} min a trecut`,
-      stScurt: { noua:'trimisa', acceptata:'acceptata', gata:'acceptata', finalizata:'preluata', anulata:'anulata', expirata:'inchisa', in_lucru:'in lucru' }, osMotiv: 'Motiv',
+      stScurt: { noua:'trimisa', acceptata:'acceptata', gata:'acceptata', finalizata:'preluata', anulata:'anulata', expirata:'inchisa', in_lucru:'in lucru' }, osMotiv: 'Motiv', osAnulatDe: 'Anulata de',
       trackerHint: 'Apasa: vezi comanda · scoate ceva · imparte nota',
       osTitle: 'Comanda ta', osSubTable: (m)=>`Masa ${m}`, osSubTakeaway: 'La pachet', osTotalLabel: 'Total comandat:', osSplitBtn: '➗ Imparte nota', osAddMore: '➕ Mai adauga ceva',
       osHintEditable: (m) => `Ai gresit ceva? Apasa − langa produs si dispare pe loc si de la bar. Se poate doar pana e acceptata comanda.`,
-      osHintLocked: 'Comanda e acceptata si nu se mai schimba de pe telefon. Vrei altceva? Apasa butonul de mai sus: ospatarul vine la masa si o modifica pe loc.', osCallWaiter: '🙋 Cheama ospatarul sa schimbe comanda', osCallWaiterSent: (m) => `Ospatarul vine la masa ${m} sa schimbe comanda.`,
+      osHintLocked: 'Comanda e acceptata si nu se mai schimba de pe telefon. Vrei altceva? Apasa butonul de mai sus: ospatarul vine la masa si o modifica pe loc.', osHintAnulata: 'Comanda a fost anulata de local — vezi mai sus cine si de ce. Poti comanda din nou din meniu sau poti chema ospatarul.', osCallWaiter: '🙋 Cheama ospatarul sa schimbe comanda', osCallWaiterSent: (m) => `Ospatarul vine la masa ${m} sa schimbe comanda.`,
       sectBar: '🍸 Bar', sectKitchen: '🍳 Bucatarie', removeOne: 'Scoate o bucata',
       removeConfirm: (n)=>`Scoti „${n}” din comanda? Barul afla pe loc.`, removeLastConfirm: (n)=>`„${n}” e ultimul produs: comanda se anuleaza. Continui?`,
       osErrTitle: 'Nu s-a putut', osErrLocked: 'Comanda a fost acceptata si nu mai poate fi modificata de pe telefon. Cheama ospatarul.',
@@ -1134,11 +1140,11 @@
       stFaraOspBautura: '🍹 Accepted — your drinks are on their way', stFaraOspMancare: '🍳 Accepted — your food is being prepared, a few minutes',
       stFaraOspMixt: '✅ Accepted — drinks any moment now, food in a few minutes',
       osTimp: (mm, ss) => `can still be changed for ${mm}:${ss}`, osTimpNoua: 'can be changed until accepted', osTimpExpirat: (m) => `the ${m}-minute window has passed`,
-      stScurt: { noua:'sent', acceptata:'accepted', gata:'accepted', finalizata:'delivered', anulata:'cancelled', expirata:'closed', in_lucru:'in progress' }, osMotiv: 'Reason',
+      stScurt: { noua:'sent', acceptata:'accepted', gata:'accepted', finalizata:'delivered', anulata:'cancelled', expirata:'closed', in_lucru:'in progress' }, osMotiv: 'Reason', osAnulatDe: 'Cancelled by',
       trackerHint: 'Tap: see your order · remove something · split the bill',
       osTitle: 'Your order', osSubTable: (m)=>`Table ${m}`, osSubTakeaway: 'Takeaway', osTotalLabel: 'Ordered total:', osSplitBtn: '➗ Split the bill', osAddMore: '➕ Add something else',
       osHintEditable: (m) => `Made a mistake? Tap − next to the item and it disappears from the bar instantly. Possible only until the order is accepted.`,
-      osHintLocked: 'The order is accepted and can no longer be changed from your phone. Want something else? Tap the button above: the waiter comes to your table and changes it on the spot.', osCallWaiter: '🙋 Call the waiter to change my order', osCallWaiterSent: (m) => `The waiter is coming to table ${m} to change your order.`,
+      osHintLocked: 'The order is accepted and can no longer be changed from your phone. Want something else? Tap the button above: the waiter comes to your table and changes it on the spot.', osHintAnulata: 'The venue cancelled this order — see above who did it and why. You can order again from the menu or call the waiter.', osCallWaiter: '🙋 Call the waiter to change my order', osCallWaiterSent: (m) => `The waiter is coming to table ${m} to change your order.`,
       sectBar: '🍸 Bar', sectKitchen: '🍳 Kitchen', removeOne: 'Remove one',
       removeConfirm: (n)=>`Remove "${n}" from your order? The bar is notified instantly.`, removeLastConfirm: (n)=>`"${n}" is the last item: the order will be cancelled. Continue?`,
       osErrTitle: 'Not possible', osErrLocked: 'The order has been accepted and can no longer be changed from your phone. Please call the waiter.',
@@ -1307,9 +1313,13 @@
       document.getElementById('privacyOverlay').classList.add('open');
   });
 
+  // Bannerul de cookie apare abia dupa fereastra de intampinare (limba,
+  // masa), ca sa nu stea peste ea.
   const cookieBanner = document.getElementById('cookieBanner');
-  if(!localStorage.getItem(STORE + 'cookieConsent')){
-      setTimeout(() => cookieBanner.classList.add('show'), 500);
+  function arataCookie() {
+      if (localStorage.getItem(STORE + 'cookieConsent')) return;
+      if (document.getElementById('onboardingOverlay').classList.contains('open')) return;
+      cookieBanner.classList.add('show');
   }
   document.getElementById('btnCookieAccept').addEventListener('click', () => {
       localStorage.setItem(STORE + 'cookieConsent', 'accepted');
@@ -1718,6 +1728,7 @@
 
   function applyBusyState(isBusy) {
       document.getElementById('busyBanner').style.display = isBusy ? 'block' : 'none';
+      document.body.classList.toggle('e-busy', !!isBusy);
   }
 
   // Setari ale localului pe care le vede si telefonul clientului: modul fara
@@ -1794,6 +1805,7 @@
       const t = I18N[currentLang] || I18N.ro;
       const tracker = document.getElementById('liveTracker');
       const st = stareGlobala();
+      document.body.classList.toggle('are-tracker', !!st);
       if (!st) { tracker.classList.remove('show'); return; }
       const statText = document.getElementById('trackerStatusText');
       const progress = document.getElementById('trackerProgress');
@@ -1813,8 +1825,10 @@
           text = areBar && areBuc ? t.stFaraOspMixt : areBuc ? t.stFaraOspMancare : t.stFaraOspBautura;
       }
       if (st === 'anulata') {
-          const motive = [...new Set(comenziSesiune.filter(c => c.status === 'anulata' && c.motiv_anulare).map(c => c.motiv_anulare))];
-          if (motive.length) text += ' — ' + motive.join('; ');
+          // „Anulata de Andrei: Produs epuizat" — cine si de ce, cand se stie
+          const parti = [...new Set(comenziSesiune.filter(c => c.status === 'anulata').map(c =>
+              (c.anulat_de ? `${t.osAnulatDe} ${c.anulat_de}` : '') + (c.motiv_anulare ? (c.anulat_de ? ': ' : '') + c.motiv_anulare : '')).filter(Boolean))];
+          if (parti.length) text = '❌ ' + parti.join('; ');
       }
       statText.textContent = text;
       progress.style.width = harta[st][1];
@@ -1822,6 +1836,8 @@
       progress.style.background = st === 'anulata' ? 'var(--coral)' : '';
       document.getElementById('trackerTitle').textContent = t.trackerTitle + ' ▸';
       tracker.classList.add('show');
+      // antetul face loc exact cat e de inalta (textul poate lua doua randuri)
+      document.documentElement.style.setProperty('--tracker-h', tracker.offsetHeight + 'px');
   }
 
   // Un singur canal pentru toate comenzile din sesiune. Se reface cand se
@@ -1834,12 +1850,15 @@
       const ids = comenziSesiune.map(c => c.id).join(',');
       const laSchimbare = (p) => {
           const c = comenziSesiune.find(x => x.id === p.new.id); if (!c) return;
+          const eraAnulata = c.status === 'anulata';
           c.status = p.new.status; c.produse = p.new.produse; c.total = p.new.total;
           if (p.new.created_at) c.created_at = p.new.created_at;
           if (p.new.motiv_anulare !== undefined) c.motiv_anulare = p.new.motiv_anulare;
+          if (p.new.anulat_de !== undefined) c.anulat_de = p.new.anulat_de;
           if (c.status === 'expirata') comenziSesiune = comenziSesiune.filter(x => x.id !== c.id);
           salveazaComenziSesiune(); actualizeazaTracker();
           if (document.getElementById('orderSheetOverlay').classList.contains('open')) randeazaFisaComanda();
+          if (c.status === 'anulata' && !eraAnulata) anuntaAnulare(c);
       };
       try {
           canalComenzi = _supabase.channel('comenzi_client_' + Date.now())
@@ -1850,6 +1869,14 @@
             })
             .subscribe();
       } catch(e) { console.warn('Urmarire comenzi:', e); }
+  }
+
+  // Barul sau ospatarul a anulat o comanda: telefonul vibreaza si fisa se
+  // deschide singura, cu numele celui care a anulat si motivul.
+  function anuntaAnulare(c) {
+      if (JSON.stringify(c.produse || []).includes('Anulata de client')) return;
+      if (navigator.vibrate) { try { navigator.vibrate([250, 120, 250]); } catch(e) {} }
+      deschideFisaComanda();
   }
 
   // Cand telefonul revine din blocare, legatura live poate fi moarta:
@@ -1869,7 +1896,7 @@
       try {
           const ids = comenziSesiune.map(c => c.id);
           const { data } = await _supabase.from('comenzi')
-              .select('id,status,produse,total,mesa,created_at,sectiune,motiv_anulare').in('id', ids);
+              .select('id,status,produse,total,mesa,created_at,sectiune,motiv_anulare,anulat_de').in('id', ids);
           const gasite = new Map((data || []).map(r => [r.id, r]));
           comenziSesiune = comenziSesiune.filter(c => gasite.has(c.id)).map(c => Object.assign(c, gasite.get(c.id)))
               .filter(c => c.status !== 'expirata');
@@ -1932,7 +1959,7 @@
           const ora = new Date(c.created_at).toLocaleTimeString(currentLang === 'en' ? 'en-GB' : 'ro-RO', { hour: '2-digit', minute: '2-digit' });
           let timp = '';
           if (st === 'noua') timp = `<span class="os-timp">${t.osTimpNoua}</span>`;
-          html += `<div class="os-grup"><div class="os-head"><span>${c.sectiune === 'bucatarie' ? t.sectKitchen : t.sectBar} · ${ora}</span><span class="os-st os-st-${escapeHTML(st)}">${escapeHTML(t.stScurt[st] || st)}</span></div>${timp ? `<div class="os-head" style="margin-top:-2px;">${timp}</div>` : ''}${st === 'anulata' && c.motiv_anulare ? `<div class="os-row os-note">${escapeHTML(t.osMotiv)}: ${escapeHTML(c.motiv_anulare)}</div>` : ''}`;
+          html += `<div class="os-grup"><div class="os-head"><span>${c.sectiune === 'bucatarie' ? t.sectKitchen : t.sectBar} · ${ora}</span><span class="os-st os-st-${escapeHTML(st)}">${escapeHTML(t.stScurt[st] || st)}</span></div>${timp ? `<div class="os-head" style="margin-top:-2px;">${timp}</div>` : ''}${st === 'anulata' && (c.motiv_anulare || c.anulat_de) ? `<div class="os-row os-note">${c.anulat_de ? `${escapeHTML(t.osAnulatDe)} ${escapeHTML(c.anulat_de)} · ` : ''}${escapeHTML(t.osMotiv)}: ${escapeHTML(c.motiv_anulare || '')}</div>` : ''}`;
           (c.produse || []).forEach((p, i) => {
               if (p.cantitate > 0) {
                   const suma = Number(p.pret_unitar) * p.cantitate;
@@ -1949,7 +1976,8 @@
       document.getElementById('osSplitBtn').style.display = total > 0 ? 'block' : 'none';
       const vreunaModificabila = comenziSesiune.some(c => c.status === 'noua');
       const vreunaAcceptata = comenziSesiune.some(c => c.status === 'acceptata' || c.status === 'gata');
-      document.getElementById('osHint').textContent = vreunaModificabila ? t.osHintEditable(fereastraMinuteClient) : t.osHintLocked;
+      const toateInchise = comenziSesiune.length && comenziSesiune.every(c => ['anulata', 'expirata'].includes(c.status));
+      document.getElementById('osHint').textContent = vreunaModificabila ? t.osHintEditable(fereastraMinuteClient) : (toateInchise ? t.osHintAnulata : t.osHintLocked);
       const cw = document.getElementById('osCallWaiter');
       cw.textContent = t.osCallWaiter;
       cw.style.display = (!vreunaModificabila && vreunaAcceptata && !CFG.DEMO && sessionStorage.getItem(STORE + 'masa') !== 'Takeaway') ? 'block' : 'none';
@@ -2460,10 +2488,11 @@
   // Ghidul porneste dupa ce clientul a ales limba si modul, si dupa ce
   // meniul e pe ecran — altfel n-ar avea pe ce arata.
   function dupaOnboarding() {
-      if (ghidProgramat) return;
       // applyLanguage() salveaza limba inainte ca fereastra de intampinare sa
       // se inchida, deci ne uitam la fereastra, nu la localStorage
       if (onboardingOverlay.classList.contains('open')) return;
+      setTimeout(arataCookie, 400);
+      if (ghidProgramat) return;
       if (!allItems.length) return;
       ghidProgramat = true;
       setTimeout(() => pornesteGhidClient(false), 700);

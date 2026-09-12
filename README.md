@@ -33,8 +33,10 @@ din prima, fără configurare: numele folderului **este** calea din URL.
    `07_cod_anulare.sql` (codul zilei pentru anulări), `08_finalizata_la.sql`
    (ora închiderii comenzii), `09_manager.sql` (rolul `manager`) și
    `10_anulare_simpla.sql` (anularea cu motiv, fără cod; clientul modifică
-   doar până e acceptată; managerul fără jurnal). Toate sunt deja aplicate pe
-   M3 și Sweet & Sour.
+   doar până e acceptată; managerul fără jurnal) și `11_zile_angajati_poze.sql`
+   (ora de închidere pe zile, lista de angajați, nume + poză la anulare,
+   bucket-ul privat `anulari`, managerul doar cu „ora de vârf"). Toate sunt
+   deja aplicate pe M3 și Sweet & Sour.
 3. Completezi `config.js` — URL, cheie publicabilă, nume, slogan, culori,
    link de recenzie Google.
 4. Creezi conturile de personal (`supabase/creeaza_conturi_staff.py`) și le dai
@@ -72,9 +74,9 @@ Fluxul unei comenzi are acum un pas în plus, la început:
 | Stare | Cine o pune | Ce vede clientul pe telefon |
 |---|---|---|
 | `noua` | intră singură | „Trimisă — așteaptă să fie văzută" |
-| `acceptata` | barul / bucătăria apasă **„Am văzut, accept"** | „Acceptată — am văzut comanda, urmează să vină" |
+| `acceptata` | barul / bucătăria apasă **„Acceptă"** pe card | „Acceptată — am văzut comanda, urmează să vină" |
 | `finalizata` | barul / bucătăria apasă **„Gata"** (cu ospătari: ospătarul e anunțat s-o ia) sau **„Preluată"** (fără ospătari) | „Preluată. Poftă bună!" |
-| `anulata` | bar / ospătar / manager, cu motiv | „Anulată — motivul" |
+| `anulata` | bar / ospătar / manager, cu motiv, nume și poză | „Anulată de Andrei: motivul" |
 
 Starea stă în baza de date, nu pe telefon: când cineva acceptă de pe un
 dispozitiv, alarma se oprește pe toate.
@@ -84,22 +86,27 @@ dispozitiv, alarma se oprește pe toate.
 Cât timp există o comandă `noua` pentru rolul curent, telefonul **nu tace**:
 
 1. un bip scurt,
-2. vocea spune, în română, „Comandă nouă, masa 4" (sau „la pachet"),
+2. vocea spune, în română, „Comandă nouă, masa 4" (sau „la pachet") — doar
+   cu butonul „Voce" pornit,
 3. apoi o alarmă continuă — un „ding-dong" pe două note, undă triunghiulară,
    cu pauză între bătăi; se aude clar în bar fără să zgârie urechea — care
-   ține **până apasă cineva „Am văzut, accept"**, nu până se termină un sunet.
+   ține **până apasă cineva „Acceptă"** pe card, nu până se termină un sunet.
 
 Masa se spune **o singură dată**: o comandă cu bar și bucătărie vine ca două
 rânduri și, fără asta, vocea zicea „masa patru" de două ori la rând. Textul
 vorbit e cu diacritice („Comandă nouă, masa 4", „Masa 4 cheamă ospătarul"),
-altfel vocea îl pronunța strâmb. **Directorul nu primește alarma**: pe
-telefonul lui doar bipul scurt și bara de acceptare.
+altfel vocea îl pronunța strâmb. **Directorul nu primește alarma** și nici
+bipul.
 
-Toate sună indiferent de butonul „Voce". Butonul (fostul „Sunet")
-controlează doar ce se mai spune după masă: bucătăria primește lista de
-produse, barul notele clientului. Bara roșie cu „Am văzut, accept" stă sus, în
-orice ecran al panoului, cât timp mai e ceva neacceptat; același buton e și pe
-fiecare card.
+Butonul **„Voce: ON / OFF"** chiar face ce spune: pornit, telefonul spune
+masa la fiecare comandă nouă și la fiecare cerere de la mese (bucătăria
+primește și lista de produse, barul notele clientului); oprit, rămân doar
+bipurile și alarma ding-dong, fără niciun cuvânt. E pornit implicit, iar
+alegerea rămâne pe dispozitiv (`localStorage`). Îl au barul, bucătăria,
+ospătarul (masa la „Gata") și managerul (anulările). Singurul anunț care
+trece peste el e cel de la anulare („camera este pornită"), fiindcă e o
+informare, nu o alarmă. Bara roșie de sus („Am văzut, accept") nu mai există:
+era același buton ca pe card, de două ori.
 
 Browserele pornesc sunetul doar după un gest al utilizatorului. Alarma se
 deblochează la prima atingere a ecranului și, dacă între timp a intrat o
@@ -178,22 +185,42 @@ Ca telefonul clientului să știe modul, `setari_ospatari`, `setari_modificare`
 și `setari_pachet` au devenit citibile de clienții anonimi (alături de
 `config_mese`, `setari_busy`, `mesa_liberada`).
 
-### Anularea: motiv + istoric, fără cod
+### Anularea: motiv + nume + poză, fără cod
 
 Cine poate anula: **barul, ospătarul și managerul** (bucătăria cere barului;
-directorul doar observă). ✕ deschide o fereastră cu motive fixe („Clientul s-a
-răzgândit", „Produs epuizat", „Comandă greșită", „Clientul a plecat", „Timp
-de așteptare prea mare", „Greșeală la bar / bucătărie", „Alt motiv" + text de
-minim 5 litere) și anulează pe loc. Fără cod, fără aprobare — am încercat
-amândouă (07, 09) și erau prea multă bătaie de cap la bar.
+directorul doar observă). ✕ deschide o fereastră cu trei lucruri:
 
-Ce rămâne, în schimb, e **istoricul**: RPC-ul `anuleaza_comanda` scrie
-`comenzi.motiv_anulare` și rândul `pedido_cancelado` în jurnal (cine, când, de
-ce, cu ce rol). Directorul le vede pe toate în Șef → Risc → „Anulări: cine,
-când, de ce" și în Jurnal; clientul vede motivul pe telefon („❌ Anulată —
-Produs epuizat"); managerul aude pe loc fiecare anulare făcută de personal
-(„Masa 4, comandă anulată. Produs epuizat"). Un UPDATE direct în `anulata` e
-refuzat de trigger, deci nu se poate ocoli fereastra cu motiv.
+1. **motivul**, din listă („Clientul s-a răzgândit", „Produs epuizat",
+   „Comandă greșită", „Clientul a plecat", „Timp de așteptare prea mare",
+   „Greșeală la bar / bucătărie", „Retur: produsul nu a fost bun", „Alt
+   motiv" + text de minim 5 litere);
+2. **numele** celui care anulează, ales din lista pusă de director (Șef →
+   Personal → „Angajați"; rândul `setari_angajati` din jurnal). Contul de bar
+   e comun, deci fără nume nu s-ar ști cine a fost. Dacă lista e goală, își
+   scrie numele de mână. Ultimul nume ales rămâne preselectat pe dispozitiv;
+3. **poza**: la deschiderea ferestrei pornește camera din față, cu anunț
+   scris și vorbit („camera este pornită, la anulare se face o poză pentru a
+   confirma numele"). La „Anulează comanda" se face un cadru (jpeg, max 480
+   px) și urcă în bucket-ul privat `anulari` (`llll-ll/idcomandă-timp.jpg`).
+   Dacă dispozitivul n-are cameră sau e refuzată, anularea merge mai departe
+   și în istoric scrie „fără poză".
+
+Fără cod, fără aprobare — am încercat amândouă (07, 09) și erau prea multă
+bătaie de cap la bar. Se poate anula **și o comandă deja preluată** (retur):
+✕ apare și în Istoric la bar/manager și pe cardul „Gata — du-o la masă" al
+ospătarului.
+
+Ce rămâne e **istoricul**: RPC-ul `anuleaza_comanda(p_id, p_motiv, p_nume,
+p_poza)` scrie `comenzi.motiv_anulare`, `comenzi.anulat_de` și rândul
+`pedido_cancelado` în jurnal (cine — nume + cont —, când, de ce, cu ce rol,
+starea de dinainte, dacă avea bon, calea pozei). Directorul le vede în Șef →
+Personal → „Anulări: cine, când, de ce", cu „📷 Vezi poza" (link semnat, 5
+minute; bucket-ul îl citește doar directorul, prin RLS pe `storage.objects`),
+și în Jurnal. Pozele mai vechi de 30 de zile se șterg când directorul deschide
+lista. Clientul vede pe telefon **cine și de ce** — telefonul vibrează și fișa
+comenzii se deschide singură cu „Anulată de Andrei · Motiv: Produs epuizat";
+managerul aude pe loc „Masa 4, comandă anulată de Andrei. Produs epuizat". Un
+UPDATE direct în `anulata` sau în `anulat_de` e refuzat de trigger.
 
 ### Clientul modifică doar până e acceptată
 
@@ -254,22 +281,13 @@ se calculează pe loc („mai lipsesc 3.00 lei" dacă nu ajunge).
 azi" în Personal: cine, de la cât la cât, câte ore. E informativ, nu pontaj
 oficial.
 
-### Face ID / amprentă (passkeys)
+### Fără Face ID / amprentă
 
-Ospătarii și directorul pot intra fără parolă: din bara laterală, „🔐 Adaugă
-Face ID / amprentă pe telefonul ăsta" (o dată, după ce au intrat cu parola),
-apoi pe ecranul de login „Intră cu Face ID / amprentă". Barul și bucătăria
-intră cu parola (lucrează de pe calculator). Tehnic e WebAuthn prin Supabase
-(`auth.experimental.passkey`): telefonul nu trimite nicăieri amprenta sau
-fața, serverul primește doar o semnătură — n-are ce date biometrice să
-stocheze, deci nu e o problemă GDPR.
-
-**Trebuie pornit în Supabase**, altfel butonul spune „passkey-urile nu sunt
-pornite": Authentication → Passkeys → Enable, cu **Relying Party ID = domeniul
-public** (fără `https://`, fără cale, ex. `meniu.exemplu.ro`) și **Origins =
-`https://domeniul-public`**. RP ID-ul nu se mai schimbă după ce lumea și-a
-adăugat amprenta (le-ar invalida pe toate). Pe 12 septembrie 2026 pe M3 era
-încă oprit.
+Passkey-urile (WebAuthn prin Supabase) au fost scoase la cererea
+proprietarului: toată lumea intră cu email și parolă. Dacă vreodată revin,
+codul a fost în `dashboard.html` până pe 12 septembrie 2026 (`arePasskey`,
+`auth.signInWithPasskey`, `auth.registerPasskey`) și cere Authentication →
+Passkeys pornit în Supabase, cu RP ID = domeniul public.
 
 ### Fonturile sunt locale
 
@@ -349,10 +367,12 @@ lipsă aducea o fotografie la întâmplare de pe alt site și trimitea IP-ul
 clientului unui terț. Acum apare un cadru neutru desenat local. Panoul de
 personal are și el un paragraf despre ce se reține despre angajați.
 
-## Ora la care se închide ziua
+## Ora la care se închide ziua, pe zile
 
-Panoul șefului → Setări → **„Ora de închidere a zilei"**. La ora aleasă (ora
-României), o dată pe zi:
+Panoul șefului → Setări → **„Ora de închidere, pe zile"**: o oră pentru
+fiecare zi a săptămânii, fiindcă vineri și sâmbătă se închide mai târziu
+decât marți. Ora e a zilei în care s-a deschis: „vineri 04:00" înseamnă
+sâmbătă dimineața la 4. La ora aleasă (ora României), o dată pe zi:
 
 - se eliberează toate mesele;
 - comenzile rămase deschise (`noua`, `acceptata`, `gata`) trec pe `expirata`:
@@ -363,10 +383,13 @@ Tot de la ora asta începe „Azi" din panoul șefului și din exportul CSV: dac
 localul închide la 3, comenzile de la 1 noaptea sunt ale serii, nu ale zilei
 următoare. „Luna aceasta" începe pe 1, la aceeași oră.
 
-Setarea e un rând `setari_zi` în jurnal, scris doar de director; cron-ul
-`curatare-miezul-noptii` (din 10 în 10 minute) o citește. Pe proiectul
-moștenit rulau încă job-urile vechi, în spaniolă, pe ora Madridului; le-am
-scos.
+Setarea e un rând `setari_zi` în jurnal (`zile` = 7 ore, index 0 = duminica,
+ca în JavaScript; `oraReset` = rezervă), scris doar de director; cron-ul
+`curatare-miezul-noptii` (din 10 în 10 minute) o citește prin
+`ora_inchidere_zi(data)`: după-amiaza (ora ≥ 12) închide ziua de azi, dimineața
+pe cea de ieri. Panoul socotește la fel („Azi" începe la închiderea zilei de
+lucru precedente, `ziLucru()` / `inceputZi()`). Pe proiectul moștenit rulau
+încă job-urile vechi, în spaniolă, pe ora Madridului; le-am scos.
 
 ## Ghidul interactiv
 
@@ -630,12 +653,13 @@ aplicație.
 
 | | director | manager | bar | bucătărie | ospătar |
 |---|---|---|---|---|---|
-| vede comenzile, sala, istoricul, jurnalul, rapoartele | ✓ | ✓ | ale lui | ale lui | ✓ |
-| setări, meniu, prețuri, stoc, harta sălii | ✓ | ✓ | stoc | stoc | – |
+| vede comenzile, sala, istoricul, rapoartele | ✓ | ✓ | ale lui | ale lui | ✓ |
+| meniu, prețuri, bucătărie închisă, fereastră, pachet, fără ospătari, ora de închidere, angajați | ✓ | – | – | – | – |
+| „ora de vârf", harta sălii, stoc | ✓ | ✓ | stoc | stoc | – |
 | acceptă / „Gata" / „Preluată" | – | – | ✓ | ✓ | – |
 | modifică o comandă | – | oricând | a lui | a lui | în fereastră |
-| anulează (cu motiv; rămâne în istoric) | – | ✓ | ✓ | – | ✓ |
-| jurnal, rapoarte pe personal, anulări, ture, feedback | ✓ | – | – | – | – |
+| anulează (motiv + nume + poză; rămâne în istoric; și retur) | – | ✓ | ✓ | – | ✓ |
+| jurnal, rapoarte pe personal, anulări cu poze, ture, feedback | ✓ | – | – | – | – |
 | șterge istoricul (Zona de risc) | ✓ | – | – | – | – |
 | confirmă bonul / scoate confirmarea | – | – / ✓ | ✓ / – | – | – |
 | comandă rapidă în numele clientului | – | ✓ | – | – | ✓ |
@@ -645,9 +669,12 @@ aplicație.
 **Directorul doar observă.** Regula e în baza de date, nu doar în ecran:
 `protect_comanda_update` refuză orice UPDATE de la un cont director, iar
 funcțiile de modificare/anulare îl refuză la fel. **Managerul lucrează**, dar
-jurnalul, datele personalului și ștergerea istoricului rămân ale directorului
-— tot prin RLS: managerul (ca și barul sau ospătarul) citește din jurnal doar
-setările, harta, mesele eliberate și rândurile proprii (tura lui).
+meniul, setările grele, jurnalul, datele personalului și ștergerea
+istoricului rămân ale directorului — tot prin RLS: politica `insert log staff`
+îi lasă managerului doar `setari_busy` și `config_mese`, `meniu_produse` se
+scrie doar de director, iar din jurnal managerul (ca și barul sau ospătarul)
+citește doar setările, harta, mesele eliberate și rândurile proprii (tura
+lui). În panou, `body.rol-manager` ascunde tot ce are `data-director`.
 
 **Mod fără ospătari** (panoul directorului): pentru turele fără nimeni pe sală,
 barul și bucătăria închid singure comenzile și preiau cererile de la mese.
