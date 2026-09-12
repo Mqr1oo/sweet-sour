@@ -36,9 +36,11 @@ din prima, fără configurare: numele folderului **este** calea din URL.
    doar până e acceptată; managerul fără jurnal) și `11_zile_angajati_poze.sql`
    (ora de închidere pe zile, lista de angajați, nume + poză la anulare,
    bucket-ul privat `anulari`, managerul doar cu „ora de vârf") și
-   `12_poze_14_zile.sql` (cron-ul care șterge pozele după 14 zile — cere
-   funcția edge `curata-poze` publicată și cheia anon a proiectului în
-   fișier). Toate sunt deja aplicate pe M3 și Sweet & Sour.
+   `13_cod_lunar_delogare_zone.sql` (fără poze; codul lunii al managerului;
+   delogarea personalului la ora închiderii; zonele ospătarilor). Pe M3 și
+   Sweet & Sour a existat și un `12_poze_14_zile` (cron + funcție edge
+   `curata-poze`) — a fost înlocuit de 13 și nu se mai rulează pe un proiect
+   nou. Toate sunt deja aplicate pe M3 și Sweet & Sour.
 3. Completezi `config.js` — URL, cheie publicabilă, nume, slogan, culori,
    link de recenzie Google.
 4. Creezi conturile de personal (`supabase/creeaza_conturi_staff.py`) și le dai
@@ -78,7 +80,7 @@ Fluxul unei comenzi are acum un pas în plus, la început:
 | `noua` | intră singură | „Trimisă — așteaptă să fie văzută" |
 | `acceptata` | barul / bucătăria apasă **„Acceptă"** pe card | „Acceptată — am văzut comanda, urmează să vină" |
 | `finalizata` | barul / bucătăria apasă **„Gata"** (cu ospătari: ospătarul e anunțat s-o ia) sau **„Preluată"** (fără ospătari) | „Preluată. Poftă bună!" |
-| `anulata` | bar / ospătar / manager, cu motiv, nume și poză | „Anulată de Andrei: motivul" |
+| `anulata` | bar / ospătar (cu codul lunii) / manager, cu motiv și nume | „Anulată de Andrei: motivul" |
 
 Starea stă în baza de date, nu pe telefon: când cineva acceptă de pe un
 dispozitiv, alarma se oprește pe toate.
@@ -105,9 +107,7 @@ masa la fiecare comandă nouă și la fiecare cerere de la mese (bucătăria
 primește și lista de produse, barul notele clientului); oprit, rămân doar
 bipurile și alarma ding-dong, fără niciun cuvânt. E pornit implicit, iar
 alegerea rămâne pe dispozitiv (`localStorage`). Îl au barul, bucătăria,
-ospătarul (masa la „Gata") și managerul (anulările). Singurul anunț care
-trece peste el e cel de la anulare („camera este pornită"), fiindcă e o
-informare, nu o alarmă. Bara roșie de sus („Am văzut, accept") nu mai există:
+ospătarul (masa la „Gata") și managerul (anulările). Bara roșie de sus („Am văzut, accept") nu mai există:
 era același buton ca pe card, de două ori.
 
 Browserele pornesc sunetul doar după un gest al utilizatorului. Alarma se
@@ -187,7 +187,7 @@ Ca telefonul clientului să știe modul, `setari_ospatari`, `setari_modificare`
 și `setari_pachet` au devenit citibile de clienții anonimi (alături de
 `config_mese`, `setari_busy`, `mesa_liberada`).
 
-### Anularea: motiv + nume + poză, fără cod
+### Anularea: motiv + nume + codul lunii
 
 Cine poate anula: **barul, ospătarul și managerul** (bucătăria cere barului;
 directorul doar observă). ✕ deschide o fereastră cu trei lucruri:
@@ -198,35 +198,34 @@ directorul doar observă). ✕ deschide o fereastră cu trei lucruri:
    motiv" + text de minim 5 litere);
 2. **numele** celui care anulează, ales din lista pusă de director (Șef →
    Personal → „Angajați"; rândul `setari_angajati` din jurnal). Contul de bar
-   e comun, deci fără nume nu s-ar ști cine a fost. Dacă lista e goală, își
-   scrie numele de mână. Ultimul nume ales rămâne preselectat pe dispozitiv;
-3. **poza**: la deschiderea ferestrei pornește camera din față, cu anunț
-   scris și vorbit („camera este pornită, la anulare se face o poză pentru a
-   confirma numele"). La „Anulează comanda" se face un cadru (jpeg, max 480
-   px) și urcă în bucket-ul privat `anulari` (`llll-ll/idcomandă-timp.jpg`).
-   Dacă dispozitivul n-are cameră sau e refuzată, anularea merge mai departe
-   și în istoric scrie „fără poză".
+   e comun, deci fără nume nu s-ar ști cine a fost. Ultimul nume ales rămâne
+   preselectat pe dispozitiv;
+3. **codul lunii**: 6 cifre, unice pe lună, pe care le vede doar managerul
+   (și directorul) în Șef → Setări → „Codul de anulare al lunii". Barul și
+   ospătarul nu pot anula fără el — managerul îl spune când e de acord.
+   Managerul anulează fără cod. Codul se generează singur la prima cerere din
+   lună (`coduri_anulare`, RPC `cod_anulare_luna`); „Cod nou" îl schimbă dacă
+   s-a aflat și rămâne în jurnal (`cod_anulare_nou`). Un cod greșit nu
+   anulează nimic și se scrie în jurnal (`cod_anulare_gresit`, cu numele și
+   masa) — directorul le vede în „Anulări".
 
-Fără cod, fără aprobare — am încercat amândouă (07, 09) și erau prea multă
-bătaie de cap la bar. Se poate anula **și o comandă deja preluată** (retur):
-✕ apare și în Istoric la bar/manager și pe cardul „Gata — du-o la masă" al
-ospătarului.
+Am încercat și **poza cu camera din față** la anulare (11/12): scoasă la
+cererea proprietarului — personalul lucrează de pe telefoanele personale și
+era prea invaziv. Politicile de storage sunt șterse, bucket-ul `anulari` e
+gol (se poate șterge din Supabase → Storage), iar funcția `curata-poze`
+rămâne publicată doar ca să nu strice nimic — se poate șterge și ea.
+
+Se poate anula **și o comandă deja preluată** (retur): ✕ apare și în Istoric
+la bar/manager și pe cardul „Gata — du-o la masă" al ospătarului.
 
 Ce rămâne e **istoricul**: RPC-ul `anuleaza_comanda(p_id, p_motiv, p_nume,
-p_poza)` scrie `comenzi.motiv_anulare`, `comenzi.anulat_de` și rândul
+p_cod)` scrie `comenzi.motiv_anulare`, `comenzi.anulat_de` și rândul
 `pedido_cancelado` în jurnal (cine — nume + cont —, când, de ce, cu ce rol,
-starea de dinainte, dacă avea bon, calea pozei). Directorul le vede în Șef →
-Personal → „Anulări: cine, când, de ce", cu „📷 Vezi poza" (link semnat, 5
-minute; bucket-ul îl citește doar directorul, prin RLS pe `storage.objects`),
-și în Jurnal. **Pozele se șterg automat după 14 zile**: Storage nu se poate
-curăța din SQL, așa că `pg_cron` apelează în fiecare noapte la 04:30, prin
-`pg_net`, funcția edge `curata-poze` (`supabase/functions/curata-poze`), care
-listează bucket-ul cu cheia `service_role` și șterge ce e mai vechi (și scrie
-`poze_sterse` în jurnal). Directorul mai dublează curățenia când deschide
-lista. Clientul vede pe telefon **cine și de ce** — telefonul vibrează și fișa
-comenzii se deschide singură cu „Anulată de Andrei · Motiv: Produs epuizat";
-managerul aude pe loc „Masa 4, comandă anulată de Andrei. Produs epuizat". Un
-UPDATE direct în `anulata` sau în `anulat_de` e refuzat de trigger.
+dacă a fost cu cod, starea de dinainte, dacă avea bon). Clientul vede pe
+telefon **cine și de ce** — telefonul vibrează și fișa comenzii se deschide
+singură cu „Anulată de Andrei · Motiv: Produs epuizat"; managerul aude pe loc
+„Masa 4, comandă anulată de Andrei. Produs epuizat". Un UPDATE direct în
+`anulata` sau în `anulat_de` e refuzat de trigger.
 
 ### Clientul modifică doar până e acceptată
 
@@ -289,14 +288,14 @@ oficial.
 
 ### Informarea personalului (GDPR)
 
-Poza de la anulare e prelucrare de date ale angajaților, deci localul (ca
-angajator = operator) trebuie să-i informeze **înainte** (art. 13 GDPR).
-Panoul are, în bara laterală, „Informare date personal (GDPR)": cine e
-operatorul (din `config.js`: OPERATOR/NUME, ADRESA, EMAIL_GDPR) și
-împuternicitul (PLATFORMA), tabelul cu fiecare dată — de ce, temei (interes
-legitim, art. 6 alin. 1 lit. f) și cât timp (jurnal 30 de zile, poză 14
-zile) —, cum funcționează camera (pornește doar în fereastra de anulare, cu
-anunț; refuzul nu are consecințe), cine vede ce, drepturile și ANSPDCP.
+Jurnalul, numele la anulare, codul folosit și zonele sunt prelucrare de date
+ale angajaților, deci localul (ca angajator = operator) trebuie să-i
+informeze **înainte** (art. 13 GDPR). Panoul are, în bara laterală,
+„Informare date personal (GDPR)": cine e operatorul (din `config.js`:
+OPERATOR/NUME, ADRESA, EMAIL_GDPR) și împuternicitul (PLATFORMA), tabelul cu
+fiecare dată — de ce, temei (interes legitim, art. 6 alin. 1 lit. f) și cât
+timp (30 de zile) —, ce NU se face (fără cameră, microfon, locație, poze;
+sesiunea se închide la ora închiderii), cine vede ce, drepturile și ANSPDCP.
 Butonul „🖨️ Printează informarea, de semnat" deschide varianta de tipărit cu
 rubrici de nume, dată și semnătură (angajat + angajator): fiecare angajat
 semnează un exemplar înainte să folosească panoul. Textul e același la toate
@@ -411,7 +410,14 @@ sâmbătă dimineața la 4. La ora aleasă (ora României), o dată pe zi:
 - se eliberează toate mesele;
 - comenzile rămase deschise (`noua`, `acceptata`, `gata`) trec pe `expirata`:
   nu apar în panou, în istoric sau în rapoarte, dar rămân în bază două zile;
-- alertele de la mese (notă, ajutor) se șterg.
+- alertele de la mese (notă, ajutor) se șterg;
+- **toate conturile de personal ies din aplicație**: cron-ul șterge
+  `auth.sessions` pentru toți cei din `staff_roles`, iar panourile deschise
+  văd rândul `curatare_miezul_noptii` în jurnal (citibil de toți, prin RLS)
+  și se deloghează singure, cu mesaj pe ecranul de login. Un panou redeschis
+  a doua zi compară ora ultimului login (`localStorage.login_la`) cu ultima
+  închidere și iese dacă e mai veche. Așa a doua zi fiecare intră cu contul
+  lui și se știe cine e pe tură.
 
 Tot de la ora asta începe „Azi" din panoul șefului și din exportul CSV: dacă
 localul închide la 3, comenzile de la 1 noaptea sunt ale serii, nu ale zilei
@@ -692,8 +698,10 @@ aplicație.
 | „ora de vârf", harta sălii, stoc | ✓ | ✓ | stoc | stoc | – |
 | acceptă / „Gata" / „Preluată" | – | – | ✓ | ✓ | – |
 | modifică o comandă | – | oricând | a lui | a lui | în fereastră |
-| anulează (motiv + nume + poză; rămâne în istoric; și retur) | – | ✓ | ✓ | – | ✓ |
-| jurnal, rapoarte pe personal, anulări cu poze, ture, feedback | ✓ | – | – | – | – |
+| anulează (motiv + nume; și retur) | – | fără cod | cu codul lunii | – | cu codul lunii |
+| vede / schimbă codul lunii | ✓ | ✓ | – | – | – |
+| își alege zona (📍) | – | – | – | – | ✓ |
+| jurnal, rapoarte pe personal, anulări, ture, feedback | ✓ | – | – | – | – |
 | șterge istoricul (Zona de risc) | ✓ | – | – | – | – |
 | confirmă bonul / scoate confirmarea | – | – / ✓ | ✓ / – | – | – |
 | comandă rapidă în numele clientului | – | ✓ | – | – | ✓ |
@@ -709,6 +717,16 @@ istoricului rămân ale directorului — tot prin RLS: politica `insert log staf
 scrie doar de director, iar din jurnal managerul (ca și barul sau ospătarul)
 citește doar setările, harta, mesele eliberate și rândurile proprii (tura
 lui). În panou, `body.rol-manager` ascunde tot ce are `data-director`.
+
+**Zonele ospătarilor.** Fiecare ospătar își alege zonele de care răspunde
+(butonul „📍 Zona mea" din bara laterală, sau la „Intru în tură" când sala
+are mai multe zone): rândul `zona_ospatar` din jurnal, citibil de tot
+personalul, scris doar de conturile de ospătar. Comenzile din zona lui apar
+primele și îl anunță (bip, voce, vibrație); cele din alte zone rămân
+vizibile, mai șterse, cu „📍 Interior · Maria" (cine le acoperă), și le poate
+lua oricând — doar un bip scurt la ele. Fără zone alese, totul e „al lui".
+Directorul vede în „Ture azi" cine ce zonă a acoperit; barul vede pe card
+zona mesei și ospătarul ei.
 
 **Mod fără ospătari** (panoul directorului): pentru turele fără nimeni pe sală,
 barul și bucătăria închid singure comenzile și preiau cererile de la mese.
