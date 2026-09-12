@@ -445,7 +445,6 @@
   .rest-calc input{ width:90px; padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:'Space Mono',monospace; font-size:14px; }
   .rest-calc b{ font-family:'Space Mono',monospace; font-size:15px; color:var(--success); }
   .gata-de-dus{ border-color:var(--blue) !important; background:rgba(59,130,246,.08); }
-  .btn-tura.on{ background:rgba(16,185,129,.15); border-color:rgba(16,185,129,.4); color:var(--success); }
   .ec-rand{ display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px dashed var(--border); }
   .ec-rand .ec-nume{ flex:1; min-width:0; font-weight:600; font-size:15px; }
   .ec-rand .ec-nume small{ display:block; color:var(--text-muted); font-family:'Space Mono',monospace; font-size:11.5px; font-weight:400; margin-top:2px; }
@@ -542,7 +541,6 @@
     <div class="logout-btn" id="btnLogout">Deconectare</div>
     <button id="btnNotificari" class="btn-notif">🔕 Activeaza notificarile</button>
     <button id="btnGhid" class="btn-notif">❓ Ghid rapid (cum functioneaza)</button>
-    <button id="btnTura" class="btn-notif btn-tura">🕒 Intru in tura</button>
     <button id="btnZona" class="btn-notif" style="display:none;">📍 Zona mea: toate</button>
     <div style="margin-top:10px;"><a href="#" onclick="document.getElementById('privacyOverlay').classList.add('open')" style="color:var(--text-muted); font-size:11px; text-decoration:underline;">Informare date personal (GDPR)</a></div>
   </div>
@@ -563,7 +561,6 @@
     <div class="mobile-actions">
         <button class="btn-ico" id="btnNotificariMobile" title="Notificari">🔕</button>
         <button class="btn-ico" id="btnGhidMobile" title="Ghid rapid">❓</button>
-        <button class="btn-ico btn-tura" id="btnTuraMobile" title="Intru / ies din tura">🕒</button>
         <button class="btn-ico" id="btnZonaMobile" title="Zona mea" style="display:none;">📍</button>
         <button class="mobile-logout" id="btnMobileLogout">Iesire</button>
     </div>
@@ -605,7 +602,7 @@
             <span><i style="background:rgba(34,197,94,0.3); border:2px solid var(--success);"></i> Ocupata, sub 1h</span>
             <span><i style="background:rgba(245,158,11,0.4); border:2px solid var(--warning);"></i> Peste 1h — trece un ospatar</span>
             <span><i style="background:rgba(239,68,68,0.4); border:2px solid var(--danger);"></i> Peste 2h fara comanda</span>
-            <span><i style="background:rgba(168,85,247,0.4); border:2px solid var(--purple);"></i> A cerut nota — 15 min sa plateasca, apoi se elibereaza singura</span>
+            <span><i style="background:rgba(168,85,247,0.4); border:2px solid var(--purple);"></i> A cerut nota — <span id="legendaMinute">15</span> min sa plateasca, apoi se elibereaza singura</span>
             <span><i style="background:rgba(59,130,246,0.4); border:2px solid var(--blue);"></i> Are nevoie de ajutor</span>
          </div>
        </div>
@@ -794,7 +791,7 @@
 
       <div data-grup="personal" class="dash-panel">
           <h3>🕒 Ture azi</h3>
-          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Cine a apasat „Intru in tura" / „Ies din tura" si cat a stat. Doar informativ — nu inlocuieste pontajul oficial.</p>
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Cine a intrat in panou azi si cat a stat. Tura incepe singura cand cineva intra in cont si se inchide cand se deconecteaza sau la ora inchiderii. Doar informativ — nu inlocuieste pontajul oficial.</p>
           <ul class="top-list" id="tureAziList"></ul>
       </div>
 
@@ -986,7 +983,7 @@
   <div class="modal" style="max-width:420px; text-align:left;">
     <button class="modal-close" id="zonaInchide">&times;</button>
     <h2 style="margin-bottom:4px;">📍 Zona mea</h2>
-    <p class="mp-sub">Alege zonele de care raspunzi in tura asta. Comenzile din ele apar primele si te anunta; cele din alte zone raman vizibile, mai sterse, si le poti lua daca e nevoie.</p>
+    <p class="mp-sub">Alege zonele de care raspunzi in tura asta. Comenzile din ele apar primele si te anunta; cele din alte zone raman vizibile, mai sterse, si le poti lua daca e nevoie. Poti schimba oricand din „📍 Zona mea".</p>
     <div id="zonaLista" style="margin-top:12px;"></div>
     <div class="mp-actiuni">
       <button class="btn-primary" id="zonaSalveaza" style="width:auto;padding:12px 22px;">Salveaza</button>
@@ -1530,6 +1527,8 @@
       if (sel) sel.value = String([5,10,15,20,30,45,60].includes(AUTO_FREE_MINUTES) ? AUTO_FREE_MINUTES : 15);
       const st = document.getElementById('eliberareStare');
       if (st) st.textContent = `Masa se elibereaza singura la ${AUTO_FREE_MINUTES} minute dupa ce a cerut nota.`;
+      const lg = document.getElementById('legendaMinute');
+      if (lg) lg.textContent = AUTO_FREE_MINUTES;
       return AUTO_FREE_MINUTES;
   }
   const selElib = document.getElementById('minuteEliberare');
@@ -1866,6 +1865,7 @@
   }
   async function deconectareLaInchidere() {
       try { sessionStorage.setItem('mesaj_inchidere', '1'); } catch(e) {}
+      await inchideTura();
       try { await _supabase.auth.signOut(); } catch(e) {}
       location.reload();
   }
@@ -1910,47 +1910,39 @@
     }
   });
 
-  // --- Tura (pontaj simplu) ---------------------------------------------
-  // „Intru in tura" / „Ies din tura" scriu in jurnal (tura_start / tura_stop),
-  // pe contul curent. Directorul vede in panoul lui cine a fost in tura si cat.
+  // --- Tura (pontaj simplu, automat) -------------------------------------
+  // Tura incepe singura cand intri in cont si se inchide cand te deconectezi
+  // (sau la ora inchiderii, cand serverul scoate pe toata lumea si scrie el
+  // „tura_stop"). Se tine in jurnal (tura_start / tura_stop), pe contul
+  // curent; directorul vede in panoul lui cine a fost pe tura si cat. Un
+  // refresh nu porneste o tura noua: cea deschisa de la ultima inchidere
+  // incoace continua. Directorul nu are tura.
   let turaInceputa = null;   // ora la care a inceput tura curenta (ms) sau null
+  async function inceputulTurei() { return Math.max(Date.now() - 20 * 3600000, await ultimaInchidere()); }
   async function incarcaTura() {
-      if (!currentUserEmail) return;
+      if (!currentUserEmail || userRole === 'director') return;
+      let deschisa = null;
       try {
           const { data } = await _supabase.from('jurnal_activitate').select('actiune, created_at')
               .in('actiune', ['tura_start', 'tura_stop']).eq('utilizator', currentUserEmail)
-              .gte('created_at', new Date(Date.now() - 20 * 3600000).toISOString())
+              .gte('created_at', new Date(await inceputulTurei()).toISOString())
               .order('created_at', { ascending: false }).limit(1);
           const ultima = data && data[0];
-          turaInceputa = ultima && ultima.actiune === 'tura_start' ? new Date(ultima.created_at).getTime() : null;
-      } catch(e) { turaInceputa = null; }
-      afiseazaTura();
+          deschisa = ultima && ultima.actiune === 'tura_start' ? new Date(ultima.created_at).getTime() : null;
+      } catch(e) {}
+      if (deschisa) { turaInceputa = deschisa; return; }
+      const ok = await logActivity('tura_start', null, { automat: true });
+      turaInceputa = ok === false ? null : Date.now();
   }
-  function afiseazaTura() {
-      const ora = turaInceputa ? new Date(turaInceputa).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' }) : '';
-      const b = document.getElementById('btnTura'), m = document.getElementById('btnTuraMobile');
-      if (b) { b.textContent = turaInceputa ? `🕒 Ies din tura (in tura de la ${ora})` : '🕒 Intru in tura'; b.classList.toggle('on', !!turaInceputa); }
-      if (m) { m.title = turaInceputa ? `In tura de la ${ora} — apasa ca sa iesi` : 'Intru in tura'; m.classList.toggle('on', !!turaInceputa); }
+  async function inchideTura() {
+      if (!turaInceputa) return;
+      const deLa = new Date(turaInceputa).toISOString();
+      const ore = Number(((Date.now() - turaInceputa) / 3600000).toFixed(1));
+      turaInceputa = null;
+      try { await logActivity('tura_stop', null, { de_la: deLa, ore, automat: true }); } catch(e) {}
   }
-  async function comutaTura() {
-      if (turaInceputa) {
-          const ore = ((Date.now() - turaInceputa) / 3600000).toFixed(1);
-          if (!confirm(`Iesi din tura? Ai fost in tura ${ore} ore.`)) return;
-          const ok = await logActivity('tura_stop', null, { de_la: new Date(turaInceputa).toISOString(), ore: Number(ore) });
-          if (ok === false) { alert('Nu s-a putut salva.'); return; }
-          turaInceputa = null;
-      } else {
-          const ok = await logActivity('tura_start', null, {});
-          if (ok === false) { alert('Nu s-a putut salva.'); return; }
-          turaInceputa = Date.now();
-          if (userRole === 'ospatar' && (salaConfig.zones || []).length > 1) deschideZona();
-      }
-      afiseazaTura();
-  }
-  document.getElementById('btnTura').addEventListener('click', comutaTura);
-  document.getElementById('btnTuraMobile').addEventListener('click', comutaTura);
 
-  const logoutFn = async () => { await _supabase.auth.signOut(); location.reload(); };
+  const logoutFn = async () => { await inchideTura(); await _supabase.auth.signOut(); location.reload(); };
   document.getElementById('btnLogout').addEventListener('click', logoutFn);
   document.getElementById('btnMobileLogout').addEventListener('click', logoutFn);
 
@@ -1959,6 +1951,7 @@
   document.getElementById('btnGhid').addEventListener('click', () => pornesteGhidDashboard(true));
   document.getElementById('btnGhidMobile').addEventListener('click', () => pornesteGhidDashboard(true));
 
+  let mediuPornit = false;
   function setupUserEnvironment(email, rol) {
     currentUserEmail = email;
     document.getElementById('userEmailDisplay').textContent = email;
@@ -2002,7 +1995,6 @@
 
     ensureNotificationPermission();
     loadOrders(); 
-    loadTablesConfig(); 
     loadFreedTables();
     loadBusyMode();
     loadFaraOspatari().then(() => renderOrders());
@@ -2013,12 +2005,21 @@
     loadComenziPachet();
     loadAngajati();
     incarcaTura();
-    loadTablesConfig().then(loadZoneOspatari).then(() => renderOrders());
+    loadTablesConfig().then(loadZoneOspatari).then(() => {
+        renderOrders();
+        // prima intrare din zi a unui ospatar: isi alege zona si e in tura
+        if (userRole === 'ospatar' && (salaConfig.zones || []).length > 1 && !zoneOspatari[currentUserEmail]) {
+            if (Tur.activ()) zonaDupaGhid = true; else deschideZona();
+        }
+    });
     if (userRole === 'ospatar') { document.getElementById('btnZona').style.display = 'block'; document.getElementById('btnZonaMobile').style.display = 'inline-flex'; }
     if(esteConducere()) loadFeedbacks();
 
-    subscribeRealtime();
-    setInterval(updateTimersUI, 10000);
+    if (!mediuPornit) {
+        mediuPornit = true;
+        subscribeRealtime();
+        setInterval(updateTimersUI, 10000);
+    }
 
     // prima intrare pe acest dispozitiv, pe rolul asta: ghidul porneste singur
     setTimeout(() => pornesteGhidDashboard(false), 1400);
@@ -2229,9 +2230,8 @@
 
   // Bip scurt, distinct de notificarea de comanda noua.
   function sunetAlerta(repetari) {
-      if (typeof isSoundOn !== 'undefined' && !isSoundOn) return;
       try {
-          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const ctx = ctxAudio(); if (!ctx) return;
           for (let i = 0; i < repetari; i++) {
               const o = ctx.createOscillator(), g = ctx.createGain();
               o.connect(g); g.connect(ctx.destination);
@@ -3069,7 +3069,10 @@
   // --- Sincronizare live intre dispozitive -------------------------------
   // Toate telefoanele din tura vad aceeasi stare, fara refresh: daca directorul
   // porneste modul aglomerat de pe telefonul lui, barul afla in aceeasi secunda.
+  let sincronizarePornita = false;
   function pornesteSincronizarea() {
+      if (sincronizarePornita) return;
+      sincronizarePornita = true;
       _supabase.channel('setari_live_staff')
         .on('postgres_changes',
             { event: 'INSERT', schema: 'public', table: 'jurnal_activitate' },
@@ -3256,7 +3259,7 @@
         }
     }
     
-    if(filterText) viewOrders = viewOrders.filter(o => o.mesa.toLowerCase().includes(filterText));
+    if(filterText) viewOrders = viewOrders.filter(o => String(o.mesa || '').toLowerCase().includes(filterText));
 
     if(currentTab === 'active' && !filterText) {
         // pentru ospatar numaram doar ce are de facut el: de dus la masa si cereri
@@ -3592,7 +3595,7 @@
           ['Numele ales si motivul, cand anulezi o comanda', 'sa se stie cine si de ce a anulat: o anulare inseamna bani lipsa din casa', '30 de zile, in jurnal'],
           ['Codul lunii (6 cifre) folosit la anulare — se scrie doar daca a fost bun sau gresit, nu codul in sine', 'dovada ca managerul a fost de acord cu anularea; incercarile cu cod gresit se vad, ca sa se previna anularile false (art. 6 alin. 1 lit. f)', '30 de zile, in jurnal'],
           ['Zonele pe care le acoperi in tura (ospatari)', 'ca barul si colegii sa stie cine raspunde de care mese', '30 de zile'],
-          ['„Intru / Ies din tura": orele la care ai apasat', 'informativ, pentru director; nu inlocuieste pontajul oficial', '30 de zile'],
+          ['Ora la care ai intrat in panou si ora la care ai iesit (se scriu singure: la intrarea in cont, la deconectare si la inchiderea zilei)', 'informativ, pentru director: cine a fost pe tura; nu inlocuieste pontajul oficial', '30 de zile'],
           ['Abonamentul la notificari push (o adresa tehnica, fara continut)', 'sa primesti comenzile si cand telefonul e blocat — doar daca le activezi tu', 'pana te deconectezi sau le revoci din telefon'] ] },
         { h: '3. Ce NU se face', p: [
           `Panoul <b>nu</b> foloseste camera, microfonul sau locatia telefonului tau, <b>nu</b> face poze si <b>nu</b> urmareste ce faci in afara aplicatiei. Nu se ia nicio decizie automata despre tine pe baza acestor date. Sesiunea ta se inchide automat la ora inchiderii localului: a doua zi intri din nou cu contul tau, ca sa fie clar cine a fost pe tura.` ] },
@@ -3644,6 +3647,8 @@
   // mai sterse, si le poate lua oricand. Alegerea se scrie in jurnal
   // (`zona_ospatar`), ca barul si colegii sa vada cine acopera ce.
   let zoneMele = [];            // ale contului curent (ospatar); gol = toate
+  let zonaDupaGhid = false;     // ghidul e pe ecran: zona se alege dupa el
+  let ghidDupaZona = false;     // fereastra zonei e deschisa: ghidul porneste dupa ea
   let zoneOspatari = {};        // email -> { zone: [...], la: ms }, azi
 
   function zonaMesei(mesa) {
@@ -3673,7 +3678,7 @@
   async function loadZoneOspatari() {
       try {
           const { data } = await _supabase.from('jurnal_activitate').select('utilizator, detalii, created_at')
-              .eq('actiune', 'zona_ospatar').gte('created_at', new Date(Date.now() - 20 * 3600000).toISOString())
+              .eq('actiune', 'zona_ospatar').gte('created_at', new Date(await inceputulTurei()).toISOString())
               .order('created_at', { ascending: false }).limit(200);
           zoneOspatari = {};
           (data || []).forEach(r => {
@@ -3698,10 +3703,14 @@
           : '<p class="mp-sub">Sala n-are inca zone. Le pune directorul sau managerul din Sala → Editeaza mesele.</p>';
       document.getElementById('modalZona').classList.add('open');
   }
+  function inchideZona() {
+      document.getElementById('modalZona').classList.remove('open');
+      if (ghidDupaZona) { ghidDupaZona = false; pornesteGhidDashboard(false); }
+  }
   async function salveazaZona(toate) {
       const alese = toate ? [] : [...document.querySelectorAll('#zonaLista input:checked')].map(i => i.value);
       zoneMele = alese;
-      document.getElementById('modalZona').classList.remove('open');
+      inchideZona();
       afiseazaZona(); renderOrders();
       const ok = await logActivity('zona_ospatar', null, { zone: alese });
       if (ok === false) alert('Nu s-a putut salva zona (doar contul de ospatar o poate alege).');
@@ -3709,8 +3718,8 @@
   }
   document.getElementById('btnZona').addEventListener('click', deschideZona);
   document.getElementById('btnZonaMobile').addEventListener('click', deschideZona);
-  document.getElementById('zonaInchide').addEventListener('click', () => document.getElementById('modalZona').classList.remove('open'));
-  document.getElementById('modalZona').addEventListener('click', (e) => { if (e.target.id === 'modalZona') document.getElementById('modalZona').classList.remove('open'); });
+  document.getElementById('zonaInchide').addEventListener('click', inchideZona);
+  document.getElementById('modalZona').addEventListener('click', (e) => { if (e.target.id === 'modalZona') inchideZona(); });
   document.getElementById('zonaSalveaza').addEventListener('click', () => salveazaZona(false));
   document.getElementById('zonaToate').addEventListener('click', () => salveazaZona(true));
 
@@ -3791,7 +3800,7 @@
       if (status === 'finalizata' && (userRole === 'ospatar' || !(order && order.preluat_de))) updatePayload.preluat_de = currentUserEmail;
 
       const isPaymentAlert = order && order.produse.some(p => p.nume.includes('ALERTĂ') && PAYMENT_ALERT_REGEX.test(p.nume));
-      if(status === 'finalizata' && userRole === 'ospatar' && isPaymentAlert) {
+      if(status === 'finalizata' && isPaymentAlert) {
           updatePayload.confirmada_la = new Date().toISOString();
       }
 
@@ -3885,6 +3894,9 @@
       e.target.classList.add('active'); statsMode = 'month'; calculateDirectorStats();
   });
 
+  // o celula CSV: ghilimelele din nume se dubleaza, altfel Excel rupe randul
+  const csvCelula = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+
   window.exportCSV = function() {
       const now = new Date();
       const cutoff = statsMode === 'today' ? inceputZi() : inceputLuna();
@@ -3904,7 +3916,7 @@
           const gratisStat = o.comp_motiv ? o.comp_motiv : '-';
           const resp = o.preluat_de || o.creat_de || 'N/A';
           
-          csvContent += `"${o.id}","${fDate}","${fTime}","${o.mesa}","${o.status}","${o.total}","${ticketStat}","${gratisStat}","${cleanProds}","${resp}"\n`;
+          csvContent += [o.id, fDate, fTime, o.mesa, o.status, o.total, ticketStat, gratisStat, cleanProds, resp].map(csvCelula).join(',') + '\n';
       });
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -3927,8 +3939,8 @@
           const dt = new Date(l.created_at);
           const fDate = dt.toLocaleDateString('ro-RO');
           const fTime = dt.toLocaleTimeString('ro-RO');
-          const detStr = JSON.stringify(l.detalii || {}).replace(/"/g, '""');
-          csvContent += `"${l.id}","${fDate}","${fTime}","${l.utilizator}","${l.actiune}","${detStr}"\n`;
+          const detStr = JSON.stringify(l.detalii || {});
+          csvContent += [l.id, fDate, fTime, l.utilizator, l.actiune, detStr].map(csvCelula).join(',') + '\n';
       });
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -3999,7 +4011,7 @@
 
   function calculateDirectorStats() {
       const istoric = allOrders.filter(o => o.status === 'finalizata' && !esteAlerta(o));
-      let total = 0, kitchenTotal = 0, pendingBonCount = 0, productCounts = {}, pendingByStaff = {}, bonuriByStaff = {};
+      let total = 0, kitchenTotal = 0, barTotal = 0, nrPerioada = 0, pendingBonCount = 0, productCounts = {}, pendingByStaff = {}, bonuriByStaff = {};
 
       const cutoff = statsMode === 'today' ? inceputZi() : inceputLuna();
 
@@ -4009,14 +4021,15 @@
           const orderTime = new Date(order.created_at).getTime();
           if (orderTime >= cutoff) {
               const val = Number(order.total);
+              nrPerioada++;
               
               if (order.bon_scos) {
                   const barman = numeScurt(order.bon_scos_de) || 'necunoscut';
                   if (!bonuriByStaff[barman]) bonuriByStaff[barman] = { n: 0, suma: 0 };
                   bonuriByStaff[barman].n++; bonuriByStaff[barman].suma += order.comp_motiv ? 0 : val;
-                  if(!order.comp_motiv) { 
-                      total += val; 
-                      kitchenTotal += val; 
+                  if(!order.comp_motiv) {
+                      total += val;
+                      if (order.sectiune === 'bucatarie') kitchenTotal += val; else barTotal += val;
 
                                             let dKey = statsMode === 'today'
                           ? new Date(order.created_at).toLocaleTimeString('ro-RO', {hour:'2-digit', minute:'2-digit'})
@@ -4038,9 +4051,9 @@
       });
 
       document.getElementById('statRevenue').textContent = `${total.toFixed(2)} lei`;
-      document.getElementById('statCount').textContent = istoric.length;
+      document.getElementById('statCount').textContent = nrPerioada;
       document.getElementById('statPendingBon').textContent = pendingBonCount;
-      document.getElementById('statKitchen').textContent = `${kitchenTotal.toFixed(2)} lei`;
+      document.getElementById('statKitchen').textContent = `${kitchenTotal.toFixed(0)} / ${barTotal.toFixed(0)} lei`;
 
       const chartContainer = document.getElementById('revenueChartBars');
       chartContainer.innerHTML = '';
@@ -4082,7 +4095,7 @@
       if (userRole === 'director') { renderStaffReport(cutoff); renderFraudList(cutoff); renderTureAzi(); }
   }
 
-  // Cine a fost in tura azi (dupa butonul „Intru / Ies din tura")
+  // Cine a fost in tura azi (intrarile si iesirile din cont)
   async function renderTureAzi() {
       const el = document.getElementById('tureAziList'); if (!el) return;
       try {
@@ -4098,7 +4111,7 @@
           });
           const ora = (t) => new Date(t).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
           const lista = Object.entries(pe);
-          el.innerHTML = lista.length ? '' : '<li class="top-item" style="color:var(--text-muted);">Nimeni n-a apasat „Intru in tura" azi</li>';
+          el.innerHTML = lista.length ? '' : '<li class="top-item" style="color:var(--text-muted);">Nimeni n-a intrat in panou azi</li>';
           lista.forEach(([u, v]) => {
               let ms = v.ture.reduce((s, [a, b]) => s + (b - a), 0);
               if (v.deschisa) ms += Date.now() - v.deschisa;
@@ -4499,17 +4512,12 @@
               attachTakeawayContacts([p.new]).then(() => renderOrders());
           }
           const isAlert = esteAlerta(p.new);
-
-          if (esteConducere() ||
-              p.new.sectiune === userRole ||
-              (userRole === 'bar' && faraBucatarie) ||
-              (userRole === 'ospatar' && isAlert) ||
-              (userRole === 'bar' && isAlert)) {
-
-              if(p.new.status === 'noua') playAlertAndVibrate(p.new);
-              renderOrders();
-              if (currentTab === 'map') renderTablesGrid();
-          }
+          const maPriveste = esteConducere() || p.new.sectiune === userRole
+              || (userRole === 'bar' && faraBucatarie) || (isAlert && (userRole === 'ospatar' || userRole === 'bar'));
+          if (maPriveste && p.new.status === 'noua') playAlertAndVibrate(p.new);
+          // lista se reface pentru toti: ospatarul vede si comenzile in lucru
+          renderOrders();
+          if (currentTab === 'map') renderTablesGrid();
 
           if(!isAlert) cleanupTableAlerts(p.new.mesa);
 
@@ -4887,47 +4895,41 @@
   function pasiGhidDashboard() {
       const rol = userRole, mobil = window.innerWidth <= 800;
       const pasi = [];
-      pasi.push({ el: null, titlu: 'Bun venit in panoul de personal',
-          text: 'Un tur de un minut prin ce ai pe ecran. Il poti relua oricand din „❓ Ghid rapid".' });
+      pasi.push({ el: null, titlu: 'Bun venit', text: 'Un tur de 30 de secunde. Il reiei oricand din „❓ Ghid rapid".' });
       pasi.push({ el: '#navActive', titlu: 'Comenzi',
           text: rol === 'ospatar'
-            ? 'Aici vezi comenzile gata de dus la masa si cererile de la mese (nota, ajutor). Comenzile in lucru apar si ele, mai sters, ca sa stii ce asteapta fiecare masa.'
-            : 'Aici intra comenzile de la clienti si de la ospatari, in timp real. Numarul de pe iconita arata cate sunt active.' });
+            ? 'Ce e de dus la masa si cererile de la mese (nota, ajutor). Comenzile in lucru apar mai sters.'
+            : 'Comenzile intra aici in timp real. Numarul de pe iconita: cate sunt active.' });
       pasi.push({ el: () => document.getElementById('cardDemoGhid') || document.querySelector('#ordersView .order-card') || document.getElementById('ordersView'),
-          titlu: 'Cardul unei comenzi',
+          titlu: 'O comanda',
           text: rol === 'ospatar'
-            ? 'Cand barul apasa „Gata", telefonul bipaie si spune masa: du-o la masa. Cardul ramane albastru cateva minute, apoi dispare singur. Daca clientul vrea sa schimbe ceva dupa ce comanda a fost acceptata, te cheama la masa: ✏️ deschide comanda ca sa scoti, sa adaugi sau sa schimbi cantitati — barul vede pe loc; ✕ o anuleaza (si ca retur, dupa ce a fost dusa), cu motiv, numele tau si codul lunii de la manager. Raman in istoricul directorului. Din „📍 Zona mea" alegi zonele de care raspunzi: comenzile lor apar primele si te anunta; pe celelalte le vezi mai sters si le poti lua daca e nevoie. La ora inchiderii toata lumea iese din cont.'
+            ? 'Cand barul apasa „Gata", telefonul spune masa: du-o. ✏️ modifica daca clientul se razgandeste, ✕ anuleaza (cu motiv, numele tau si codul lunii de la manager).'
             : rol === 'director'
-            ? 'Tu doar observi: nu esti anuntat de comenzi, nu le confirmi, nu le modifici si nu le anulezi. Vezi in timp real ce se intampla, iar in Sef ai incasarile, rapoartele, jurnalul, anularile (cine, cand, de ce, cu ce cod), codul lunii, lista de angajati si setarile.'
+            ? 'Tu doar observi. Nu esti anuntat, nu confirmi, nu modifici. Totul se vede in timp real, iar cifrele sunt in „Sef".'
             : rol === 'manager'
-            ? 'Tu nu esti anuntat de comenzi noi, dar afli pe loc de fiecare anulare facuta de bar sau ospatari, cu numele si motivul. Ei pot anula doar cu codul lunii — il ai in Sef → Setari si il spui cand esti de acord. ✏️ modifica orice comanda, ✕ anuleaza (tu fara cod), scoti confirmarea unui bon gresit, pornesti „ora de varf" si aranjezi sala. Meniul, bucataria inchisa, fereastra, pachetul, modul fara ospatari, ora de inchidere, jurnalul si datele personalului raman ale directorului.'
-            : 'Cand intra o comanda, telefonul bipaie, spune masa (cu vocea pornita) si apoi suna ding-dong pana apesi „Accepta" — asa clientul afla ca ai vazut-o. „Gata" cand e facuta: comanda se inchide si ospatarul e anuntat sa vina s-o ia (fara ospatari: „Preluata", cand ai dus-o). ✏️ modifica produsele daca clientul s-a razgandit. ✕ anuleaza, cu motiv, numele tau si codul lunii de la manager — raman in istoricul directorului. Daca clientul scoate ceva de pe telefon (poate doar pana accepti), cardul clipeste galben si telefonul iti spune ce s-a schimbat.',
+            ? 'Nu esti anuntat de comenzi noi, dar afli de fiecare anulare, cu numele si motivul. Barul si ospatarii anuleaza doar cu codul lunii — il ai in Sef → Setari.'
+            : 'Comanda noua: bip, masa (cu vocea pornita) si ding-dong pana apesi „Accepta". „Gata" cand e facuta. ✏️ modifica, ✕ anuleaza (cu motiv, numele tau si codul lunii).',
           inainte() { switchTab('active'); cardDemoGhid(true); },
           dupa() { cardDemoGhid(false); } });
       if (rol !== 'director') {
           pasi.push({ el: mobil ? '#btnToggleSoundMobile' : '#btnToggleSound', titlu: 'Voce',
-              text: rol === 'bar' || rol === 'bucatarie'
-                ? 'Pornita: telefonul spune masa la fiecare comanda noua si la fiecare cerere (nota, ajutor)' + (rol === 'bucatarie' ? ', plus produsele' : ', plus notele clientului') + '. Oprita: doar bipul si alarma ding-dong, fara voce. Butonul tine minte ce ai ales.'
-                : rol === 'ospatar' ? 'Pornita: cand barul apasa „Gata", telefonul spune masa. Oprita: doar bipul si vibratia.'
-                : 'Pornita: auzi masa si motivul la fiecare anulare facuta de personal. Oprita: doar sunetul.' });
+              text: 'Pornita: telefonul spune masa. Oprita: doar bipuri. Tine minte ce ai ales.' });
+      }
+      if (rol === 'ospatar') {
+          pasi.push({ el: mobil ? '#btnZonaMobile' : '#btnZona', titlu: 'Zona mea',
+              text: 'Zonele de care raspunzi azi. Comenzile lor apar primele si te anunta; pe celelalte le vezi mai sters si le poti lua.' });
       }
       pasi.push({ el: '#navMap', titlu: 'Sala',
-          text: 'Planul meselor, fiecare cu timerul ei: de cand e ocupata si de cand a comandat ultima data. Verde: ocupata de curand. Portocaliu: peste o ora fara comanda noua, treci pe la ea. Rosu: peste doua ore. Mov: a cerut nota. Atinge o masa: vezi totul de la ea de cand e ocupata (total, comenzi, produse), pui cererea de nota daca clientul a cerut-o verbal, sau o eliberezi.' });
-      pasi.push({ el: '#navMeniu', titlu: 'Meniu — comanda rapida',
-          text: 'Trimiti o comanda in numele clientului, direct la bar sau la bucatarie. Ajunge acolo exact ca una de pe telefon.' });
-      pasi.push({ el: '#navStock', titlu: 'Stoc',
-          text: 'S-a terminat ceva? Il blochezi de aici si dispare pe loc din meniul clientilor. Il deblochezi cand revine.' });
+          text: 'Mesele si de cand stau. Verde: ok. Portocaliu: treci pe la ea. Rosu: prea mult. Mov: a cerut nota. Atinge o masa: totalul ei, cererea de nota, sau o eliberezi.' });
+      pasi.push({ el: '#navMeniu', titlu: 'Meniu', text: 'Trimiti o comanda in numele clientului, ca de pe telefon.' });
+      pasi.push({ el: '#navStock', titlu: 'Stoc', text: 'S-a terminat ceva? Il blochezi si dispare din meniul clientilor.' });
       pasi.push({ el: '#navHistory', titlu: 'Istoric',
-          text: rol === 'bar' ? 'Comenzile terminate si anulate. Tot aici confirmi, pentru fiecare, ca ai scos bonul: ramane pe numele tau, cu ora, si nu se mai poate scoate de la bar.' : 'Comenzile terminate si anulate.' });
-      pasi.push({ el: '#navAdmin', titlu: 'Panoul sefului',
-          text: rol === 'manager'
-            ? 'Incasari si grafice, codul lunii pentru anulari, „ora de varf" si stocul. Restul setarilor si rapoartele pe oameni sunt la director.'
-            : 'Incasari si grafice, editorul de meniu, setari (ora de inchidere pe zile, cat sta masa dupa nota, bucatarie inchisa, fereastra de modificare, pachet, mod fara ospatari), lista de angajati, codul lunii pentru anulari, rapoarte pe angajat si anularile.' });
-      pasi.push({ el: '#navJurnal', titlu: 'Jurnal',
-          text: 'Fiecare actiune, cu ora si cine a facut-o — inclusiv ce au scos clientii din comenzi de pe telefon.' });
+          text: rol === 'bar' ? 'Comenzile terminate. Aici confirmi ca ai scos bonul — ramane pe numele tau.' : 'Comenzile terminate si anulate.' });
+      pasi.push({ el: '#navAdmin', titlu: 'Sef',
+          text: rol === 'manager' ? 'Incasari, codul lunii pentru anulari, „ora de varf".' : 'Incasari, meniul, setarile, angajatii, codul lunii, rapoartele si anularile.' });
+      pasi.push({ el: '#navJurnal', titlu: 'Jurnal', text: 'Fiecare actiune, cu ora si cine a facut-o.' });
       pasi.push({ el: mobil ? '#btnNotificariMobile' : '#btnNotificari', titlu: 'Notificari',
-          text: 'Activeaza-le ca sa primesti comenzile si cand telefonul e blocat sau aplicatia e inchisa.' });
-      pasi.push({ el: null, titlu: 'Gata!', text: 'Spor la treaba. Daca vrei sa revezi turul, apasa „❓ Ghid rapid".' });
+          text: 'Porneste-le ca sa primesti comenzile si cu telefonul blocat.' });
       return pasi;
   }
 
@@ -4937,7 +4939,11 @@
       try { vazut = !!localStorage.getItem(cheie); } catch(e) {}
       if (!fortat && vazut) return;
       if (Tur.activ()) return;
-      Tur.start(pasiGhidDashboard(), { laFinal() { try { localStorage.setItem(cheie, '1'); } catch(e) {} } });
+      if (!fortat && document.getElementById('modalZona').classList.contains('open')) { ghidDupaZona = true; return; }
+      Tur.start(pasiGhidDashboard(), { laFinal() {
+          try { localStorage.setItem(cheie, '1'); } catch(e) {}
+          if (zonaDupaGhid) { zonaDupaGhid = false; deschideZona(); }
+      } });
   }
 
   checkAuth();

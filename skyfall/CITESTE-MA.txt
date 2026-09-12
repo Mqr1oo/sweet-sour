@@ -5,7 +5,8 @@ Sablon pentru un local nou.
    apoi supabase/04_comenzi_live.sql, 05_fereastra_modificare.sql,
    06_anulari_bonuri_pachet.sql, 07_cod_anulare.sql, 08_finalizata_la.sql,
    09_manager.sql, 10_anulare_simpla.sql, 11_zile_angajati_poze.sql si
-   13_cod_lunar_delogare_zone.sql si 14_timp_eliberare.sql (12 nu mai e necesar).
+   13_cod_lunar_delogare_zone.sql, 14_timp_eliberare.sql si
+   15_tura_automata.sql (12 nu mai e necesar).
 3. Completeaza config.js: URL, cheie, nume, slogan, culori, link recenzie,
    plus firma localului (OPERATOR, ADRESA, EMAIL_GDPR) si firma ta
    (PLATFORMA, EMAIL_PLATFORMA) pentru politica si termeni.

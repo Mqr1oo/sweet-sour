@@ -371,28 +371,6 @@
   .os-del:active{ transform:scale(.92); }
   .os-del[disabled]{ opacity:.4; }
 
-  /* --- GHIDUL INTERACTIV: reflector pe fiecare element, cu o bula explicativa --- */
-  .tur-ov{ position:fixed; inset:0; z-index:100000; }
-  .tur-gaura{ position:fixed; border-radius:14px; box-shadow:0 0 0 9999px rgba(3,4,9,.78); pointer-events:none;
-    transition: top .35s var(--ease-out), left .35s var(--ease-out), width .35s var(--ease-out), height .35s var(--ease-out);
-    outline:2px solid var(--brass); }
-  .tur-gaura.fara{ outline:none; width:0 !important; height:0 !important; left:50% !important; top:50% !important; border-radius:0; }
-  .tur-bula{ position:fixed; background:var(--bg-card); color:var(--ink); border:1px solid var(--brass); border-radius:16px;
-    padding:16px 18px 14px; box-shadow:var(--shadow-warm); z-index:1; transition: top .3s ease, left .3s ease; --ax:40px; }
-  .tur-bula::before{ content:""; position:absolute; width:16px; height:16px; background:var(--bg-card); border:1px solid var(--brass);
-    transform:rotate(45deg); left:calc(var(--ax) - 8px); }
-  .tur-bula[data-poz="jos"]::before{ top:-9px; border-right:none; border-bottom:none; }
-  .tur-bula[data-poz="sus"]::before{ bottom:-9px; border-left:none; border-top:none; }
-  .tur-bula[data-poz="mijloc"]::before{ display:none; }
-  .tur-nr{ font-family:'Space Mono', monospace; font-size:11px; color:var(--brass-soft); letter-spacing:.08em; margin-bottom:6px; }
-  .tur-bula h4{ font-family:'Fraunces', serif; font-size:1.15rem; font-weight:600; margin:0 0 6px; }
-  .tur-bula p{ font-size:14px; line-height:1.5; color:var(--ink-soft); margin:0 0 14px; }
-  .tur-btns{ display:flex; gap:8px; align-items:center; }
-  .tur-btns button{ font-family:'Work Sans', sans-serif; font-weight:600; font-size:13.5px; border-radius:10px; padding:10px 14px; cursor:pointer; border:1.5px solid var(--paper-dim); background:transparent; color:var(--ink-soft); min-height:40px; -webkit-tap-highlight-color:transparent; }
-  .tur-btns button.tur-prim{ background:var(--pink-main); color:#f6f0e6; border-color:var(--pink-main); }
-  .tur-btns .tur-spatiu{ flex:1; }
-  @media (prefers-reduced-motion: reduce){ .tur-gaura, .tur-bula{ transition:none; } }
-
   /* ==================================================================
      RAFINARE PE TELEFON
      ================================================================== */
@@ -750,7 +728,6 @@
   <div class="wrap footer-inner">
     <div class="brand">Meniu digital</div>
     <div class="footer-links" style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
-        <button id="btnGhidClient">Cum functioneaza meniul?</button>
         <button id="btnPrivacyPolicy">Politica de confidentialitate (GDPR)</button>
     </div>
     <span id="txtFooterCopy">Demonstratie</span>
@@ -824,7 +801,6 @@
   // comenzile trimise in vizita asta (vezi mai jos, „Comenzile trimise in vizita asta")
   let comenziSesiune = [];      // [{id, token, sectiune, status, produse, total, mesa, created_at}]
   let canalComenzi = null;
-  let ghidProgramat = false;
 
   // Categoriile principale sunt luate DIRECT din produsele incarcate din baza
   // (primul tag din array-ul "tags" al fiecărui produs este considerat categoria principală).
@@ -852,18 +828,9 @@
     document.getElementById('customAlertOverlay').classList.remove('open');
     if(pendingReviewPrompt) {
       pendingReviewPrompt = false;
-      setTimeout(showDirectReviewModal, 1000);
+      setTimeout(showFeedbackModal, 1000);
     }
   };
-
-  function showDirectReviewModal() {
-    const t = I18N[currentLang];
-    document.getElementById('fbTitle').textContent = t.fbDirectTitle;
-    document.getElementById('starContainer').style.display = 'none';
-    document.getElementById('fbBad').style.display = 'none';
-    document.getElementById('fbGood').style.display = 'block';
-    document.getElementById('feedbackOverlay').classList.add('open');
-  }
 
   const urlParams = new URLSearchParams(window.location.search);
   if(urlParams.has('mesa')) {
@@ -968,7 +935,7 @@
           'Executarea comenzii tale (art. 6 alin. 1 lit. b din GDPR); interesul legitim al localului de a tine evidenta comenzilor, de a preveni fraudele si de a rezolva reclamatiile (art. 6 alin. 1 lit. f); consimtamantul tau pentru parerea trimisa (art. 6 alin. 1 lit. a), pe care il poti retrage oricand cerand stergerea ei.' ] },
         { h: '4. Cat timp le pastram', p: [
           '<b>Comenzile:</b> se sterg automat la 2 zile dupa ce sunt inchise. <b>Numele si telefonul de la pachet:</b> 48 de ore. <b>Jurnalul de activitate</b> (ce s-a intamplat cu comanda, fara date personale de la masa): 30 de zile. <b>Parerile:</b> 30 de zile, apoi doar ca statistica, fara text.',
-          '<b>Pe telefonul tau:</b> masa si comenzile trimise raman pana inchizi meniul; limba, ghidul si consimtamantul raman pana stergi datele site-ului din browser.' ] },
+          '<b>Pe telefonul tau:</b> masa si comenzile trimise raman pana inchizi meniul; limba si consimtamantul raman pana stergi datele site-ului din browser.' ] },
         { h: '5. Cui le transmitem', p: [
           '<b>Supabase Inc.</b> — baza de date si transmisia in timp real, in centre de date din Uniunea Europeana. <b>Cloudflare Inc.</b> — livrarea paginilor. Fonturile sunt servite de pe acelasi site: nu se face niciun apel catre Google sau alt tert cand se incarca pagina.',
           'Toti actioneaza ca persoane imputernicite, pe baza de contract, cu clauzele contractuale standard ale UE pentru orice transfer in afara Uniunii. Nimeni altcineva nu primeste datele tale si nu exista niciun transfer in scop comercial.' ] },
@@ -978,7 +945,7 @@
           'Ai dreptul de acces, rectificare, stergere („dreptul de a fi uitat"), restrictionare a prelucrarii, portabilitate, opozitie si retragerea consimtamantului. Spune-i personalului sau scrie la <b>' + op.contact + '</b>; raspundem in cel mult 30 de zile.',
           'Daca nu esti multumit, te poti adresa Autoritatii Nationale de Supraveghere a Prelucrarii Datelor cu Caracter Personal (ANSPDCP), B-dul G-ral Gheorghe Magheru 28-30, Bucuresti — <b>www.dataprotection.ro</b>.' ] },
         { h: '8. Stocarea locala din browser', p: [
-          'Nu folosim cookie-uri. Pagina tine pe telefonul tau, fara sa trimita nicaieri: <b>limba</b> aleasa; <b>produsele din cos</b> (pana trimiti comanda); <b>masa si modul</b> (la masa / la pachet) pe durata vizitei; <b>comenzile trimise</b> si identificatorul lor secret, pe durata vizitei; <b>consimtamantul si ghidul</b>, ca sa nu ti le mai aratam. Le stergi oricand din setarile browserului (datele site-ului).' ] },
+          'Nu folosim cookie-uri. Pagina tine pe telefonul tau, fara sa trimita nicaieri: <b>limba</b> aleasa; <b>produsele din cos</b> (pana trimiti comanda); <b>masa si modul</b> (la masa / la pachet) pe durata vizitei; <b>comenzile trimise</b> si identificatorul lor secret, pe durata vizitei; <b>consimtamantul</b>, ca sa nu ti-l mai cerem. Le stergi oricand din setarile browserului (datele site-ului).' ] },
         { h: '9. Minori', p: [
           'Meniul poate fi rasfoit de oricine e la masa; nu cerem varsta si nu colectam intentionat date de la copii. Comanda la pachet (nume si telefon) e destinata adultilor.' ] },
         { h: '10. Gramaje, valori nutritionale si alergeni', p: [ op.alergeni ] },
@@ -1015,7 +982,7 @@
       privacyAllergensText: 'Precizare privind gramajele, valorile nutritionale si alergenii: gramajele, valorile calorice (kcal) si lista de ingrediente si alergeni afisate in acest meniu digital au caracter strict orientativ si informativ. Aceste date sunt introduse, actualizate si validate exclusiv de catre local, care raspunde singur de exactitatea si actualizarea lor, in conformitate cu Regulamentul (UE) nr. 1169/2011 privind informarea consumatorilor cu privire la produsele alimentare si cu restul legislatiei aplicabile in materie de siguranta alimentara si protectia consumatorului. Platforma care gazduieste si afiseaza acest meniu digital are exclusiv rolul de furnizor al instrumentului de vizualizare si comanda, nu intervine in prepararea, supravegherea sau verificarea continutului nutritional ori a alergenilor introdusi de local si este expres exonerata de raspundere pentru erori, omisiuni, variatii de reteta, contaminare incrucisata in bucatarie sau date neactualizate. Din cauza prepararii manuale, gramajele servite efectiv si valorile calorice pot varia fata de cele indicate. Recomandam insistent clientilor cu alergii, intolerante sau nevoi alimentare speciale sa anunte direct personalul inainte de a comanda, pentru informatii actualizate si personalizate.',
       cookieBannerText: 'Folosim stocarea locala a browserului, necesara tehnic, ca sa retinem limba, masa si produsele din comanda ta. Nu folosim cookie-uri de publicitate sau de urmarire. Daca navighezi mai departe, esti de acord cu utilizarea lor.', cookieAcceptBtn: 'Accept si continui', cookieInfoBtn: 'Politica de confidentialitate',
       busyBanner: '🔥 Barul are comenzi multe acum. Timpii de asteptare sunt putin mai mari decat de obicei.',
-      fbTitle: 'Cum a fost la noi?', fbPlaceholder: 'Ce am putea imbunatati?', fbBtn: 'Trimite parerea', fbThanks: 'Multumim ca ne ajuti sa fim mai buni!', fbGoogle: 'Super! Ne-ar ajuta enorm o recenzie pe Google.', fbGoogleBtn: 'Lasa recenzie pe Google', fbDirectTitle: 'Multumim de vizita!', tablesFree: 'mese libere', tablesFull: 'Nicio masa libera', tablesFor: 'locuri',
+      fbTitle: 'Cum a fost la noi?', fbPlaceholder: 'Ce am putea imbunatati?', fbBtn: 'Trimite parerea', fbThanks: 'Multumim ca ne ajuti sa fim mai buni!', fbGoogle: 'Super! Ne-ar ajuta enorm o recenzie pe Google.', fbGoogleBtn: 'Lasa recenzie pe Google', fbDirectTitle: 'Multumim de vizita!', tablesFree: 'mese libere', tablesFull: 'Nicio masa libera', tablesFor: 'locuri', tableWord: 'Masa',
       weightLabel:'Volum', kcalLabel:'kcal', ingredientsLabel:'Ingrediente', allergensLabel:'Alergeni', noAllergens:'Fara alergeni declarati',
       splitModeEqual: 'Parti egale', splitModeProduct: 'Pe produs', splitProductHint: 'Atribuie fiecare produs unei persoane.', personLabel: 'Persoana',
       cartItemsLabel: 'produse alese', emptyCartHint: 'Nu ai ales nimic inca.',
@@ -1035,19 +1002,6 @@
       removeConfirm: (n)=>`Scoti „${n}” din comanda? Barul afla pe loc.`, removeLastConfirm: (n)=>`„${n}” e ultimul produs: comanda se anuleaza. Continui?`,
       osErrTitle: 'Nu s-a putut', osErrLocked: 'Comanda a fost acceptata si nu mai poate fi modificata de pe telefon. Cheama ospatarul.',
       tablePrompt: 'Numarul mesei:', errSend: 'Nu s-a putut trimite comanda: ',
-      helpLink: 'Cum functioneaza meniul?',
-      turBtn: { next:'Urmatorul →', prev:'Inapoi', skip:'Sari peste', done:'Gata ✓' },
-      tur: [
-        { t:'Bine ai venit!', x:'Un tur de 30 de secunde prin meniu: cum alegi, cum comanzi si cum urmaresti comanda. Il poti relua oricand din josul paginii.' },
-        { t:'Limba', x:'Schimbi limba meniului de aici, oricand.' },
-        { t:'Mese libere', x:'Cate mese sunt libere acum. Apasa ca sa le vezi pe fiecare, cu numarul de locuri.' },
-        { t:'Cauta', x:'Scrie un cuvant si meniul se filtreaza pe loc.' },
-        { t:'Categorii', x:'Sau treci direct la o categorie. Bara se trage cu degetul.' },
-        { t:'Adauga in comanda', x:'Apasa + ca sa pui un produs in comanda si − ca sa-l scoti. Numarul din mijloc e cate bucati ai ales.' },
-        { t:'Comanda ta si ospatarul', x:'Cand ai ales ceva, butonul asta iti arata comanda si de aici o trimiti. Cand nu ai nimic in cos, de aici chemi ospatarul: ceri nota (cash sau card) sau ajutor.' },
-        { t:'Starea comenzii', x:'Dupa ce trimiti, sus apare starea: trimisa → acceptata (barul a vazut-o, urmeaza sa vina) → preluata. Apasa pe ea ca sa vezi ce ai comandat, sa scoti ceva daca ai gresit (pana e acceptata) sau sa imparti nota intre voi.' },
-        { t:'Asta e tot', x:'Pofta buna! Daca ai nevoie de ceva, cheama ospatarul din butonul de jos.' }
-      ]
     },
 
     en: { 
@@ -1093,7 +1047,7 @@
           'Fulfilling your order (Art. 6(1)(b) GDPR); the venue\'s legitimate interest in keeping order records, preventing fraud and handling complaints (Art. 6(1)(f)); your consent for the feedback you send (Art. 6(1)(a)), which you can withdraw at any time by asking for it to be deleted.' ] },
         { h: '4. How long we keep it', p: [
           '<b>Orders:</b> deleted automatically 2 days after they are closed. <b>Takeaway name and phone:</b> 48 hours. <b>Activity log</b> (what happened to the order, no personal data from the table): 30 days. <b>Feedback:</b> 30 days, then statistics only, without the text.',
-          '<b>On your phone:</b> table and sent orders stay until you close the menu; language, guide and consent stay until you clear the site data in your browser.' ] },
+          '<b>On your phone:</b> table and sent orders stay until you close the menu; language and consent stay until you clear the site data in your browser.' ] },
         { h: '5. Who receives it', p: [
           '<b>Supabase Inc.</b> — database and real-time delivery, in data centres within the European Union. <b>Cloudflare Inc.</b> — page delivery. Fonts are served from this same site: no request goes to Google or any other third party when the page loads.',
           'All of them act as processors under contract, with the EU standard contractual clauses for any transfer outside the Union. Nobody else receives your data and there is no transfer for commercial purposes.' ] },
@@ -1103,7 +1057,7 @@
           'You have the right of access, rectification, erasure ("right to be forgotten"), restriction of processing, portability, objection and withdrawal of consent. Tell the staff or write to <b>' + op.contact + '</b>; we answer within 30 days.',
           'If you are not satisfied, you can contact the Romanian supervisory authority (ANSPDCP), B-dul G-ral Gheorghe Magheru 28-30, Bucharest — <b>www.dataprotection.ro</b> — or the authority in your own country.' ] },
         { h: '8. Local storage in your browser', p: [
-          'We use no cookies. The page keeps on your phone, without sending it anywhere: your <b>language</b>; the <b>items in your cart</b> (until you send the order); your <b>table and mode</b> (dine-in / takeaway) for the visit; the <b>orders you sent</b> and their secret identifier, for the visit; the <b>consent and guide</b> flags, so we don\'t show them again. You can clear them at any time from your browser settings (site data).' ] },
+          'We use no cookies. The page keeps on your phone, without sending it anywhere: your <b>language</b>; the <b>items in your cart</b> (until you send the order); your <b>table and mode</b> (dine-in / takeaway) for the visit; the <b>orders you sent</b> and their secret identifier, for the visit; the <b>consent</b> flag, so we don\'t ask again. You can clear them at any time from your browser settings (site data).' ] },
         { h: '9. Minors', p: [
           'Anyone at the table may browse the menu; we do not ask for age and do not knowingly collect data from children. Takeaway ordering (name and phone) is meant for adults.' ] },
         { h: '10. Weights, nutritional values and allergens', p: [ op.alergeni ] },
@@ -1140,7 +1094,7 @@
       privacyAllergensText: 'Notice regarding weights, nutritional values and allergens: the weights, calorie (kcal) values, and the list of ingredients and allergens shown in this digital menu are provided for guidance and informational purposes only. This information is entered, updated, and validated exclusively by the establishment (the restaurant), which is solely responsible for its accuracy and for keeping it up to date, in accordance with EU Regulation No. 1169/2011 on the provision of food information to consumers and any other applicable food-safety and consumer-protection regulations. The technology platform hosting and displaying this digital menu acts solely as the provider of the display and ordering tool; it does not take part in preparing, supervising, or verifying the nutritional or allergen content entered by the establishment, and is therefore expressly released from any liability arising from errors, omissions, recipe variations, cross-contact in the kitchen, or outdated information. Because dishes are prepared by hand, the actual weight served and calorie values may vary from those indicated. Customers with allergies, intolerances, or special dietary needs are strongly advised to inform staff directly before ordering, to receive current, personalized information.',
       cookieBannerText: 'We use browser local storage, technically necessary, to remember your language, your table and the items in your order. We do not use advertising or tracking cookies. By continuing to browse you accept its use.', cookieAcceptBtn: 'Accept and continue', cookieInfoBtn: 'Privacy policy',
       busyBanner: '🔥 The bar is very busy right now. Waiting times are slightly longer than usual.',
-      fbTitle: 'How was your evening?', fbPlaceholder: 'What can we improve?', fbBtn: 'Send Feedback', fbThanks: 'Thank you for your feedback!', fbGoogle: 'Great! We would love a review on Google.', fbGoogleBtn: 'Leave Google Review', fbDirectTitle: 'Thanks for visiting us!', tablesFree: 'tables free', tablesFull: 'No tables free', tablesFor: 'seats',
+      fbTitle: 'How was your evening?', fbPlaceholder: 'What can we improve?', fbBtn: 'Send Feedback', fbThanks: 'Thank you for your feedback!', fbGoogle: 'Great! We would love a review on Google.', fbGoogleBtn: 'Leave Google Review', fbDirectTitle: 'Thanks for visiting us!', tablesFree: 'tables free', tablesFull: 'No tables free', tablesFor: 'seats', tableWord: 'Table',
       weightLabel:'Volume', kcalLabel:'kcal', ingredientsLabel:'Ingredients', allergensLabel:'Allergens', noAllergens:'No declared allergens',
       splitModeEqual: 'Equal parts', splitModeProduct: 'By product', splitProductHint: 'Assign each product to a person.', personLabel: 'Person',
       cartItemsLabel: 'items selected', emptyCartHint: 'You haven\'t picked anything yet.',
@@ -1158,19 +1112,6 @@
       removeConfirm: (n)=>`Remove "${n}" from your order? The bar is notified instantly.`, removeLastConfirm: (n)=>`"${n}" is the last item: the order will be cancelled. Continue?`,
       osErrTitle: 'Not possible', osErrLocked: 'The order has been accepted and can no longer be changed from your phone. Please call the waiter.',
       tablePrompt: 'Table number:', errSend: 'The order could not be sent: ',
-      helpLink: 'How does the menu work?',
-      turBtn: { next:'Next →', prev:'Back', skip:'Skip', done:'Done ✓' },
-      tur: [
-        { t:'Welcome!', x:'A 30-second tour of the menu: how to pick, order and follow your order. You can replay it any time from the bottom of the page.' },
-        { t:'Language', x:'Switch the menu language here, any time.' },
-        { t:'Free tables', x:'How many tables are free right now. Tap to see each one, with its number of seats.' },
-        { t:'Search', x:'Type a word and the menu filters instantly.' },
-        { t:'Categories', x:'Or jump straight to a category. The bar scrolls sideways.' },
-        { t:'Add to your order', x:'Tap + to add an item and − to remove it. The number in the middle is how many you picked.' },
-        { t:'Your order and the waiter', x:'Once you\'ve picked something, this button shows your order and sends it. When your cart is empty, this is where you call the waiter: ask for the bill (cash or card) or for help.' },
-        { t:'Order status', x:'After you send it, the status shows at the top: sent → accepted (the bar has seen it, it\'s on its way) → delivered. Tap it to see what you ordered, remove something if you made a mistake (until it is accepted) or split the bill between you.' },
-        { t:'That\'s it', x:'Enjoy! If you need anything, call the waiter from the button at the bottom.' }
-      ]
     },
   };
 
@@ -1259,7 +1200,6 @@
     document.getElementById('osSplitBtn').textContent = t.osSplitBtn;
     document.getElementById('osAddMore').textContent = t.osAddMore;
     document.getElementById('trackerHint').textContent = t.trackerHint;
-    document.getElementById('btnGhidClient').textContent = t.helpLink;
 
     renderTagFilters();
     render();
@@ -1327,7 +1267,7 @@
     const t = I18N[currentLang];
     const tagsEl = document.getElementById('tagFilters');
     tagsEl.innerHTML = `<button class="chip active" data-filter="all">${t.allChip}</button>`;
-    CATEGORY_ORDER.forEach(key => { if(allItems.some(i => (i.tags || []).includes(key))) tagsEl.innerHTML += `<button class="chip" data-filter="${key}">${t.catNames[key] || key}</button>`; });
+    CATEGORY_ORDER.forEach(key => { if(allItems.some(i => (i.tags || []).includes(key))) tagsEl.innerHTML += `<button class="chip" data-filter="${escapeHTML(key)}">${escapeHTML(t.catNames[key] || key)}</button>`; });
     tagsEl.querySelectorAll('.chip').forEach(btn => {
       btn.addEventListener('click', (e) => {
         activeFilter = e.target.dataset.filter;
@@ -1363,7 +1303,7 @@
       if(items.length === 0) return;
 
       const catName = t.catNames[catKey] || catKey;
-      let html = `<section class="category-section"><h2>${catName}</h2><div class="grid">`;
+      let html = `<section class="category-section"><h2>${escapeHTML(catName)}</h2><div class="grid">`;
       
       items.forEach(item => {
         const isEpuizat = outOfStockIds.has(item.imageNumber.toString());
@@ -1597,7 +1537,7 @@
   const obModeStep = document.getElementById('obModeStep');
 
   // Politica (stocarea locala) e primul pas, inaintea limbii: pana o accepta,
-  // nu i se cere nimic si nu porneste ghidul. Textul e in limba browserului,
+  // nu i se cere nimic. Textul e in limba browserului,
   // fiindca limba meniului se alege abia dupa.
   function needsCookie(){ return !localStorage.getItem(STORE + 'cookieConsent'); }
   function arataPasCookie(){
@@ -1632,10 +1572,10 @@
   const pachetPromisiune = new Promise(r => { pachetRezolvat = r; });
   function alegeMasaDirect() {
       sessionStorage.setItem(STORE + 'mod', 'masa'); sessionStorage.setItem(STORE + 'masa', 'stabilita');
-      onboardingOverlay.classList.remove('open'); dupaOnboarding();
+      onboardingOverlay.classList.remove('open');
   }
   async function showModeStepOrClose(){
-    if(!needsMode()){ onboardingOverlay.classList.remove('open'); dupaOnboarding(); return; }
+    if(!needsMode()){ onboardingOverlay.classList.remove('open'); return; }
     if (pachetActiv === null) await Promise.race([pachetPromisiune, new Promise(r => setTimeout(r, 1500))]);
     if (!pachetActiv) { alegeMasaDirect(); return; }
     obLangStep.style.display = 'none'; obModeStep.style.display = 'block';
@@ -1648,15 +1588,14 @@
       else if(!needsLang()) showModeStepOrClose();
   } else {
       applyLanguage(currentLang);
-      dupaOnboarding();
   }
 
   document.querySelectorAll('.lang-pick-btn').forEach(btn => {
     btn.addEventListener('click', () => { limbaConfirmata = true; applyLanguage(btn.dataset.lang); showModeStepOrClose(); });
   });
 
-  document.getElementById('btnDineIn').addEventListener('click', () => { sessionStorage.setItem(STORE + 'mod', 'masa'); sessionStorage.setItem(STORE + 'masa', 'stabilita'); onboardingOverlay.classList.remove('open'); dupaOnboarding(); });
-  document.getElementById('btnTakeaway').addEventListener('click', () => { sessionStorage.setItem(STORE + 'mod', 'takeaway'); sessionStorage.setItem(STORE + 'masa', 'Takeaway'); onboardingOverlay.classList.remove('open'); dupaOnboarding(); });
+  document.getElementById('btnDineIn').addEventListener('click', () => { sessionStorage.setItem(STORE + 'mod', 'masa'); sessionStorage.setItem(STORE + 'masa', 'stabilita'); onboardingOverlay.classList.remove('open'); });
+  document.getElementById('btnTakeaway').addEventListener('click', () => { sessionStorage.setItem(STORE + 'mod', 'takeaway'); sessionStorage.setItem(STORE + 'masa', 'Takeaway'); onboardingOverlay.classList.remove('open'); });
 
   const orderModal = document.getElementById('orderOverlay');
   const callModal = document.getElementById('callWaiterOverlay');
@@ -1725,15 +1664,27 @@
   });
 
   document.getElementById('btnSubmitFb').addEventListener('click', async () => {
-      let msg = document.getElementById('fbMessage').value;
+      const btn = document.getElementById('btnSubmitFb');
+      if (btn.disabled) return;
+      btn.disabled = true;
+      const msg = document.getElementById('fbMessage').value.trim().slice(0, 500);
       const masa = sessionStorage.getItem(STORE + 'masa') || 'N/A';
-      await _supabase.from('jurnal_activitate').insert([{ 
-          utilizator: 'client', actiune: 'feedback_client', 
-          detalii: { rating: currentRating, mesaj: msg, mesa: masa } 
-      }]);
+      if (!CFG.DEMO) {
+          try {
+              await _supabase.from('jurnal_activitate').insert([{
+                  utilizator: 'client', actiune: 'feedback_client',
+                  detalii: { rating: currentRating, mesaj: msg, mesa: masa }
+              }]);
+          } catch(e) {}
+      }
+      btn.disabled = false;
       const t = I18N[currentLang];
-      document.getElementById('feedbackOverlay').innerHTML = `<div class="modal"><h2 style="color:var(--pink-bright); margin:0;">${t.fbThanks}</h2></div>`;
-      setTimeout(()=>document.getElementById('feedbackOverlay').classList.remove('open'), 3000);
+      // multumim, fara sa stricam fereastra: se refoloseste la vizita urmatoare
+      document.getElementById('fbTitle').textContent = t.fbThanks;
+      document.getElementById('starContainer').style.display = 'none';
+      document.getElementById('fbBad').style.display = 'none';
+      document.getElementById('fbMessage').value = '';
+      setTimeout(() => document.getElementById('feedbackOverlay').classList.remove('open'), 2500);
   });
 
   function showFeedbackModal() {
@@ -1981,9 +1932,6 @@
       [...comenziSesiune].sort((a, b) => new Date(a.created_at) - new Date(b.created_at)).forEach(c => {
           const st = c.status;
           const inchisa = ['anulata', 'expirata'].includes(st);
-          // aceeasi regula ca pe server: pana e acceptata oricand, apoi doar in
-          // fereastra — chiar daca barul a apasat intre timp „gata"
-          const sec = Math.round(fereastraMinuteClient * 60 - (Date.now() - new Date(c.created_at).getTime()) / 1000);
           // de pe telefon se scoate doar pana e acceptata; dupa, ospatarul
           const inFereastra = st === 'noua';
           const poateSterge = inFereastra && !!c.token && !CFG.DEMO;
@@ -2013,20 +1961,6 @@
       cw.textContent = t.osCallWaiter;
       cw.style.display = (!vreunaModificabila && vreunaAcceptata && !CFG.DEMO && sessionStorage.getItem(STORE + 'masa') !== 'Takeaway') ? 'block' : 'none';
   }
-
-  // numaratoarea inversa din fisa, cat e deschisa
-  setInterval(() => {
-      if (!orderSheet.classList.contains('open')) return;
-      const t = I18N[currentLang] || I18N.ro;
-      let expirata = false;
-      document.querySelectorAll('[data-os-timp]').forEach(el => {
-          const c = comenziSesiune.find(x => String(x.id) === el.dataset.osTimp); if (!c) return;
-          const sec = Math.round(fereastraMinuteClient * 60 - (Date.now() - new Date(c.created_at).getTime()) / 1000);
-          if (sec <= 0) { expirata = true; return; }
-          el.textContent = t.osTimp(Math.floor(sec / 60), String(sec % 60).padStart(2, '0'));
-      });
-      if (expirata) randeazaFisaComanda();   // dispar butoanele „−"
-  }, 1000);
 
   // Scoate o bucata dintr-un produs. Serverul verifica token-ul, refuza daca
   // a trecut fereastra si, daca n-a mai ramas nimic, anuleaza comanda.
@@ -2073,7 +2007,15 @@
           sessionStorage.setItem(STORE + 'masa', 'Takeaway');
       } else {
           const tableInput = document.getElementById('tableNumberInput');
-          finalTableNr = tableInput.value.trim() || 'Fără-Nr';
+          finalTableNr = tableInput.value.trim();
+          if(!finalTableNr) {
+              showCustomAlert(
+                currentLang === 'ro' ? 'Numarul mesei' : 'Table number',
+                currentLang === 'ro' ? 'Scrie numarul mesei ca sa trimitem comanda.' : 'Enter your table number so we can send the order.'
+              );
+              tableInput.focus();
+              return;
+          }
 
           if(validTableNumbers && validTableNumbers.size > 0 && !validTableNumbers.has(finalTableNr)) {
               showCustomAlert(
@@ -2243,7 +2185,7 @@
       } else {
           badge.textContent = `🪑 ${freeTables.length}/${allTables.length} ${t.tablesFree}`;
           badge.classList.add('badge-low');
-          list.innerHTML = freeTables.map(m => `<span>Masa #${escapeHTML(m.numar)} · ${escapeHTML(m.scaune)} ${t.tablesFor}</span>`).join('');
+          list.innerHTML = freeTables.map(m => `<span>${t.tableWord} #${escapeHTML(m.numar)} · ${escapeHTML(m.scaune)} ${t.tablesFor}</span>`).join('');
       }
       badge.style.display = 'flex';
   }
@@ -2322,7 +2264,6 @@
         if(currentLang) applyLanguage(currentLang);
         else render();
         reiaComenziSesiune();
-        dupaOnboarding();
 
         // Inițializăm Supabase izolat pentru a nu periclita meniul la refresh
         (async function initSupabase() {
@@ -2381,167 +2322,6 @@
         document.getElementById('emptyState').textContent = I18N[currentLang||'ro'].emptyState;
         document.getElementById('emptyState').style.display = 'block';
     });
-
-  // =======================================================================
-  // GHID INTERACTIV — ecranul se intuneca, un reflector cade pe fiecare
-  // element si o bula explica ce face. Porneste singur la prima vizita de pe
-  // telefonul asta si se poate relua din josul paginii.
-  // =======================================================================
-  const Tur = (function(){
-      let pasi = [], idx = 0, ov = null, gaura = null, bula = null, tinta = null, activ = false, laFinal = null, ultimul = null, etichete = {};
-
-      function construieste() {
-          if (ov) return;
-          ov = document.createElement('div'); ov.className = 'tur-ov';
-          gaura = document.createElement('div'); gaura.className = 'tur-gaura';
-          bula = document.createElement('div'); bula.className = 'tur-bula';
-          ov.appendChild(gaura); ov.appendChild(bula); document.body.appendChild(ov);
-          bula.addEventListener('click', e => {
-              const b = e.target.closest('[data-tur]'); if (!b) return;
-              if (b.dataset.tur === 'next') urmatorul(); else if (b.dataset.tur === 'prev') inapoi(); else stop(false);
-          });
-          window.addEventListener('resize', pozitioneaza);
-          window.addEventListener('scroll', pozitioneaza, true);
-          document.addEventListener('keydown', e => {
-              if (!activ) return;
-              if (e.key === 'Escape') stop(false);
-              else if (e.key === 'ArrowRight' || e.key === 'Enter') urmatorul();
-              else if (e.key === 'ArrowLeft') inapoi();
-          });
-      }
-      function gaseste(p) {
-          if (!p.el) return null;
-          const e = typeof p.el === 'function' ? p.el() : document.querySelector(p.el);
-          if (!e) return null;
-          const r = e.getBoundingClientRect();
-          if (!r.width && !r.height) return null;
-          return e;
-      }
-      function arata(i, dir) {
-          if (ultimul && ultimul.dupa) { try { ultimul.dupa(); } catch(e) {} }
-          ultimul = null;
-          while (i >= 0 && i < pasi.length) {
-              const p = pasi[i];
-              if (p.inainte) { try { p.inainte(); } catch(e) {} }
-              if (!p.el || gaseste(p)) break;
-              if (p.dupa) { try { p.dupa(); } catch(e) {} }
-              i += dir;
-          }
-          if (i < 0) i = 0;
-          if (i >= pasi.length) { stop(true); return; }
-          idx = i; const p = pasi[i]; ultimul = p;
-          tinta = gaseste(p);
-          if (tinta) {
-              try { tinta.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }); }
-              catch(e) { try { tinta.scrollIntoView(); } catch(e2) {} }
-          }
-          bula.innerHTML = `<div class="tur-nr">${i + 1} / ${pasi.length}</div><h4>${p.titlu}</h4><p>${p.text}</p>
-            <div class="tur-btns"><button data-tur="skip">${etichete.skip}</button><span class="tur-spatiu"></span>
-            ${i > 0 ? `<button data-tur="prev">${etichete.prev}</button>` : ''}
-            <button data-tur="next" class="tur-prim">${i === pasi.length - 1 ? etichete.done : etichete.next}</button></div>`;
-          pozitioneaza();
-          setTimeout(pozitioneaza, 380);
-      }
-      function pozitioneaza() {
-          if (!activ) return;
-          const vw = window.innerWidth, vh = window.innerHeight, pad = 8;
-          const bw = Math.min(360, vw - 24); bula.style.width = bw + 'px';
-          const bh = bula.offsetHeight;
-          if (tinta) {
-              const r = tinta.getBoundingClientRect();
-              gaura.classList.remove('fara');
-              gaura.style.left = (r.left - pad) + 'px'; gaura.style.top = (r.top - pad) + 'px';
-              gaura.style.width = (r.width + 2 * pad) + 'px'; gaura.style.height = (r.height + 2 * pad) + 'px';
-              let top = r.bottom + pad + 14, poz = 'jos';
-              if (top + bh > vh - 12) { top = r.top - pad - 14 - bh; poz = 'sus'; }
-              if (top < 12) { top = Math.max(12, Math.min(vh - bh - 12, r.bottom + pad + 14)); poz = 'mijloc'; }
-              let left = r.left + r.width / 2 - bw / 2;
-              left = Math.max(12, Math.min(left, vw - bw - 12));
-              bula.style.top = top + 'px'; bula.style.left = left + 'px'; bula.dataset.poz = poz;
-              bula.style.setProperty('--ax', Math.max(20, Math.min(bw - 20, r.left + r.width / 2 - left)) + 'px');
-          } else {
-              gaura.classList.add('fara');
-              bula.dataset.poz = 'mijloc';
-              bula.style.top = Math.max(12, (vh - bh) / 2) + 'px';
-              bula.style.left = Math.max(12, (vw - bw) / 2) + 'px';
-          }
-      }
-      function urmatorul() { arata(idx + 1, 1); }
-      function inapoi() { arata(idx - 1, -1); }
-      function start(lista, optiuni) {
-          construieste();
-          // pasii cu element ascuns pentru rolul/ecranul curent ies din lista de la
-          // inceput, ca numaratoarea „3 / 9" sa fie corecta; cei cu `inainte` isi
-          // arata singuri elementul, deci raman
-          lista = lista.filter(p => !p.el || p.inainte || !!gaseste(p));
-          pasi = lista; laFinal = optiuni && optiuni.laFinal; etichete = (optiuni && optiuni.etichete) || { next:'→', prev:'←', skip:'×', done:'✓' };
-          activ = true; ultimul = null;
-          ov.style.display = 'block';
-          arata(0, 1);
-      }
-      function stop(complet) {
-          if (!activ) return;
-          activ = false;
-          if (ultimul && ultimul.dupa) { try { ultimul.dupa(); } catch(e) {} }
-          ultimul = null; tinta = null;
-          ov.style.display = 'none';
-          if (laFinal) laFinal(!!complet);
-      }
-      return { start, stop, activ: () => activ };
-  })();
-
-  function pasiGhidClient() {
-      const t = I18N[currentLang] || I18N.ro;
-      const T = t.tur;
-      const tracker = document.getElementById('liveTracker');
-      let trackerEraVizibil = false;
-      return [
-        { el: null, titlu: T[0].t, text: T[0].x },
-        { el: '#langToggleBtn', titlu: T[1].t, text: T[1].x },
-        { el: '#tablesBadge', titlu: T[2].t, text: T[2].x },
-        { el: '.search-box', titlu: T[3].t, text: T[3].x },
-        { el: '#tagFilters', titlu: T[4].t, text: T[4].x },
-        { el: () => document.querySelector('.card:not(.out-of-stock) .card-qty-controls'), titlu: T[5].t, text: T[5].x },
-        { el: '#smartActionBtn', titlu: T[6].t, text: T[6].x },
-        { el: '#liveTracker', titlu: T[7].t, text: T[7].x,
-          inainte() {
-              trackerEraVizibil = tracker.classList.contains('show');
-              if (!trackerEraVizibil) {
-                  document.getElementById('trackerStatusText').textContent = t.stAcceptata;
-                  document.getElementById('trackerProgress').style.width = '60%';
-                  document.getElementById('trackerTitle').textContent = t.trackerTitle + ' ▸';
-                  tracker.classList.add('show');
-              }
-          },
-          dupa() { if (!trackerEraVizibil) { tracker.classList.remove('show'); actualizeazaTracker(); } } },
-        { el: null, titlu: T[8].t, text: T[8].x }
-      ];
-  }
-
-  function pornesteGhidClient(fortat) {
-      let vazut = false;
-      try { vazut = !!localStorage.getItem(STORE + 'ghid'); } catch(e) {}
-      if (!fortat && vazut) return;
-      if (Tur.activ()) return;
-      const t = I18N[currentLang] || I18N.ro;
-      Tur.start(pasiGhidClient(), {
-          etichete: t.turBtn,
-          laFinal() { try { localStorage.setItem(STORE + 'ghid', '1'); } catch(e) {} }
-      });
-  }
-  document.getElementById('btnGhidClient').addEventListener('click', () => { window.scrollTo(0, 0); pornesteGhidClient(true); });
-
-  // Ghidul porneste dupa ce clientul a ales limba si modul, si dupa ce
-  // meniul e pe ecran — altfel n-ar avea pe ce arata.
-  function dupaOnboarding() {
-      // applyLanguage() salveaza limba inainte ca fereastra de intampinare sa
-      // se inchida, deci ne uitam la fereastra, nu la localStorage
-      if (onboardingOverlay.classList.contains('open')) return;
-      if (ghidProgramat) return;
-      if (!allItems.length) return;
-      ghidProgramat = true;
-      setTimeout(() => pornesteGhidClient(false), 700);
-  }
 
 })();
 </script>

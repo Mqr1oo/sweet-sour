@@ -42,7 +42,9 @@ din prima, fără configurare: numele folderului **este** calea din URL.
    `13_cod_lunar_delogare_zone.sql` (fără poze; codul lunii al managerului;
    delogarea personalului la ora închiderii; zonele ospătarilor) și
    `14_timp_eliberare.sql` (câte minute după notă se eliberează masa —
-   setare a directorului, citită și de cron). Pe M3 și
+   setare a directorului, citită și de cron) și `15_tura_automata.sql`
+   (turele deschise se închid la ora închiderii; rândurile serverului din
+   jurnal rămân „sistema", nu „client"). Pe M3 și
    Sweet & Sour a existat și un `12_poze_14_zile` (cron + funcție edge
    `curata-poze`) — a fost înlocuit de 13 și nu se mai rulează pe un proiect
    nou. Toate sunt deja aplicate pe M3 și Sweet & Sour.
@@ -286,10 +288,21 @@ se calculează pe loc („mai lipsesc 3.00 lei" dacă nu ajunge).
 
 ### Tura
 
-„🕒 Intru în tură / Ies din tură" în bara laterală (și 🕒 pe mobil): rânduri
-`tura_start` / `tura_stop` în jurnal, pe contul curent. Directorul are „Ture
-azi" în Personal: cine, de la cât la cât, câte ore. E informativ, nu pontaj
-oficial.
+Nu mai există buton. La intrarea în cont, panoul caută în jurnal ultimul
+`tura_start` / `tura_stop` al contului de la ultima închidere încoace (sau
+din ultimele 20 h); dacă nu e o tură deschisă, scrie `tura_start` cu
+`{automat:true}`. Un refresh nu pornește altă tură. La „Deconectare" scrie
+`tura_stop` (`de_la`, `ore`); la ora închiderii serverul
+(`curatare_mese_miezul_noptii`, migrația 15) închide el turele rămase
+deschise, pe contul fiecăruia, înainte să șteargă sesiunile. Directorul n-are
+tură. „Ture azi" în Personal: cine, de la cât la cât, câte ore. E informativ,
+nu pontaj oficial.
+
+Tot în migrația 15: trigger-ul `force_jurnal_utilizator` punea „client" pe
+orice rând fără `auth.uid()` — inclusiv pe cele scrise de cron. Acum
+„client" rămâne doar pentru cererile cu rolul `anon`/`authenticated`; ce
+scrie serverul păstrează utilizatorul dat („sistema", sau email-ul din
+`tura_stop`).
 
 ### Informarea personalului (GDPR)
 
@@ -394,8 +407,7 @@ Pe telefonul clientului, fereastra de întâmpinare are trei pași, în ordinea
 asta: **1) stocarea locală** (textul de cookie, „Accept și continui", cu
 buton spre politică), în limba browserului, fiindcă limba meniului nu e încă
 aleasă; **2) limba**; **3) masa / la pachet** (sărit când pachetul e oprit).
-Ghidul pornește abia după ce se închide fereastra. Bannerul de jos cu cookie
-nu mai există — se punea peste ghid și peste alegerea limbii.
+Bannerul de jos cu cookie nu mai există — se punea peste alegerea limbii.
 
 ## Politica de confidențialitate și termenii
 
@@ -461,17 +473,14 @@ lucru precedente, `ziLucru()` / `inceputZi()`). Pe proiectul moștenit rulau
 
 ## Ghidul interactiv
 
-Prima dată când cineva deschide meniul (pe telefon) sau panoul (pe fiecare
-rol), ecranul se întunecă și un reflector cade, pe rând, pe fiecare element:
-o bulă cu săgeată explică ce face. Se sare cu „Sari peste", se navighează cu
-săgețile tastaturii, se reia oricând din „Cum funcționează meniul?" (jos, în
-meniu) sau „❓ Ghid rapid" (panou). Pașii ale căror elemente nu există pentru
-rolul curent dispar singuri din numărătoare.
-
-Pentru panou, ghidul arată o comandă de exemplu și bara de acceptare chiar
-dacă nu e nicio comandă în acel moment. Pe telefon, butonul de notificări
-lipsea din antet (bara laterală e ascunsă sub 800 px) — acum e acolo, lângă
-„❓".
+Doar în panoul personalului (meniul clienților nu mai are tur: era prea mult
+pentru cineva care vrea doar să comande). Prima dată pe fiecare rol, ecranul
+se întunecă și un reflector cade, pe rând, pe fiecare element, cu o bulă de
+una-două propoziții. Se sare cu „Sari peste", se navighează cu săgețile, se
+reia din „❓ Ghid rapid". Pașii ale căror elemente nu există pentru rolul
+curent dispar din numărătoare. Ghidul arată o comandă de exemplu chiar dacă
+nu e niciuna. Dacă ospătarului i se cere zona la intrare, ghidul așteaptă să
+se închidă fereastra zonei (și invers).
 
 ## Nativ în română
 
@@ -747,8 +756,8 @@ citește doar setările, harta, mesele eliberate și rândurile proprii (tura
 lui). În panou, `body.rol-manager` ascunde tot ce are `data-director`.
 
 **Zonele ospătarilor.** Fiecare ospătar își alege zonele de care răspunde
-(butonul „📍 Zona mea" din bara laterală, sau la „Intru în tură" când sala
-are mai multe zone): rândul `zona_ospatar` din jurnal, citibil de tot
+(fereastra se deschide singură la prima intrare din zi, când sala are mai
+multe zone; apoi din butonul „📍 Zona mea"): rândul `zona_ospatar` din jurnal, citibil de tot
 personalul, scris doar de conturile de ospătar. Comenzile din zona lui apar
 primele și îl anunță (bip, voce, vibrație); cele din alte zone rămân
 vizibile, mai șterse, cu „📍 Interior · Maria" (cine le acoperă), și le poate

@@ -52,8 +52,8 @@ Scanează codul QR de pe masă și îi apare meniul, în culorile localului.
 
 - **Primul ecran**: un mesaj scurt despre faptul că telefonul lui ține minte
   limba și comanda (obligatoriu prin lege), apoi alege **limba** — română sau
-  engleză — și gata, e în meniu. Un tur de 30 de secunde îi arată cum
-  funcționează; îl poate sări.
+  engleză — și gata, e în meniu. Fără tururi, fără explicații: meniul se
+  înțelege singur.
 - **Meniul**: categorii, poze, descrieri, ingrediente, alergeni, prețuri.
   Căutare. Produsele terminate apar marcate „Stoc epuizat", nu dispar pur și
   simplu — știe că există, dar nu sunt azi.
@@ -156,8 +156,8 @@ singur alt rol.
   clienților.
 - **Comandă rapidă** (meniu): barul sau ospătarul trimite o comandă în numele
   clientului, exact ca de pe telefon.
-- **Ghid rapid**: un tur de un minut, pe rol, care pornește singur prima dată
-  și se poate relua oricând din „❓".
+- **Ghid rapid**: un tur de 30 de secunde, pe rol, câteva cuvinte la fiecare
+  buton. Pornește singur prima dată și se poate relua oricând din „❓".
 
 ---
 
@@ -178,10 +178,11 @@ Același panou, dar cu ce-l privește pe el:
 - **⭐ Zona mea**: își bifează zonele de care răspunde (Terasă, Interior…).
   Comenzile din zona lui apar primele și îl anunță; cele din alte zone rămân
   vizibile, mai șterse, cu „📍 Interior · Maria" (cine le acoperă) — și le
-  poate lua oricând dacă e nevoie (colegul e la fumat). I se cere zona la
-  „Intru în tură".
-- **Intru / Ies din tură**: apasă la venire și la plecare; directorul vede
-  cine a fost în tură, cât, și pe ce zonă.
+  poate lua oricând dacă e nevoie (colegul e la fumat). Zona i se cere
+  singură, la prima intrare din zi; o schimbă oricând din „📍 Zona mea".
+- **Tura se ține singură**: nu apasă nimic. Când intră în cont a intrat în
+  tură; când se deconectează (sau la ora închiderii, când toată lumea iese
+  automat) a ieșit. Directorul vede cine a fost în tură, cât, și pe ce zonă.
 
 ---
 
