@@ -2,7 +2,9 @@ Sablon pentru un local nou.
 
 1. Redenumeste folderul: numele lui devine calea din URL.
 2. Creeaza un proiect Supabase nou si ruleaza supabase/01_schema.sql,
-   apoi supabase/04_comenzi_live.sql, 05_fereastra_modificare.sql si 06_anulari_bonuri_pachet.sql.
+   apoi supabase/04_comenzi_live.sql, 05_fereastra_modificare.sql,
+   06_anulari_bonuri_pachet.sql, 07_cod_anulare.sql, 08_finalizata_la.sql,
+   09_manager.sql si 10_anulare_simpla.sql.
 3. Completeaza config.js: URL, cheie, nume, slogan, culori, link recenzie,
    plus firma localului (OPERATOR, ADRESA, EMAIL_GDPR) si firma ta
    (PLATFORMA, EMAIL_PLATFORMA) pentru politica si termeni.

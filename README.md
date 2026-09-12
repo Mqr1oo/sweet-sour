@@ -28,9 +28,13 @@ din prima, fără configurare: numele folderului **este** calea din URL.
 2. Creezi un proiect Supabase nou și rulezi `supabase/01_schema.sql`, apoi
    `04_comenzi_live.sql` (acceptare, modificări din mers, închiderea zilei) și
    `05_fereastra_modificare.sql` (fereastra de modificare, setări citibile de
-   clienți) și `06_anulari_bonuri_pachet.sql` (motiv obligatoriu la anulare,
-   bonul pe numele barmanului, comenzi la pachet opționale). Toate sunt deja
-   aplicate pe M3 și Sweet & Sour.
+   clienți), `06_anulari_bonuri_pachet.sql` (motiv obligatoriu la anulare,
+   bonul pe numele barmanului, comenzi la pachet opționale),
+   `07_cod_anulare.sql` (codul zilei pentru anulări), `08_finalizata_la.sql`
+   (ora închiderii comenzii), `09_manager.sql` (rolul `manager`) și
+   `10_anulare_simpla.sql` (anularea cu motiv, fără cod; clientul modifică
+   doar până e acceptată; managerul fără jurnal). Toate sunt deja aplicate pe
+   M3 și Sweet & Sour.
 3. Completezi `config.js` — URL, cheie publicabilă, nume, slogan, culori,
    link de recenzie Google.
 4. Creezi conturile de personal (`supabase/creeaza_conturi_staff.py`) și le dai
@@ -69,8 +73,8 @@ Fluxul unei comenzi are acum un pas în plus, la început:
 |---|---|---|
 | `noua` | intră singură | „Trimisă — așteaptă să fie văzută" |
 | `acceptata` | barul / bucătăria apasă **„Am văzut, accept"** | „Acceptată — am văzut comanda, urmează să vină" |
-| `gata` | barul / bucătăria apasă „Gata" | „Gata — vine acum la masă" |
-| `finalizata` | ospătarul apasă „Servit" | „Servită. Poftă bună!" |
+| `finalizata` | barul / bucătăria apasă **„Gata"** (cu ospătari: ospătarul e anunțat s-o ia) sau **„Preluată"** (fără ospătari) | „Preluată. Poftă bună!" |
+| `anulata` | bar / ospătar / manager, cu motiv | „Anulată — motivul" |
 
 Starea stă în baza de date, nu pe telefon: când cineva acceptă de pe un
 dispozitiv, alarma se oprește pe toate.
@@ -147,9 +151,9 @@ două funcții RPC; interfața doar o arată):
 
 | Cine | Cât timp |
 |---|---|
-| clientul, de pe telefon | cât e `noua` (nimeni n-a văzut-o); apoi **N minute de la trimitere**, chiar dacă barul a apăsat între timp „Gata"; niciodată după `finalizata` |
+| clientul, de pe telefon | **doar cât e `noua`**; după acceptare cheamă ospătarul din fișa comenzii |
 | ospătarul | cât e `noua`; apoi N minute de la trimitere |
-| barul / bucătăria (cei care o pregătesc), directorul | oricând, cât e deschisă |
+| barul / bucătăria (cei care o pregătesc), managerul | oricând, cât e deschisă |
 
 N e „Fereastra de modificare" din Șef → Setări (3/5/10/15/30 min, implicit 5),
 rând `setari_modificare` în jurnal, scris doar de director. Pe card apare
@@ -174,15 +178,33 @@ Ca telefonul clientului să știe modul, `setari_ospatari`, `setari_modificare`
 și `setari_pachet` au devenit citibile de clienții anonimi (alături de
 `config_mese`, `setari_busy`, `mesa_liberada`).
 
-### Anularea cere mereu un motiv
+### Anularea: motiv + istoric, fără cod
 
-Când personalul apasă ✕, panoul cere un motiv de **minim 5 litere** și nu
-merge mai departe fără el. Regula e și în baza de date
-(`protect_comanda_update`): o anulare fără motiv e refuzată chiar dacă cineva
-ocolește ecranul. Motivul stă în `comenzi.motiv_anulare`, în jurnal pe numele
-celui care a anulat, pe cardul din Istoric, în „Anulări suspecte" și **pe
-telefonul clientului** („❌ Anulată — Nu mai avem ceai verde"). Odată scris nu
-se mai schimbă (doar directorul poate).
+Cine poate anula: **barul, ospătarul și managerul** (bucătăria cere barului;
+directorul doar observă). ✕ deschide o fereastră cu motive fixe („Clientul s-a
+răzgândit", „Produs epuizat", „Comandă greșită", „Clientul a plecat", „Timp
+de așteptare prea mare", „Greșeală la bar / bucătărie", „Alt motiv" + text de
+minim 5 litere) și anulează pe loc. Fără cod, fără aprobare — am încercat
+amândouă (07, 09) și erau prea multă bătaie de cap la bar.
+
+Ce rămâne, în schimb, e **istoricul**: RPC-ul `anuleaza_comanda` scrie
+`comenzi.motiv_anulare` și rândul `pedido_cancelado` în jurnal (cine, când, de
+ce, cu ce rol). Directorul le vede pe toate în Șef → Risc → „Anulări: cine,
+când, de ce" și în Jurnal; clientul vede motivul pe telefon („❌ Anulată —
+Produs epuizat"); managerul aude pe loc fiecare anulare făcută de personal
+(„Masa 4, comandă anulată. Produs epuizat"). Un UPDATE direct în `anulata` e
+refuzat de trigger, deci nu se poate ocoli fereastra cu motiv.
+
+### Clientul modifică doar până e acceptată
+
+De pe telefon se pot scoate produse **doar cât comanda e `noua`**. Din clipa
+în care barul a acceptat-o, butoanele „−" dispar, iar în fișa comenzii apare
+**„🙋 Cheamă ospătarul să schimbe comanda"**: trimite o cerere „Modificare
+comandă" — la bar sună și se aude „Masa 4 vrea să schimbe comanda. Trimite
+ospătarul", ospătarul o vede în aplicație — iar ospătarul modifică (✏️) sau
+anulează (✕) comanda la masă. Un produs returnat merge pe același drum:
+ospătarul scoate produsul din comandă sau, dacă e toată, o anulează cu motiv.
+Fereastra de modificare (Setări) se aplică acum doar ospătarului.
 
 ### Bonul rămâne pe numele barmanului
 
@@ -195,9 +217,65 @@ fiecare cont, lângă „Bonuri neconfirmate".
 
 ### Comenzile la pachet sunt opționale
 
-Șef → Setări → „Comenzi la pachet", implicit **oprit**: clientul vede la
-început doar „Sunt la o masă". Pornit, apare și „La pachet" (nume și telefon,
-șterse după 48 h). Rând `setari_pachet` în jurnal, scris doar de director.
+Șef → Setări → „Comenzi la pachet", implicit **oprit**: pasul „Cum vrei să
+comanzi?" dispare cu totul (clientul e pus direct la masă). Pornit, apare și
+„La pachet" (nume și telefon, șterse după 48 h). Rând `setari_pachet` în
+jurnal, scris doar de director; telefonul așteaptă setarea cel mult 1,5 s
+înainte să decidă.
+
+### „Gata" închide comanda; ospătarul e anunțat
+
+Cu ospătari, nu mai există pasul „Servit": barul/bucătăria apasă **„Gata"** și
+comanda trece direct în `finalizata` (serverul scrie `finalizata_la`).
+Telefonul ospătarului bipăie de două ori și spune „Masa 4, comanda e gata";
+cardul rămâne în lista lui, albastru, „🍽️ Gata — du-o la masă (de 2 min)",
+timp de 10 minute, apoi dispare singur. Clientul vede „Preluată" din clipa în
+care barul a terminat-o. Fără ospătari, butonul e „Preluată".
+
+### Directorul nu e deranjat
+
+Contul de director nu primește nimic la comenzi: fără bip, fără alarmă, fără
+bara „Am văzut, accept", fără butoane pe card (vede doar starea), fără push.
+Managerul la fel, cu o singură excepție: aude anulările făcute de personal. Cererile de la mese (nota, ajutor) sună **doar la bar**: trei note
+care coboară, apoi vocea „Masa 4 cere nota, cash" / „Masa 4 cere ajutor".
+Ospătarul le vede în aplicație cu vibrație, fără sunet; push-ul pentru alerte
+merge tot doar la bar (`notifica-comanda`, redeploy pe Sweet & Sour).
+
+### Restul de dat
+
+Pe cardul cererii de notă, ospătarul (sau barul, fără ospătari) vede totalul
+mesei — toate comenzile de la ultima eliberare — și un câmp „Primit": restul
+se calculează pe loc („mai lipsesc 3.00 lei" dacă nu ajunge).
+
+### Tura
+
+„🕒 Intru în tură / Ies din tură" în bara laterală (și 🕒 pe mobil): rânduri
+`tura_start` / `tura_stop` în jurnal, pe contul curent. Directorul are „Ture
+azi" în Personal: cine, de la cât la cât, câte ore. E informativ, nu pontaj
+oficial.
+
+### Face ID / amprentă (passkeys)
+
+Ospătarii și directorul pot intra fără parolă: din bara laterală, „🔐 Adaugă
+Face ID / amprentă pe telefonul ăsta" (o dată, după ce au intrat cu parola),
+apoi pe ecranul de login „Intră cu Face ID / amprentă". Barul și bucătăria
+intră cu parola (lucrează de pe calculator). Tehnic e WebAuthn prin Supabase
+(`auth.experimental.passkey`): telefonul nu trimite nicăieri amprenta sau
+fața, serverul primește doar o semnătură — n-are ce date biometrice să
+stocheze, deci nu e o problemă GDPR.
+
+**Trebuie pornit în Supabase**, altfel butonul spune „passkey-urile nu sunt
+pornite": Authentication → Passkeys → Enable, cu **Relying Party ID = domeniul
+public** (fără `https://`, fără cale, ex. `meniu.exemplu.ro`) și **Origins =
+`https://domeniul-public`**. RP ID-ul nu se mai schimbă după ce lumea și-a
+adăugat amprenta (le-ar invalida pe toate). Pe 12 septembrie 2026 pe M3 era
+încă oprit.
+
+### Fonturile sunt locale
+
+`fonturi/` (Fraunces, Work Sans, Inter, Space Mono, Playfair Display — latin +
+latin-ext, 441 KB, licență OFL) e servit de pe același domeniu; niciun apel la
+Google când se încarcă paginile, iar politica nu mai menționează Google LLC.
 
 ### Fișa comenzii împarte nota
 
@@ -250,7 +328,8 @@ localului") și cine e persoana împuternicită (platforma: `PLATFORMA`,
 prelucrează și ce **nu** (fără cont, locație, urmărire, profilare, marketing),
 temeiul legal pe articole, duratele reale de păstrare (comenzi 2 zile,
 contacte la pachet 48 h, jurnal 30 de zile), împuterniciții (Supabase — UE,
-Cloudflare, Google Fonts — cu menționarea IP-ului), măsurile de protecție,
+Cloudflare; fonturile sunt servite local din `fonturi/`, fără niciun apel la
+Google), măsurile de protecție,
 drepturile și ANSPDCP, tabelul stocării locale, minori, alergeni, data
 actualizării. Completează câmpurile din `config.js` înainte de deschidere.
 
@@ -444,7 +523,10 @@ Rulata pe baza reala, cu rolurile reale. Ce a trecut:
 | Bar incearca sa schimbe totalul | respins |
 | Ospatar confirma bonul | respins (doar barul poate) |
 | Bar confirma bonul | permis |
-| Ospatar marcheaza „Servit" | permis |
+| Bar anuleaza cu motiv (`anuleaza_comanda`) | permis, jurnal `pedido_cancelado` |
+| Director anuleaza / accepta | respins (doar observa) |
+| Manager citeste anularile altora din jurnal | 0 randuri (RLS) |
+| Bar pune `anulata` direct, prin UPDATE | respins de trigger |
 | Ospatar sterge comanda | niciun rand atins |
 | Director corecteaza totalul | permis |
 | Comanda la pachet | nume si telefon mutate in `contacte_takeaway` |
@@ -485,12 +567,20 @@ biblioteca local, langa `config.js`. Nu am facut-o inca.
 
 ## Conturi de personal
 
-**M3 Coffee & Lounge** (`@m3coffe.com`): director, bar, bucatarie, ospatar1-3.
+**M3 Coffee & Lounge** (`@m3coffe.com`): director, manager, bar, bucatarie,
+ospatar1-3.
 
-**Sweet & Sour** (`@alibretto.com`, mostenite din proiectul anterior): jefe
-(director), bar, cocina (bucatarie), camarero1-8 (ospatari). Rolurile sunt
-corecte, doar adresele au numele vechi. Daca vrei adrese noi, le creezi din
-consola si rulezi din nou atribuirea de roluri — cele vechi pot fi sterse dupa.
+**Sweet & Sour** (`@sweetnsour.com`): director, manager, bar, bucatarie,
+ospatar1-3. Conturile vechi `@alibretto.com` au fost sterse.
+
+Atentie la nume: in Supabase, proiectul care serveste **M3** se numeste
+„Sweet and Sour" (`cjav…`), iar cel care serveste **Sweet & Sour** se numeste
+„Á Libretto" (`wnwl…`). Cel mai simplu e sa redenumesti proiectele dupa
+localul pe care il servesc.
+
+Push-ul (`notifica-comanda` + `03_push.sql`) e instalat doar pe Sweet & Sour;
+pe M3 nu exista nici functia, nici trigger-ul, deci notificarile push nu merg
+acolo (alarma din aplicatie merge oricum).
 
 ## Demo pentru prezentări — `/exemplu/`
 
@@ -533,9 +623,31 @@ mai știe după ce preț să recalculeze comanda.
 
 ## Rolurile de personal
 
-`director`, `bar`, `bucatarie`, `ospatar`. Se acordă din `staff_roles`, tabelă
-care nu are nicio politică de scriere — se completează doar din consolă, cu
-`service_role`. Nici directorul nu-și poate schimba rolul din aplicație.
+`director`, `manager`, `bar`, `bucatarie`, `ospatar`. Se acordă din
+`staff_roles`, tabelă care nu are nicio politică de scriere — se completează
+doar din consolă, cu `service_role`. Nimeni nu-și poate schimba rolul din
+aplicație.
+
+| | director | manager | bar | bucătărie | ospătar |
+|---|---|---|---|---|---|
+| vede comenzile, sala, istoricul, jurnalul, rapoartele | ✓ | ✓ | ale lui | ale lui | ✓ |
+| setări, meniu, prețuri, stoc, harta sălii | ✓ | ✓ | stoc | stoc | – |
+| acceptă / „Gata" / „Preluată" | – | – | ✓ | ✓ | – |
+| modifică o comandă | – | oricând | a lui | a lui | în fereastră |
+| anulează (cu motiv; rămâne în istoric) | – | ✓ | ✓ | – | ✓ |
+| jurnal, rapoarte pe personal, anulări, ture, feedback | ✓ | – | – | – | – |
+| șterge istoricul (Zona de risc) | ✓ | – | – | – | – |
+| confirmă bonul / scoate confirmarea | – | – / ✓ | ✓ / – | – | – |
+| comandă rapidă în numele clientului | – | ✓ | – | – | ✓ |
+| eliberează o masă manual | – | ✓ | ✓ | – | ✓ |
+| alarme (comenzi noi, cereri de la mese) | nimic | doar anulările făcute de personal | ✓ | ✓ | „gata", vibrație |
+
+**Directorul doar observă.** Regula e în baza de date, nu doar în ecran:
+`protect_comanda_update` refuză orice UPDATE de la un cont director, iar
+funcțiile de modificare/anulare îl refuză la fel. **Managerul lucrează**, dar
+jurnalul, datele personalului și ștergerea istoricului rămân ale directorului
+— tot prin RLS: managerul (ca și barul sau ospătarul) citește din jurnal doar
+setările, harta, mesele eliberate și rândurile proprii (tura lui).
 
 **Mod fără ospătari** (panoul directorului): pentru turele fără nimeni pe sală,
 barul și bucătăria închid singure comenzile și preiau cererile de la mese.
