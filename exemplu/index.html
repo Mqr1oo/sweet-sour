@@ -22,9 +22,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../fonturi/fonturi.css">
 <style>
   /* ============================================================
      SWEET & SOUR — token system
@@ -689,6 +687,8 @@
         <span id="osTotalLabel">Total comandat:</span>
         <span id="osTotal" style="color:var(--brass-soft); font-weight:700;">0.00 lei</span>
     </div>
+    <button class="btn-submit" id="osCallWaiter" style="margin-bottom:10px; display:none;">🙋 Cheama ospatarul sa schimbe comanda</button>
+    <button class="btn-submit" id="osAddMore" style="margin-bottom:10px; background:transparent; color:var(--ink); border:2px solid var(--paper-dim); box-shadow:none;">➕ Mai adauga ceva</button>
     <button class="btn-submit" id="osSplitBtn" style="margin-bottom:12px;">➗ Imparte nota</button>
     <p id="osHint" style="font-size:12.5px; margin:0; color:var(--ink-soft); line-height:1.45;"></p>
   </div>
@@ -945,7 +945,7 @@
       },
       smartWaiter: '💳 Plata / Ajutor 🙋', smartCart: 'Comanda mea', splitTitle: 'Imparte nota', splitDesc: 'Cum impartiti nota: in parti egale, sau fiecare plateste ce a comandat?', sl1: 'Total:', sl2: 'Numar de persoane:', sl3: 'Bacsis (%):', perPerson: '/ persoana',
       badgeEpuizat: 'Stoc epuizat', ribbonEsp: 'Recomandarea casei',
-      alertPayload: { cash: 'Nota (cash)', card: 'Nota (card)', help: 'Ajutor / Altceva' },
+      alertPayload: { cash: 'Nota (cash)', card: 'Nota (card)', help: 'Ajutor / Altceva', modificare: 'Modificare comanda' },
       privacyTitle: 'Confidentialitate si termeni', privacyBtn: 'Confidentialitate si termeni (GDPR)', gdprNote: 'Datele tale se sterg automat in 48h (GDPR).', privacyClose: 'Inchide',
       termsTitle: 'Termeni si conditii de utilizare',
       politica: (op) => [
@@ -964,7 +964,7 @@
           '<b>Comenzile:</b> se sterg automat la 2 zile dupa ce sunt inchise. <b>Numele si telefonul de la pachet:</b> 48 de ore. <b>Jurnalul de activitate</b> (ce s-a intamplat cu comanda, fara date personale de la masa): 30 de zile. <b>Parerile:</b> 30 de zile, apoi doar ca statistica, fara text.',
           '<b>Pe telefonul tau:</b> masa si comenzile trimise raman pana inchizi meniul; limba, ghidul si consimtamantul raman pana stergi datele site-ului din browser.' ] },
         { h: '5. Cui le transmitem', p: [
-          '<b>Supabase Inc.</b> — baza de date si transmisia in timp real, in centre de date din Uniunea Europeana. <b>Cloudflare Inc.</b> — livrarea paginilor. <b>Google LLC</b> — fonturile paginii (la incarcare, adresa ta IP ajunge la serverele Google Fonts).',
+          '<b>Supabase Inc.</b> — baza de date si transmisia in timp real, in centre de date din Uniunea Europeana. <b>Cloudflare Inc.</b> — livrarea paginilor. Fonturile sunt servite de pe acelasi site: nu se face niciun apel catre Google sau alt tert cand se incarca pagina.',
           'Toti actioneaza ca persoane imputernicite, pe baza de contract, cu clauzele contractuale standard ale UE pentru orice transfer in afara Uniunii. Nimeni altcineva nu primeste datele tale si nu exista niciun transfer in scop comercial.' ] },
         { h: '6. Cum le protejam', p: [
           'Conexiune criptata (HTTPS). Comenzile pot fi citite doar de personalul autentificat, fiecare pe rolul lui, prin reguli aplicate direct in baza de date. Comanda ta poate fi modificata de pe telefon doar cu identificatorul tau secret, verificat pe server. Fiecare actiune a personalului se scrie intr-un jurnal. Stergerea datelor e automata, nu depinde de cineva.' ] },
@@ -995,7 +995,7 @@
           'In limita maxima permisa de lege, Platforma <b>nu raspunde</b> pentru: alergeni, ingrediente, calitatea sau siguranta alimentelor si bauturilor; erori, omisiuni sau informatii neactualizate introduse de Local; preturi, nota de plata, rest, bon fiscal sau orice disputa financiara cu Localul; intarzieri, comenzi pierdute, gresite sau neonorate din cauza Localului; intreruperi ale internetului, ale telefonului tau sau ale serviciilor terte (gazduire, baza de date); daune indirecte, pierderi de profit sau de timp.',
           'Aplicatia este oferita „ca atare". Platforma nu garanteaza functionarea neintrerupta si isi rezerva dreptul de a o modifica sau suspenda. Daca, in ciuda celor de mai sus, o instanta ar retine o raspundere a Platformei fata de tine, aceasta este limitata la valoarea comenzii in cauza. Nimic din acesti termeni nu limiteaza drepturile pe care ti le da legea in calitate de consumator si nici raspunderea pentru dol sau culpa grava.' ] },
         { h: '6. Comenzi, modificari, anulari, plata', p: [
-          `Comanda devine ferma cand Localul o accepta. Poti scoate produse de pe telefon in fereastra de modificare afisata in fisa comenzii (implicit 5 minute de la trimitere); dupa, doar personalul o mai poate schimba. Localul poate anula o comanda (de ex. produs epuizat) — motivul iti apare pe telefon. Plata se face la Local, in modalitatile acceptate de el; Platforma nu proceseaza plati si nu pastreaza date de card. Impartirea notei din Aplicatie este doar un calcul orientativ.` ] },
+          `Comanda devine ferma cand Localul o accepta. Poti scoate produse de pe telefon doar pana cand Localul o accepta; dupa, o schimba personalul, la cererea ta. Localul poate anula o comanda (de ex. produs epuizat) — motivul iti apare pe telefon. Plata se face la Local, in modalitatile acceptate de el; Platforma nu proceseaza plati si nu pastreaza date de card. Impartirea notei din Aplicatie este doar un calcul orientativ.` ] },
         { h: '7. Utilizare corecta', p: [
           'Foloseste Aplicatia doar pentru comenzi reale, de la masa la care te afli. Sunt interzise comenzile in gluma, comenzile trimise pe numarul altei mese, cererile repetate abuzive sau orice incercare de a interfera cu functionarea Aplicatiei. Raspunzi pentru comenzile trimise de pe telefonul tau. Localul poate refuza sau anula comenzile abuzive si poate cere despagubiri pentru produsele deja preparate. Alcoolul nu se serveste minorilor; personalul poate cere un act de identitate.' ] },
         { h: '8. Reclamatii si solutionarea disputelor', p: [
@@ -1022,12 +1022,12 @@
       osTimp: (mm, ss) => `se mai poate modifica ${mm}:${ss}`, osTimpNoua: 'se poate modifica pana e acceptata', osTimpExpirat: (m) => `fereastra de ${m} min a trecut`,
       stScurt: { noua:'trimisa', acceptata:'acceptata', gata:'acceptata', finalizata:'preluata', anulata:'anulata', expirata:'inchisa', in_lucru:'in lucru' }, osMotiv: 'Motiv',
       trackerHint: 'Apasa: vezi comanda · scoate ceva · imparte nota',
-      osTitle: 'Comanda ta', osSubTable: (m)=>`Masa ${m}`, osSubTakeaway: 'La pachet', osTotalLabel: 'Total comandat:', osSplitBtn: '➗ Imparte nota',
-      osHintEditable: (m) => `Ai gresit ceva? Apasa − langa produs si dispare pe loc si de la bar. Ai ${m} minute de la trimitere (pana e acceptata, oricat).`,
-      osHintLocked: 'Comanda nu mai poate fi modificata de pe telefon. Cheama ospatarul — el o poate schimba pe loc.',
+      osTitle: 'Comanda ta', osSubTable: (m)=>`Masa ${m}`, osSubTakeaway: 'La pachet', osTotalLabel: 'Total comandat:', osSplitBtn: '➗ Imparte nota', osAddMore: '➕ Mai adauga ceva',
+      osHintEditable: (m) => `Ai gresit ceva? Apasa − langa produs si dispare pe loc si de la bar. Se poate doar pana e acceptata comanda.`,
+      osHintLocked: 'Comanda e acceptata si nu se mai schimba de pe telefon. Vrei altceva? Apasa butonul de mai sus: ospatarul vine la masa si o modifica pe loc.', osCallWaiter: '🙋 Cheama ospatarul sa schimbe comanda', osCallWaiterSent: (m) => `Ospatarul vine la masa ${m} sa schimbe comanda.`,
       sectBar: '🍸 Bar', sectKitchen: '🍳 Bucatarie', removeOne: 'Scoate o bucata',
       removeConfirm: (n)=>`Scoti „${n}” din comanda? Barul afla pe loc.`, removeLastConfirm: (n)=>`„${n}” e ultimul produs: comanda se anuleaza. Continui?`,
-      osErrTitle: 'Nu s-a putut', osErrLocked: 'Comanda nu mai poate fi modificata de pe telefon. Cheama ospatarul.',
+      osErrTitle: 'Nu s-a putut', osErrLocked: 'Comanda a fost acceptata si nu mai poate fi modificata de pe telefon. Cheama ospatarul.',
       tablePrompt: 'Numarul mesei:', errSend: 'Nu s-a putut trimite comanda: ',
       helpLink: 'Cum functioneaza meniul?',
       turBtn: { next:'Urmatorul →', prev:'Inapoi', skip:'Sari peste', done:'Gata ✓' },
@@ -1039,7 +1039,7 @@
         { t:'Categorii', x:'Sau treci direct la o categorie. Bara se trage cu degetul.' },
         { t:'Adauga in comanda', x:'Apasa + ca sa pui un produs in comanda si − ca sa-l scoti. Numarul din mijloc e cate bucati ai ales.' },
         { t:'Comanda ta si ospatarul', x:'Cand ai ales ceva, butonul asta iti arata comanda si de aici o trimiti. Cand nu ai nimic in cos, de aici chemi ospatarul: ceri nota (cash sau card) sau ajutor.' },
-        { t:'Starea comenzii', x:'Dupa ce trimiti, sus apare starea: trimisa → acceptata (barul a vazut-o, urmeaza sa vina) → preluata. Apasa pe ea ca sa vezi ce ai comandat, sa scoti ceva daca ai gresit (ai 5 minute) sau sa imparti nota intre voi.' },
+        { t:'Starea comenzii', x:'Dupa ce trimiti, sus apare starea: trimisa → acceptata (barul a vazut-o, urmeaza sa vina) → preluata. Apasa pe ea ca sa vezi ce ai comandat, sa scoti ceva daca ai gresit (pana e acceptata) sau sa imparti nota intre voi.' },
         { t:'Asta e tot', x:'Pofta buna! Daca ai nevoie de ceva, cheama ospatarul din butonul de jos.' }
       ]
     },
@@ -1070,7 +1070,7 @@
       }, 
       smartWaiter: '💳 Pay / Help 🙋‍♂️', smartCart: 'My Order', splitTitle: 'Split the bill', splitDesc: 'How do you split the bill: equal parts, or everyone pays what they ordered?', sl1: 'Total:', sl2: 'Number of people:', sl3: 'Tip (%):', perPerson: '/ person',
       badgeEpuizat: 'Sold Out', ribbonEsp: 'Signature',
-      alertPayload: { cash: 'Bill (Cash)', card: 'Bill (Card)', help: 'Help / Other' },
+      alertPayload: { cash: 'Bill (Cash)', card: 'Bill (Card)', help: 'Help / Other', modificare: 'Change my order' },
       privacyTitle: 'Privacy and Terms', privacyBtn: 'Privacy and Terms (GDPR)', gdprNote: 'Your data will be auto-deleted in 48h (GDPR).', privacyClose: 'Close',
       termsTitle: 'Terms and Conditions of Use',
       politica: (op) => [
@@ -1089,7 +1089,7 @@
           '<b>Orders:</b> deleted automatically 2 days after they are closed. <b>Takeaway name and phone:</b> 48 hours. <b>Activity log</b> (what happened to the order, no personal data from the table): 30 days. <b>Feedback:</b> 30 days, then statistics only, without the text.',
           '<b>On your phone:</b> table and sent orders stay until you close the menu; language, guide and consent stay until you clear the site data in your browser.' ] },
         { h: '5. Who receives it', p: [
-          '<b>Supabase Inc.</b> — database and real-time delivery, in data centres within the European Union. <b>Cloudflare Inc.</b> — page delivery. <b>Google LLC</b> — page fonts (when the page loads, your IP address reaches Google Fonts servers).',
+          '<b>Supabase Inc.</b> — database and real-time delivery, in data centres within the European Union. <b>Cloudflare Inc.</b> — page delivery. Fonts are served from this same site: no request goes to Google or any other third party when the page loads.',
           'All of them act as processors under contract, with the EU standard contractual clauses for any transfer outside the Union. Nobody else receives your data and there is no transfer for commercial purposes.' ] },
         { h: '6. How we protect it', p: [
           'Encrypted connection (HTTPS). Orders can be read only by signed-in staff, each within their role, through rules enforced directly in the database. Your order can be changed from your phone only with your secret identifier, verified on the server. Every staff action is written to a log. Deletion is automatic, not up to anyone.' ] },
@@ -1120,7 +1120,7 @@
           'To the fullest extent permitted by law, the Platform is <b>not liable</b> for: allergens, ingredients, the quality or safety of food and drinks; errors, omissions or outdated information entered by the Venue; prices, the bill, change, fiscal receipts or any financial dispute with the Venue; delays, lost, wrong or unfulfilled orders caused by the Venue; outages of the internet, of your phone or of third-party services (hosting, database); indirect damages, loss of profit or of time.',
           'The App is provided "as is". The Platform does not guarantee uninterrupted operation and may modify or suspend it. Should a court nevertheless find the Platform liable towards you, that liability is limited to the value of the order concerned. Nothing in these terms limits your statutory consumer rights or liability for fraud or gross negligence.' ] },
         { h: '6. Orders, changes, cancellations, payment', p: [
-          `An order becomes firm once the Venue accepts it. You can remove items from your phone within the change window shown in your order sheet (5 minutes from sending by default); after that only the staff can change it. The Venue may cancel an order (e.g. item sold out) — the reason appears on your phone. Payment is made to the Venue, by the means it accepts; the Platform does not process payments and stores no card data. The bill-splitting feature is an indicative calculation only.` ] },
+          `An order becomes firm once the Venue accepts it. You can remove items from your phone only until the Venue accepts the order; after that the staff changes it at your request. The Venue may cancel an order (e.g. item sold out) — the reason appears on your phone. Payment is made to the Venue, by the means it accepts; the Platform does not process payments and stores no card data. The bill-splitting feature is an indicative calculation only.` ] },
         { h: '7. Fair use', p: [
           'Use the App only for real orders from the table you are sitting at. Prank orders, orders sent under another table\'s number, repeated abusive requests or any attempt to interfere with the App are prohibited. You are responsible for orders sent from your phone. The Venue may refuse or cancel abusive orders and may claim compensation for products already prepared. Alcohol is not served to minors; staff may ask for ID.' ] },
         { h: '8. Complaints and disputes', p: [
@@ -1145,12 +1145,12 @@
       osTimp: (mm, ss) => `can still be changed for ${mm}:${ss}`, osTimpNoua: 'can be changed until accepted', osTimpExpirat: (m) => `the ${m}-minute window has passed`,
       stScurt: { noua:'sent', acceptata:'accepted', gata:'accepted', finalizata:'delivered', anulata:'cancelled', expirata:'closed', in_lucru:'in progress' }, osMotiv: 'Reason',
       trackerHint: 'Tap: see your order · remove something · split the bill',
-      osTitle: 'Your order', osSubTable: (m)=>`Table ${m}`, osSubTakeaway: 'Takeaway', osTotalLabel: 'Ordered total:', osSplitBtn: '➗ Split the bill',
-      osHintEditable: (m) => `Made a mistake? Tap − next to the item and it disappears from the bar instantly. You have ${m} minutes from sending (until accepted, no limit).`,
-      osHintLocked: 'The order can no longer be changed from your phone. Call the waiter — they can edit it on the spot.',
+      osTitle: 'Your order', osSubTable: (m)=>`Table ${m}`, osSubTakeaway: 'Takeaway', osTotalLabel: 'Ordered total:', osSplitBtn: '➗ Split the bill', osAddMore: '➕ Add something else',
+      osHintEditable: (m) => `Made a mistake? Tap − next to the item and it disappears from the bar instantly. Possible only until the order is accepted.`,
+      osHintLocked: 'The order is accepted and can no longer be changed from your phone. Want something else? Tap the button above: the waiter comes to your table and changes it on the spot.', osCallWaiter: '🙋 Call the waiter to change my order', osCallWaiterSent: (m) => `The waiter is coming to table ${m} to change your order.`,
       sectBar: '🍸 Bar', sectKitchen: '🍳 Kitchen', removeOne: 'Remove one',
       removeConfirm: (n)=>`Remove "${n}" from your order? The bar is notified instantly.`, removeLastConfirm: (n)=>`"${n}" is the last item: the order will be cancelled. Continue?`,
-      osErrTitle: 'Not possible', osErrLocked: 'The order can no longer be changed from your phone. Please call the waiter.',
+      osErrTitle: 'Not possible', osErrLocked: 'The order has been accepted and can no longer be changed from your phone. Please call the waiter.',
       tablePrompt: 'Table number:', errSend: 'The order could not be sent: ',
       helpLink: 'How does the menu work?',
       turBtn: { next:'Next →', prev:'Back', skip:'Skip', done:'Done ✓' },
@@ -1162,7 +1162,7 @@
         { t:'Categories', x:'Or jump straight to a category. The bar scrolls sideways.' },
         { t:'Add to your order', x:'Tap + to add an item and − to remove it. The number in the middle is how many you picked.' },
         { t:'Your order and the waiter', x:'Once you\'ve picked something, this button shows your order and sends it. When your cart is empty, this is where you call the waiter: ask for the bill (cash or card) or for help.' },
-        { t:'Order status', x:'After you send it, the status shows at the top: sent → accepted (the bar has seen it, it\'s on its way) → delivered. Tap it to see what you ordered, remove something if you made a mistake (you have 5 minutes) or split the bill between you.' },
+        { t:'Order status', x:'After you send it, the status shows at the top: sent → accepted (the bar has seen it, it\'s on its way) → delivered. Tap it to see what you ordered, remove something if you made a mistake (until it is accepted) or split the bill between you.' },
         { t:'That\'s it', x:'Enjoy! If you need anything, call the waiter from the button at the bottom.' }
       ]
     },
@@ -1254,6 +1254,7 @@
     document.getElementById('osTitle').textContent = t.osTitle;
     document.getElementById('osTotalLabel').textContent = t.osTotalLabel;
     document.getElementById('osSplitBtn').textContent = t.osSplitBtn;
+    document.getElementById('osAddMore').textContent = t.osAddMore;
     document.getElementById('trackerHint').textContent = t.trackerHint;
     document.getElementById('btnGhidClient').textContent = t.helpLink;
 
@@ -1602,9 +1603,21 @@
   function needsLang(){ return !localStorage.getItem(STORE + 'lang'); }
   function needsMode(){ return !sessionStorage.getItem(STORE + 'masa'); }
 
-    function showModeStepOrClose(){
-    if(needsMode()){ obLangStep.style.display = 'none'; obModeStep.style.display = 'block'; }
-    else { onboardingOverlay.classList.remove('open'); dupaOnboarding(); }
+  // Comenzile la pachet sunt pornite doar daca localul le-a activat. Cat nu
+  // stim inca (setarile se incarca in paralel), asteptam putin; daca sunt
+  // oprite, „sunt la o masa" e singura optiune, deci nu mai intrebam.
+  let pachetActiv = null;
+  let pachetRezolvat = null;
+  const pachetPromisiune = new Promise(r => { pachetRezolvat = r; });
+  function alegeMasaDirect() {
+      sessionStorage.setItem(STORE + 'mod', 'masa'); sessionStorage.setItem(STORE + 'masa', 'stabilita');
+      onboardingOverlay.classList.remove('open'); dupaOnboarding();
+  }
+  async function showModeStepOrClose(){
+    if(!needsMode()){ onboardingOverlay.classList.remove('open'); dupaOnboarding(); return; }
+    if (pachetActiv === null) await Promise.race([pachetPromisiune, new Promise(r => setTimeout(r, 1500))]);
+    if (!pachetActiv) { alegeMasaDirect(); return; }
+    obLangStep.style.display = 'none'; obModeStep.style.display = 'block';
   }
 
   if(needsLang() || needsMode()){
@@ -1730,8 +1743,10 @@
           if (r.actiune === 'setari_ospatari') faraOspatariClient = !!d.faraOspatari;
           if (r.actiune === 'setari_modificare') { const m = parseInt(d.minute, 10); fereastraMinuteClient = m > 0 ? m : 5; }
           // comenzile la pachet apar doar daca localul le-a pornit
-          if (r.actiune === 'setari_pachet') document.getElementById('btnTakeaway').style.display = d.activ ? '' : 'none';
+          if (r.actiune === 'setari_pachet') { pachetActiv = !!d.activ; document.getElementById('btnTakeaway').style.display = d.activ ? '' : 'none'; }
       });
+      if (pachetActiv === null) pachetActiv = false;   // nicio setare scrisa = oprite
+      if (pachetRezolvat) { pachetRezolvat(); pachetRezolvat = null; }
       actualizeazaTracker();
       if (document.getElementById('orderSheetOverlay').classList.contains('open')) randeazaFisaComanda();
   }
@@ -1901,6 +1916,21 @@
   document.getElementById('liveTracker').addEventListener('click', deschideFisaComanda);
   document.getElementById('closeOrderSheet').addEventListener('click', () => orderSheet.classList.remove('open'));
   document.getElementById('osSplitBtn').addEventListener('click', () => { orderSheet.classList.remove('open'); deschideSplit('comanda'); });
+  // comanda e acceptata si clientul vrea altceva: ospatarul e chemat la masa
+  document.getElementById('osCallWaiter').addEventListener('click', async () => {
+      const t = I18N[currentLang] || I18N.ro;
+      const b = document.getElementById('osCallWaiter'); b.disabled = true;
+      try {
+          await sendSpecialAlert('modificare');
+          orderSheet.classList.remove('open');
+      } finally { b.disabled = false; }
+  });
+  // inapoi la meniu: ce adaugi pleaca drept o comanda noua, la aceeasi masa
+  document.getElementById('osAddMore').addEventListener('click', () => {
+      orderSheet.classList.remove('open');
+      const m = document.getElementById('categoriesWrap') || document.querySelector('main');
+      if (m) m.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 
   function randeazaFisaComanda() {
       const t = I18N[currentLang] || I18N.ro;
@@ -1915,14 +1945,12 @@
           // aceeasi regula ca pe server: pana e acceptata oricand, apoi doar in
           // fereastra — chiar daca barul a apasat intre timp „gata"
           const sec = Math.round(fereastraMinuteClient * 60 - (Date.now() - new Date(c.created_at).getTime()) / 1000);
-          const inFereastra = st === 'noua' || ((st === 'acceptata' || st === 'gata') && sec > 0);
+          // de pe telefon se scoate doar pana e acceptata; dupa, ospatarul
+          const inFereastra = st === 'noua';
           const poateSterge = inFereastra && !!c.token && !CFG.DEMO;
           const ora = new Date(c.created_at).toLocaleTimeString(currentLang === 'en' ? 'en-GB' : 'ro-RO', { hour: '2-digit', minute: '2-digit' });
           let timp = '';
           if (st === 'noua') timp = `<span class="os-timp">${t.osTimpNoua}</span>`;
-          else if (st === 'acceptata' || st === 'gata') timp = sec > 0
-              ? `<span class="os-timp" data-os-timp="${c.id}">${t.osTimp(Math.floor(sec / 60), String(sec % 60).padStart(2, '0'))}</span>`
-              : `<span class="os-timp expirat">${t.osTimpExpirat(fereastraMinuteClient)}</span>`;
           html += `<div class="os-grup"><div class="os-head"><span>${c.sectiune === 'bucatarie' ? t.sectKitchen : t.sectBar} · ${ora}</span><span class="os-st os-st-${escapeHTML(st)}">${escapeHTML(t.stScurt[st] || st)}</span></div>${timp ? `<div class="os-head" style="margin-top:-2px;">${timp}</div>` : ''}${st === 'anulata' && c.motiv_anulare ? `<div class="os-row os-note">${escapeHTML(t.osMotiv)}: ${escapeHTML(c.motiv_anulare)}</div>` : ''}`;
           (c.produse || []).forEach((p, i) => {
               if (p.cantitate > 0) {
@@ -1938,9 +1966,12 @@
       list.innerHTML = html || `<p>${t.emptyCartHint}</p>`;
       document.getElementById('osTotal').textContent = total.toFixed(2) + ' ' + CFG.MONEDA;
       document.getElementById('osSplitBtn').style.display = total > 0 ? 'block' : 'none';
-      const vreunaModificabila = comenziSesiune.some(c => c.status === 'noua'
-          || ((c.status === 'acceptata' || c.status === 'gata') && Date.now() - new Date(c.created_at).getTime() < fereastraMinuteClient * 60000));
+      const vreunaModificabila = comenziSesiune.some(c => c.status === 'noua');
+      const vreunaAcceptata = comenziSesiune.some(c => c.status === 'acceptata' || c.status === 'gata');
       document.getElementById('osHint').textContent = vreunaModificabila ? t.osHintEditable(fereastraMinuteClient) : t.osHintLocked;
+      const cw = document.getElementById('osCallWaiter');
+      cw.textContent = t.osCallWaiter;
+      cw.style.display = (!vreunaModificabila && vreunaAcceptata && !CFG.DEMO && sessionStorage.getItem(STORE + 'masa') !== 'Takeaway') ? 'block' : 'none';
   }
 
   // numaratoarea inversa din fisa, cat e deschisa
