@@ -27,6 +27,19 @@ window.SS_CONFIG = {
   // apoi copiezi adresa din bara browserului.
   GOOGLE_REVIEW: 'https://search.google.com/local/writereview?placeid=ChIJyzJWVP5VNUcRhjKpcE9ZqY8',
 
+  // --- Protectia datelor (apar in politica de confidentialitate din meniu) ---
+  // Denumirea legala a firmei care opereaza localul, adresa sediului si o
+  // adresa de email la care clientii isi pot exercita drepturile GDPR.
+  // Daca raman goale, politica foloseste numele localului si „personalul localului".
+  OPERATOR:   '',
+  ADRESA:     '',
+  EMAIL_GDPR: '',
+  // Cine pune la dispozitie meniul digital (firma ta). Apare in termeni si
+  // in politica, ca furnizor al instrumentului — nu ca vanzator al
+  // produselor. Contactul e doar pentru probleme tehnice.
+  PLATFORMA:       '',
+  EMAIL_PLATFORMA: '',
+
   // --- Culori: bleumarinul siglei + chihlimbarul de tonomat ---
   CULORI: {
     '--bg-base':     '#0b0f1c',
