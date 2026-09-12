@@ -1865,7 +1865,7 @@
   }
   async function deconectareLaInchidere() {
       try { sessionStorage.setItem('mesaj_inchidere', '1'); } catch(e) {}
-      await inchideTura();
+      turaInceputa = null;   // tura a inchis-o serverul, odata cu sesiunea
       try { await _supabase.auth.signOut(); } catch(e) {}
       location.reload();
   }
@@ -1918,7 +1918,11 @@
   // refresh nu porneste o tura noua: cea deschisa de la ultima inchidere
   // incoace continua. Directorul nu are tura.
   let turaInceputa = null;   // ora la care a inceput tura curenta (ms) sau null
-  async function inceputulTurei() { return Math.max(Date.now() - 20 * 3600000, await ultimaInchidere()); }
+  let inchidereCunoscuta = null;
+  async function inceputulTurei() {
+      if (inchidereCunoscuta === null) inchidereCunoscuta = await ultimaInchidere();
+      return Math.max(Date.now() - 20 * 3600000, inchidereCunoscuta);
+  }
   async function incarcaTura() {
       if (!currentUserEmail || userRole === 'director') return;
       let deschisa = null;
@@ -4110,7 +4114,7 @@
               else if (u.deschisa) { u.ture.push([u.deschisa, t]); u.deschisa = null; }
           });
           const ora = (t) => new Date(t).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
-          const lista = Object.entries(pe);
+          const lista = Object.entries(pe).filter(([, v]) => v.ture.length || v.deschisa);
           el.innerHTML = lista.length ? '' : '<li class="top-item" style="color:var(--text-muted);">Nimeni n-a intrat in panou azi</li>';
           lista.forEach(([u, v]) => {
               let ms = v.ture.reduce((s, [a, b]) => s + (b - a), 0);
