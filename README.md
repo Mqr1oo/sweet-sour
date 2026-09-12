@@ -35,8 +35,10 @@ din prima, fără configurare: numele folderului **este** calea din URL.
    `10_anulare_simpla.sql` (anularea cu motiv, fără cod; clientul modifică
    doar până e acceptată; managerul fără jurnal) și `11_zile_angajati_poze.sql`
    (ora de închidere pe zile, lista de angajați, nume + poză la anulare,
-   bucket-ul privat `anulari`, managerul doar cu „ora de vârf"). Toate sunt
-   deja aplicate pe M3 și Sweet & Sour.
+   bucket-ul privat `anulari`, managerul doar cu „ora de vârf") și
+   `12_poze_14_zile.sql` (cron-ul care șterge pozele după 14 zile — cere
+   funcția edge `curata-poze` publicată și cheia anon a proiectului în
+   fișier). Toate sunt deja aplicate pe M3 și Sweet & Sour.
 3. Completezi `config.js` — URL, cheie publicabilă, nume, slogan, culori,
    link de recenzie Google.
 4. Creezi conturile de personal (`supabase/creeaza_conturi_staff.py`) și le dai
@@ -216,7 +218,11 @@ p_poza)` scrie `comenzi.motiv_anulare`, `comenzi.anulat_de` și rândul
 starea de dinainte, dacă avea bon, calea pozei). Directorul le vede în Șef →
 Personal → „Anulări: cine, când, de ce", cu „📷 Vezi poza" (link semnat, 5
 minute; bucket-ul îl citește doar directorul, prin RLS pe `storage.objects`),
-și în Jurnal. Pozele mai vechi de 30 de zile se șterg când directorul deschide
+și în Jurnal. **Pozele se șterg automat după 14 zile**: Storage nu se poate
+curăța din SQL, așa că `pg_cron` apelează în fiecare noapte la 04:30, prin
+`pg_net`, funcția edge `curata-poze` (`supabase/functions/curata-poze`), care
+listează bucket-ul cu cheia `service_role` și șterge ce e mai vechi (și scrie
+`poze_sterse` în jurnal). Directorul mai dublează curățenia când deschide
 lista. Clientul vede pe telefon **cine și de ce** — telefonul vibrează și fișa
 comenzii se deschide singură cu „Anulată de Andrei · Motiv: Produs epuizat";
 managerul aude pe loc „Masa 4, comandă anulată de Andrei. Produs epuizat". Un
@@ -281,6 +287,25 @@ se calculează pe loc („mai lipsesc 3.00 lei" dacă nu ajunge).
 azi" în Personal: cine, de la cât la cât, câte ore. E informativ, nu pontaj
 oficial.
 
+### Informarea personalului (GDPR)
+
+Poza de la anulare e prelucrare de date ale angajaților, deci localul (ca
+angajator = operator) trebuie să-i informeze **înainte** (art. 13 GDPR).
+Panoul are, în bara laterală, „Informare date personal (GDPR)": cine e
+operatorul (din `config.js`: OPERATOR/NUME, ADRESA, EMAIL_GDPR) și
+împuternicitul (PLATFORMA), tabelul cu fiecare dată — de ce, temei (interes
+legitim, art. 6 alin. 1 lit. f) și cât timp (jurnal 30 de zile, poză 14
+zile) —, cum funcționează camera (pornește doar în fereastra de anulare, cu
+anunț; refuzul nu are consecințe), cine vede ce, drepturile și ANSPDCP.
+Butonul „🖨️ Printează informarea, de semnat" deschide varianta de tipărit cu
+rubrici de nume, dată și semnătură (angajat + angajator): fiecare angajat
+semnează un exemplar înainte să folosească panoul. Textul e același la toate
+localurile (vine din `config.js`), deci `dashboard.html` nu mai are nicio
+linie cu numele localului.
+
+Pe meniul clienților, politica spune explicit că aplicația nu folosește
+camera sau microfonul și nu face poze clienților.
+
 ### Fără Face ID / amprentă
 
 Passkey-urile (WebAuthn prin Supabase) au fost scoase la cererea
@@ -335,6 +360,15 @@ blocat sau când netul are sughițuri. Panoul se apără în patru feluri:
 
 Fără net apare o bară galbenă sus. Meniul clientului face același lucru la
 revenirea ecranului: reîncarcă starea comenzilor și setările.
+
+## Consimțământul vine primul
+
+Pe telefonul clientului, fereastra de întâmpinare are trei pași, în ordinea
+asta: **1) stocarea locală** (textul de cookie, „Accept și continui", cu
+buton spre politică), în limba browserului, fiindcă limba meniului nu e încă
+aleasă; **2) limba**; **3) masa / la pachet** (sărit când pachetul e oprit).
+Ghidul pornește abia după ce se închide fereastra. Bannerul de jos cu cookie
+nu mai există — se punea peste ghid și peste alegerea limbii.
 
 ## Politica de confidențialitate și termenii
 

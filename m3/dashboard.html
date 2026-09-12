@@ -408,6 +408,13 @@
 
   /* Editorul de comanda (ospatar / bar) */
   #modalEditComanda .modal{ max-width:540px; text-align:left; max-height:90vh; overflow-y:auto; }
+  /* informarea personalului (GDPR) */
+  .pol-h3{ font-size:14px; font-weight:700; margin:16px 0 6px; color:var(--text); }
+  .pol-p{ font-size:13px; color:var(--text-muted); line-height:1.55; margin:0 0 8px; }
+  .pol-tab{ width:100%; border-collapse:collapse; font-size:12.5px; margin-top:6px; }
+  .pol-tab th, .pol-tab td{ border:1px solid var(--border); padding:6px 8px; text-align:left; vertical-align:top; line-height:1.45; }
+  .pol-tab th{ color:var(--text); font-weight:700; background:rgba(255,255,255,.04); }
+  .pol-tab td{ color:var(--text-muted); }
   #modalAnulare .modal{ max-width:460px; text-align:left; max-height:92vh; overflow-y:auto; }
   .an-eticheta{ font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin:14px 0 6px; font-weight:700; }
   .an-nume-lista{ display:flex; flex-wrap:wrap; gap:8px; }
@@ -524,7 +531,7 @@
     <button id="btnNotificari" class="btn-notif">🔕 Activeaza notificarile</button>
     <button id="btnGhid" class="btn-notif">❓ Ghid rapid (cum functioneaza)</button>
     <button id="btnTura" class="btn-notif btn-tura">🕒 Intru in tura</button>
-    <div style="margin-top:10px;"><a href="#" onclick="document.getElementById('privacyOverlay').classList.add('open')" style="color:var(--text-muted); font-size:11px; text-decoration:underline;">Politica de confidentialitate</a></div>
+    <div style="margin-top:10px;"><a href="#" onclick="document.getElementById('privacyOverlay').classList.add('open')" style="color:var(--text-muted); font-size:11px; text-decoration:underline;">Informare date personal (GDPR)</a></div>
   </div>
 </aside>
 
@@ -803,7 +810,7 @@
 
       <div data-grup="personal" class="dash-panel" style="border-color: var(--danger);">
           <h3 style="color: var(--danger);">❌ Anulari: cine, cand, de ce</h3>
-          <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Fiecare anulare din perioada selectata: cine (numele ales + contul), cand, de ce, si poza facuta in momentul anularii, daca dispozitivul avea camera. Pozele se sterg dupa 30 de zile.</p>
+          <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Fiecare anulare din perioada selectata: cine (numele ales + contul), cand, de ce, si poza facuta in momentul anularii, daca dispozitivul avea camera. Pozele se sterg automat dupa 14 zile (in fiecare noapte, la 04:30).</p>
           <div id="fraudList"><span style="color:var(--text-muted); font-size:13.5px;">Se analizeaza istoricul...</span></div>
       </div>
 
@@ -871,11 +878,14 @@
 </main>
 
 <div class="modal-overlay" id="privacyOverlay">
-  <div class="modal" style="text-align: left;">
+  <div class="modal" style="text-align:left; max-width:640px; max-height:92vh; overflow-y:auto;">
     <button class="modal-close" onclick="document.getElementById('privacyOverlay').classList.remove('open')">&times;</button>
-    <h2>Politica interna de confidentialitate</h2>
-    <p style="font-size:14px; color: var(--text-muted); margin-top:10px;">Sistemul M3 Coffee &amp; Lounge gestioneaza date operationale. Numele si numerele de telefon colectate pentru comenzile la pachet se sterg automat din baza de date (Supabase) dupa 48 de ore.</p>
-    <p style="font-size:13px; color: var(--text-muted); margin-top:10px; line-height:1.5;">Despre tine, ca membru al personalului: adresa de email a contului si fiecare actiune facuta din panou (acceptare, „Gata" / „Preluata", anulare cu motivul si numele ales, confirmarea bonului, modificare de comanda, schimbari de setari) se scriu in jurnalul de activitate, cu ora exacta, si sunt vizibile directorului. Jurnalul se pastreaza 30 de zile. Daca activezi notificarile, adresa tehnica a abonamentului push (fara continut personal) se pastreaza pana te deconectezi sau pana o revoci din telefon. Comenzile finalizate se sterg dupa 2 zile. Daca anulezi o comanda, alegi numele tau din lista si, daca dispozitivul are camera, se face o poza cu tine in momentul anularii; numele, motivul si poza raman 30 de zile in istoricul directorului, ca dovada cine a anulat. Daca apesi „Intru / ies din tura”, orele raman in jurnal. Datele stau in centre de date din Uniunea Europeana (Supabase).</p>
+    <h2>Informare privind datele personalului</h2>
+    <p class="pol-p" id="polSub" style="margin-top:6px;"></p>
+    <div id="polContinut"></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;">
+      <button class="btn-primary" style="width:auto; padding:10px 16px;" id="btnPrintInformare">🖨️ Printeaza informarea, de semnat</button>
+    </div>
   </div>
 </div>
 
@@ -931,7 +941,7 @@
       <button class="btn-primary" id="anConfirma" style="width:auto;padding:12px 22px;background:var(--danger);">Anuleaza comanda</button>
       <button id="anRenunta" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font:inherit;padding:12px 16px;">Renunta</button>
     </div>
-    <p class="mp-sub" id="anHint" style="margin:12px 0 0;">Se anuleaza pe loc. Motivul, numele si poza raman in istoricul directorului; clientul vede pe telefon cine a anulat si de ce.</p>
+    <p class="mp-sub" id="anHint" style="margin:12px 0 0;">Se anuleaza pe loc. Motivul si numele raman in istoricul directorului, poza 14 zile; clientul vede pe telefon cine a anulat si de ce.</p>
   </div>
 </div>
 
@@ -1058,7 +1068,8 @@
   let freedTables = {}; 
   let autoFreedGuard = new Set(); 
 
-  const AUTO_FREE_MINUTES = 15; 
+  const AUTO_FREE_MINUTES = 15;
+  const ZILE_POZE = 14;            // pozele de la anulari se sterg automat dupa atatea zile 
   // Praguri de timp pentru mese, in minute de la ultima comanda.
   const PRAG_VERIFICA_MIN = 60;    // portocaliu: trece un ospatar pe la masa
   const PRAG_LUNG_MIN     = 120;   // rosu: masa sta de peste 2 ore
@@ -3293,7 +3304,7 @@
           if (!anComanda) { stream.getTracks().forEach(t => t.stop()); return; }   // s-a inchis intre timp
           anStream = stream;
           video.srcObject = stream; video.style.display = 'block';
-          txt.textContent = '📷 Camera e pornita. Cand apesi „Anuleaza comanda", se face o poza cu tine, ca sa se confirme numele ales. Ramane in istoricul directorului.';
+          txt.textContent = '📷 Camera e pornita. Cand apesi „Anuleaza comanda", se face o poza cu tine, ca sa se confirme numele ales. O vede doar directorul si se sterge automat dupa ' + ZILE_POZE + ' zile.';
           rosteste('Atenție: camera este pornită. La anulare se face o poză, pentru a confirma numele.', null, 8000, true);
       } catch(e) {
           anStream = null;
@@ -3381,6 +3392,73 @@
           renderOrders(); updateMapBadge(); updatePaymentAlertBadge(); sincronizeazaAlarma();
           if (currentTab === 'admin') calculateDirectorStats();
       } finally { btn.disabled = false; btn.textContent = 'Anuleaza comanda'; }
+  });
+
+  // --- Informarea personalului (GDPR) ----------------------------------------
+  // Localul e operatorul (angajatorul), platforma e imputernicit. Textul se
+  // face din config.js, ca sa fie acelasi la toate localurile, si se poate
+  // printa cu loc de semnatura: art. 13 GDPR cere informarea inainte de
+  // prelucrare, iar poza de la anulare e cea mai sensibila parte.
+  const VERSIUNE_INFORMARE = '12 septembrie 2026';
+  function sectiuniInformare() {
+      const c = window.SS_CONFIG || {};
+      const local = escapeHTML(c.OPERATOR || c.NUME || 'localul');
+      const adresa = c.ADRESA ? ', ' + escapeHTML(c.ADRESA) : '';
+      const contact = escapeHTML(c.EMAIL_GDPR || '') || 'directorul localului';
+      const platforma = escapeHTML(c.PLATFORMA || 'furnizorul platformei');
+      return [
+        { h: '1. Cine raspunde de datele tale', p: [
+          `<b>Operatorul</b> este angajatorul tau, <b>${local}</b>${adresa} — el decide de ce si cum sunt folosite datele din acest panou. Intrebari sau cereri: <b>${contact}</b>.`,
+          `Panoul e pus la dispozitie de <b>${platforma}</b>, care actioneaza doar ca <b>persoana imputernicita</b> (art. 28 GDPR): gazduieste si transmite datele in numele localului, pe instructiunile lui, si nu le foloseste in niciun alt scop. Datele stau la Supabase, in centre de date din Uniunea Europeana, pe conexiune criptata.` ] },
+        { h: '2. Ce date, de ce si cat timp', tabel: [
+          ['Email-ul contului si rolul (bar, bucatarie, ospatar, manager, director)', 'ca sa intri in panou si sa vezi doar ce e treaba rolului tau', 'cat timp ai cont'],
+          ['Jurnalul de activitate: fiecare actiune din panou (acceptare, „Gata" / „Preluata", modificare de comanda, confirmarea bonului, setari), cu ora exacta', 'evidenta comenzilor si a banilor, raspundere, rezolvarea reclamatiilor — interesul legitim al localului (art. 6 alin. 1 lit. f GDPR)', '30 de zile, apoi se sterge automat'],
+          ['Numele ales si motivul, cand anulezi o comanda', 'sa se stie cine si de ce a anulat: o anulare inseamna bani lipsa din casa', '30 de zile, in jurnal'],
+          [`<b>Poza</b> facuta cu camera din fata a dispozitivului in momentul in care apesi „Anuleaza comanda"`, `confirmarea identitatii celui care anuleaza: contul de bar e comun, iar un nume ales de mana se poate gresi sau falsifica. Interesul legitim al localului de a preveni anularile false (art. 6 alin. 1 lit. f). <b>Nu</b> se face recunoastere faciala, <b>nu</b> se trimite nicaieri, <b>nu</b> se foloseste in alt scop`, `<b>${ZILE_POZE} zile</b>, apoi se sterge automat de pe server (in fiecare noapte, la 04:30). O vede doar directorul`],
+          ['„Intru / Ies din tura": orele la care ai apasat', 'informativ, pentru director; nu inlocuieste pontajul oficial', '30 de zile'],
+          ['Abonamentul la notificari push (o adresa tehnica, fara continut)', 'sa primesti comenzile si cand telefonul e blocat — doar daca le activezi tu', 'pana te deconectezi sau le revoci din telefon'] ] },
+        { h: '3. Camera, pe scurt', p: [
+          `Camera porneste <b>doar</b> cand deschizi fereastra de anulare, si esti anuntat — scris si cu voce — ca se face o poza. Se face un singur cadru, cand apesi „Anuleaza comanda"; cand inchizi fereastra, camera se opreste. Daca refuzi accesul la camera sau dispozitivul n-are camera, anularea se face oricum, fara poza: refuzul nu are nicio consecinta in aplicatie. Tine camera spre tine — nu fotografia clientii sau colegii.` ] },
+        { h: '4. Cine vede datele', p: [
+          `Directorul localului vede jurnalul, anularile si pozele. Managerul vede comenzile si cateva setari, dar nu jurnalul, nu datele personalului si nu pozele. Colegii vad doar comenzile pe care le lucreaza. Regulile sunt aplicate in baza de date, nu doar in ecran. Datele nu se transmit nimanui altcuiva si nu se folosesc pentru decizii automate despre tine.` ] },
+        { h: '5. Drepturile tale', p: [
+          `Ai dreptul de acces (sa primesti o copie), rectificare, stergere, restrictionare, <b>opozitie</b> fata de prelucrarea bazata pe interes legitim si dreptul de a te plange la Autoritatea Nationala de Supraveghere a Prelucrarii Datelor cu Caracter Personal (ANSPDCP, B-dul G-ral Gheorghe Magheru 28-30, Bucuresti, <b>www.dataprotection.ro</b>). Cererile se trimit la <b>${contact}</b>; raspunsul vine in cel mult 30 de zile.` ] },
+        { h: '6. Informarea', p: [
+          `Localul trebuie sa-ti dea aceasta informare <b>inainte</b> sa folosesti panoul (art. 13 GDPR). Butonul de mai jos o printeaza cu loc de semnatura: un exemplar semnat ramane la local, unul la tine. Versiunea: ${VERSIUNE_INFORMARE}.` ] }
+      ];
+  }
+  function htmlInformare() {
+      return sectiuniInformare().map(sec => `<h3 class="pol-h3">${sec.h}</h3>` +
+          (sec.p ? sec.p.map(p => `<p class="pol-p">${p}</p>`).join('') : '') +
+          (sec.tabel ? `<table class="pol-tab"><thead><tr><th>Ce</th><th>De ce</th><th>Cat timp</th></tr></thead><tbody>` +
+              sec.tabel.map(r => `<tr>${r.map(x => `<td>${x}</td>`).join('')}</tr>`).join('') + `</tbody></table>` : '')).join('');
+  }
+  function randeazaInformare() {
+      const c = window.SS_CONFIG || {};
+      const el = document.getElementById('polContinut'); if (!el) return;
+      document.getElementById('polSub').textContent = `Pentru personalul ${c.OPERATOR || c.NUME || 'localului'}: ce date se aduna din panoul de comenzi, de ce, cat timp si ce drepturi ai.`;
+      el.innerHTML = htmlInformare();
+  }
+  randeazaInformare();
+  document.getElementById('btnPrintInformare').addEventListener('click', () => {
+      const c = window.SS_CONFIG || {};
+      const w = window.open('', '_blank');
+      if (!w) { alert('Browserul a blocat fereastra de printare. Permite pop-up-urile si incearca din nou.'); return; }
+      w.document.write(`<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>Informare privind datele personalului</title>
+        <style>body{font-family:Arial,sans-serif;color:#111;max-width:760px;margin:24px auto;padding:0 16px;font-size:12.5px;line-height:1.5}
+        h1{font-size:19px;margin:0 0 4px}h3{font-size:14px;margin:16px 0 4px}p{margin:0 0 6px}
+        table{width:100%;border-collapse:collapse;font-size:11.5px}th,td{border:1px solid #999;padding:5px 6px;text-align:left;vertical-align:top}
+        .semn{margin-top:28px;border-top:1px solid #999;padding-top:14px}.semn div{margin:14px 0}
+        @media print{body{margin:0}}</style></head><body>
+        <h1>Informare privind prelucrarea datelor personalului</h1>
+        <p><b>${escapeHTML(c.OPERATOR || c.NUME || 'Localul')}</b>${c.ADRESA ? ', ' + escapeHTML(c.ADRESA) : ''} · panoul de comenzi · versiunea ${VERSIUNE_INFORMARE}</p>
+        ${htmlInformare()}
+        <div class="semn"><p><b>Am luat la cunostinta</b> continutul acestei informari, inclusiv faptul ca la anularea unei comenzi se face o poza cu camera dispozitivului, pastrata ${ZILE_POZE} zile.</p>
+        <div>Nume si prenume: ______________________________________</div>
+        <div>Functia: ____________________ &nbsp;&nbsp; Data: ____________________</div>
+        <div>Semnatura angajat: ____________________ &nbsp;&nbsp; Semnatura angajator: ____________________</div></div>
+        <script>window.onload=function(){window.print();}<\/script></body></html>`);
+      w.document.close();
   });
 
   // --- Angajatii (numele pentru anulari) ------------------------------------
@@ -3810,13 +3888,14 @@
   // Tiparul asta e semnalul clasic de frauda: produsul a iesit din bucatarie/bar, dar comanda
   // s-a anulat in sistem. Se atribuie utilizatorului care a facut trecerea la "anulata" (log.utilizator
   // real al acelei actiuni, nu neaparat cel care a creat comanda).
-  // Pozele de la anulari: link semnat la cerere (bucket privat); cele mai
-  // vechi de 30 de zile se sterg cand directorul deschide lista.
+  // Pozele de la anulari: link semnat la cerere (bucket privat). Stergerea
+  // dupa ZILE_POZE zile o face serverul (functia `curata-poze`, in fiecare
+  // noapte); aici doar o dublam, cand directorul deschide lista.
   window.vedePozaAnulare = async function(cale, btn) {
       btn.disabled = true;
       const { data, error } = await _supabase.storage.from('anulari').createSignedUrl(cale, 300);
       btn.disabled = false;
-      if (error || !data || !data.signedUrl) { alert('Poza nu mai exista (se sterge dupa 30 de zile).'); return; }
+      if (error || !data || !data.signedUrl) { alert('Poza nu mai exista (se sterge automat dupa ' + ZILE_POZE + ' zile).'); return; }
       const img = document.createElement('img');
       img.src = data.signedUrl; img.alt = 'Poza de la anulare';
       img.style.cssText = 'max-width:100%; width:240px; border-radius:10px; margin-top:8px; display:block;';
@@ -3827,7 +3906,7 @@
       if (pozeCuratate || userRole !== 'director') return;
       pozeCuratate = true;
       try {
-          const prag = Date.now() - 30 * 86400000;
+          const prag = Date.now() - ZILE_POZE * 86400000;
           const { data: foldere } = await _supabase.storage.from('anulari').list('', { limit: 100 });
           const vechi = [];
           for (const f of (foldere || [])) {
@@ -4104,6 +4183,7 @@
           setari_modificare: '<span style="color:var(--warning)">✏️ Fereastra de modificare</span>',
           setari_pachet: '<span style="color:var(--warning)">🥡 Comenzi la pachet</span>',
           setari_angajati: '<span style="color:var(--warning)">👥 Lista de angajati</span>',
+          poze_sterse: '<span style="color:var(--text-muted)">🧹 Poze sterse automat</span>',
           tura_start: '<span style="color:var(--success)">🕒 A intrat in tura</span>',
           tura_stop: '<span style="color:var(--text-muted)">🕒 A iesit din tura</span>',
           meniu_modificat: '<span style="color:var(--accent)">🍸 Meniu modificat</span>',
@@ -4130,6 +4210,7 @@
               if (log.actiune === 'tura_stop' && log.detalii.ore != null) detText += `${log.detalii.ore} ore`;
               if (log.actiune === 'pedido_cancelado') detText += `· ${escapeHTML(log.detalii.nume || '')}${log.detalii.rol ? ' (' + escapeHTML(log.detalii.rol) + ')' : ''}${log.detalii.status_inainte === 'finalizata' ? ' · retur' : ''}${log.detalii.poza ? ' · 📷' : ''} `;
               if (log.actiune === 'setari_angajati') detText += Array.isArray(log.detalii.nume) ? log.detalii.nume.map(escapeHTML).join(', ') : '';
+              if (log.actiune === 'poze_sterse') detText += `${log.detalii.sterse || 0} poze mai vechi de ${log.detalii.zile || ZILE_POZE} zile`;
               if (log.actiune === 'ticket_confirmado') detText += log.detalii.bon_scos ? `bon confirmat${log.detalii.total != null ? ' · ' + Number(log.detalii.total).toFixed(2) + ' lei' : ''}` : 'confirmarea bonului scoasa';
               if (log.actiune === 'mesa_liberada') detText += log.detalii.automat ? '(automat)' : '(manual)';
               if (log.actiune === 'estado_cambiado' && log.detalii.status) detText += `→ ${escapeHTML(log.detalii.status)} `;

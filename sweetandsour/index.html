@@ -64,9 +64,9 @@
     .hero-parallax-bg{ transform:none !important; }
   }
   @media (prefers-reduced-transparency: reduce){
-    .lang-toggle-btn, .tables-badge, .total-bar, .tracker-widget, .global-fav-btn, .cookie-banner, .modal-overlay, .card-qty-controls{ backdrop-filter:none !important; }
+    .lang-toggle-btn, .tables-badge, .total-bar, .tracker-widget, .global-fav-btn, .modal-overlay, .card-qty-controls{ backdrop-filter:none !important; }
     .total-bar{ background:var(--bg-panel); }
-    .tracker-widget, .cookie-banner{ background:var(--bg-card); }
+    .tracker-widget{ background:var(--bg-card); }
   }
 
   .busy-banner { display: none; background: var(--brass); color: #16110a; padding: 12px 20px; font-weight: 700; text-align: center; font-size: 14.5px; z-index: 100; position: relative; line-height: 1.3; font-family:'Space Mono', monospace; letter-spacing:.01em; }
@@ -314,10 +314,10 @@
   .os-timp{ font-family:'Space Mono', monospace; font-size: 11px; color: var(--brass-soft); }
   .os-timp.expirat{ color: var(--ink-soft); }
 
-  .cookie-banner{ position: fixed; left:16px; right:16px; bottom: calc(88px + env(safe-area-inset-bottom)); max-width:480px; margin:0 auto; background: rgba(17, 14, 11, 0.92); backdrop-filter: blur(18px) saturate(160%); border:1.5px solid var(--pink-main); border-radius: var(--radius-md); padding:16px 18px; box-shadow: var(--shadow-warm); z-index:290; display:none; flex-direction:column; gap:12px; transform: translateY(140%); opacity:0; transition: transform .45s var(--ease-sheet), opacity .35s var(--ease-out); }
-  .cookie-banner.show{ display:flex; transform: translateY(0); opacity:1; }
-  .cookie-banner p{ margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.45; }
-  .cookie-banner-actions{ display:flex; gap:10px; }
+  /* pasul „politica" din fereastra de intampinare — primul, inaintea limbii */
+  .ob-cookie-text{ font-size:13px; color:var(--ink-soft); line-height:1.5; text-align:left; margin:0 0 16px; }
+  .ob-cookie-actions{ display:flex; flex-direction:column; gap:10px; }
+  #privacyOverlay{ z-index:350; }
   .btn-cookie-accept{ flex:1; background:var(--pink-main); color:#f6f0e6; border:none; padding:12px; border-radius:10px; font-weight:700; font-size:13.5px; cursor:pointer; font-family:'Work Sans', sans-serif; }
   .btn-cookie-accept:active{ transform: scale(0.96); }
   .btn-cookie-info{ background:transparent; color:var(--ink-soft); border:1.5px solid var(--paper-dim); padding:12px 16px; border-radius:10px; font-size:12.5px; cursor:pointer; font-family:'Work Sans', sans-serif; white-space:nowrap; }
@@ -578,17 +578,17 @@
 
 <button class="global-fav-btn" id="smartActionBtn"></button>
 
-<div class="cookie-banner" id="cookieBanner">
-  <p id="cookieBannerText">Folosim stocarea locala a browserului, necesara tehnic, ca sa retinem limba, masa si produsele din comanda ta. Nu folosim cookie-uri de publicitate sau de urmarire. Daca navighezi mai departe, esti de acord cu utilizarea lor.</p>
-  <div class="cookie-banner-actions">
-    <button class="btn-cookie-info" id="btnCookieInfo">Mai multe</button>
-    <button class="btn-cookie-accept" id="btnCookieAccept">Accept si continui</button>
-  </div>
-</div>
-
 <div class="modal-overlay" id="onboardingOverlay">
   <div class="modal">
     <img id="obLogo" src="" alt="" class="onb-logo" hidden>
+    <div id="obCookieStep" style="display:none;">
+      <h2 id="obCookieTitle">Inainte sa incepem</h2>
+      <p class="ob-cookie-text" id="obCookieText">Folosim stocarea locala a browserului, necesara tehnic, ca sa retinem limba, masa si produsele din comanda ta. Nu folosim cookie-uri de publicitate sau de urmarire. Daca navighezi mai departe, esti de acord cu utilizarea lor.</p>
+      <div class="ob-cookie-actions">
+        <button class="btn-cookie-accept" id="obCookieAccept" style="padding:14px;">Accept si continui</button>
+        <button class="btn-cookie-info" id="obCookieInfo">Politica de confidentialitate</button>
+      </div>
+    </div>
     <div id="obLangStep">
       <h2 id="obLangTitle">Bine ai venit!</h2>
       <p id="obLangSubtitle">Alege limba meniului</p>
@@ -914,7 +914,7 @@
       flag:'🇷🇴', code:'RO', eyebrow:'Meniu digital', title:'Sweet & Sour', tagline:'',
       allChip:'Toate', searchPlaceholder:'Cauta...', emptyState:'Niciun produs gasit.',
       totalLabel:'Total:', btnOrderBar:'Trimite comanda', trackerTitle:'Comanda ta',
-      obLangTitle:'Bine ai venit!', obLangSubtitle:'Alege limba meniului',
+      obCookieTitle:'Inainte sa incepem', obLangTitle:'Bine ai venit!', obLangSubtitle:'Alege limba meniului',
       obModeTitle:'Cum vrei sa comanzi?', obModeSubtitle:'Alege o optiune ca sa continui.',
       dineIn:'🍹 Sunt la o masa', takeaway:'🥡 La pachet', takeawayLabel:'La pachet',
       orderModalTitle:'Numarul mesei', orderModalDesc:'Scrie numarul mesei tale ca sa trimitem comanda.',
@@ -951,7 +951,7 @@
           '<b>La pachet:</b> numele si numarul de telefon, doar ca sa te anuntam cand e gata comanda.',
           '<b>Parerea ta:</b> nota (stele), textul scris si masa — doar daca alegi sa le trimiti.',
           '<b>Tehnic:</b> un identificator aleator al comenzii, pastrat pe telefonul tau, ca doar tu sa-ti poti modifica comanda; in baza de date se pastreaza numai o amprenta (hash) a lui, care nu poate fi inversata. Adresa IP ajunge la furnizorii de gazduire, ca la orice site, in jurnalele lor tehnice.',
-          '<b>Ce NU facem:</b> nu cerem cont, nu citim locatia, nu folosim cookie-uri de urmarire sau de publicitate, nu facem profilare, nu vindem date si nu trimitem mesaje de marketing.' ] },
+          '<b>Ce NU facem:</b> nu cerem cont, nu citim locatia, nu folosim camera sau microfonul telefonului tau si nu iti facem fotografii, nu folosim cookie-uri de urmarire sau de publicitate, nu facem profilare, nu vindem date si nu trimitem mesaje de marketing.' ] },
         { h: '3. De ce si pe ce temei legal', p: [
           'Executarea comenzii tale (art. 6 alin. 1 lit. b din GDPR); interesul legitim al localului de a tine evidenta comenzilor, de a preveni fraudele si de a rezolva reclamatiile (art. 6 alin. 1 lit. f); consimtamantul tau pentru parerea trimisa (art. 6 alin. 1 lit. a), pe care il poti retrage oricand cerand stergerea ei.' ] },
         { h: '4. Cat timp le pastram', p: [
@@ -1001,7 +1001,7 @@
           'Acesti termeni sunt guvernati de legea romana. Litigiile se solutioneaza pe cale amiabila, iar in lipsa, de instantele competente din Romania, fara a afecta drepturile tale de consumator. Termenii se pot actualiza; versiunea in vigoare e cea afisata aici. <b>Ultima actualizare: 12 septembrie 2026.</b>' ] }
       ],
       privacyAllergensText: 'Precizare privind gramajele, valorile nutritionale si alergenii: gramajele, valorile calorice (kcal) si lista de ingrediente si alergeni afisate in acest meniu digital au caracter strict orientativ si informativ. Aceste date sunt introduse, actualizate si validate exclusiv de catre local, care raspunde singur de exactitatea si actualizarea lor, in conformitate cu Regulamentul (UE) nr. 1169/2011 privind informarea consumatorilor cu privire la produsele alimentare si cu restul legislatiei aplicabile in materie de siguranta alimentara si protectia consumatorului. Platforma care gazduieste si afiseaza acest meniu digital are exclusiv rolul de furnizor al instrumentului de vizualizare si comanda, nu intervine in prepararea, supravegherea sau verificarea continutului nutritional ori a alergenilor introdusi de local si este expres exonerata de raspundere pentru erori, omisiuni, variatii de reteta, contaminare incrucisata in bucatarie sau date neactualizate. Din cauza prepararii manuale, gramajele servite efectiv si valorile calorice pot varia fata de cele indicate. Recomandam insistent clientilor cu alergii, intolerante sau nevoi alimentare speciale sa anunte direct personalul inainte de a comanda, pentru informatii actualizate si personalizate.',
-      cookieBannerText: 'Folosim stocarea locala a browserului, necesara tehnic, ca sa retinem limba, masa si produsele din comanda ta. Nu folosim cookie-uri de publicitate sau de urmarire. Daca navighezi mai departe, esti de acord cu utilizarea lor.', cookieAcceptBtn: 'Accept si continui', cookieInfoBtn: 'Mai multe',
+      cookieBannerText: 'Folosim stocarea locala a browserului, necesara tehnic, ca sa retinem limba, masa si produsele din comanda ta. Nu folosim cookie-uri de publicitate sau de urmarire. Daca navighezi mai departe, esti de acord cu utilizarea lor.', cookieAcceptBtn: 'Accept si continui', cookieInfoBtn: 'Politica de confidentialitate',
       busyBanner: '🔥 Barul are comenzi multe acum. Timpii de asteptare sunt putin mai mari decat de obicei.',
       fbTitle: 'Cum a fost la noi?', fbPlaceholder: 'Ce am putea imbunatati?', fbBtn: 'Trimite parerea', fbThanks: 'Multumim ca ne ajuti sa fim mai buni!', fbGoogle: 'Super! Ne-ar ajuta enorm o recenzie pe Google.', fbGoogleBtn: 'Lasa recenzie pe Google', fbDirectTitle: 'Multumim de vizita!', tablesFree: 'mese libere', tablesFull: 'Nicio masa libera', tablesFor: 'locuri',
       weightLabel:'Volum', kcalLabel:'kcal', ingredientsLabel:'Ingrediente', allergensLabel:'Alergeni', noAllergens:'Fara alergeni declarati',
@@ -1042,7 +1042,7 @@
       flag:'🇬🇧', code:'EN', eyebrow:'Digital menu', title:'Sweet & Sour', tagline:'', 
       allChip:'All', searchPlaceholder:'Search...', emptyState:'No products found.', 
       totalLabel:'Total:', btnOrderBar:'Send Order', trackerTitle:'Your order',
-      obLangTitle:'Welcome!', obLangSubtitle:'Choose your menu language', 
+      obCookieTitle:'Before we start', obLangTitle:'Welcome!', obLangSubtitle:'Choose your menu language', 
       obModeTitle:'How would you like to order?', obModeSubtitle:'Pick one option to continue.', 
       dineIn:"🍽️ I'm at a table", takeaway:'🥡 Takeaway', takeawayLabel:'Takeaway', 
       orderModalTitle:'Table Number', orderModalDesc:'Please enter your table number to send the order.', 
@@ -1079,7 +1079,7 @@
           '<b>Takeaway:</b> your name and phone number, only so we can tell you when the order is ready.',
           '<b>Your feedback:</b> the rating (stars), the text and the table — only if you choose to send them.',
           '<b>Technical:</b> a random order identifier kept on your phone, so that only you can change your order; the database stores only a one-way fingerprint (hash) of it. Your IP address reaches the hosting providers, as with any website, in their technical logs.',
-          '<b>What we do NOT do:</b> no account, no location, no tracking or advertising cookies, no profiling, no selling of data, no marketing messages.' ] },
+          '<b>What we do NOT do:</b> no account, no location, no access to your camera or microphone and no photos of you, no tracking or advertising cookies, no profiling, no selling of data, no marketing messages.' ] },
         { h: '3. Why, and on what legal basis', p: [
           'Fulfilling your order (Art. 6(1)(b) GDPR); the venue\'s legitimate interest in keeping order records, preventing fraud and handling complaints (Art. 6(1)(f)); your consent for the feedback you send (Art. 6(1)(a)), which you can withdraw at any time by asking for it to be deleted.' ] },
         { h: '4. How long we keep it', p: [
@@ -1129,7 +1129,7 @@
           'These terms are governed by Romanian law. Disputes are settled amicably or, failing that, by the competent courts of Romania, without affecting your consumer rights. The terms may be updated; the version in force is the one shown here. <b>Last updated: 12 September 2026.</b>' ] }
       ],
       privacyAllergensText: 'Notice regarding weights, nutritional values and allergens: the weights, calorie (kcal) values, and the list of ingredients and allergens shown in this digital menu are provided for guidance and informational purposes only. This information is entered, updated, and validated exclusively by the establishment (the restaurant), which is solely responsible for its accuracy and for keeping it up to date, in accordance with EU Regulation No. 1169/2011 on the provision of food information to consumers and any other applicable food-safety and consumer-protection regulations. The technology platform hosting and displaying this digital menu acts solely as the provider of the display and ordering tool; it does not take part in preparing, supervising, or verifying the nutritional or allergen content entered by the establishment, and is therefore expressly released from any liability arising from errors, omissions, recipe variations, cross-contact in the kitchen, or outdated information. Because dishes are prepared by hand, the actual weight served and calorie values may vary from those indicated. Customers with allergies, intolerances, or special dietary needs are strongly advised to inform staff directly before ordering, to receive current, personalized information.',
-      cookieBannerText: 'We use browser local storage, technically necessary, to remember your language, your table and the items in your order. We do not use advertising or tracking cookies. By continuing to browse you accept its use.', cookieAcceptBtn: 'Accept and continue', cookieInfoBtn: 'More info',
+      cookieBannerText: 'We use browser local storage, technically necessary, to remember your language, your table and the items in your order. We do not use advertising or tracking cookies. By continuing to browse you accept its use.', cookieAcceptBtn: 'Accept and continue', cookieInfoBtn: 'Privacy policy',
       busyBanner: '🔥 The bar is very busy right now. Waiting times are slightly longer than usual.',
       fbTitle: 'How was your evening?', fbPlaceholder: 'What can we improve?', fbBtn: 'Send Feedback', fbThanks: 'Thank you for your feedback!', fbGoogle: 'Great! We would love a review on Google.', fbGoogleBtn: 'Leave Google Review', fbDirectTitle: 'Thanks for visiting us!', tablesFree: 'tables free', tablesFull: 'No tables free', tablesFor: 'seats',
       weightLabel:'Volume', kcalLabel:'kcal', ingredientsLabel:'Ingredients', allergensLabel:'Allergens', noAllergens:'No declared allergens',
@@ -1237,9 +1237,6 @@
     document.getElementById('privacyCloseBtn').textContent = t.privacyClose;
     randeazaPolitica();
     document.getElementById('txtGdprNote').textContent = t.gdprNote;
-    document.getElementById('cookieBannerText').textContent = t.cookieBannerText;
-    document.getElementById('btnCookieAccept').textContent = t.cookieAcceptBtn;
-    document.getElementById('btnCookieInfo').textContent = t.cookieInfoBtn;
     
     document.getElementById('busyBanner').textContent = t.busyBanner;
     document.getElementById('fbTitle').textContent = t.fbTitle;
@@ -1306,26 +1303,14 @@
   });
 
   document.querySelectorAll('.lang-option').forEach(opt => {
-      opt.addEventListener('click', () => { applyLanguage(opt.dataset.lang); });
+      opt.addEventListener('click', () => { limbaConfirmata = true; applyLanguage(opt.dataset.lang); });
   });
 
   document.getElementById('btnPrivacyPolicy').addEventListener('click', () => {
       document.getElementById('privacyOverlay').classList.add('open');
   });
 
-  // Bannerul de cookie apare abia dupa fereastra de intampinare (limba,
-  // masa), ca sa nu stea peste ea.
-  const cookieBanner = document.getElementById('cookieBanner');
-  function arataCookie() {
-      if (localStorage.getItem(STORE + 'cookieConsent')) return;
-      if (document.getElementById('onboardingOverlay').classList.contains('open')) return;
-      cookieBanner.classList.add('show');
-  }
-  document.getElementById('btnCookieAccept').addEventListener('click', () => {
-      localStorage.setItem(STORE + 'cookieConsent', 'accepted');
-      cookieBanner.classList.remove('show');
-  });
-  document.getElementById('btnCookieInfo').addEventListener('click', () => {
+  document.getElementById('obCookieInfo').addEventListener('click', () => {
       document.getElementById('privacyOverlay').classList.add('open');
   });
 
@@ -1598,10 +1583,36 @@
   }
 
   const onboardingOverlay = document.getElementById('onboardingOverlay');
+  const obCookieStep = document.getElementById('obCookieStep');
   const obLangStep = document.getElementById('obLangStep');
   const obModeStep = document.getElementById('obModeStep');
 
-  function needsLang(){ return !localStorage.getItem(STORE + 'lang'); }
+  // Politica (stocarea locala) e primul pas, inaintea limbii: pana o accepta,
+  // nu i se cere nimic si nu porneste ghidul. Textul e in limba browserului,
+  // fiindca limba meniului se alege abia dupa.
+  function needsCookie(){ return !localStorage.getItem(STORE + 'cookieConsent'); }
+  function arataPasCookie(){
+      const ro = String(navigator.language || 'ro').toLowerCase().startsWith('ro');
+      const t = ro ? I18N.ro : I18N.en;
+      currentLang = ro ? 'ro' : 'en';
+      document.getElementById('obCookieTitle').textContent = t.obCookieTitle;
+      document.getElementById('obCookieText').textContent = t.cookieBannerText;
+      document.getElementById('obCookieAccept').textContent = t.cookieAcceptBtn;
+      document.getElementById('obCookieInfo').textContent = t.cookieInfoBtn;
+      obCookieStep.style.display = 'block'; obLangStep.style.display = 'none'; obModeStep.style.display = 'none';
+  }
+  document.getElementById('obCookieAccept').addEventListener('click', () => {
+      localStorage.setItem(STORE + 'cookieConsent', 'accepted');
+      obCookieStep.style.display = 'none';
+      if (needsLang()) { obLangStep.style.display = 'block'; return; }
+      showModeStepOrClose();
+  });
+
+  // Limba e „aleasa" doar cand o alege clientul (sau o avea salvata de data
+  // trecuta). applyLanguage() o salveaza si cand se incarca meniul, deci nu ne
+  // putem lua dupa localStorage — altfel pasul cu limba ar fi sarit.
+  let limbaConfirmata = !!localStorage.getItem(STORE + 'lang');
+  function needsLang(){ return !limbaConfirmata; }
   function needsMode(){ return !sessionStorage.getItem(STORE + 'masa'); }
 
   // Comenzile la pachet sunt pornite doar daca localul le-a activat. Cat nu
@@ -1621,17 +1632,18 @@
     obLangStep.style.display = 'none'; obModeStep.style.display = 'block';
   }
 
-  if(needsLang() || needsMode()){
+  if(needsCookie() || needsLang() || needsMode()){
       if(!currentLang) currentLang = 'ro';
       onboardingOverlay.classList.add('open');
-      if(!needsLang()) showModeStepOrClose();
+      if (needsCookie()) arataPasCookie();
+      else if(!needsLang()) showModeStepOrClose();
   } else {
       applyLanguage(currentLang);
       dupaOnboarding();
   }
 
   document.querySelectorAll('.lang-pick-btn').forEach(btn => {
-    btn.addEventListener('click', () => { applyLanguage(btn.dataset.lang); showModeStepOrClose(); });
+    btn.addEventListener('click', () => { limbaConfirmata = true; applyLanguage(btn.dataset.lang); showModeStepOrClose(); });
   });
 
   document.getElementById('btnDineIn').addEventListener('click', () => { sessionStorage.setItem(STORE + 'mod', 'masa'); sessionStorage.setItem(STORE + 'masa', 'stabilita'); onboardingOverlay.classList.remove('open'); dupaOnboarding(); });
@@ -2491,7 +2503,6 @@
       // applyLanguage() salveaza limba inainte ca fereastra de intampinare sa
       // se inchida, deci ne uitam la fereastra, nu la localStorage
       if (onboardingOverlay.classList.contains('open')) return;
-      setTimeout(arataCookie, 400);
       if (ghidProgramat) return;
       if (!allItems.length) return;
       ghidProgramat = true;
