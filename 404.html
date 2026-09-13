@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pagina nu exista — Meniuri digitale</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b0f1c">
+<!-- GitHub Pages serveste pagina asta la ORICE adresa lipsa (si sub /m3/..., si
+     sub /sweetandsour/...), deci caile relative nu ar merge. Le scriem de la
+     radacina site-ului: pe github.io radacina e /sweet-sour/, pe un domeniu
+     propriu e /. Scriptul de mai jos le potriveste; fara script, raman cele
+     de pe github.io. -->
+<link id="fonturi" rel="stylesheet" href="/sweet-sour/fonturi/fonturi.css">
+<style>
+  :root{
+    --bg:#0b0f1c; --card:#131a2e; --line:rgba(255,255,255,.09);
+    --ink:#f2ece0; --soft:#96a0bb; --brass:#e8a33d;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased;
+    min-height:100dvh; display:flex; flex-direction:column;
+  }
+  .glow{
+    position:fixed; inset:-30% -20% auto -20%; height:70vh; pointer-events:none;
+    background:radial-gradient(ellipse at 60% 0%, rgba(232,163,61,.16), transparent 62%);
+  }
+  .wrap{width:100%; max-width:760px; margin:0 auto; padding:56px 20px 40px; position:relative; flex:1}
+  .eyebrow{
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--brass); margin:0 0 12px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:""; width:26px; height:2px; background:var(--brass)}
+  .cod{
+    font-family:'Playfair Display',serif; font-weight:700; line-height:.9;
+    font-size:clamp(5.5rem,26vw,9rem); margin:0 0 6px; letter-spacing:-.02em;
+    background:linear-gradient(160deg, var(--ink) 30%, var(--brass) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  h1{font-family:'Playfair Display',serif; font-size:clamp(1.6rem,6vw,2.3rem); margin:0 0 10px; line-height:1.12}
+  .sub{color:var(--soft); font-size:15px; margin:0 0 8px; max-width:46ch; line-height:1.55}
+  .sub.en{font-size:13px; margin-bottom:34px; opacity:.85}
+
+  .list{display:grid; gap:14px}
+  .venue{
+    display:flex; align-items:center; gap:16px; text-decoration:none; color:inherit;
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:18px 20px; transition:transform .18s cubic-bezier(.22,1,.36,1), border-color .18s;
+    -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  }
+  .venue:hover,.venue:focus-visible{transform:translateY(-2px); border-color:var(--brass); outline:none}
+  .venue:active{transform:scale(.99)}
+  .mark{
+    width:56px; height:56px; flex:0 0 56px; border-radius:13px;
+    display:grid; place-items:center; font-family:'Playfair Display',serif;
+    font-size:26px; font-weight:700; color:var(--ink); overflow:hidden;
+  }
+  .meta{flex:1; min-width:0}
+  .name{font-family:'Playfair Display',serif; font-size:1.32rem; margin:0 0 3px}
+  .desc{color:var(--soft); font-size:13px; margin:0; line-height:1.45}
+  .arrow{color:var(--soft); flex:0 0 auto; font-size:20px}
+  .venue:hover .arrow{color:var(--brass)}
+
+  .toate{
+    display:inline-flex; align-items:center; gap:8px; margin-top:26px;
+    color:var(--brass); text-decoration:none; font-size:14px; font-weight:600;
+  }
+  .toate:hover{text-decoration:underline}
+
+  .adresa{
+    margin-top:36px; padding-top:18px; border-top:1px solid var(--line);
+    font-family:'Space Mono',monospace; font-size:11px; color:var(--soft);
+    letter-spacing:.04em; word-break:break-all; display:none;
+  }
+  .adresa span{color:var(--ink); opacity:.7}
+
+  footer{
+    text-align:center; color:var(--soft); font-size:12px;
+    padding:24px 20px 32px; font-family:'Space Mono',monospace;
+  }
+  @media (hover:none){ .venue:hover{transform:none; border-color:var(--line)} .venue:hover .arrow{color:var(--soft)} }
+  @media (prefers-reduced-motion:reduce){ .venue{transition:none} }
+</style>
+</head>
+<body>
+<div class="glow" aria-hidden="true"></div>
+
+<main class="wrap">
+  <p class="eyebrow">Eroare 404</p>
+  <p class="cod" aria-hidden="true">404</p>
+  <h1>Pagina asta nu exista</h1>
+  <p class="sub">Poate codul QR e mai vechi sau adresa a fost scrisa gresit. Alege localul in care esti sau scaneaza din nou codul de pe masa.</p>
+  <p class="sub en">This page doesn't exist. Pick your venue below or scan the QR code on your table again.</p>
+
+  <div class="list">
+
+    <a class="venue" href="/sweet-sour/m3/" data-cale="m3/">
+      <span class="mark" style="background:#000;border:1px solid rgba(255,255,255,.14);padding:6px">
+        <img src="/sweet-sour/m3/icons/mark.png" data-cale="m3/icons/mark.png" alt="" style="width:100%;height:100%;object-fit:contain">
+      </span>
+      <span class="meta">
+        <p class="name">M3 Coffee &amp; Lounge</p>
+        <p class="desc">Gradina „Nicu Albu", Piatra Neamt</p>
+      </span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+
+    <a class="venue" href="/sweet-sour/sweetandsour/" data-cale="sweetandsour/">
+      <span class="mark" style="background:#0b0f1c;border:1px solid rgba(255,255,255,.14);padding:5px">
+        <img src="/sweet-sour/sweetandsour/icons/mark.png" data-cale="sweetandsour/icons/mark.png" alt="" style="width:100%;height:100%;object-fit:contain">
+      </span>
+      <span class="meta">
+        <p class="name">Sweet &amp; Sour</p>
+        <p class="desc">Cocktail bar &amp; lounge, Piatra Neamt</p>
+      </span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+
+  </div>
+
+  <a class="toate" href="/sweet-sour/" data-cale="">Toate localurile <span aria-hidden="true">→</span></a>
+
+  <p class="adresa" id="adresa">Adresa ceruta: <span id="adresaCale"></span></p>
+</main>
+
+<footer>Fiecare local isi administreaza propriul meniu.</footer>
+
+<script>
+  // Radacina site-ului: pe github.io e primul segment din cale (/sweet-sour/),
+  // pe un domeniu propriu e /. Potrivim toate legaturile si pozele.
+  (function () {
+    var seg = location.pathname.split('/')[1] || '';
+    var radacina = /\.github\.io$/i.test(location.hostname) && seg ? '/' + seg + '/' : '/';
+    document.getElementById('fonturi').href = radacina + 'fonturi/fonturi.css';
+    document.querySelectorAll('[data-cale]').forEach(function (el) {
+      var cale = radacina + el.getAttribute('data-cale');
+      if (el.tagName === 'IMG') el.src = cale; else el.href = cale;
+    });
+    // adresa gresita, ca sa se vada ce cod QR sau link trebuie refacut
+    var cale = location.pathname + location.search;
+    if (cale && cale !== '/' && cale !== radacina) {
+      document.getElementById('adresaCale').textContent = cale;
+      document.getElementById('adresa').style.display = 'block';
+    }
+  })();
+</script>
+</body>
+</html>

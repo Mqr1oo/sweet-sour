@@ -56,7 +56,8 @@ din prima, fără configurare: numele folderului **este** calea din URL.
 4. Creezi conturile de personal (`supabase/creeaza_conturi_staff.py`) și le dai
    roluri.
 5. Adaugi produsele din dashboard → panoul directorului → Meniu.
-6. Adaugi localul în `index.html` (pagina de start) — un bloc `<a class="venue">`.
+6. Adaugi localul în `index.html` (pagina de start) și în `404.html` — câte un
+   bloc `<a class="venue">`.
 
 `index.html`, `dashboard.html` și `sw.js` sunt **aproape identice** la toate
 localurile: diferă doar titlul, culorile din `:root` ale panoului, numele din
@@ -536,6 +537,15 @@ clientul.
 
 Categoriile nu mai sunt scrise în cod: se deduc din produse, în ordinea din
 coloana `ordine`. Adaugi o categorie nouă din dashboard și apare singură în meniu.
+
+## Pagina 404
+
+`404.html` din rădăcină e servită de GitHub Pages la orice adresă lipsă — un
+cod QR vechi, un link scris greșit. Arată „Pagina asta nu exista" (RO + EN),
+cardurile localurilor și legătura spre pagina de start, plus adresa cerută,
+ca să se vadă ce QR trebuie refăcut. Pentru că apare la orice cale, folosește
+legături de la rădăcina site-ului (`/sweet-sour/...` pe github.io); scriptul
+din pagină le rescrie singur dacă site-ul se mută pe un domeniu propriu.
 
 ## Coduri QR pentru mese
 
