@@ -6,12 +6,11 @@
 <title>Pagina nu exista — Meniuri digitale</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0b0f1c">
-<!-- GitHub Pages serveste pagina asta la ORICE adresa lipsa (si sub /m3/..., si
-     sub /sweetandsour/...), deci caile relative nu ar merge. Le scriem de la
-     radacina site-ului: pe github.io radacina e /sweet-sour/, pe un domeniu
-     propriu e /. Scriptul de mai jos le potriveste; fara script, raman cele
-     de pe github.io. -->
-<link id="fonturi" rel="stylesheet" href="/sweet-sour/fonturi/fonturi.css">
+<!-- Cloudflare Pages serveste pagina asta la orice adresa lipsa care nu e sub
+     un local (localurile au fiecare 404.html-ul lor). URL-ul ramane cel gresit,
+     deci caile sunt scrise de la radacina site-ului (/); scriptul de jos le
+     potriveste si pe github.io, unde radacina e /<repo>/. -->
+<link id="fonturi" rel="stylesheet" href="/fonturi/fonturi.css">
 <style>
   :root{
     --bg:#0b0f1c; --card:#131a2e; --line:rgba(255,255,255,.09);
@@ -97,9 +96,9 @@
 
   <div class="list">
 
-    <a class="venue" href="/sweet-sour/m3/" data-cale="m3/">
+    <a class="venue" href="/m3/" data-cale="m3/">
       <span class="mark" style="background:#000;border:1px solid rgba(255,255,255,.14);padding:6px">
-        <img src="/sweet-sour/m3/icons/mark.png" data-cale="m3/icons/mark.png" alt="" style="width:100%;height:100%;object-fit:contain">
+        <img src="/m3/icons/mark.png" data-cale="m3/icons/mark.png" alt="" style="width:100%;height:100%;object-fit:contain">
       </span>
       <span class="meta">
         <p class="name">M3 Coffee &amp; Lounge</p>
@@ -108,9 +107,9 @@
       <span class="arrow" aria-hidden="true">→</span>
     </a>
 
-    <a class="venue" href="/sweet-sour/sweetandsour/" data-cale="sweetandsour/">
+    <a class="venue" href="/sweetandsour/" data-cale="sweetandsour/">
       <span class="mark" style="background:#0b0f1c;border:1px solid rgba(255,255,255,.14);padding:5px">
-        <img src="/sweet-sour/sweetandsour/icons/mark.png" data-cale="sweetandsour/icons/mark.png" alt="" style="width:100%;height:100%;object-fit:contain">
+        <img src="/sweetandsour/icons/mark.png" data-cale="sweetandsour/icons/mark.png" alt="" style="width:100%;height:100%;object-fit:contain">
       </span>
       <span class="meta">
         <p class="name">Sweet &amp; Sour</p>
@@ -121,7 +120,7 @@
 
   </div>
 
-  <a class="toate" href="/sweet-sour/" data-cale="">Toate localurile <span aria-hidden="true">→</span></a>
+  <a class="toate" href="/" data-cale="">Toate localurile <span aria-hidden="true">→</span></a>
 
   <p class="adresa" id="adresa">Adresa ceruta: <span id="adresaCale"></span></p>
 </main>
@@ -129,8 +128,8 @@
 <footer>Fiecare local isi administreaza propriul meniu.</footer>
 
 <script>
-  // Radacina site-ului: pe github.io e primul segment din cale (/sweet-sour/),
-  // pe un domeniu propriu e /. Potrivim toate legaturile si pozele.
+  // Radacina site-ului: / pe Cloudflare Pages sau domeniu propriu; pe github.io
+  // e primul segment din cale (/<repo>/). Potrivim legaturile si pozele.
   (function () {
     var seg = location.pathname.split('/')[1] || '';
     var radacina = /\.github\.io$/i.test(location.hostname) && seg ? '/' + seg + '/' : '/';

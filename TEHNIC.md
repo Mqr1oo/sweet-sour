@@ -56,8 +56,10 @@ din prima, fără configurare: numele folderului **este** calea din URL.
 4. Creezi conturile de personal (`supabase/creeaza_conturi_staff.py`) și le dai
    roluri.
 5. Adaugi produsele din dashboard → panoul directorului → Meniu.
-6. Adaugi localul în `index.html` (pagina de start) și în `404.html` — câte un
-   bloc `<a class="venue">`.
+6. Adaugi localul în `index.html` (pagina de start) și în `404.html` din
+   rădăcină — câte un bloc `<a class="venue">`. Pagina 404 a localului vine
+   odată cu folderul copiat și își ia singură numele, sigla și culorile din
+   `config.js`.
 
 `index.html`, `dashboard.html` și `sw.js` sunt **aproape identice** la toate
 localurile: diferă doar titlul, culorile din `:root` ale panoului, numele din
@@ -538,14 +540,26 @@ clientul.
 Categoriile nu mai sunt scrise în cod: se deduc din produse, în ordinea din
 coloana `ordine`. Adaugi o categorie nouă din dashboard și apare singură în meniu.
 
-## Pagina 404
+## Paginile 404
 
-`404.html` din rădăcină e servită de GitHub Pages la orice adresă lipsă — un
-cod QR vechi, un link scris greșit. Arată „Pagina asta nu exista" (RO + EN),
-cardurile localurilor și legătura spre pagina de start, plus adresa cerută,
-ca să se vadă ce QR trebuie refăcut. Pentru că apare la orice cale, folosește
-legături de la rădăcina site-ului (`/sweet-sour/...` pe github.io); scriptul
-din pagină le rescrie singur dacă site-ul se mută pe un domeniu propriu.
+Cloudflare Pages servește, la o adresă lipsă, **cel mai apropiat `404.html`**:
+pentru `/m3/masa-99` caută `/m3/404.html`, apoi `/404.html`. De aceea sunt
+două feluri de pagini:
+
+- **una pe local** (`m3/404.html`, `sweetandsour/404.html`, în șablon și în
+  demo): în hainele meniului — sigla, numele, culorile și fonturile localului —
+  cu un singur buton, „Deschide meniul", spre `/<local>/`. Un client care a
+  scanat un QR vechi de pe masă rămâne la localul lui, nu e trimis să aleagă
+  dintr-o listă. Numele, sigla și culorile se citesc din `config.js` la
+  încărcare (valorile din pagină sunt doar ca să nu clipească);
+- **una în rădăcină** (`404.html`): pentru adrese greșite în afara localurilor,
+  cu cardurile tuturor localurilor, în stilul paginii de start.
+
+Amândouă arată textul în română și engleză și, discret, adresa cerută — ca să
+se vadă ce QR sau link trebuie refăcut. Pentru că URL-ul rămâne cel greșit
+(poate fi oricât de adânc), legăturile sunt scrise de la rădăcina site-ului
+(`/fonturi/…`, `/m3/…`); un script mic le potrivește și pe github.io, unde
+rădăcina e `/<repo>/`.
 
 ## Coduri QR pentru mese
 

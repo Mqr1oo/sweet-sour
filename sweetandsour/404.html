@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pagina nu exista — Sweet &amp; Sour · Cocktail bar &amp; lounge</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b0f1c">
+<link rel="icon" href="/sweetandsour/icons/favicon.png">
+<!-- Cloudflare Pages serveste pagina asta la orice adresa lipsa de sub /sweetandsour/
+     (cea mai apropiata 404.html castiga). URL-ul ramane cel gresit, deci caile
+     sunt scrise de la radacina site-ului; scriptul de jos le potriveste si pe
+     github.io. Numele, sigla si culorile vin din config.js — valorile de aici
+     sunt doar ca pagina sa arate bine pana se incarca. -->
+<link id="fonturi" rel="stylesheet" href="/fonturi/fonturi.css">
+<style>
+  :root{
+    --bg-base: #0b0f1c;
+    --bg-card: #131a2e;
+    --ink: #f2ece0;
+    --ink-soft: #96a0bb;
+    --pink-main: #2f3f6b;
+    --pink-bright: #8fb0f0;
+    --brass: #e8a33d;
+    --paper-dim: #2a3350;
+    --radius-md: 14px;
+    --ease-out-fast: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; min-height:100dvh; background:var(--bg-base); color:var(--ink);
+    font-family:'Work Sans', system-ui, sans-serif; font-size:16px; line-height:1.5;
+    -webkit-font-smoothing:antialiased; display:flex; flex-direction:column;
+  }
+  .fundal{
+    position:fixed; inset:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 55% 50% at 85% -5%, color-mix(in srgb, var(--pink-main) 34%, transparent), transparent 62%),
+      radial-gradient(ellipse 38% 38% at 4% 4%,  color-mix(in srgb, var(--brass) 14%, transparent), transparent 65%);
+  }
+  main{ position:relative; flex:1; width:100%; max-width:560px; margin:0 auto; padding:max(48px, 9vh) 24px 32px; display:flex; flex-direction:column; justify-content:center; }
+  .eticheta{
+    font-family:'Space Mono', monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--brass); margin:0 0 22px; display:flex; align-items:center; gap:10px;
+  }
+  .eticheta::before{ content:""; width:22px; height:1.5px; background:var(--brass); }
+  .sigla{ display:block; width:min(200px, 56vw); height:auto; margin:0 0 22px; filter:drop-shadow(0 2px 18px rgba(0,0,0,.6)); }
+  .nume{ font-family:'Fraunces', serif; font-weight:600; font-size:1.05rem; letter-spacing:.01em; margin:0 0 22px; color:var(--ink-soft); }
+  .nume b{ color:var(--ink); font-weight:600; }
+  h1{
+    font-family:'Fraunces', serif; font-weight:600; font-optical-sizing:auto;
+    font-size:clamp(2.3rem, 9vw, 3.4rem); line-height:.98; letter-spacing:-0.025em; margin:0 0 18px;
+  }
+  h1 em{ font-style:italic; font-weight:500; color:var(--pink-bright); }
+  p{ margin:0 0 10px; color:var(--ink-soft); max-width:40ch; }
+  p.en{ font-size:14px; opacity:.85; margin-bottom:30px; }
+  .btn{
+    display:flex; align-items:center; justify-content:center; gap:10px; width:100%;
+    background:var(--pink-main); color:#f6f0e6; text-decoration:none; font-weight:700; font-size:1.05rem;
+    padding:17px 20px; border-radius:var(--radius-md);
+    box-shadow:0 8px 22px color-mix(in srgb, var(--pink-main) 40%, transparent);
+    transition:transform .15s var(--ease-out-fast); -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  }
+  .btn:active{ transform:scale(.98); }
+  .alte{ display:inline-block; margin-top:18px; color:var(--ink-soft); font-size:14px; text-decoration:none; }
+  .alte:hover{ color:var(--ink); }
+  .adresa{
+    margin-top:38px; padding-top:16px; border-top:1px solid var(--paper-dim);
+    font-family:'Space Mono', monospace; font-size:11px; color:var(--ink-soft); letter-spacing:.04em; word-break:break-all; display:none;
+  }
+  .adresa span{ color:var(--ink); opacity:.75; }
+  footer{ position:relative; text-align:center; padding:18px 20px 28px; font-family:'Space Mono', monospace; font-size:11px; color:var(--ink-soft); }
+  @media (prefers-reduced-motion:reduce){ .btn{ transition:none; } }
+</style>
+</head>
+<body>
+<div class="fundal" aria-hidden="true"></div>
+
+<main>
+  <p class="eticheta">Eroare 404</p>
+  <img id="sigla" class="sigla" src="/sweetandsour/icons/logo.png" alt="" hidden onload="this.hidden=false">
+  <p class="nume" id="nume"><b>Sweet &amp; Sour</b> · Cocktail bar &amp; lounge</p>
+  <h1>Pagina asta <em>nu exista</em></h1>
+  <p>Poate codul QR de pe masa e mai vechi sau adresa a fost scrisa gresit. Meniul e la un pas.</p>
+  <p class="en">This page doesn't exist — the QR code may be outdated or the address mistyped. The menu is one tap away.</p>
+
+  <a class="btn" id="btnMeniu" href="/sweetandsour/">Deschide meniul <span aria-hidden="true">→</span></a>
+  <a class="alte" id="lnkAlte" href="/">Alte localuri</a>
+
+  <p class="adresa" id="adresa">Adresa ceruta: <span id="adresaCale"></span></p>
+</main>
+
+<footer id="subsol">Sweet &amp; Sour · Cocktail bar &amp; lounge</footer>
+
+<script>
+  (function () {
+    // radacina site-ului: / pe Cloudflare Pages sau domeniu propriu; pe github.io e /<repo>/
+    var seg = location.pathname.split('/')[1] || '';
+    var radacina = /\.github\.io$/i.test(location.hostname) && seg ? '/' + seg + '/' : '/';
+    var local = radacina + 'sweetandsour/';
+    document.getElementById('fonturi').href = radacina + 'fonturi/fonturi.css';
+    document.getElementById('btnMeniu').href = local;
+    document.getElementById('lnkAlte').href = radacina;
+    var sigla = document.getElementById('sigla');
+    if (sigla.getAttribute('src')) sigla.src = local + sigla.getAttribute('src').replace(/^\/[^/]+\//, '');
+
+    // adresa gresita, ca sa se vada ce cod QR sau link trebuie refacut
+    var cale = location.pathname + location.search;
+    if (cale !== local && cale !== local + '404.html') {
+      document.getElementById('adresaCale').textContent = cale;
+      document.getElementById('adresa').style.display = 'block';
+    }
+
+    // numele, sigla si culorile la zi, din config.js
+    var s = document.createElement('script');
+    s.src = local + 'config.js';
+    s.onload = function () {
+      var c = window.SS_CONFIG || {};
+      if (c.CULORI) Object.keys(c.CULORI).forEach(function (k) { document.documentElement.style.setProperty(k, c.CULORI[k]); });
+      if (c.NUME) {
+        var titlu = c.NUME + (c.SUBTITLU ? ' · ' + c.SUBTITLU : '');
+        document.getElementById('nume').innerHTML = '';
+        var b = document.createElement('b'); b.textContent = c.NUME;
+        document.getElementById('nume').appendChild(b);
+        if (c.SUBTITLU) document.getElementById('nume').appendChild(document.createTextNode(' \u00b7 ' + c.SUBTITLU));
+        document.getElementById('subsol').textContent = titlu;
+        document.title = 'Pagina nu exista \u2014 ' + titlu;
+      }
+      if (c.LOGO && sigla.getAttribute('src') !== local + c.LOGO) { sigla.hidden = true; sigla.src = local + c.LOGO; }
+    };
+    document.head.appendChild(s);
+  })();
+</script>
+</body>
+</html>
