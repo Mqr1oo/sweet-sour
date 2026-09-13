@@ -3910,8 +3910,14 @@
       e.target.classList.add('active'); statsMode = 'month'; calculateDirectorStats();
   });
 
-  // o celula CSV: ghilimelele din nume se dubleaza, altfel Excel rupe randul
-  const csvCelula = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  // o celula CSV: ghilimelele din nume se dubleaza, altfel Excel rupe randul;
+  // un text care incepe cu = + - @ (sau tab) ar fi rulat ca formula de Excel
+  // si Google Sheets — masa si notele vin de la client, asa ca il facem text
+  const csvCelula = v => {
+      let s = String(v == null ? '' : v);
+      if (/^[=+\-@\t\r]/.test(s) && s !== '-' && !/^-?\d+([.,]\d+)?$/.test(s)) s = "'" + s;
+      return '"' + s.replace(/"/g, '""') + '"';
+  };
 
   window.exportCSV = function() {
       const now = new Date();
@@ -4502,7 +4508,7 @@
               if ((log.actiune === 'comanda_modificata_client' || log.actiune === 'comanda_anulata_client') && Array.isArray(log.detalii.sterse))
                   detText += log.detalii.sterse.map(x => `−${x.scos} ${escapeHTML(x.nume)}`).join(', ');
               if (log.actiune === 'comanda_modificata')
-                  detText += `${textDiferente(log.detalii.inainte, log.detalii.dupa)} · ${Number(log.detalii.total_inainte||0).toFixed(2)} → ${Number(log.detalii.total_dupa||0).toFixed(2)} lei`;
+                  detText += `${escapeHTML(textDiferente(log.detalii.inainte, log.detalii.dupa))} · ${Number(log.detalii.total_inainte||0).toFixed(2)} → ${Number(log.detalii.total_dupa||0).toFixed(2)} lei`;
               if (log.actiune === 'stoc_modificat') detText += log.detalii.epuizat ? `produs ${escapeHTML(log.detalii.id_produs)} blocat` : `produs ${escapeHTML(log.detalii.id_produs)} deblocat`;
           }
 

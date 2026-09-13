@@ -2210,7 +2210,7 @@
           await new Promise(r => setTimeout(r, 500));
           data = payloads.map((p, i) => ({ ...p, id: 900 + i })); error = null;
       } else {
-          ({ data, error } = await _supabase.from('comenzi').insert(payloads).select());
+          ({ data, error } = await _supabase.from('comenzi').insert(payloads).select('id,status,produse,total,mesa,created_at,sectiune'));
       }
       btn.textContent = t.sendOrderBtnText; btn.disabled = false;
 
@@ -2269,7 +2269,7 @@
 
   async function loadFreedTablesClient() {
       try {
-          const {data} = await _supabase.from('jurnal_activitate').select('*').eq('actiune', 'mesa_liberada').order('created_at', {ascending:false}).limit(300);
+          const {data} = await _supabase.from('jurnal_activitate').select('created_at,detalii').eq('actiune', 'mesa_liberada').order('created_at', {ascending:false}).limit(300);
           freedTablesClient = {};
           if(data) data.forEach(log => { const mesa = log.detalii && log.detalii.mesa; if(mesa && !freedTablesClient[mesa]) freedTablesClient[mesa] = new Date(log.created_at).getTime(); });
       } catch(e) {}

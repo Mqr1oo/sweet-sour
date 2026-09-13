@@ -42,9 +42,12 @@ din prima, fără configurare: numele folderului **este** calea din URL.
    `13_cod_lunar_delogare_zone.sql` (fără poze; codul lunii al managerului;
    delogarea personalului la ora închiderii; zonele ospătarilor) și
    `14_timp_eliberare.sql` (câte minute după notă se eliberează masa —
-   setare a directorului, citită și de cron) și `15_tura_automata.sql`
+   setare a directorului, citită și de cron), `15_tura_automata.sql`
    (turele deschise se închid la ora închiderii; rândurile serverului din
-   jurnal rămân „sistema", nu „client"). Pe M3 și
+   jurnal rămân „sistema", nu „client") și `16_securitate.sql` (numele
+   produselor vin din meniu, „bon gratis" doar managerul, clientul anonim nu
+   vede coloanele personalului, cheia trigger-ului de push e verificabilă —
+   vezi „Revizia de securitate"). Pe M3 și
    Sweet & Sour a existat și un `12_poze_14_zile` (cron + funcție edge
    `curata-poze`) — a fost înlocuit de 13 și nu se mai rulează pe un proiect
    nou. Toate sunt deja aplicate pe M3 și Sweet & Sour.
@@ -140,7 +143,8 @@ aleator, îl păstrează în `sessionStorage` și trimite doar hash-ul SHA-256
 verifică hash-ul și permite **doar scoateri și scăderi de cantitate** — nimic
 nou, niciun preț atins; totalul se recalculează din prețurile deja validate.
 Un client anonim poate citi comenzile ultimelor 2 ore (politica existentă),
-dar vede doar hash-ul, care nu se poate inversa.
+dar numai coloanele de care are nevoie meniul — nici hash-ul, nici cine a
+preluat sau a scos bonul (vezi „Revizia de securitate").
 
 ### Ospătarul modifică o comandă în timp real
 
@@ -679,6 +683,50 @@ angajat, anuntul vocal pentru comenzile la pachet, starile meselor).
 
 **Numele si telefonul de la pachet nu apareau in panou.** Trigger-ul scrie in
 `mesa` „🥡 La pachet", dar codul care ataseaza contactele cauta „Takeaway".
+
+## Revizia de securitate
+
+O trecere separată, doar pe securitate (RLS, triggere, ce ajunge în HTML), a
+găsit cinci lucruri; toate sunt reparate în `16_securitate.sql`, în
+`dashboard.html`, `index.html` și în funcția `notifica-comanda`.
+
+**Numele produselor vin din meniu, nu de la client.** Serverul verifica doar că
+produsul există și păstra textul trimis de telefon în `nume`; oricine putea
+băga HTML într-o comandă (direct pe API, cu cheia publică). Toate locurile din
+panou escapau textul, cu o singură excepție — rândul „comandă modificată" din
+Jurnal — deci scriptul ar fi rulat în sesiunea directorului. Acum
+`normalizeaza_produse` scrie numele din `meniu_produse`, notele și masa rămân
+text liber dar fără `<` și `>`, iar rândul din jurnal e escapat și el.
+
+**„Bon gratis" doar managerul.** `comp_motiv` scoate comanda din încasări și
+din venitul pe angajat, dar trigger-ul `protect_comanda_update` nu-l păzea:
+orice ospătar sau barman putea trimite un `PATCH` cu `comp_motiv` și comanda
+dispărea din cifre, fără urmă. Acum e refuzat pentru toți în afara
+managerului, iar când managerul îl pune (sau îl scoate) apare în jurnal ca
+`pedido_gratis`, pe care doar serverul îl poate scrie.
+
+**Clientul anonim nu mai vede emailurile personalului.** RLS alege rândurile,
+dar grantul pe `comenzi` și `jurnal_activitate` era pe toată tabela: cu cheia
+publică se puteau citi `creat_de`, `preluat_de`, `bon_scos_de` și
+`utilizator` din rândurile de configurare (adresele de login ale
+personalului). Acum `anon` are grant doar pe coloanele folosite de meniu
+(`comenzi`: id, created_at, mesa, produse, total, sectiune, status,
+motiv_anulare, anulat_de; `jurnal_activitate`: id, created_at, actiune,
+detalii). Meniul cere coloanele explicit — `select('*')` ar pica —, iar
+Realtime trimite clientului doar coloanele pe care le poate citi
+(`has_column_privilege`, în `realtime.apply_rls`).
+
+**`notifica-comanda` răspunde doar trigger-ului.** Funcția lua orice
+corp de cerere drept comandă și trimitea push-ul; cu cheia publică se puteau
+trimite notificări inventate pe telefoanele barului. Acum cere cheia
+service_role în `Authorization` (cea pe care trigger-ul o ia din Vault): o
+compară cu a ei sau întreabă baza prin `verifica_cheie_notificari(cheie)`,
+care răspunde doar da/nu — cheia nu iese din bază.
+
+**CSV-ul nu mai poate purta formule.** O masă sau o notă care începea cu `=`,
+`+`, `-` sau `@` ar fi fost rulată ca formulă de Excel / Google Sheets la
+deschiderea exportului directorului. `csvCelula` pune un apostrof în față
+(numerele și liniuța de „gol" rămân cum sunt).
 
 ## Un risc de productie ramas
 
