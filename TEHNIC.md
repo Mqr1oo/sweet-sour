@@ -757,14 +757,15 @@ care răspunde doar da/nu — cheia nu iese din bază.
 deschiderea exportului directorului. `csvCelula` pune un apostrof în față
 (numerele și liniuța de „gol" rămân cum sunt).
 
-## Un risc de productie ramas
+## Biblioteca Supabase e locala
 
-`index.html` si `dashboard.html` incarca biblioteca Supabase de pe un CDN
-(`cdn.jsdelivr.net`). Din runda 14, service worker-ul o tine in cache (raspuns
-opac, `no-cors`) si o serveste de acolo, deci un telefon care a deschis o data
-meniul sau panoul porneste si daca CDN-ul e picat. Prima deschidere ramane
-dependenta de CDN; pentru a scapa complet, biblioteca ar trebui descarcata
-local, langa `config.js`. Nu am facut-o inca.
+`index.html` si `dashboard.html` incarcau biblioteca Supabase de pe un CDN
+(`cdn.jsdelivr.net`); daca CDN-ul era blocat sau picat (retea de firma,
+adblock, pana), pagina nu pornea deloc si formularul de login se trimitea
+„pe vechi" (adresa se termina in `?`). Acum biblioteca sta in `vendor/supabase.js`
+(UMD, v2.116.0), incarcata cu `../vendor/supabase.js`, pusa in cache de
+service worker si acoperita de `script-src 'self'`. Ca s-o innoiesti:
+`curl -L -o vendor/supabase.js https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js`.
 
 ## Runda 14 — funcții noi, anti-abuz, copie de siguranță
 

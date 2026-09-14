@@ -1,5 +1,5 @@
 # Antete de securitate pentru Cloudflare Pages (se aplica la publicare).
-# Browserul refuza scripturi din alta parte decat site-ul si CDN-ul Supabase,
+# Browserul refuza orice script care nu vine de pe site (biblioteca Supabase e locala, in vendor/),
 # nu lasa pagina sa fie pusa intr-un iframe strain si nu trimite mai departe
 # adresa completa. Datele merg doar la Supabase (si la serviciul de traducere
 # din panou). Pozele produselor pot veni de oriunde (le pune directorul).
@@ -10,7 +10,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
   Cross-Origin-Opener-Policy: same-origin
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.mymemory.translated.net; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.mymemory.translated.net; worker-src 'self'; manifest-src 'self'; media-src 'self' data: blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
 
 # service worker-ul si configurarea se reincarca mereu, ca sa ajunga repede noutatile
 /:local/sw.js

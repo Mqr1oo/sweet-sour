@@ -14,10 +14,12 @@ const urlsToCache = [
   './manifest.json',
   './config.js',
   '../fonturi/fonturi.css',
+  '../vendor/supabase.js',
   './icons/logo.png',
   './icons/favicon.png'
 ];
-// scriptul Supabase vine de pe CDN: raspuns „opac", se pune in cache doar cu no-cors
+// scriptul Supabase e local (vendor/), dar pastram si varianta de pe CDN in cache
+// pentru paginile vechi ramase deschise
 const CDN_SUPABASE = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 
 self.addEventListener('install', event => {
