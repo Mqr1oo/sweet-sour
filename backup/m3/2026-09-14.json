@@ -1,6 +1,6 @@
 {
  "ciorna": null,
- "exportat_la": "2026-09-14T18:46:09.086222+00:00",
+ "exportat_la": "2026-09-14T19:37:31.663989+00:00",
  "meniu": [
   {
    "activ": true,
@@ -1566,7 +1566,7 @@
  "meniu_complet": [
   {
    "activ": true,
-   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "actualizat_la": "2026-09-14T18:50:29.59479+00:00",
    "alergeni": [],
    "categorie": "Espresso Bar",
    "descriere": "Un shot scurt din blendul casei. Baza tuturor cafelelor de aici.",
@@ -1604,7 +1604,7 @@
   },
   {
    "activ": true,
-   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "actualizat_la": "2026-09-14T18:50:29.59479+00:00",
    "alergeni": [],
    "categorie": "Espresso Bar",
    "descriere": "Doua shot-uri, pentru diminetile grele.",
@@ -1642,7 +1642,7 @@
   },
   {
    "activ": true,
-   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "actualizat_la": "2026-09-14T18:50:29.59479+00:00",
    "alergeni": [],
    "categorie": "Espresso Bar",
    "descriere": "Espresso lung cu apa fierbinte. Se bea incet.",
@@ -1682,7 +1682,7 @@
   },
   {
    "activ": true,
-   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "actualizat_la": "2026-09-14T18:50:29.59479+00:00",
    "alergeni": [
     "Lapte"
    ],
