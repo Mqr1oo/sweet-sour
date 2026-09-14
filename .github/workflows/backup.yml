@@ -12,6 +12,9 @@ on:
   schedule:
     - cron: '17 3 * * *'   # 03:17 UTC = 06:17 ora Romaniei
   workflow_dispatch:
+  push:                    # si cand se schimba scriptul, ca sa se vada pe loc ca merge
+    branches: [main]
+    paths: ['.github/workflows/backup.yml', 'backup/salveaza.py']
 
 permissions:
   contents: write
