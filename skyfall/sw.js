@@ -1,23 +1,35 @@
-const CACHE_NAME = 'skyfall-cache-v1';
+const CACHE_NAME = 'skyfall-cache-v2';
 
-// Cai RELATIVE: aplicatia e servita dintr-un subfolder (/MeniuSS/sweetsour/),
-// iar caile absolute ('/dashboard') dadeau 404 -> cache.addAll pica -> service
+// Cai RELATIVE: aplicatia e servita dintr-un subfolder (/m3/), iar caile
+// absolute ('/dashboard') dadeau 404 -> cache.addAll pica -> service
 // worker-ul nu se instala deloc si PWA-ul ramanea fara offline.
-// Doar fisierele panoului de personal. Meniul clientilor (index.html) nu se
-// pune in cache: e o pagina publica, deschisa o data de la codul QR.
+// Fisierele panoului SI ale meniului clientilor: o data deschis, meniul
+// ramane in telefon si se deschide si cu semnal slab (datele — produse,
+// preturi, comenzi — vin mereu din baza si nu se pun niciodata in cache;
+// clientul le tine el, in localStorage, ca rezerva).
 const urlsToCache = [
   './dashboard.html',
+  './index.html',
+  './',
   './manifest.json',
-  './config.js'
+  './config.js',
+  '../fonturi/fonturi.css',
+  './icons/logo.png',
+  './icons/favicon.png'
 ];
+// scriptul Supabase vine de pe CDN: raspuns „opac", se pune in cache doar cu no-cors
+const CDN_SUPABASE = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache =>
       // Fiecare fisier separat: daca unul lipseste, instalarea continua.
-      Promise.all(urlsToCache.map(url =>
-        cache.add(url).catch(err => console.warn('SW: nu am putut pune in cache', url, err))
-      ))
+      Promise.all([
+        ...urlsToCache.map(url =>
+          cache.add(url).catch(err => console.warn('SW: nu am putut pune in cache', url, err))
+        ),
+        fetch(CDN_SUPABASE, { mode: 'no-cors' }).then(r => cache.put(CDN_SUPABASE, r)).catch(() => {})
+      ])
     )
   );
   self.skipWaiting();
@@ -34,7 +46,16 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// NETWORK-FIRST, doar pentru fisierele proprii.
+// Reteaua, cu un termen: daca nu raspunde in cateva secunde (semnal slab),
+// dam copia din cache si lasam reteaua sa termine in fundal.
+function reteaCuTermen(request, ms) {
+  return new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error('termen')), ms);
+    fetch(request).then(r => { clearTimeout(t); resolve(r); }, e => { clearTimeout(t); reject(e); });
+  });
+}
+
+// NETWORK-FIRST pentru fisierele proprii (si fonturi), cu cache ca rezerva.
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
@@ -42,15 +63,27 @@ self.addEventListener('fetch', event => {
 
   // Nu se pun NICIODATA in cache raspunsurile Supabase (comenzi, jurnal, sesiuni).
   // Altfel datele clientilor si ale personalului ramaneau stocate pe telefon.
-  if (url.origin !== self.location.origin || url.hostname.endsWith('supabase.co')) return;
+  if (url.hostname.endsWith('supabase.co') || url.hostname.endsWith('supabase.in')) return;
 
-  // Scope-ul unui service worker e folderul din care e inregistrat, deci ar
-  // prinde si meniul clientilor. Il lasam sa treaca direct la retea: clientul
-  // trebuie sa vada mereu meniul si preturile curente, nu o copie veche.
-  if (url.pathname.endsWith('/') || url.pathname.endsWith('/index.html')) return;
+  // scriptul Supabase de pe CDN: din cache daca il avem (se innoieste in fundal)
+  if (event.request.url.startsWith(CDN_SUPABASE)) {
+    event.respondWith(
+      caches.match(event.request.url).then(cached => {
+        const dinRetea = fetch(event.request.url, { mode: 'no-cors' })
+          .then(r => { caches.open(CACHE_NAME).then(c => c.put(CDN_SUPABASE, r.clone())); return r; })
+          .catch(() => cached);
+        return cached || dinRetea;
+      })
+    );
+    return;
+  }
 
+  if (url.origin !== self.location.origin) return;
+
+  // paginile (meniul, panoul): reteaua are 4 secunde, apoi copia din cache
+  const ePagina = event.request.mode === 'navigate' || url.pathname.endsWith('/') || url.pathname.endsWith('.html');
   event.respondWith(
-    fetch(event.request)
+    reteaCuTermen(event.request, ePagina ? 4000 : 8000)
       .then(networkResponse => {
         if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
           const cacheCopy = networkResponse.clone();
@@ -58,7 +91,7 @@ self.addEventListener('fetch', event => {
         }
         return networkResponse;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => caches.match(event.request, { ignoreSearch: ePagina }))
   );
 });
 

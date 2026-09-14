@@ -259,6 +259,23 @@ Anularea înseamnă bani lipsă din casă, deci e cea mai păzită acțiune:
 
 ---
 
+### „Înapoi" 10 secunde
+
+După „Gata", „Bon confirmat" sau o anulare apare jos o bară cu **„↩ Înapoi"**
+și un contor de 10 secunde, ca la Gmail. Apeși și comanda revine cum era
+(anularea se retrage, bonul se de-bifează). Serverul acceptă doar ce ai făcut
+tu, în ultimele secunde; după aceea rămâne cum e și se aplică regulile
+obișnuite. Revenirea rămâne în jurnal.
+
+### Comanda uitată
+
+O comandă neacceptată de N minute (setare, implicit 5) e marcată **⏰ uitată**:
+sună tare la toată lumea din tură, apare o bandă roșie sus, iar managerul și
+secțiunea primesc notificare pe telefon chiar dacă n-au panoul deschis.
+Directorul primește doar un bip.
+
+---
+
 ## 9. Managerul și directorul
 
 **Managerul** e cel care *lucrează*: modifică orice comandă, anulează fără
@@ -305,6 +322,11 @@ vârf"):
 | **Ore de vârf** | avertisment roșu la clienți: așteptarea e mai mare |
 | **Mod fără ospătari** | barul închide singur comenzile („Preluată") și preia cererile de la mese |
 | **Comenzi la pachet** | pornit/oprit; oprit = clientul nici nu e întrebat |
+| **Meniul zilei** (și managerul) | un produs în capul meniului, cu preț special și ora până la care ține; dispare singur |
+| **Al doilea factor** (și managerul) | codul din aplicația de autentificare, la fiecare intrare, pentru contul tău |
+| **Cod unic pe masă** | comenzile de la clienți trec doar de pe telefoane care au scanat codul QR de pe masă (coduri QR cu cheie) |
+| **Limite pentru comenzile clienților** | câte comenzi neconfirmate pe masă, câte în 10 minute, câte bucăți într-o comandă, pragul „sumă mare" |
+| **Alerta „comandă uitată"** | după câte minute o comandă neacceptată sună la toată lumea și trimite notificare |
 
 ---
 
@@ -339,6 +361,28 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
 - Categoriile se fac singure din produse, în ordinea lor.
 - **Coduri QR**: un generator (separat) face codul fiecărei mese cu numele
   localului pe el, la orice dimensiune, gata de print.
+- **Ciornă → Publică → Versiuni.** Directorul lucrează pe o ciornă:
+  modifică, „Salvează ciorna" de câte ori vrea (clienții nu văd nimic), apoi
+  apasă „Publică" o singură dată. Fiecare publicare păstrează versiunea de
+  dinainte; din „Versiuni" te întorci la oricare („revino la versiunea de
+  ieri"). Prețurile ciudate (0 lei, peste 500 lei) și numele duplicate cer
+  o confirmare înainte.
+- **Produsele nu se șterg, se ascund.** Un produs șters dispare din meniu,
+  dar rămâne cu tot istoricul lui și se recuperează cu un buton.
+- **Etichete**: vegan, vegetarian, fără gluten, fără lactoză, picant, fără
+  alcool, fără zahăr — le bifezi la produs, iar clientului îi apar ca filtre
+  (doar cele care există în meniu).
+- **Meniul zilei**: managerul sau directorul alege un produs, un preț
+  special și ora până la care ține. Apare primul în meniul clientului, cu
+  prețul vechi tăiat; la ora aleasă dispare singur și produsul revine la
+  prețul normal. Serverul calculează comanda cu prețul special cât timp e
+  valabil.
+- **Copie de siguranță**: în fiecare dimineață, GitHub salvează meniul și
+  setările fiecărui local în `backup/<local>/`. Din Șef → Meniu → „Din copia
+  de siguranță" pui fișierul înapoi în ciornă și publici — două minute.
+  Aceeași rulare ține proiectele treze (planul gratuit Supabase le pune pe
+  pauză după o săptămână fără activitate) și trimite email dacă un local nu
+  răspunde.
 
 ---
 
@@ -348,6 +392,11 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
   netul; comenzile intrate între timp sunt anunțate ca și cum ar fi intrat
   atunci.
 - Telefonul clientului reîncarcă starea comenzii când revine pe ecran.
+- **Semnal slab la client**: odată deschis, meniul rămâne în telefon. Fără
+  semnal, clientul vede meniul salvat (cu o bandă „fără semnal") și poate
+  trimite comanda: ea așteaptă pe telefon și pleacă singură când revine
+  semnalul (cel mult 20 de minute; după aceea îi spunem să cheme
+  ospătarul). „Cheamă ospătarul" fără semnal îi spune să facă semn cu mâna.
 - Fiecare local are propria bază de date, separată — un local nu poate
   ajunge la comenzile sau banii altuia, nici prin greșeală.
 - Datele stau în centre de date din Uniunea Europeană, pe conexiune

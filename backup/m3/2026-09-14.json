@@ -1,0 +1,3318 @@
+{
+ "ciorna": null,
+ "exportat_la": "2026-09-14T18:46:09.086222+00:00",
+ "meniu": [
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Espresso Bar",
+   "descriere": "Un shot scurt din blendul casei. Baza tuturor cafelelor de aici.",
+   "etichete": [],
+   "id_produs": "1",
+   "imagine": "images/1.webp",
+   "ingrediente": [
+    "Cafea"
+   ],
+   "nume": "Espresso",
+   "nume_variante": [
+    "espresso",
+    "espresso"
+   ],
+   "ordine": 10,
+   "pret": 9.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "A short shot of our house blend.",
+     "ingrediente": [
+      "Cafea"
+     ],
+     "nume": "Espresso"
+    }
+   },
+   "volum": "30 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Espresso Bar",
+   "descriere": "Doua shot-uri, pentru diminetile grele.",
+   "etichete": [],
+   "id_produs": "2",
+   "imagine": "images/2.webp",
+   "ingrediente": [
+    "Cafea"
+   ],
+   "nume": "Espresso dublu",
+   "nume_variante": [
+    "espresso dublu",
+    "double espresso"
+   ],
+   "ordine": 20,
+   "pret": 12.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Two shots, for the hard mornings.",
+     "ingrediente": [
+      "Cafea"
+     ],
+     "nume": "Double Espresso"
+    }
+   },
+   "volum": "60 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Espresso Bar",
+   "descriere": "Espresso lung cu apa fierbinte. Se bea incet.",
+   "etichete": [],
+   "id_produs": "3",
+   "imagine": "images/3.webp",
+   "ingrediente": [
+    "Cafea",
+    "Apa"
+   ],
+   "nume": "Americano",
+   "nume_variante": [
+    "americano",
+    "americano"
+   ],
+   "ordine": 30,
+   "pret": 11.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Espresso lengthened with hot water.",
+     "ingrediente": [
+      "Cafea",
+      "Apa"
+     ],
+     "nume": "Americano"
+    }
+   },
+   "volum": "200 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Espresso Bar",
+   "descriere": "Espresso, lapte aburit si un strat gros de spuma.",
+   "etichete": [],
+   "id_produs": "4",
+   "imagine": "images/4.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte"
+   ],
+   "nume": "Cappuccino",
+   "nume_variante": [
+    "cappuccino",
+    "cappuccino"
+   ],
+   "ordine": 40,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Espresso, steamed milk and a thick layer of foam.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte"
+     ],
+     "nume": "Cappuccino"
+    }
+   },
+   "volum": "180 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Espresso Bar",
+   "descriere": "Mai mult espresso, mai putina spuma. Pentru cine vrea sa simta cafeaua.",
+   "etichete": [],
+   "id_produs": "5",
+   "imagine": "images/5.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte"
+   ],
+   "nume": "Flat White",
+   "nume_variante": [
+    "flat white",
+    "flat white"
+   ],
+   "ordine": 50,
+   "pret": 16.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "More espresso, less foam. For those who want to taste the coffee.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte"
+     ],
+     "nume": "Flat White"
+    }
+   },
+   "volum": "160 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Espresso Bar",
+   "descriere": "Bland si cremos, cu mult lapte aburit.",
+   "etichete": [],
+   "id_produs": "6",
+   "imagine": "images/6.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte"
+   ],
+   "nume": "Latte",
+   "nume_variante": [
+    "latte",
+    "latte"
+   ],
+   "ordine": 60,
+   "pret": 16.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Mild and creamy, with plenty of steamed milk.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte"
+     ],
+     "nume": "Latte"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Espresso Bar",
+   "descriere": "Espresso taiat cu putin lapte cald. Echilibrat, fara sa fie tare.",
+   "etichete": [],
+   "id_produs": "7",
+   "imagine": "images/7.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte"
+   ],
+   "nume": "Cortado",
+   "nume_variante": [
+    "cortado",
+    "cortado"
+   ],
+   "ordine": 70,
+   "pret": 13.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Espresso cut with a little warm milk.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte"
+     ],
+     "nume": "Cortado"
+    }
+   },
+   "volum": "120 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Espresso Bar",
+   "descriere": "Cafea cu ciocolata si lapte, cu frisca deasupra.",
+   "etichete": [],
+   "id_produs": "8",
+   "imagine": "images/8.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte",
+    "Ciocolata",
+    "Frisca"
+   ],
+   "nume": "Mocha",
+   "nume_variante": [
+    "mocha",
+    "mocha"
+   ],
+   "ordine": 80,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Coffee with chocolate and milk, topped with cream.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte",
+      "Ciocolata",
+      "Frisca"
+     ],
+     "nume": "Mocha"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte",
+    "Fructe cu coaja lemnoasa"
+   ],
+   "categorie": "Signature",
+   "descriere": "Espresso dublu, sirop de fistic si lapte, servit in strat dublu. Bautura casei.",
+   "etichete": [],
+   "id_produs": "9",
+   "imagine": "images/9.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte",
+    "Sirop de fistic"
+   ],
+   "nume": "M3 Signature",
+   "nume_variante": [
+    "m3 signature",
+    "m3 signature"
+   ],
+   "ordine": 90,
+   "pret": 22.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte",
+      "Fructe cu coaja lemnoasa"
+     ],
+     "descriere": "Double espresso, pistachio syrup and milk, served layered. The house drink.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte",
+      "Sirop de fistic"
+     ],
+     "nume": "M3 Signature"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Signature",
+   "descriere": "Cafea turnata peste cuburi de gheata din lapte condensat. Se schimba in pahar pe masura ce se topesc.",
+   "etichete": [],
+   "id_produs": "10",
+   "imagine": "images/10.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte condensat",
+    "Gheata"
+   ],
+   "nume": "Cub de Cafea",
+   "nume_variante": [
+    "cub de cafea",
+    "coffee cube"
+   ],
+   "ordine": 100,
+   "pret": 21.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Coffee poured over condensed-milk ice cubes. It changes in the glass as they melt.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte condensat",
+      "Gheata"
+     ],
+     "nume": "Coffee Cube"
+    }
+   },
+   "volum": "350 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Signature",
+   "descriere": "Latte cu caramel sarat si un praf de scortisoara.",
+   "etichete": [],
+   "id_produs": "11",
+   "imagine": "images/11.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte",
+    "Caramel",
+    "Scortisoara"
+   ],
+   "nume": "Caramel Lounge",
+   "nume_variante": [
+    "caramel lounge",
+    "caramel lounge"
+   ],
+   "ordine": 110,
+   "pret": 20.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Latte with salted caramel and a dust of cinnamon.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte",
+      "Caramel",
+      "Scortisoara"
+     ],
+     "nume": "Caramel Lounge"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Cold Brew & Iced",
+   "descriere": "Espresso peste gheata, cu lapte rece.",
+   "etichete": [],
+   "id_produs": "12",
+   "imagine": "images/12.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte",
+    "Gheata"
+   ],
+   "nume": "Iced Latte",
+   "nume_variante": [
+    "iced latte",
+    "iced latte"
+   ],
+   "ordine": 120,
+   "pret": 17.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Espresso over ice with cold milk.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte",
+      "Gheata"
+     ],
+     "nume": "Iced Latte"
+    }
+   },
+   "volum": "350 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cold Brew & Iced",
+   "descriere": "Infuzat la rece 18 ore. Mai putin acid, mai dulce natural.",
+   "etichete": [],
+   "id_produs": "13",
+   "imagine": "images/13.webp",
+   "ingrediente": [
+    "Cafea",
+    "Apa"
+   ],
+   "nume": "Cold Brew",
+   "nume_variante": [
+    "cold brew",
+    "cold brew"
+   ],
+   "ordine": 130,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Cold-steeped for 18 hours. Less acidic, naturally sweeter.",
+     "ingrediente": [
+      "Cafea",
+      "Apa"
+     ],
+     "nume": "Cold Brew"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Cold Brew & Iced",
+   "descriere": "Cafea batuta cu gheata si lapte, rece si spumoasa.",
+   "etichete": [],
+   "id_produs": "14",
+   "imagine": "images/14.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte",
+    "Gheata",
+    "Zahar"
+   ],
+   "nume": "Frappe",
+   "nume_variante": [
+    "frappe",
+    "frappe"
+   ],
+   "ordine": 140,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Coffee shaken with ice and milk, cold and foamy.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte",
+      "Gheata",
+      "Zahar"
+     ],
+     "nume": "Frappe"
+    }
+   },
+   "volum": "400 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cold Brew & Iced",
+   "descriere": "Espresso peste tonic si gheata, cu felie de lamaie. Surprinzator de bun.",
+   "etichete": [],
+   "id_produs": "15",
+   "imagine": "images/15.webp",
+   "ingrediente": [
+    "Cafea",
+    "Tonic",
+    "Lamaie",
+    "Gheata"
+   ],
+   "nume": "Espresso Tonic",
+   "nume_variante": [
+    "espresso tonic",
+    "espresso tonic"
+   ],
+   "ordine": 150,
+   "pret": 19.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Espresso over tonic and ice, with a lemon slice.",
+     "ingrediente": [
+      "Cafea",
+      "Tonic",
+      "Lamaie",
+      "Gheata"
+     ],
+     "nume": "Espresso Tonic"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Ceai & Altele",
+   "descriere": "Negru, verde, menta sau fructe de padure.",
+   "etichete": [],
+   "id_produs": "16",
+   "imagine": "images/16.webp",
+   "ingrediente": [
+    "Ceai"
+   ],
+   "nume": "Ceai la ceainic",
+   "nume_variante": [
+    "ceai la ceainic",
+    "pot of tea"
+   ],
+   "ordine": 160,
+   "pret": 12.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Black, green, mint or forest fruit.",
+     "ingrediente": [
+      "Ceai"
+     ],
+     "nume": "Pot of Tea"
+    }
+   },
+   "volum": "400 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Ceai & Altele",
+   "descriere": "Groasa, din ciocolata adevarata, nu din plic.",
+   "etichete": [],
+   "id_produs": "17",
+   "imagine": "images/17.webp",
+   "ingrediente": [
+    "Ciocolata",
+    "Lapte"
+   ],
+   "nume": "Ciocolata calda",
+   "nume_variante": [
+    "ciocolata calda",
+    "hot chocolate"
+   ],
+   "ordine": 170,
+   "pret": 17.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Thick, from real chocolate, not from a sachet.",
+     "ingrediente": [
+      "Ciocolata",
+      "Lapte"
+     ],
+     "nume": "Hot Chocolate"
+    }
+   },
+   "volum": "250 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Ceai & Altele",
+   "descriere": "Matcha ceremonial cu lapte aburit.",
+   "etichete": [],
+   "id_produs": "18",
+   "imagine": "images/18.webp",
+   "ingrediente": [
+    "Matcha",
+    "Lapte"
+   ],
+   "nume": "Matcha Latte",
+   "nume_variante": [
+    "matcha latte",
+    "matcha latte"
+   ],
+   "ordine": 180,
+   "pret": 20.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Ceremonial matcha with steamed milk.",
+     "ingrediente": [
+      "Matcha",
+      "Lapte"
+     ],
+     "nume": "Matcha Latte"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Ceai & Altele",
+   "descriere": "Ceai negru cu condimente si lapte.",
+   "etichete": [],
+   "id_produs": "19",
+   "imagine": "images/19.webp",
+   "ingrediente": [
+    "Ceai negru",
+    "Condimente",
+    "Lapte"
+   ],
+   "nume": "Chai Latte",
+   "nume_variante": [
+    "chai latte",
+    "chai latte"
+   ],
+   "ordine": 190,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Black tea with spices and milk.",
+     "ingrediente": [
+      "Ceai negru",
+      "Condimente",
+      "Lapte"
+     ],
+     "nume": "Chai Latte"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Limonade & Racoritoare",
+   "descriere": "Lamaie stoarsa pe loc, menta si sifon.",
+   "etichete": [],
+   "id_produs": "20",
+   "imagine": "images/20.webp",
+   "ingrediente": [
+    "Lamaie",
+    "Menta",
+    "Zahar",
+    "Sifon"
+   ],
+   "nume": "Limonada casei",
+   "nume_variante": [
+    "limonada casei",
+    "house lemonade"
+   ],
+   "ordine": 200,
+   "pret": 16.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Lemons squeezed to order, mint and soda.",
+     "ingrediente": [
+      "Lamaie",
+      "Menta",
+      "Zahar",
+      "Sifon"
+     ],
+     "nume": "House Lemonade"
+    }
+   },
+   "volum": "400 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Limonade & Racoritoare",
+   "descriere": "Aceeasi limonada, cu piure de zmeura.",
+   "etichete": [],
+   "id_produs": "21",
+   "imagine": "images/21.webp",
+   "ingrediente": [
+    "Lamaie",
+    "Zmeura",
+    "Zahar",
+    "Sifon"
+   ],
+   "nume": "Limonada de zmeura",
+   "nume_variante": [
+    "limonada de zmeura",
+    "raspberry lemonade"
+   ],
+   "ordine": 210,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "The same lemonade, with raspberry puree.",
+     "ingrediente": [
+      "Lamaie",
+      "Zmeura",
+      "Zahar",
+      "Sifon"
+     ],
+     "nume": "Raspberry Lemonade"
+    }
+   },
+   "volum": "400 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Limonade & Racoritoare",
+   "descriere": "Stors la comanda.",
+   "etichete": [],
+   "id_produs": "22",
+   "imagine": "images/22.webp",
+   "ingrediente": [
+    "Portocale"
+   ],
+   "nume": "Suc natural de portocale",
+   "nume_variante": [
+    "suc natural de portocale",
+    "fresh orange juice"
+   ],
+   "ordine": 220,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Squeezed to order.",
+     "ingrediente": [
+      "Portocale"
+     ],
+     "nume": "Fresh Orange Juice"
+    }
+   },
+   "volum": "250 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Limonade & Racoritoare",
+   "descriere": "Plata sau carbogazoasa.",
+   "etichete": [],
+   "id_produs": "23",
+   "imagine": "images/23.webp",
+   "ingrediente": [
+    "Apa minerala"
+   ],
+   "nume": "Apa minerala",
+   "nume_variante": [
+    "apa minerala",
+    "mineral water"
+   ],
+   "ordine": 230,
+   "pret": 8.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Still or sparkling.",
+     "ingrediente": [
+      "Apa minerala"
+     ],
+     "nume": "Mineral Water"
+    }
+   },
+   "volum": "330 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Limonade & Racoritoare",
+   "descriere": "Bauturi carbogazoase la sticla.",
+   "etichete": [],
+   "id_produs": "24",
+   "imagine": "images/24.webp",
+   "ingrediente": [
+    "Bautura carbogazoasa"
+   ],
+   "nume": "Cola / Fanta / Sprite",
+   "nume_variante": [
+    "cola / fanta / sprite",
+    "cola / fanta / sprite"
+   ],
+   "ordine": 240,
+   "pret": 10.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Bottled soft drinks.",
+     "ingrediente": [
+      "Bautura carbogazoasa"
+     ],
+     "nume": "Cola / Fanta / Sprite"
+    }
+   },
+   "volum": "330 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Cocktailuri",
+   "descriere": "Aperol, prosecco si sifon, cu felie de portocala.",
+   "etichete": [],
+   "id_produs": "25",
+   "imagine": "images/25.webp",
+   "ingrediente": [
+    "Aperol",
+    "Prosecco",
+    "Sifon",
+    "Portocala"
+   ],
+   "nume": "Aperol Spritz",
+   "nume_variante": [
+    "aperol spritz",
+    "aperol spritz"
+   ],
+   "ordine": 250,
+   "pret": 29.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "Aperol, prosecco and soda with an orange slice.",
+     "ingrediente": [
+      "Aperol",
+      "Prosecco",
+      "Sifon",
+      "Portocala"
+     ],
+     "nume": "Aperol Spritz"
+    }
+   },
+   "volum": "250 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Vodka, lichior de cafea si un espresso proaspat.",
+   "etichete": [],
+   "id_produs": "26",
+   "imagine": "images/26.webp",
+   "ingrediente": [
+    "Vodka",
+    "Lichior de cafea",
+    "Espresso",
+    "Sirop"
+   ],
+   "nume": "Espresso Martini",
+   "nume_variante": [
+    "espresso martini",
+    "espresso martini"
+   ],
+   "ordine": 260,
+   "pret": 32.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Vodka, coffee liqueur and a fresh espresso.",
+     "ingrediente": [
+      "Vodka",
+      "Lichior de cafea",
+      "Espresso",
+      "Sirop"
+     ],
+     "nume": "Espresso Martini"
+    }
+   },
+   "volum": "180 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Gin, vermut rosu si bitter, pe un cub mare.",
+   "etichete": [],
+   "id_produs": "27",
+   "imagine": "images/27.webp",
+   "ingrediente": [
+    "Gin",
+    "Vermut rosu",
+    "Bitter"
+   ],
+   "nume": "Negroni",
+   "nume_variante": [
+    "negroni",
+    "negroni"
+   ],
+   "ordine": 270,
+   "pret": 30.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Gin, red vermouth and bitter over one large cube.",
+     "ingrediente": [
+      "Gin",
+      "Vermut rosu",
+      "Bitter"
+     ],
+     "nume": "Negroni"
+    }
+   },
+   "volum": "200 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Gin la alegere, tonic premium si citrice.",
+   "etichete": [],
+   "id_produs": "28",
+   "imagine": "images/28.webp",
+   "ingrediente": [
+    "Gin",
+    "Tonic",
+    "Lamaie verde"
+   ],
+   "nume": "Gin Tonic",
+   "nume_variante": [
+    "gin tonic",
+    "gin & tonic"
+   ],
+   "ordine": 280,
+   "pret": 28.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Your choice of gin, premium tonic and citrus.",
+     "ingrediente": [
+      "Gin",
+      "Tonic",
+      "Lamaie verde"
+     ],
+     "nume": "Gin & Tonic"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Cocktailuri",
+   "descriere": "Alb sau rosu, sec. Intreaba de recolta zilei.",
+   "etichete": [],
+   "id_produs": "29",
+   "imagine": "images/29.webp",
+   "ingrediente": [
+    "Vin"
+   ],
+   "nume": "Vin la pahar",
+   "nume_variante": [
+    "vin la pahar",
+    "wine by the glass"
+   ],
+   "ordine": 290,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "White or red, dry. Ask for today's bottle.",
+     "ingrediente": [
+      "Vin"
+     ],
+     "nume": "Wine by the Glass"
+    }
+   },
+   "volum": "150 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Gluten",
+    "Lapte"
+   ],
+   "categorie": "Mic Dejun",
+   "descriere": "Copt in fiecare dimineata.",
+   "etichete": [],
+   "id_produs": "30",
+   "imagine": "images/30.webp",
+   "ingrediente": [
+    "Faina",
+    "Unt",
+    "Drojdie"
+   ],
+   "nume": "Croissant simplu",
+   "nume_variante": [
+    "croissant simplu",
+    "plain croissant"
+   ],
+   "ordine": 300,
+   "pret": 9.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten",
+      "Lapte"
+     ],
+     "descriere": "Baked every morning.",
+     "ingrediente": [
+      "Faina",
+      "Unt",
+      "Drojdie"
+     ],
+     "nume": "Plain Croissant"
+    }
+   },
+   "volum": "80 g"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Gluten",
+    "Lapte"
+   ],
+   "categorie": "Mic Dejun",
+   "descriere": "Cu unt de ferma si gem de casa.",
+   "etichete": [],
+   "id_produs": "31",
+   "imagine": "images/31.webp",
+   "ingrediente": [
+    "Croissant",
+    "Unt",
+    "Gem"
+   ],
+   "nume": "Croissant cu unt si gem",
+   "nume_variante": [
+    "croissant cu unt si gem",
+    "croissant with butter and jam"
+   ],
+   "ordine": 310,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten",
+      "Lapte"
+     ],
+     "descriere": "With farm butter and house jam.",
+     "ingrediente": [
+      "Croissant",
+      "Unt",
+      "Gem"
+     ],
+     "nume": "Croissant with Butter and Jam"
+    }
+   },
+   "volum": "130 g"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Gluten",
+    "Ou"
+   ],
+   "categorie": "Mic Dejun",
+   "descriere": "Paine cu maia, avocado, ou posat si seminte.",
+   "etichete": [],
+   "id_produs": "32",
+   "imagine": "images/32.webp",
+   "ingrediente": [
+    "Paine cu maia",
+    "Avocado",
+    "Ou",
+    "Seminte"
+   ],
+   "nume": "Avocado toast",
+   "nume_variante": [
+    "avocado toast",
+    "avocado toast"
+   ],
+   "ordine": 320,
+   "pret": 32.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": true,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten",
+      "Ou"
+     ],
+     "descriere": "Sourdough, avocado, poached egg and seeds.",
+     "ingrediente": [
+      "Paine cu maia",
+      "Avocado",
+      "Ou",
+      "Seminte"
+     ],
+     "nume": "Avocado Toast"
+    }
+   },
+   "volum": "280 g"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Ou",
+    "Lapte",
+    "Gluten"
+   ],
+   "categorie": "Mic Dejun",
+   "descriere": "Trei oua, branza si ierburi, cu paine prajita.",
+   "etichete": [],
+   "id_produs": "33",
+   "imagine": "images/33.webp",
+   "ingrediente": [
+    "Oua",
+    "Branza",
+    "Ierburi",
+    "Paine"
+   ],
+   "nume": "Omleta cu branza",
+   "nume_variante": [
+    "omleta cu branza",
+    "cheese omelette"
+   ],
+   "ordine": 330,
+   "pret": 28.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Ou",
+      "Lapte",
+      "Gluten"
+     ],
+     "descriere": "Three eggs, cheese and herbs, with toast.",
+     "ingrediente": [
+      "Oua",
+      "Branza",
+      "Ierburi",
+      "Paine"
+     ],
+     "nume": "Cheese Omelette"
+    }
+   },
+   "volum": "250 g"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte",
+    "Gluten",
+    "Fructe cu coaja lemnoasa"
+   ],
+   "categorie": "Mic Dejun",
+   "descriere": "Iaurt grecesc, granola de casa si fructe de sezon.",
+   "etichete": [],
+   "id_produs": "34",
+   "imagine": "images/34.webp",
+   "ingrediente": [
+    "Iaurt",
+    "Granola",
+    "Fructe",
+    "Miere"
+   ],
+   "nume": "Iaurt cu granola",
+   "nume_variante": [
+    "iaurt cu granola",
+    "yogurt with granola"
+   ],
+   "ordine": 340,
+   "pret": 24.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte",
+      "Gluten",
+      "Fructe cu coaja lemnoasa"
+     ],
+     "descriere": "Greek yogurt, house granola and seasonal fruit.",
+     "ingrediente": [
+      "Iaurt",
+      "Granola",
+      "Fructe",
+      "Miere"
+     ],
+     "nume": "Yogurt with Granola"
+    }
+   },
+   "volum": "300 g"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte",
+    "Gluten",
+    "Ou"
+   ],
+   "categorie": "Prajituri",
+   "descriere": "New York, cu sos de fructe de padure.",
+   "etichete": [],
+   "id_produs": "35",
+   "imagine": "images/35.webp",
+   "ingrediente": [
+    "Branza",
+    "Biscuiti",
+    "Fructe de padure"
+   ],
+   "nume": "Cheesecake",
+   "nume_variante": [
+    "cheesecake",
+    "cheesecake"
+   ],
+   "ordine": 350,
+   "pret": 22.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte",
+      "Gluten",
+      "Ou"
+     ],
+     "descriere": "New York style, with berry sauce.",
+     "ingrediente": [
+      "Branza",
+      "Biscuiti",
+      "Fructe de padure"
+     ],
+     "nume": "Cheesecake"
+    }
+   },
+   "volum": "150 g"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte",
+    "Gluten",
+    "Ou"
+   ],
+   "categorie": "Prajituri",
+   "descriere": "Reteta clasica, facut in casa.",
+   "etichete": [],
+   "id_produs": "36",
+   "imagine": "images/36.webp",
+   "ingrediente": [
+    "Mascarpone",
+    "Piscoturi",
+    "Cafea",
+    "Cacao"
+   ],
+   "nume": "Tiramisu",
+   "nume_variante": [
+    "tiramisu",
+    "tiramisu"
+   ],
+   "ordine": 360,
+   "pret": 22.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte",
+      "Gluten",
+      "Ou"
+     ],
+     "descriere": "Classic recipe, made in house.",
+     "ingrediente": [
+      "Mascarpone",
+      "Piscoturi",
+      "Cafea",
+      "Cacao"
+     ],
+     "nume": "Tiramisu"
+    }
+   },
+   "volum": "140 g"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Gluten",
+    "Lapte",
+    "Ou",
+    "Fructe cu coaja lemnoasa"
+   ],
+   "categorie": "Prajituri",
+   "descriere": "Blat fraged si crema de fistic.",
+   "etichete": [],
+   "id_produs": "37",
+   "imagine": "images/37.webp",
+   "ingrediente": [
+    "Faina",
+    "Unt",
+    "Fistic",
+    "Ou"
+   ],
+   "nume": "Tarta cu fistic",
+   "nume_variante": [
+    "tarta cu fistic",
+    "pistachio tart"
+   ],
+   "ordine": 370,
+   "pret": 24.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": true,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten",
+      "Lapte",
+      "Ou",
+      "Fructe cu coaja lemnoasa"
+     ],
+     "descriere": "Shortcrust base and pistachio cream.",
+     "ingrediente": [
+      "Faina",
+      "Unt",
+      "Fistic",
+      "Ou"
+     ],
+     "nume": "Pistachio Tart"
+    }
+   },
+   "volum": "120 g"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Gluten",
+    "Lapte",
+    "Ou",
+    "Fructe cu coaja lemnoasa"
+   ],
+   "categorie": "Prajituri",
+   "descriere": "Cu ciocolata neagra si nuci, servit cald.",
+   "etichete": [],
+   "id_produs": "38",
+   "imagine": "images/38.webp",
+   "ingrediente": [
+    "Ciocolata",
+    "Unt",
+    "Nuci",
+    "Ou"
+   ],
+   "nume": "Brownie",
+   "nume_variante": [
+    "brownie",
+    "brownie"
+   ],
+   "ordine": 380,
+   "pret": 20.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten",
+      "Lapte",
+      "Ou",
+      "Fructe cu coaja lemnoasa"
+     ],
+     "descriere": "Dark chocolate and walnuts, served warm.",
+     "ingrediente": [
+      "Ciocolata",
+      "Unt",
+      "Nuci",
+      "Ou"
+     ],
+     "nume": "Brownie"
+    }
+   },
+   "volum": "130 g"
+  }
+ ],
+ "meniu_complet": [
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Espresso Bar",
+   "descriere": "Un shot scurt din blendul casei. Baza tuturor cafelelor de aici.",
+   "etichete": [],
+   "id_produs": "1",
+   "imagine": "images/1.webp",
+   "ingrediente": [
+    "Cafea"
+   ],
+   "nume": "Espresso",
+   "nume_variante": [
+    "espresso",
+    "espresso"
+   ],
+   "ordine": 10,
+   "pret": 9.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "A short shot of our house blend.",
+     "ingrediente": [
+      "Cafea"
+     ],
+     "nume": "Espresso"
+    }
+   },
+   "volum": "30 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Espresso Bar",
+   "descriere": "Doua shot-uri, pentru diminetile grele.",
+   "etichete": [],
+   "id_produs": "2",
+   "imagine": "images/2.webp",
+   "ingrediente": [
+    "Cafea"
+   ],
+   "nume": "Espresso dublu",
+   "nume_variante": [
+    "espresso dublu",
+    "double espresso"
+   ],
+   "ordine": 20,
+   "pret": 12.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Two shots, for the hard mornings.",
+     "ingrediente": [
+      "Cafea"
+     ],
+     "nume": "Double Espresso"
+    }
+   },
+   "volum": "60 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Espresso Bar",
+   "descriere": "Espresso lung cu apa fierbinte. Se bea incet.",
+   "etichete": [],
+   "id_produs": "3",
+   "imagine": "images/3.webp",
+   "ingrediente": [
+    "Cafea",
+    "Apa"
+   ],
+   "nume": "Americano",
+   "nume_variante": [
+    "americano",
+    "americano"
+   ],
+   "ordine": 30,
+   "pret": 11.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Espresso lengthened with hot water.",
+     "ingrediente": [
+      "Cafea",
+      "Apa"
+     ],
+     "nume": "Americano"
+    }
+   },
+   "volum": "200 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Espresso Bar",
+   "descriere": "Espresso, lapte aburit si un strat gros de spuma.",
+   "etichete": [],
+   "id_produs": "4",
+   "imagine": "images/4.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte"
+   ],
+   "nume": "Cappuccino",
+   "nume_variante": [
+    "cappuccino",
+    "cappuccino"
+   ],
+   "ordine": 40,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Espresso, steamed milk and a thick layer of foam.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte"
+     ],
+     "nume": "Cappuccino"
+    }
+   },
+   "volum": "180 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Espresso Bar",
+   "descriere": "Mai mult espresso, mai putina spuma. Pentru cine vrea sa simta cafeaua.",
+   "etichete": [],
+   "id_produs": "5",
+   "imagine": "images/5.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte"
+   ],
+   "nume": "Flat White",
+   "nume_variante": [
+    "flat white",
+    "flat white"
+   ],
+   "ordine": 50,
+   "pret": 16.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "More espresso, less foam. For those who want to taste the coffee.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte"
+     ],
+     "nume": "Flat White"
+    }
+   },
+   "volum": "160 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Espresso Bar",
+   "descriere": "Bland si cremos, cu mult lapte aburit.",
+   "etichete": [],
+   "id_produs": "6",
+   "imagine": "images/6.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte"
+   ],
+   "nume": "Latte",
+   "nume_variante": [
+    "latte",
+    "latte"
+   ],
+   "ordine": 60,
+   "pret": 16.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Mild and creamy, with plenty of steamed milk.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte"
+     ],
+     "nume": "Latte"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Espresso Bar",
+   "descriere": "Espresso taiat cu putin lapte cald. Echilibrat, fara sa fie tare.",
+   "etichete": [],
+   "id_produs": "7",
+   "imagine": "images/7.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte"
+   ],
+   "nume": "Cortado",
+   "nume_variante": [
+    "cortado",
+    "cortado"
+   ],
+   "ordine": 70,
+   "pret": 13.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Espresso cut with a little warm milk.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte"
+     ],
+     "nume": "Cortado"
+    }
+   },
+   "volum": "120 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Espresso Bar",
+   "descriere": "Cafea cu ciocolata si lapte, cu frisca deasupra.",
+   "etichete": [],
+   "id_produs": "8",
+   "imagine": "images/8.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte",
+    "Ciocolata",
+    "Frisca"
+   ],
+   "nume": "Mocha",
+   "nume_variante": [
+    "mocha",
+    "mocha"
+   ],
+   "ordine": 80,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Coffee with chocolate and milk, topped with cream.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte",
+      "Ciocolata",
+      "Frisca"
+     ],
+     "nume": "Mocha"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte",
+    "Fructe cu coaja lemnoasa"
+   ],
+   "categorie": "Signature",
+   "descriere": "Espresso dublu, sirop de fistic si lapte, servit in strat dublu. Bautura casei.",
+   "etichete": [],
+   "id_produs": "9",
+   "imagine": "images/9.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte",
+    "Sirop de fistic"
+   ],
+   "nume": "M3 Signature",
+   "nume_variante": [
+    "m3 signature",
+    "m3 signature"
+   ],
+   "ordine": 90,
+   "pret": 22.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte",
+      "Fructe cu coaja lemnoasa"
+     ],
+     "descriere": "Double espresso, pistachio syrup and milk, served layered. The house drink.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte",
+      "Sirop de fistic"
+     ],
+     "nume": "M3 Signature"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Signature",
+   "descriere": "Cafea turnata peste cuburi de gheata din lapte condensat. Se schimba in pahar pe masura ce se topesc.",
+   "etichete": [],
+   "id_produs": "10",
+   "imagine": "images/10.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte condensat",
+    "Gheata"
+   ],
+   "nume": "Cub de Cafea",
+   "nume_variante": [
+    "cub de cafea",
+    "coffee cube"
+   ],
+   "ordine": 100,
+   "pret": 21.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Coffee poured over condensed-milk ice cubes. It changes in the glass as they melt.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte condensat",
+      "Gheata"
+     ],
+     "nume": "Coffee Cube"
+    }
+   },
+   "volum": "350 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Signature",
+   "descriere": "Latte cu caramel sarat si un praf de scortisoara.",
+   "etichete": [],
+   "id_produs": "11",
+   "imagine": "images/11.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte",
+    "Caramel",
+    "Scortisoara"
+   ],
+   "nume": "Caramel Lounge",
+   "nume_variante": [
+    "caramel lounge",
+    "caramel lounge"
+   ],
+   "ordine": 110,
+   "pret": 20.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Latte with salted caramel and a dust of cinnamon.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte",
+      "Caramel",
+      "Scortisoara"
+     ],
+     "nume": "Caramel Lounge"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Cold Brew & Iced",
+   "descriere": "Espresso peste gheata, cu lapte rece.",
+   "etichete": [],
+   "id_produs": "12",
+   "imagine": "images/12.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte",
+    "Gheata"
+   ],
+   "nume": "Iced Latte",
+   "nume_variante": [
+    "iced latte",
+    "iced latte"
+   ],
+   "ordine": 120,
+   "pret": 17.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Espresso over ice with cold milk.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte",
+      "Gheata"
+     ],
+     "nume": "Iced Latte"
+    }
+   },
+   "volum": "350 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Cold Brew & Iced",
+   "descriere": "Infuzat la rece 18 ore. Mai putin acid, mai dulce natural.",
+   "etichete": [],
+   "id_produs": "13",
+   "imagine": "images/13.webp",
+   "ingrediente": [
+    "Cafea",
+    "Apa"
+   ],
+   "nume": "Cold Brew",
+   "nume_variante": [
+    "cold brew",
+    "cold brew"
+   ],
+   "ordine": 130,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Cold-steeped for 18 hours. Less acidic, naturally sweeter.",
+     "ingrediente": [
+      "Cafea",
+      "Apa"
+     ],
+     "nume": "Cold Brew"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Cold Brew & Iced",
+   "descriere": "Cafea batuta cu gheata si lapte, rece si spumoasa.",
+   "etichete": [],
+   "id_produs": "14",
+   "imagine": "images/14.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte",
+    "Gheata",
+    "Zahar"
+   ],
+   "nume": "Frappe",
+   "nume_variante": [
+    "frappe",
+    "frappe"
+   ],
+   "ordine": 140,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Coffee shaken with ice and milk, cold and foamy.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte",
+      "Gheata",
+      "Zahar"
+     ],
+     "nume": "Frappe"
+    }
+   },
+   "volum": "400 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Cold Brew & Iced",
+   "descriere": "Espresso peste tonic si gheata, cu felie de lamaie. Surprinzator de bun.",
+   "etichete": [],
+   "id_produs": "15",
+   "imagine": "images/15.webp",
+   "ingrediente": [
+    "Cafea",
+    "Tonic",
+    "Lamaie",
+    "Gheata"
+   ],
+   "nume": "Espresso Tonic",
+   "nume_variante": [
+    "espresso tonic",
+    "espresso tonic"
+   ],
+   "ordine": 150,
+   "pret": 19.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Espresso over tonic and ice, with a lemon slice.",
+     "ingrediente": [
+      "Cafea",
+      "Tonic",
+      "Lamaie",
+      "Gheata"
+     ],
+     "nume": "Espresso Tonic"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Ceai & Altele",
+   "descriere": "Negru, verde, menta sau fructe de padure.",
+   "etichete": [],
+   "id_produs": "16",
+   "imagine": "images/16.webp",
+   "ingrediente": [
+    "Ceai"
+   ],
+   "nume": "Ceai la ceainic",
+   "nume_variante": [
+    "ceai la ceainic",
+    "pot of tea"
+   ],
+   "ordine": 160,
+   "pret": 12.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Black, green, mint or forest fruit.",
+     "ingrediente": [
+      "Ceai"
+     ],
+     "nume": "Pot of Tea"
+    }
+   },
+   "volum": "400 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Ceai & Altele",
+   "descriere": "Groasa, din ciocolata adevarata, nu din plic.",
+   "etichete": [],
+   "id_produs": "17",
+   "imagine": "images/17.webp",
+   "ingrediente": [
+    "Ciocolata",
+    "Lapte"
+   ],
+   "nume": "Ciocolata calda",
+   "nume_variante": [
+    "ciocolata calda",
+    "hot chocolate"
+   ],
+   "ordine": 170,
+   "pret": 17.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Thick, from real chocolate, not from a sachet.",
+     "ingrediente": [
+      "Ciocolata",
+      "Lapte"
+     ],
+     "nume": "Hot Chocolate"
+    }
+   },
+   "volum": "250 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Ceai & Altele",
+   "descriere": "Matcha ceremonial cu lapte aburit.",
+   "etichete": [],
+   "id_produs": "18",
+   "imagine": "images/18.webp",
+   "ingrediente": [
+    "Matcha",
+    "Lapte"
+   ],
+   "nume": "Matcha Latte",
+   "nume_variante": [
+    "matcha latte",
+    "matcha latte"
+   ],
+   "ordine": 180,
+   "pret": 20.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Ceremonial matcha with steamed milk.",
+     "ingrediente": [
+      "Matcha",
+      "Lapte"
+     ],
+     "nume": "Matcha Latte"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Ceai & Altele",
+   "descriere": "Ceai negru cu condimente si lapte.",
+   "etichete": [],
+   "id_produs": "19",
+   "imagine": "images/19.webp",
+   "ingrediente": [
+    "Ceai negru",
+    "Condimente",
+    "Lapte"
+   ],
+   "nume": "Chai Latte",
+   "nume_variante": [
+    "chai latte",
+    "chai latte"
+   ],
+   "ordine": 190,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Black tea with spices and milk.",
+     "ingrediente": [
+      "Ceai negru",
+      "Condimente",
+      "Lapte"
+     ],
+     "nume": "Chai Latte"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Limonade & Racoritoare",
+   "descriere": "Lamaie stoarsa pe loc, menta si sifon.",
+   "etichete": [],
+   "id_produs": "20",
+   "imagine": "images/20.webp",
+   "ingrediente": [
+    "Lamaie",
+    "Menta",
+    "Zahar",
+    "Sifon"
+   ],
+   "nume": "Limonada casei",
+   "nume_variante": [
+    "limonada casei",
+    "house lemonade"
+   ],
+   "ordine": 200,
+   "pret": 16.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Lemons squeezed to order, mint and soda.",
+     "ingrediente": [
+      "Lamaie",
+      "Menta",
+      "Zahar",
+      "Sifon"
+     ],
+     "nume": "House Lemonade"
+    }
+   },
+   "volum": "400 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Limonade & Racoritoare",
+   "descriere": "Aceeasi limonada, cu piure de zmeura.",
+   "etichete": [],
+   "id_produs": "21",
+   "imagine": "images/21.webp",
+   "ingrediente": [
+    "Lamaie",
+    "Zmeura",
+    "Zahar",
+    "Sifon"
+   ],
+   "nume": "Limonada de zmeura",
+   "nume_variante": [
+    "limonada de zmeura",
+    "raspberry lemonade"
+   ],
+   "ordine": 210,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "The same lemonade, with raspberry puree.",
+     "ingrediente": [
+      "Lamaie",
+      "Zmeura",
+      "Zahar",
+      "Sifon"
+     ],
+     "nume": "Raspberry Lemonade"
+    }
+   },
+   "volum": "400 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Limonade & Racoritoare",
+   "descriere": "Stors la comanda.",
+   "etichete": [],
+   "id_produs": "22",
+   "imagine": "images/22.webp",
+   "ingrediente": [
+    "Portocale"
+   ],
+   "nume": "Suc natural de portocale",
+   "nume_variante": [
+    "suc natural de portocale",
+    "fresh orange juice"
+   ],
+   "ordine": 220,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Squeezed to order.",
+     "ingrediente": [
+      "Portocale"
+     ],
+     "nume": "Fresh Orange Juice"
+    }
+   },
+   "volum": "250 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Limonade & Racoritoare",
+   "descriere": "Plata sau carbogazoasa.",
+   "etichete": [],
+   "id_produs": "23",
+   "imagine": "images/23.webp",
+   "ingrediente": [
+    "Apa minerala"
+   ],
+   "nume": "Apa minerala",
+   "nume_variante": [
+    "apa minerala",
+    "mineral water"
+   ],
+   "ordine": 230,
+   "pret": 8.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Still or sparkling.",
+     "ingrediente": [
+      "Apa minerala"
+     ],
+     "nume": "Mineral Water"
+    }
+   },
+   "volum": "330 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Limonade & Racoritoare",
+   "descriere": "Bauturi carbogazoase la sticla.",
+   "etichete": [],
+   "id_produs": "24",
+   "imagine": "images/24.webp",
+   "ingrediente": [
+    "Bautura carbogazoasa"
+   ],
+   "nume": "Cola / Fanta / Sprite",
+   "nume_variante": [
+    "cola / fanta / sprite",
+    "cola / fanta / sprite"
+   ],
+   "ordine": 240,
+   "pret": 10.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Bottled soft drinks.",
+     "ingrediente": [
+      "Bautura carbogazoasa"
+     ],
+     "nume": "Cola / Fanta / Sprite"
+    }
+   },
+   "volum": "330 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Cocktailuri",
+   "descriere": "Aperol, prosecco si sifon, cu felie de portocala.",
+   "etichete": [],
+   "id_produs": "25",
+   "imagine": "images/25.webp",
+   "ingrediente": [
+    "Aperol",
+    "Prosecco",
+    "Sifon",
+    "Portocala"
+   ],
+   "nume": "Aperol Spritz",
+   "nume_variante": [
+    "aperol spritz",
+    "aperol spritz"
+   ],
+   "ordine": 250,
+   "pret": 29.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "Aperol, prosecco and soda with an orange slice.",
+     "ingrediente": [
+      "Aperol",
+      "Prosecco",
+      "Sifon",
+      "Portocala"
+     ],
+     "nume": "Aperol Spritz"
+    }
+   },
+   "volum": "250 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Vodka, lichior de cafea si un espresso proaspat.",
+   "etichete": [],
+   "id_produs": "26",
+   "imagine": "images/26.webp",
+   "ingrediente": [
+    "Vodka",
+    "Lichior de cafea",
+    "Espresso",
+    "Sirop"
+   ],
+   "nume": "Espresso Martini",
+   "nume_variante": [
+    "espresso martini",
+    "espresso martini"
+   ],
+   "ordine": 260,
+   "pret": 32.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Vodka, coffee liqueur and a fresh espresso.",
+     "ingrediente": [
+      "Vodka",
+      "Lichior de cafea",
+      "Espresso",
+      "Sirop"
+     ],
+     "nume": "Espresso Martini"
+    }
+   },
+   "volum": "180 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Gin, vermut rosu si bitter, pe un cub mare.",
+   "etichete": [],
+   "id_produs": "27",
+   "imagine": "images/27.webp",
+   "ingrediente": [
+    "Gin",
+    "Vermut rosu",
+    "Bitter"
+   ],
+   "nume": "Negroni",
+   "nume_variante": [
+    "negroni",
+    "negroni"
+   ],
+   "ordine": 270,
+   "pret": 30.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Gin, red vermouth and bitter over one large cube.",
+     "ingrediente": [
+      "Gin",
+      "Vermut rosu",
+      "Bitter"
+     ],
+     "nume": "Negroni"
+    }
+   },
+   "volum": "200 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Gin la alegere, tonic premium si citrice.",
+   "etichete": [],
+   "id_produs": "28",
+   "imagine": "images/28.webp",
+   "ingrediente": [
+    "Gin",
+    "Tonic",
+    "Lamaie verde"
+   ],
+   "nume": "Gin Tonic",
+   "nume_variante": [
+    "gin tonic",
+    "gin & tonic"
+   ],
+   "ordine": 280,
+   "pret": 28.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Your choice of gin, premium tonic and citrus.",
+     "ingrediente": [
+      "Gin",
+      "Tonic",
+      "Lamaie verde"
+     ],
+     "nume": "Gin & Tonic"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Cocktailuri",
+   "descriere": "Alb sau rosu, sec. Intreaba de recolta zilei.",
+   "etichete": [],
+   "id_produs": "29",
+   "imagine": "images/29.webp",
+   "ingrediente": [
+    "Vin"
+   ],
+   "nume": "Vin la pahar",
+   "nume_variante": [
+    "vin la pahar",
+    "wine by the glass"
+   ],
+   "ordine": 290,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "White or red, dry. Ask for today's bottle.",
+     "ingrediente": [
+      "Vin"
+     ],
+     "nume": "Wine by the Glass"
+    }
+   },
+   "volum": "150 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Gluten",
+    "Lapte"
+   ],
+   "categorie": "Mic Dejun",
+   "descriere": "Copt in fiecare dimineata.",
+   "etichete": [],
+   "id_produs": "30",
+   "imagine": "images/30.webp",
+   "ingrediente": [
+    "Faina",
+    "Unt",
+    "Drojdie"
+   ],
+   "nume": "Croissant simplu",
+   "nume_variante": [
+    "croissant simplu",
+    "plain croissant"
+   ],
+   "ordine": 300,
+   "pret": 9.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten",
+      "Lapte"
+     ],
+     "descriere": "Baked every morning.",
+     "ingrediente": [
+      "Faina",
+      "Unt",
+      "Drojdie"
+     ],
+     "nume": "Plain Croissant"
+    }
+   },
+   "volum": "80 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Gluten",
+    "Lapte"
+   ],
+   "categorie": "Mic Dejun",
+   "descriere": "Cu unt de ferma si gem de casa.",
+   "etichete": [],
+   "id_produs": "31",
+   "imagine": "images/31.webp",
+   "ingrediente": [
+    "Croissant",
+    "Unt",
+    "Gem"
+   ],
+   "nume": "Croissant cu unt si gem",
+   "nume_variante": [
+    "croissant cu unt si gem",
+    "croissant with butter and jam"
+   ],
+   "ordine": 310,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten",
+      "Lapte"
+     ],
+     "descriere": "With farm butter and house jam.",
+     "ingrediente": [
+      "Croissant",
+      "Unt",
+      "Gem"
+     ],
+     "nume": "Croissant with Butter and Jam"
+    }
+   },
+   "volum": "130 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Gluten",
+    "Ou"
+   ],
+   "categorie": "Mic Dejun",
+   "descriere": "Paine cu maia, avocado, ou posat si seminte.",
+   "etichete": [],
+   "id_produs": "32",
+   "imagine": "images/32.webp",
+   "ingrediente": [
+    "Paine cu maia",
+    "Avocado",
+    "Ou",
+    "Seminte"
+   ],
+   "nume": "Avocado toast",
+   "nume_variante": [
+    "avocado toast",
+    "avocado toast"
+   ],
+   "ordine": 320,
+   "pret": 32.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": true,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten",
+      "Ou"
+     ],
+     "descriere": "Sourdough, avocado, poached egg and seeds.",
+     "ingrediente": [
+      "Paine cu maia",
+      "Avocado",
+      "Ou",
+      "Seminte"
+     ],
+     "nume": "Avocado Toast"
+    }
+   },
+   "volum": "280 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Ou",
+    "Lapte",
+    "Gluten"
+   ],
+   "categorie": "Mic Dejun",
+   "descriere": "Trei oua, branza si ierburi, cu paine prajita.",
+   "etichete": [],
+   "id_produs": "33",
+   "imagine": "images/33.webp",
+   "ingrediente": [
+    "Oua",
+    "Branza",
+    "Ierburi",
+    "Paine"
+   ],
+   "nume": "Omleta cu branza",
+   "nume_variante": [
+    "omleta cu branza",
+    "cheese omelette"
+   ],
+   "ordine": 330,
+   "pret": 28.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Ou",
+      "Lapte",
+      "Gluten"
+     ],
+     "descriere": "Three eggs, cheese and herbs, with toast.",
+     "ingrediente": [
+      "Oua",
+      "Branza",
+      "Ierburi",
+      "Paine"
+     ],
+     "nume": "Cheese Omelette"
+    }
+   },
+   "volum": "250 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte",
+    "Gluten",
+    "Fructe cu coaja lemnoasa"
+   ],
+   "categorie": "Mic Dejun",
+   "descriere": "Iaurt grecesc, granola de casa si fructe de sezon.",
+   "etichete": [],
+   "id_produs": "34",
+   "imagine": "images/34.webp",
+   "ingrediente": [
+    "Iaurt",
+    "Granola",
+    "Fructe",
+    "Miere"
+   ],
+   "nume": "Iaurt cu granola",
+   "nume_variante": [
+    "iaurt cu granola",
+    "yogurt with granola"
+   ],
+   "ordine": 340,
+   "pret": 24.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte",
+      "Gluten",
+      "Fructe cu coaja lemnoasa"
+     ],
+     "descriere": "Greek yogurt, house granola and seasonal fruit.",
+     "ingrediente": [
+      "Iaurt",
+      "Granola",
+      "Fructe",
+      "Miere"
+     ],
+     "nume": "Yogurt with Granola"
+    }
+   },
+   "volum": "300 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte",
+    "Gluten",
+    "Ou"
+   ],
+   "categorie": "Prajituri",
+   "descriere": "New York, cu sos de fructe de padure.",
+   "etichete": [],
+   "id_produs": "35",
+   "imagine": "images/35.webp",
+   "ingrediente": [
+    "Branza",
+    "Biscuiti",
+    "Fructe de padure"
+   ],
+   "nume": "Cheesecake",
+   "nume_variante": [
+    "cheesecake",
+    "cheesecake"
+   ],
+   "ordine": 350,
+   "pret": 22.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte",
+      "Gluten",
+      "Ou"
+     ],
+     "descriere": "New York style, with berry sauce.",
+     "ingrediente": [
+      "Branza",
+      "Biscuiti",
+      "Fructe de padure"
+     ],
+     "nume": "Cheesecake"
+    }
+   },
+   "volum": "150 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Lapte",
+    "Gluten",
+    "Ou"
+   ],
+   "categorie": "Prajituri",
+   "descriere": "Reteta clasica, facut in casa.",
+   "etichete": [],
+   "id_produs": "36",
+   "imagine": "images/36.webp",
+   "ingrediente": [
+    "Mascarpone",
+    "Piscoturi",
+    "Cafea",
+    "Cacao"
+   ],
+   "nume": "Tiramisu",
+   "nume_variante": [
+    "tiramisu",
+    "tiramisu"
+   ],
+   "ordine": 360,
+   "pret": 22.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte",
+      "Gluten",
+      "Ou"
+     ],
+     "descriere": "Classic recipe, made in house.",
+     "ingrediente": [
+      "Mascarpone",
+      "Piscoturi",
+      "Cafea",
+      "Cacao"
+     ],
+     "nume": "Tiramisu"
+    }
+   },
+   "volum": "140 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Gluten",
+    "Lapte",
+    "Ou",
+    "Fructe cu coaja lemnoasa"
+   ],
+   "categorie": "Prajituri",
+   "descriere": "Blat fraged si crema de fistic.",
+   "etichete": [],
+   "id_produs": "37",
+   "imagine": "images/37.webp",
+   "ingrediente": [
+    "Faina",
+    "Unt",
+    "Fistic",
+    "Ou"
+   ],
+   "nume": "Tarta cu fistic",
+   "nume_variante": [
+    "tarta cu fistic",
+    "pistachio tart"
+   ],
+   "ordine": 370,
+   "pret": 24.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": true,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten",
+      "Lapte",
+      "Ou",
+      "Fructe cu coaja lemnoasa"
+     ],
+     "descriere": "Shortcrust base and pistachio cream.",
+     "ingrediente": [
+      "Faina",
+      "Unt",
+      "Fistic",
+      "Ou"
+     ],
+     "nume": "Pistachio Tart"
+    }
+   },
+   "volum": "120 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-08T18:03:23.666593+00:00",
+   "alergeni": [
+    "Gluten",
+    "Lapte",
+    "Ou",
+    "Fructe cu coaja lemnoasa"
+   ],
+   "categorie": "Prajituri",
+   "descriere": "Cu ciocolata neagra si nuci, servit cald.",
+   "etichete": [],
+   "id_produs": "38",
+   "imagine": "images/38.webp",
+   "ingrediente": [
+    "Ciocolata",
+    "Unt",
+    "Nuci",
+    "Ou"
+   ],
+   "nume": "Brownie",
+   "nume_variante": [
+    "brownie",
+    "brownie"
+   ],
+   "ordine": 380,
+   "pret": 20.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten",
+      "Lapte",
+      "Ou",
+      "Fructe cu coaja lemnoasa"
+     ],
+     "descriere": "Dark chocolate and walnuts, served warm.",
+     "ingrediente": [
+      "Ciocolata",
+      "Unt",
+      "Nuci",
+      "Ou"
+     ],
+     "nume": "Brownie"
+    }
+   },
+   "volum": "130 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  }
+ ],
+ "setari": {
+  "config_mese": {
+   "zones": [
+    {
+     "mese": [
+      {
+       "numar": "20",
+       "scaune": 4
+      },
+      {
+       "numar": "10",
+       "scaune": 6
+      },
+      {
+       "numar": "30",
+       "scaune": 4
+      }
+     ],
+     "nume": "Salonul principal"
+    },
+    {
+     "mese": [
+      {
+       "numar": "40",
+       "scaune": 4
+      }
+     ],
+     "nume": "Terasa"
+    }
+   ]
+  }
+ },
+ "stoc_epuizat": [
+  "5",
+  "6"
+ ],
+ "versiune": 1,
+ "versiuni_meniu": 0
+}

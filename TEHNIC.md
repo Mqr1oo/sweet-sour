@@ -47,7 +47,12 @@ din prima, fără configurare: numele folderului **este** calea din URL.
    jurnal rămân „sistema", nu „client") și `16_securitate.sql` (numele
    produselor vin din meniu, „bon gratis" doar managerul, clientul anonim nu
    vede coloanele personalului, cheia trigger-ului de push e verificabilă —
-   vezi „Revizia de securitate"). Pe M3 și
+   vezi „Revizia de securitate"), `17_functii_noi.sql` (meniul zilei,
+   etichete, produse ascunse, ciornă/publicare/versiuni, cod unic pe masă,
+   limite anti-abuz, comandă uitată, „înapoi", al doilea factor, jurnal de
+   conectări, `export_backup` — vezi „Runda 14"; înlocuiește `<REF>` cu
+   ref-ul proiectului înainte de rulare) și `18_inregistrare_inchisa.sql`
+   (înregistrarea publică refuzată și din bază). Pe M3 și
    Sweet & Sour a existat și un `12_poze_14_zile` (cron + funcție edge
    `curata-poze`) — a fost înlocuit de 13 și nu se mai rulează pe un proiect
    nou. Toate sunt deja aplicate pe M3 și Sweet & Sour.
@@ -755,10 +760,145 @@ deschiderea exportului directorului. `csvCelula` pune un apostrof în față
 ## Un risc de productie ramas
 
 `index.html` si `dashboard.html` incarca biblioteca Supabase de pe un CDN
-(`cdn.jsdelivr.net`). Daca acel CDN e indisponibil, aplicatia nu porneste deloc —
-nici macar dashboard-ul instalat, pentru ca service worker-ul nu pune in cache
-fisiere de pe alt domeniu. Pentru un sistem care tine casa, merita descarcata
-biblioteca local, langa `config.js`. Nu am facut-o inca.
+(`cdn.jsdelivr.net`). Din runda 14, service worker-ul o tine in cache (raspuns
+opac, `no-cors`) si o serveste de acolo, deci un telefon care a deschis o data
+meniul sau panoul porneste si daca CDN-ul e picat. Prima deschidere ramane
+dependenta de CDN; pentru a scapa complet, biblioteca ar trebui descarcata
+local, langa `config.js`. Nu am facut-o inca.
+
+## Runda 14 — funcții noi, anti-abuz, copie de siguranță
+
+Tot ce e pe server stă în `17_functii_noi.sql` (aplicată pe ambele proiecte)
+și `18_inregistrare_inchisa.sql`; funcția edge `notifica-comanda` (v7, doar pe
+Sweet & Sour) primește acum și mesaje generice `{ mesaj: { title, body, tag,
+roluri } }`.
+
+**Meniul zilei.** `meniu_produse.zilei / zilei_pret / zilei_pana_la`;
+`pret_curent(rand)` alege prețul special cât timp ține, iar
+`normalizeaza_produse` îl folosește la orice comandă. RPC
+`seteaza_meniul_zilei(id, pret, pana_la)` — manager și director; `null` îl
+scoate. Clientul arată cardul în capul meniului (`renderMeniulZilei`) și îl
+ascunde la ora aleasă; jurnal `meniul_zilei`.
+
+**Etichete.** `meniu_produse.etichete text[]` (vegan, vegetarian, fara_gluten,
+fara_lactoza, picant, fara_alcool, fara_zahar). Directorul le bifează în
+formularul produsului; clientul vede al doilea rând de filtre doar cu cele
+prezente în meniu; se combină (toate trebuie să se potrivească).
+
+**Produse ascunse.** `meniu_produse.sters_la`. Politica pentru anonim e
+`activ and sters_la is null` (a înlocuit vechea „select meniu public", care
+se aduna cu OR); `normalizeaza_produse` refuză produsele ascunse. Editorul le
+arată sub tabel, cu „recuperează".
+
+**Ciornă → publică → versiuni.** `meniu_ciorna` (un rând, tot meniul ca
+JSON, în forma dată de `meniu_ca_json()`), `meniu_versiuni` (snapshot-ul
+meniului viu de dinaintea fiecărei publicări; 40 păstrate, cron-ul șterge
+peste 180 de zile dar ține ultimele 5). RPC-uri, toate doar director:
+`ciorna_meniu()` (o creează din meniul viu dacă lipsește; `publicat` = ciorna
+e identică cu meniul viu), `salveaza_ciorna(json)`, `publica_meniu()`
+(snapshot + `aplica_meniu`, care face upsert doar pe rândurile schimbate și
+ascunde ce nu mai e în listă; coloanele „vii" — stoc, meniul zilei — nu sunt
+atinse), `restaureaza_meniu(id_versiune)` (versiunea devine meniu viu și
+ciornă; starea de dinainte e salvată și ea), `restaureaza_din_backup(json)`
+(un fișier din `backup/` intră în ciornă). Editorul (`loadMeniu`,
+`salveazaMeniu`, `publicaMeniu`, `arataVersiuni`) nu mai scrie direct în
+`meniu_produse`; `produsCiorna()` normalizează fiecare produs în forma
+serverului. Clientul reîncarcă meniul cu un `setTimeout` de 500 ms după
+evenimentele realtime, ca o publicare (38 de rânduri) să însemne o singură
+reîncărcare.
+
+**Cod unic pe masă.** `chei_mese (masa, cheie)` — fără niciun grant;
+`chei_mese_lista()` (manager, director; creează cheile lipsă după
+`config_mese`), `chei_mese_regenereaza(masa|null)` (director). Setarea
+`setari_chei {activ}` e citită și de anonim, ca telefonul să spună dinainte
+„scanează codul". `sanitize_comanda_insert` (acum security definer) cere, când
+e activ, `comenzi.cheie_masa` egală cu cheia mesei; coloana e golită înainte
+de scriere, deci nu ajunge nicăieri. Clientul ia `?mesa=4&k=…` din QR, îl ține
+14 ore în `localStorage` (`STORE + 'cheie'`) și îl trimite la comenzi și la
+cererile de ospătar; cu cheie, numărul mesei e blocat în fereastră. Unealta
+`qr/` primește lista din panou (`masa<TAB>link`) și face codurile cu cheie.
+Erorile serverului au `hint` (`cod_masa`, `limita_neacceptate`,
+`limita_ritm`, `limita_produse`, `alerta_recenta`), pe care clientul îl
+traduce în engleză (`mesajEroareComanda`).
+
+**Limite anti-abuz.** Trigger `trg_zz_limite_comanda` (rulează după
+recalcularea totalului), doar pentru anonim, cu `setari_limite` (implicit:
+3 grupuri de comenzi neconfirmate pe masă, 8 în 10 minute, 30 de bucăți,
+prag 500 lei). Cererile de ospătar se refuză dacă aceeași masă are una
+neacceptată din ultimele 2 minute. Peste prag, `comenzi.atentie =
+'suma_mare'` (coloană citită și de anonim): telefonul îi spune clientului că
+vine un ospătar, cardul are semnul „sumă mare", iar „Accepta" cere o
+confirmare.
+
+**Comandă uitată.** Cron `comenzi-uitate` (la minut) → `alerte_comenzi_uitate()`:
+o comandă `noua` mai veche de `setari_alerte.minute_uitata` (implicit 5)
+primește `alerta_uitata_la`, un rând `comanda_uitata` în jurnal (citit de tot
+personalul) și un push `trimite_mesaj_push(...)` către manager și secțiune
+(doar unde există `service_role_key` în Vault, deci Sweet & Sour). Panoul
+sună (`alarmaComandaUitata`, bandă roșie 60 s, bip pentru director) și
+marchează cardul.
+
+**„Înapoi".** `protect_comanda_update` ține `status_anterior /
+status_schimbat_la / status_schimbat_de` (nu și pe drumul RPC-urilor, care
+își pun singure urma). `revino_comanda(id, 'status'|'bon'|'anulare')` acceptă
+doar acțiunea aceluiași cont din ultimele 25 s (bara din panou arată 10);
+anularea se retrage după rândul `pedido_cancelado`. Jurnal `revenire`.
+
+**Al doilea factor.** `mfa_ok()` = jwt `aal = 'aal2'` sau niciun factor
+verificat în `auth.mfa_factors`; `is_staff()`, `current_staff_rol()` și
+politica de pe `staff_roles` îl includ, deci un cont înrolat fără cod nu e
+„staff" nicăieri. Panoul: `verificaMfa()` după login (fereastra de cod),
+Șef → Setări → „Al doilea factor" (enroll TOTP cu QR, `challengeAndVerify`,
+unenroll). TOTP trebuie să fie pornit în Authentication → Multi-Factor (e
+implicit).
+
+**Jurnal de conectări.** Trigger pe `auth.sessions` (postgres are TRIGGER
+acolo): rând `conectare {rol, dispozitiv, ip, amprenta, nou}`; amprenta e
+user-agent-ul fără numere de versiune. Un dispozitiv nevăzut în 90 de zile pe
+un cont de conducere (nu prima conectare) dă `dispozitiv_nou` + push. Orice
+eroare e prinsă (`raise log`), ca login-ul să nu pice.
+
+**Înregistrare închisă.** Ambele proiecte aveau sign-up-ul pornit (testat cu
+`/auth/v1/signup`; conturile de test au fost șterse). Pe lângă setarea din
+consolă, `18_inregistrare_inchisa.sql` refuză din `auth.users` orice cont
+care intră neconfirmat și neinvitat; conturile din consolă / scriptul de
+personal (confirmate pe loc) trec.
+
+**Copie de siguranță și ținut treaz.** `export_backup(cheie)` (anonim, cu
+cheia din Vault `cheie_backup`, aceeași pe ambele proiecte) întoarce meniul,
+meniul complet, ciorna, stocul epuizat și setările (fără `setari_angajati`,
+fără coduri, fără cheile meselor). `.github/workflows/backup.yml` rulează
+zilnic `backup/salveaza.py`: o cerere la fiecare proiect (ține treaz planul
+gratuit), apoi copia în `backup/<local>/<data>.json` + `ultimul.json`
+(30 de zile; restul rămâne în istoricul git). Are nevoie de secretul GitHub
+`CHEIE_BACKUP`; fără el face doar ținutul treaz. Dacă un proiect nu răspunde,
+rularea eșuează și GitHub trimite email.
+
+**Semnal slab la client.** `sw.js` (v2) pune în cache și meniul (`index.html`,
+`config.js`, fonturile, sigla, scriptul Supabase de pe CDN — opac) și
+răspunde network-first cu termen de 4 s pentru pagini, cu cache-ul ca rezervă;
+răspunsurile Supabase nu intră niciodată în cache. `index.html` înregistrează
+același `sw.js` (nu în demo). Datele: ultimul meniu în
+`localStorage (STORE + 'meniuCache')`; o comandă trimisă fără semnal
+(`esteEroareRetea`) intră în coada `STORE + 'coada'` și pleacă la `online`
+sau la 10 s (20 de minute maxim), cu bandă „fără semnal" / „comanda a
+plecat".
+
+**Antete Cloudflare.** `_headers` din rădăcină: CSP (`script-src 'self'
+'unsafe-inline' cdn.jsdelivr.net`, `connect-src` doar Supabase + serviciul de
+traducere, `frame-ancestors 'none'`), nosniff, Referrer-Policy,
+Permissions-Policy; `sw.js` și `config.js` cu `Cache-Control: no-cache`.
+Testat local cu CSP-ul ca `<meta>`: nicio încălcare pe meniu și pe panou.
+
+**Politici de jurnal.** `select jurnal staff` lasă acum tot personalul să
+citească orice `setari_%` plus noile acțiuni; `insert log staff` interzice
+rândurile scrise doar de server (`comanda_uitata`, `revenire`, `conectare`,
+`dispozitiv_nou`, `meniul_zilei`, `meniu_publicat`, `chei_regenerate`) și
+lasă `setari_%` doar directorului (mai puțin `setari_busy`). Curățenia
+zilnică păstrează orice `setari_%`, nu o listă fixă. `setare_jurnal()` ordonează
+după `created_at, id`, ca două rânduri din aceeași tranzacție să nu se bată.
+Un `cod_anulare_luna` fără rol nu mai trece de verificare (`null not in
+(...)` era null, nu fals).
 
 ## Conturi de personal
 
@@ -869,9 +1009,17 @@ flux de răspundere.
 ## Înainte de deschidere
 
 1. Authentication → Providers → Email: **Allow new users to sign up** = oprit.
-   (Nu „Enable email provider" — acela e logarea însăși.)
-2. Pornește **Leaked password protection**.
-3. Testează un ciclu complet: comandă de pe un telefon, o vezi la bar pe altul,
+   (Nu „Enable email provider" — acela e logarea însăși.) Pe 14 septembrie
+   2026 era pornit pe ambele proiecte; baza refuză oricum înregistrările
+   (migrația 18), dar setarea trebuie oprită.
+2. **Leaked password protection** e doar pe planul Pro; până atunci, pune
+   parola minimă la 10 caractere din aceeași pagină.
+3. GitHub → Settings → Secrets and variables → Actions → `CHEIE_BACKUP`
+   (cheia din Vault `cheie_backup`), altfel copiile nu se fac.
+4. Directorul și managerul își activează al doilea factor (Șef → Setări).
+5. Dacă vrei codul unic pe masă: lista din panou → `qr/` → printezi și
+   lipești codurile noi → abia apoi pornești opțiunea.
+6. Testează un ciclu complet: comandă de pe un telefon, o vezi la bar pe altul,
    „Gata" → ospătar → „Servit". Înainte să fie clienți în local.
 
 ## Ce mai lipsește

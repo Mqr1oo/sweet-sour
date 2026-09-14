@@ -484,6 +484,36 @@
   .tur-btns .tur-spatiu{ flex:1; }
   body.tur-activ{ overflow:hidden; }
   @media (prefers-reduced-motion: reduce){ .tur-gaura, .tur-bula{ transition:none; } }
+
+  /* „Inapoi" 10 secunde, dupa Gata / bon / anulare */
+  .inapoi-bar{ position:fixed; left:50%; bottom:max(18px, env(safe-area-inset-bottom)); transform:translateX(-50%);
+    z-index:1200; display:flex; align-items:center; gap:12px; background:#1c1c1c; color:var(--text);
+    border:1px solid var(--border); border-radius:14px; padding:10px 12px 10px 16px; box-shadow:0 12px 30px rgba(0,0,0,.5);
+    font-size:14px; max-width:min(92vw, 520px); }
+  .inapoi-bar[hidden]{ display:none; }
+  .inapoi-bar button{ background:var(--accent); color:#16110a; border:none; border-radius:10px; padding:9px 14px; font:inherit; font-weight:700; cursor:pointer; min-height:40px; }
+  .inapoi-sec{ font-family:'Space Mono',monospace; font-size:12px; color:var(--text-muted); min-width:2ch; text-align:right; }
+  .uitata-banner{ position:fixed; top:0; left:0; right:0; z-index:1150; background:var(--danger); color:#fff; font-weight:700;
+    text-align:center; padding:12px 16px; font-size:14px; box-shadow:0 6px 20px rgba(0,0,0,.4); }
+  .stare-pill.uitata{ background:rgba(239,68,68,.22); color:#fecaca; border:1px solid rgba(239,68,68,.6); }
+  .stare-pill.suma{ background:rgba(245,158,11,.18); color:#fde68a; border:1px solid rgba(245,158,11,.55); }
+  .order-card.uitata{ border-color:var(--danger); }
+  /* etichetele produsului (filtrele din meniul clientului) */
+  .mp-etichete{ display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 10px; }
+  .mp-etichete label{ display:inline-flex; align-items:center; gap:6px; font-size:13px; padding:7px 11px; border:1px solid var(--border); border-radius:999px; cursor:pointer; background:rgba(255,255,255,.03); }
+  .mp-etichete label:has(input:checked){ border-color:var(--accent); background:rgba(232,163,61,.14); }
+  .mp-etichete input{ accent-color:var(--accent); }
+  .sters-chip{ display:inline-flex; align-items:center; gap:8px; margin:4px 6px 4px 0; padding:5px 10px; border:1px dashed var(--border); border-radius:999px; font-size:12px; color:var(--text-muted); }
+  .sters-chip button{ background:none; border:none; color:var(--accent); cursor:pointer; font:inherit; font-size:12px; padding:0; }
+  #btnPublicaMeniu.de-publicat{ animation: cardPuls 1.2s ease-in-out infinite; }
+  .versiuni-lista{ list-style:none; padding:0; margin:10px 0 0; display:grid; gap:8px; }
+  .versiuni-lista li{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:10px; font-size:13px; flex-wrap:wrap; }
+  .limite-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:10px; margin:10px 0 14px; }
+  .limite-grid label{ display:flex; flex-direction:column; gap:6px; font-size:13px; color:var(--text-muted); }
+  .limite-grid input, .mz-rand input, .mz-rand select, .lim-in{ padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px; }
+  .mz-rand{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px; }
+  #mfaQr img, #mfaQr svg{ width:180px; height:180px; background:#fff; border-radius:12px; padding:8px; display:block; margin:10px 0; }
+  .mfa-secret{ font-family:'Space Mono',monospace; font-size:12px; word-break:break-all; color:var(--text-muted); user-select:all; }
 </style>
 </head>
 <body>
@@ -500,6 +530,26 @@
     <p id="loginInfo" style="display:none; color:var(--warning); font-size:13px; margin-top:12px; line-height:1.5;"></p>
   </div>
 </div>
+
+<div class="auth-overlay" id="mfaOverlay" style="display:none;">
+  <div class="auth-card">
+    <h2>🔐 Al doilea factor</h2>
+    <p style="color: var(--text-muted); margin-bottom: 22px;">Scrie codul de 6 cifre din aplicatia de autentificare.</p>
+    <form id="mfaForm">
+      <input type="text" id="mfaCod" class="auth-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" required>
+      <button type="submit" class="btn-primary">Continua</button>
+    </form>
+    <p id="mfaEroare" style="display:none; color:var(--danger); font-size:13px; margin-top:12px;"></p>
+    <button id="mfaRenunta" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font:inherit;margin-top:16px;">Iesi din cont</button>
+  </div>
+</div>
+
+<div class="inapoi-bar" id="inapoiBar" hidden>
+  <span id="inapoiText"></span>
+  <button id="inapoiBtn" type="button">↩ Inapoi</button>
+  <span class="inapoi-sec" id="inapoiSec">10</span>
+</div>
+<div id="uitataBanner" class="uitata-banner" style="display:none;"></div>
 
 <aside>
   <div class="brand"><img src="icons/logo.png" alt="M3" style="width:120px;height:auto;display:block"></div>
@@ -739,6 +789,107 @@
          <div id="fereastraStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
       </div>
 
+      <div data-grup="setari" class="dash-panel" style="border-color: var(--accent);">
+         <h3 style="color: var(--accent);">🍽️ Meniul zilei</h3>
+         <p style="color:var(--text-muted); font-size:13px;">
+           Un produs pus in capul meniului, cu pret special si ora pana la care
+           tine. Clientii il vad primul; dupa ora aleasa dispare singur si
+           produsul revine la pretul normal. Serverul calculeaza comanda cu
+           pretul special cat timp e valabil.
+         </p>
+         <div class="mz-rand">
+           <select id="mzProdus" style="flex:1; min-width:200px;"><option value="">Alege produsul…</option></select>
+           <input type="number" id="mzPret" placeholder="Pret special (lei)" step="0.01" min="0" style="width:170px;">
+           <input type="time" id="mzPana" value="16:00" style="width:130px;">
+           <button class="btn-primary" id="btnMzPune" style="width:auto; padding:10px 16px;">Pune</button>
+           <button class="btn-action" id="btnMzScoate" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;">Scoate</button>
+         </div>
+         <div id="mzStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+      </div>
+
+      <div data-grup="setari" class="dash-panel" style="border-color: var(--blue);">
+         <h3 style="color: var(--blue);">🔐 Al doilea factor pentru contul tau</h3>
+         <p style="color:var(--text-muted); font-size:13px;">
+           La intrare, pe langa parola, ti se cere un cod de 6 cifre din
+           aplicatia de autentificare de pe telefon (Google Authenticator,
+           Microsoft Authenticator, Authy). Daca cineva afla parola, tot nu
+           poate intra. Doar pentru contul cu care esti logat acum.
+         </p>
+         <div id="mfaStare" style="margin:10px 0; font-size:14px;">…</div>
+         <div id="mfaInrolare" style="display:none;">
+           <p style="font-size:13px; color:var(--text-muted);">1. Deschide aplicatia de autentificare si scaneaza codul (sau scrie cheia de mai jos). 2. Scrie codul de 6 cifre pe care ti-l arata.</p>
+           <div id="mfaQr"></div>
+           <div class="mfa-secret" id="mfaSecret"></div>
+           <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px;">
+             <input type="text" id="mfaCodInrolare" class="lim-in" inputmode="numeric" maxlength="6" placeholder="000000" style="width:130px;">
+             <button class="btn-primary" id="btnMfaConfirma" style="width:auto; padding:10px 16px;">Confirma</button>
+           </div>
+         </div>
+         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+           <button class="btn-primary" id="btnMfaActiveaza" style="width:auto; padding:10px 16px; display:none;">Activeaza</button>
+           <button class="btn-action" id="btnMfaDezactiveaza" style="display:none; border:1px solid var(--danger); background:rgba(239,68,68,.12); color:var(--text); font-size:13px; padding:10px 14px;">Dezactiveaza</button>
+         </div>
+         <div id="mfaMesaj" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+      </div>
+
+      <div data-grup="setari" class="dash-panel" data-director style="border-color: var(--danger);">
+         <h3 style="color: var(--danger);">🔑 Cod unic pe masa (anti-farse)</h3>
+         <p style="color:var(--text-muted); font-size:13px;">
+           Pornit: o comanda de la client trece doar daca telefonul a scanat
+           codul QR de pe masa — fiecare masa are un cod ascuns in QR. Nimeni
+           nu mai poate comanda „de acasa" pe masa 7. Ai nevoie de coduri QR
+           noi, facute din lista de mai jos (unealta din <code>qr/</code>);
+           porneste optiunea abia dupa ce le-ai lipit pe mese.
+         </p>
+         <label class="mp-check" style="margin:8px 0;">
+           <input type="checkbox" id="cheiActiv"> Comenzile de la clienti cer codul de pe masa
+         </label>
+         <div style="display:flex; gap:10px; flex-wrap:wrap;">
+           <button class="btn-action" id="btnCheiArata" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;">📋 Lista pentru codurile QR</button>
+           <button class="btn-action" id="btnCheiCopiaza" style="display:none; border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;">Copiaza lista</button>
+           <button class="btn-action" id="btnCheiNoi" style="border:1px solid var(--danger); background:rgba(239,68,68,.12); color:var(--text); font-size:13px; padding:10px 14px;">Chei noi (toate)</button>
+         </div>
+         <textarea id="cheiLista" readonly style="display:none; width:100%; min-height:140px; margin-top:10px; padding:10px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:'Space Mono',monospace; font-size:12px;"></textarea>
+         <div id="cheiStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+      </div>
+
+      <div data-grup="setari" class="dash-panel" data-director>
+         <h3>🚧 Limite pentru comenzile de la clienti</h3>
+         <p style="color:var(--text-muted); font-size:13px;">
+           Aparare impotriva glumelor si a greselilor: peste limite, telefonul
+           clientului primeste un mesaj si e trimis la ospatar. Peste pragul in
+           lei comanda intra normal, dar cu semnul „suma mare — confirma la
+           masa" (barul o accepta abia dupa ce a confirmat).
+         </p>
+         <div class="limite-grid">
+           <label>Comenzi neconfirmate pe masa, in acelasi timp <input type="number" id="limNeacceptate" min="1" max="20" value="3"></label>
+           <label>Comenzi in 10 minute, pe masa <input type="number" id="limRitm" min="2" max="50" value="8"></label>
+           <label>Bucati intr-o singura comanda <input type="number" id="limProduse" min="5" max="200" value="30"></label>
+           <label>Prag „suma mare" (lei) <input type="number" id="limPrag" min="50" step="10" value="500"></label>
+         </div>
+         <button class="btn-primary" id="btnLimite" style="width:auto; padding:10px 16px;">Salveaza limitele</button>
+         <div id="limiteStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+      </div>
+
+      <div data-grup="setari" class="dash-panel" data-director style="border-color: var(--warning);">
+         <h3 style="color: var(--warning);">⏰ Alerta „comanda uitata"</h3>
+         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <p style="color:var(--text-muted); font-size:13px; max-width:76%;">
+              O comanda neacceptata de atatea minute suna tare la toata lumea
+              din tura si trimite notificare managerului si sectiunii, chiar
+              daca nimeni n-are panoul deschis. Ramane in jurnal.
+            </p>
+            <select id="minuteUitata" class="lim-in">
+              <option value="3">3 minute</option>
+              <option value="5">5 minute</option>
+              <option value="7">7 minute</option>
+              <option value="10">10 minute</option>
+              <option value="15">15 minute</option>
+            </select>
+         </div>
+         <div id="uitataStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+      </div>
+
       <div data-grup="setari" class="dash-panel" style="border-color: var(--warning);">
          <h3 style="color: var(--warning);">🔐 Codul de anulare al lunii</h3>
          <p style="color:var(--text-muted); font-size:13px; margin-bottom:8px;">
@@ -810,17 +961,25 @@
       <div data-grup="meniu" class="dash-panel" style="border-color: var(--accent);">
           <h3 style="color: var(--accent);">🍸 Meniu</h3>
           <p style="color:var(--text-muted); font-size:13px; margin-bottom:14px;">
-            Asta e meniul, si atat. Ce scrii aici vad clientii, si tot de aici
-            recalculeaza serverul fiecare comanda — nu mai exista un al doilea loc
-            care sa se desincronizeze.
+            Lucrezi pe o ciorna: modifici linistit, „Salveaza ciorna" oricand
+            (clientii nu vad nimic), iar cand esti gata apesi „Publica" o
+            singura data. Fiecare publicare pastreaza versiunea de dinainte —
+            „Versiuni" te intoarce la ea. Produsele sterse doar se ascund si se
+            pot recupera de mai jos. Serverul recalculeaza fiecare comanda din
+            meniul publicat.
           </p>
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
             <input type="text" id="cautaProdus" placeholder="🔍 Cauta produs..."
                    style="flex:1; min-width:170px; padding:10px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text);">
             <button class="btn-primary" style="width:auto; padding:10px 16px;" id="btnProdusNou">➕ Produs nou</button>
-            <button class="btn-primary" style="width:auto; padding:10px 16px;" id="btnSalveazaMeniu">💾 Salveaza</button>
+            <button class="btn-primary" style="width:auto; padding:10px 16px;" id="btnSalveazaMeniu">💾 Salveaza ciorna</button>
+            <button class="btn-primary" style="width:auto; padding:10px 16px; background:var(--success);" id="btnPublicaMeniu">🚀 Publica</button>
+            <button class="btn-action" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;" id="btnVersiuniMeniu">🕘 Versiuni</button>
+            <button class="btn-action" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;" id="btnRestaureazaFisier">📂 Din copia de siguranta</button>
+            <input type="file" id="fisierBackup" accept="application/json,.json" style="display:none;">
           </div>
           <div id="meniuStare" style="font-size:13px; margin-bottom:10px; min-height:18px;"></div>
+          <div id="meniuVersiuni" style="display:none; margin-bottom:14px;"></div>
           <div class="table-responsive">
             <table class="staff-table" id="tabelMeniu">
               <thead><tr>
@@ -834,9 +993,10 @@
               <tbody id="meniuBody"></tbody>
             </table>
           </div>
+          <div id="meniuSterse" style="margin-top:12px;"></div>
           <p style="color:var(--text-muted); font-size:12px; margin-top:12px;">
             Apasa pe numele unui produs ca sa editezi descrierea, ingredientele,
-            alergenii si traducerea in engleza.
+            alergenii, etichetele (vegan, fara gluten…) si traducerea in engleza.
           </p>
       </div>
 
@@ -1083,6 +1243,8 @@
         </span>
       </label>
 
+      <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">Etichete (filtrele din meniul clientului):</div>
+      <div class="mp-etichete" id="mpEtichete"></div>
       <label class="mp-check">
         <input type="checkbox" id="mpSemn"> Semnatura casei (apare cu eticheta)
       </label>
@@ -1185,7 +1347,7 @@
   async function incarcaMeniuComun() {
       const {data, error} = await _supabase.from('meniu_produse')
           .select('id_produs,nume,pret,categorie,sectiune,ordine')
-          .eq('activ', true).order('ordine');
+          .eq('activ', true).is('sters_la', null).order('ordine');
       if (error) { console.warn('Meniu:', error.message); return []; }
       return (data || []).map(r => ({
           imageNumber: r.id_produs, name: r.nume, price: Number(r.pret),
@@ -1892,8 +2054,103 @@
         mesajLogin('Ziua s-a inchis de cand ai intrat ultima data. Intra din nou cu contul tau.');
         return;
     }
+    if (!(await verificaMfa())) return;
     await startSession(session.user.email);
   }
+
+  // --- Al doilea factor (TOTP) -------------------------------------------
+  // Cine si-a activat un factor trebuie sa intre cu codul din aplicatie;
+  // serverul (mfa_ok) nu-l considera „staff" pana nu-l da. Cine n-are factor
+  // intra ca pana acum.
+  async function verificaMfa() {
+      let nivel = null;
+      try { nivel = (await _supabase.auth.mfa.getAuthenticatorAssuranceLevel()).data; } catch(e) { return true; }
+      if (!nivel || nivel.nextLevel !== 'aal2' || nivel.currentLevel === 'aal2') return true;
+      document.getElementById('authOverlay').style.display = 'none';
+      document.getElementById('mfaEroare').style.display = 'none';
+      document.getElementById('mfaCod').value = '';
+      document.getElementById('mfaOverlay').style.display = 'flex';
+      setTimeout(() => document.getElementById('mfaCod').focus(), 80);
+      return false;
+  }
+  document.getElementById('mfaForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = document.getElementById('mfaEroare');
+      const cod = document.getElementById('mfaCod').value.replace(/\D/g, '');
+      if (cod.length !== 6) { err.textContent = 'Codul are 6 cifre.'; err.style.display = 'block'; return; }
+      try {
+          const { data: lf } = await _supabase.auth.mfa.listFactors();
+          const f = ((lf && lf.totp) || []).find(x => x.status === 'verified');
+          if (!f) { err.textContent = 'Nu gasesc factorul. Iesi si intra din nou.'; err.style.display = 'block'; return; }
+          const { error } = await _supabase.auth.mfa.challengeAndVerify({ factorId: f.id, code: cod });
+          if (error) { err.textContent = 'Cod gresit sau expirat. Incearca din nou.'; err.style.display = 'block'; return; }
+          document.getElementById('mfaOverlay').style.display = 'none';
+          const { data: { session } } = await _supabase.auth.getSession();
+          if (session) await startSession(session.user.email);
+      } catch(ex) { err.textContent = 'Nu s-a putut verifica: ' + ex.message; err.style.display = 'block'; }
+  });
+  document.getElementById('mfaRenunta').addEventListener('click', async () => {
+      try { await _supabase.auth.signOut(); } catch(e) {}
+      location.reload();
+  });
+
+  let mfaFactorNou = null;
+  async function loadSecuritate() {
+      const st = document.getElementById('mfaStare');
+      if (!st || !esteConducere()) return;
+      try {
+          const { data } = await _supabase.auth.mfa.listFactors();
+          const f = ((data && data.totp) || []).find(x => x.status === 'verified');
+          st.innerHTML = f
+            ? '<span style="color:var(--success); font-weight:700;">✓ Activ</span> — la fiecare intrare ti se cere codul din aplicatie.'
+            : '<span style="color:var(--warning); font-weight:700;">Inactiv</span> — intri doar cu parola.';
+          document.getElementById('btnMfaActiveaza').style.display = f ? 'none' : 'inline-flex';
+          document.getElementById('btnMfaDezactiveaza').style.display = f ? 'inline-flex' : 'none';
+          document.getElementById('btnMfaDezactiveaza').dataset.id = f ? f.id : '';
+          if (f) document.getElementById('mfaInrolare').style.display = 'none';
+      } catch(e) { st.textContent = 'Nu am putut citi starea: ' + e.message; }
+  }
+  document.getElementById('btnMfaActiveaza').addEventListener('click', async () => {
+      const msg = document.getElementById('mfaMesaj'); msg.textContent = 'Se pregateste...';
+      try {
+          // incercarile vechi, neterminate, se curata
+          const { data: lf } = await _supabase.auth.mfa.listFactors();
+          for (const f of ((lf && lf.all) || []).filter(x => x.status !== 'verified')) {
+              try { await _supabase.auth.mfa.unenroll({ factorId: f.id }); } catch(e) {}
+          }
+          const { data, error } = await _supabase.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'Panou ' + new Date().toLocaleDateString('ro-RO') });
+          if (error) { msg.textContent = 'Nu s-a putut porni: ' + error.message; return; }
+          mfaFactorNou = data.id;
+          const qr = document.getElementById('mfaQr');
+          const cod = (data.totp && data.totp.qr_code) || '';
+          qr.innerHTML = '';
+          if (cod.startsWith('data:')) { const img = document.createElement('img'); img.src = cod; img.alt = 'Cod QR'; qr.appendChild(img); }
+          else if (cod.startsWith('<svg')) { qr.innerHTML = cod; }
+          document.getElementById('mfaSecret').textContent = data.totp && data.totp.secret ? 'Cheie manuala: ' + data.totp.secret : '';
+          document.getElementById('mfaInrolare').style.display = 'block';
+          document.getElementById('mfaCodInrolare').value = '';
+          msg.textContent = '';
+      } catch(e) { msg.textContent = 'Eroare: ' + e.message; }
+  });
+  document.getElementById('btnMfaConfirma').addEventListener('click', async () => {
+      const msg = document.getElementById('mfaMesaj');
+      const cod = document.getElementById('mfaCodInrolare').value.replace(/\D/g, '');
+      if (!mfaFactorNou || cod.length !== 6) { msg.textContent = 'Scrie codul de 6 cifre din aplicatie.'; return; }
+      const { error } = await _supabase.auth.mfa.challengeAndVerify({ factorId: mfaFactorNou, code: cod });
+      if (error) { msg.textContent = 'Cod gresit. Mai incearca (codul se schimba la 30 de secunde).'; return; }
+      mfaFactorNou = null;
+      msg.textContent = '✓ Activ. De acum, la intrare, dupa parola ti se cere codul.';
+      await loadSecuritate();
+  });
+  document.getElementById('btnMfaDezactiveaza').addEventListener('click', async (e) => {
+      const id = e.currentTarget.dataset.id; if (!id) return;
+      if (!confirm('Dezactivezi al doilea factor? Contul ramane doar cu parola.')) return;
+      const msg = document.getElementById('mfaMesaj');
+      const { error } = await _supabase.auth.mfa.unenroll({ factorId: id });
+      if (error) { msg.textContent = 'Nu s-a putut dezactiva: ' + error.message + ' (iesi si intra din nou cu codul, apoi incearca).'; return; }
+      msg.textContent = 'Dezactivat.';
+      await loadSecuritate();
+  });
 
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1904,6 +2161,7 @@
     if (!error) {
         try { localStorage.setItem(CHEIE_LOGIN_LA, String(Date.now())); } catch(e) {}
         mesajLogin('');
+        if (!(await verificaMfa())) return;
         await startSession(data.user.email);
     } else {
         alert("Autentificare esuata! Verifica emailul si parola.");
@@ -2662,7 +2920,7 @@
 
       if (grup === 'sinteza')  { calculateDirectorStats(); renderHeatmap(); }
       if (grup === 'meniu')    { loadMeniu(); }
-      if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); loadEliberare(); loadCodLuna(); }
+      if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); loadEliberare(); loadCodLuna(); loadMeniulZilei(); loadSecuritate(); loadChei(); loadLimite(); loadAlerte(); }
       if (grup === 'personal') { loadFeedbacks(); loadAngajati(); }
   }
 
@@ -2672,26 +2930,61 @@
   });
 
   // --- Editor de meniu (director) ---------------------------------------
-  // Sursa unica de adevar: tabela `meniu_produse`. Scrierea e permisa doar
-  // directorului, prin politica RLS "scrie meniu director" (managerul nu
-  // vede editorul si nici n-ar putea salva).
-  let meniu = [];        // randurile din baza
-  let meniuSters = [];   // id-uri marcate pentru stergere la salvare
+  // Directorul lucreaza pe o CIORNA (`meniu_ciorna`, pe server): salveaza
+  // cat vrea fara ca clientii sa vada ceva, apoi apasa „Publica" o singura
+  // data (`publica_meniu`). Fiecare publicare pastreaza versiunea de
+  // dinainte in `meniu_versiuni`; „Versiuni" o aduce inapoi. Produsele
+  // sterse doar se ascund (`sters`) si pot fi recuperate.
+  let meniu = [];            // produsele din ciorna (inclusiv cele sterse)
+  let meniuModificat = false;
+  let ciornaPublicata = true;
+
+  const ETICHETE = [
+      ['vegan', '🌱 Vegan'], ['vegetarian', '🥕 Vegetarian'], ['fara_gluten', '🌾 Fara gluten'],
+      ['fara_lactoza', '🥛 Fara lactoza'], ['picant', '🌶️ Picant'], ['fara_alcool', '🍹 Fara alcool'],
+      ['fara_zahar', '🍬 Fara zahar']
+  ];
+
+  // exact forma pe care o intoarce serverul (meniu_ca_json), ca sa poata
+  // compara ciorna cu meniul publicat
+  function produsCiorna(p) {
+      return {
+          id_produs: String(p.id_produs), nume: (p.nume || '').trim(), descriere: p.descriere || null,
+          categorie: (p.categorie || '').trim(), sectiune: p.sectiune === 'bucatarie' ? 'bucatarie' : 'bar',
+          volum: p.volum || null, ingrediente: p.ingrediente || [], alergeni: p.alergeni || [],
+          pret: Math.round(Number(p.pret || 0) * 100) / 100, pret_variabil: !!p.pret_variabil,
+          semnatura: !!p.semnatura, activ: !!p.activ, ordine: Number(p.ordine) || 0,
+          imagine: p.imagine || null, traduceri: p.traduceri || {},
+          nume_variante: (p.nume_variante && p.nume_variante.length) ? p.nume_variante : [(p.nume || '').trim().toLowerCase()],
+          etichete: p.etichete || [], sters: !!p.sters
+      };
+  }
 
   async function loadMeniu() {
       const body = document.getElementById('meniuBody');
       body.innerHTML = '<tr><td colspan="6" style="color:var(--text-muted);">Se incarca...</td></tr>';
-      const {data, error} = await _supabase.from('meniu_produse')
-          .select('*').order('ordine');
+      const {data, error} = await _supabase.rpc('ciorna_meniu');
       if (error) {
           body.innerHTML = '';
           setMeniuStare('Eroare la incarcare: ' + error.message, 'var(--danger)');
           return;
       }
-      meniu = (data || []).map(r => ({...r, _nou: false, _modificat: false}));
-      meniuSters = [];
+      meniu = ((data && data.produse) || []).map(r => ({...r, _nou: false, _modificat: false}));
+      meniuModificat = false;
+      ciornaPublicata = !!(data && data.publicat);
+      document.getElementById('meniuVersiuni').style.display = 'none';
       renderMeniu();
+      actualizeazaStareCiorna();
   }
+
+  function actualizeazaStareCiorna() {
+      const btnPub = document.getElementById('btnPublicaMeniu');
+      if (btnPub) btnPub.classList.toggle('de-publicat', !ciornaPublicata && !meniuModificat);
+      if (meniuModificat) setMeniuStare('Ai modificari nesalvate. Apasa „Salveaza ciorna" — clientii nu vad nimic pana la „Publica".', 'var(--warning)');
+      else if (!ciornaPublicata) setMeniuStare('Ciorna e salvata, dar clientii vad inca meniul vechi. Apasa „Publica" cand esti gata.', 'var(--warning)');
+      else setMeniuStare('✓ Meniul publicat e la zi cu ciorna.', 'var(--success)');
+  }
+  function marcheazaModificat() { meniuModificat = true; actualizeazaStareCiorna(); }
 
   function setMeniuStare(txt, culoare) {
       const s = document.getElementById('meniuStare');
@@ -2701,8 +2994,15 @@
   function renderMeniu() {
       const f = (document.getElementById('cautaProdus').value || '').trim().toLowerCase();
       const body = document.getElementById('meniuBody');
-      const lista = meniu.filter(p => !f || (p.nume || '').toLowerCase().includes(f)
-                                        || (p.categorie || '').toLowerCase().includes(f));
+      const lista = meniu.filter(p => !p.sters && (!f || (p.nume || '').toLowerCase().includes(f)
+                                        || (p.categorie || '').toLowerCase().includes(f)));
+      // produsele sterse raman recuperabile, cu tot istoricul lor
+      const sterse = meniu.filter(p => p.sters);
+      const boxS = document.getElementById('meniuSterse');
+      if (boxS) boxS.innerHTML = sterse.length
+          ? `<div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">🗑 Produse sterse (ascunse din meniu, se pot recupera):</div>`
+            + sterse.map(p => `<span class="sters-chip">${escapeHTML(p.nume || '')} <button type="button" data-recupereaza="${meniu.indexOf(p)}">↩ recupereaza</button></span>`).join('')
+          : '';
       if (!lista.length) {
           body.innerHTML = '<tr><td colspan="6" style="color:var(--text-muted);">Niciun produs. Apasa „Produs nou”.</td></tr>';
           return;
@@ -2736,7 +3036,7 @@
                      : camp === 'pret'  ? parseFloat(el.value)
                      : el.value;
       meniu[i]._modificat = true;
-      setMeniuStare('Ai modificari nesalvate.', 'var(--warning)');
+      marcheazaModificat();
   });
 
   document.getElementById('meniuBody').addEventListener('change', (e) => {
@@ -2745,7 +3045,7 @@
           if (i === undefined) return;
           meniu[i][e.target.dataset.camp] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
           meniu[i]._modificat = true;
-          setMeniuStare('Ai modificari nesalvate.', 'var(--warning)');
+          marcheazaModificat();
       }
   });
 
@@ -2753,15 +3053,21 @@
       const del = e.target.closest('[data-sterge]');
       if (del) {
           const i = +del.dataset.sterge;
-          if (!confirm(`Stergi „${meniu[i].nume}” din meniu?`)) return;
-          if (!meniu[i]._nou) meniuSters.push(meniu[i].id_produs);
-          meniu.splice(i, 1);
+          if (!confirm(`Stergi „${meniu[i].nume}” din meniu? Se ascunde si se poate recupera oricand.`)) return;
+          if (meniu[i]._nou) meniu.splice(i, 1); else { meniu[i].sters = true; meniu[i]._modificat = true; }
           renderMeniu();
-          setMeniuStare('Ai modificari nesalvate.', 'var(--warning)');
+          marcheazaModificat();
           return;
       }
       const ed = e.target.closest('[data-editeaza]');
       if (ed) deschideFormular(+ed.dataset.editeaza);
+  });
+
+  document.getElementById('meniuSterse').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-recupereaza]'); if (!b) return;
+      const p = meniu[+b.dataset.recupereaza]; if (!p) return;
+      p.sters = false; p._modificat = true;
+      renderMeniu(); marcheazaModificat();
   });
 
   document.getElementById('cautaProdus').addEventListener('input', renderMeniu);
@@ -2870,6 +3176,9 @@
       setAutoBadge('mpDescEnAuto', !en.descriere);
       document.getElementById('mpSemn').checked  = p ? !!p.semnatura : false;
       document.getElementById('mpActiv').checked = p ? !!p.activ : true;
+      const et = new Set((p && p.etichete) || []);
+      document.getElementById('mpEtichete').innerHTML = ETICHETE.map(([k, t]) =>
+          `<label><input type="checkbox" data-eticheta="${k}"${et.has(k) ? ' checked' : ''}> ${t}</label>`).join('');
       document.getElementById('mpFaraAlerg').checked =
           !!(p && (!p.alergeni || p.alergeni.length === 0) && p.descriere);
 
@@ -2949,6 +3258,9 @@
       const alergeni = faraAlerg ? [] : lista(v('mpAlerg'));
       const numeRo = v('mpNume');
 
+      // greseala clasica de tastare: un pret de 10 ori mai mare (0 lei e refuzat mai sus)
+      if (pret > 500 && !confirm(`„${numeRo}” are pretul ${pret.toFixed(2)} lei. Sigur? (peste 500 lei)`)) return;
+
       // Daca directorul a apasat "Salveaza" inainte sa iasa din campurile de
       // engleza (deci n-a apucat sa se traduca la blur), traducem acum, o
       // singura data, inainte sa continuam.
@@ -2992,6 +3304,7 @@
       p.alergeni    = alergeni;
       p.semnatura   = document.getElementById('mpSemn').checked;
       p.activ       = document.getElementById('mpActiv').checked;
+      p.etichete    = [...document.querySelectorAll('#mpEtichete input:checked')].map(x => x.dataset.eticheta);
       // Ingredientele si alergenii se traduc mereu automat: n-are rost sa
       // ceri directorului sa le scrie de doua ori, in doua limbi.
       btnSalv.textContent = 'Se traduce...'; btnSalv.disabled = true;
@@ -3011,7 +3324,7 @@
 
       inchideFormular();
       renderMeniu();
-      setMeniuStare('Produs pregatit, tradus automat. Apasa „Salveaza” ca sa il trimiti in meniu.', 'var(--warning)');
+      marcheazaModificat();
   }
 
   document.getElementById('mpSalveaza').addEventListener('click', salveazaFormular);
@@ -3025,49 +3338,99 @@
       }
   });
 
-  async function salveazaMeniu() {
-      const schimbate = meniu.filter(p => p._modificat);
-      if (!schimbate.length && !meniuSters.length) {
-          setMeniuStare('Nu ai facut nicio modificare.'); return;
+  function verificaMeniuInainte() {
+      const vii = meniu.filter(p => !p.sters);
+      for (const p of vii) {
+          if (!p.nume || !p.nume.trim()) { setMeniuStare('Un produs are numele gol.', 'var(--danger)'); return false; }
+          if (!p.categorie || !p.categorie.trim()) { setMeniuStare(`„${p.nume}” nu are categorie.`, 'var(--danger)'); return false; }
+          if (isNaN(p.pret) || p.pret < 0 || p.pret > 9999) { setMeniuStare(`Pret invalid la „${p.nume}”.`, 'var(--danger)'); return false; }
       }
-      for (const p of schimbate) {
-          if (!p.nume || !p.nume.trim()) { setMeniuStare('Un produs are numele gol.', 'var(--danger)'); return; }
-          if (!p.categorie || !p.categorie.trim()) { setMeniuStare(`„${p.nume}” nu are categorie.`, 'var(--danger)'); return; }
-          if (isNaN(p.pret) || p.pret < 0 || p.pret > 9999) { setMeniuStare(`Pret invalid la „${p.nume}”.`, 'var(--danger)'); return; }
+      // aceleasi verificari ca la formular, si pentru preturile schimbate direct in tabel
+      const ciudate = vii.filter(p => p._modificat && (Number(p.pret) === 0 || Number(p.pret) > 500) && !p.pret_variabil);
+      if (ciudate.length && !confirm('Preturi neobisnuite: ' + ciudate.map(p => `${p.nume} = ${Number(p.pret).toFixed(2)} lei`).join(', ') + '. Sigur?')) return false;
+      const nume = new Map();
+      for (const p of vii) {
+          const k = (p.nume || '').trim().toLowerCase();
+          if (nume.has(k)) { if (!confirm(`Exista doua produse cu numele „${p.nume}”. Continui?`)) return false; }
+          nume.set(k, true);
       }
-      if (!confirm(`Salvezi ${schimbate.length} modificare(i)` +
-                   (meniuSters.length ? ` si ${meniuSters.length} stergere(i)` : '') + '?')) return;
-
-      setMeniuStare('Se salveaza...');
-      let esecuri = 0;
-
-      if (meniuSters.length) {
-          const {error} = await _supabase.from('meniu_produse').delete().in('id_produs', meniuSters);
-          if (error) { esecuri++; console.error('stergere', error.message); }
-      }
-      for (const p of schimbate) {
-          const rand = {
-              id_produs: p.id_produs, nume: p.nume.trim(), descriere: p.descriere || null,
-              categorie: p.categorie.trim(), sectiune: p.sectiune, volum: p.volum || null,
-              ingrediente: p.ingrediente || [], alergeni: p.alergeni || [],
-              pret: Math.round(p.pret * 100) / 100, pret_variabil: !!p.pret_variabil,
-              semnatura: !!p.semnatura, activ: !!p.activ, ordine: p.ordine || 0,
-              imagine: p.imagine || null, traduceri: p.traduceri || {},
-              nume_variante: (p.nume_variante && p.nume_variante.length)
-                  ? p.nume_variante : [p.nume.trim().toLowerCase()]
-          };
-          const {error} = await _supabase.from('meniu_produse').upsert(rand, {onConflict: 'id_produs'});
-          if (error) { esecuri++; console.error('produs', p.id_produs, error.message); }
-      }
-
-      await logActivity('meniu_modificat', null,
-          {modificate: schimbate.length, sterse: meniuSters.length});
-
-      if (esecuri) setMeniuStare(`${esecuri} operatie(i) au esuat. Doar directorul sau managerul pot modifica meniul.`, 'var(--danger)');
-      else setMeniuStare('✓ Meniu salvat.', 'var(--success)');
-      await loadMeniu();
+      return true;
   }
 
+  async function salveazaMeniu() {
+      if (!verificaMeniuInainte()) return;
+      setMeniuStare('Se salveaza ciorna...');
+      const { data, error } = await _supabase.rpc('salveaza_ciorna', { p_produse: meniu.map(produsCiorna) });
+      if (error) { setMeniuStare('Nu s-a putut salva: ' + error.message, 'var(--danger)'); return; }
+      meniu.forEach(p => { p._modificat = false; p._nou = false; });
+      meniuModificat = false;
+      ciornaPublicata = !!(data && data.publicat);
+      renderMeniu();
+      actualizeazaStareCiorna();
+      return true;
+  }
+
+  async function publicaMeniu() {
+      if (meniuModificat) {
+          if (!confirm('Ai modificari nesalvate. Le salvez in ciorna si public tot?')) return;
+          if (!(await salveazaMeniu())) return;
+      }
+      const vii = meniu.filter(p => !p.sters).length, sterse = meniu.filter(p => p.sters).length;
+      if (!confirm(`Publici meniul? ${vii} produse vizibile${sterse ? `, ${sterse} ascunse` : ''}. Clientii il vad in secunda asta; versiunea de acum ramane la „Versiuni”.`)) return;
+      setMeniuStare('Se publica...');
+      const { data, error } = await _supabase.rpc('publica_meniu');
+      if (error) { setMeniuStare('Nu s-a putut publica: ' + error.message, 'var(--danger)'); return; }
+      fullMenu = [];
+      await logActivity('meniu_modificat', null, { publicat: true, noi: data && data.noi, modificate: data && data.modificate, ascunse: data && data.ascunse });
+      ciornaPublicata = true;
+      actualizeazaStareCiorna();
+      setMeniuStare(data && data.nimic ? '✓ Nimic de publicat: meniul era deja la zi.' : `✓ Publicat: ${data.noi || 0} noi, ${data.modificate || 0} modificate, ${data.ascunse || 0} ascunse.`, 'var(--success)');
+  }
+
+  async function arataVersiuni() {
+      const box = document.getElementById('meniuVersiuni');
+      if (box.style.display === 'block') { box.style.display = 'none'; return; }
+      box.style.display = 'block';
+      box.innerHTML = '<span style="color:var(--text-muted); font-size:13px;">Se incarca...</span>';
+      const { data, error } = await _supabase.from('meniu_versiuni').select('id, created_at, de, nota, produse').order('id', { ascending: false }).limit(40);
+      if (error) { box.innerHTML = `<span style="color:var(--danger); font-size:13px;">${escapeHTML(error.message)}</span>`; return; }
+      if (!data || !data.length) { box.innerHTML = '<span style="color:var(--text-muted); font-size:13px;">Nicio versiune inca: prima apare dupa prima publicare.</span>'; return; }
+      box.innerHTML = '<div style="font-size:13px; color:var(--text-muted);">Versiunile de dinaintea fiecarei publicari. „Revino” pune versiunea aleasa in meniul publicat si in ciorna (starea de acum ramane si ea aici).</div>'
+        + '<ul class="versiuni-lista">' + data.map(v => {
+            const cand = new Date(v.created_at).toLocaleString('ro-RO', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const n = Array.isArray(v.produse) ? v.produse.filter(p => !p.sters).length : 0;
+            return `<li><span><b>${cand}</b> · ${n} produse · ${escapeHTML(v.nota || '')} <span style="color:var(--text-muted)">(${escapeHTML(numeScurt(v.de || ''))})</span></span>
+                    <button class="btn-action" data-revino="${v.id}" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:12px; padding:8px 12px;">↩ Revino la asta</button></li>`;
+        }).join('') + '</ul>';
+  }
+  document.getElementById('meniuVersiuni').addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-revino]'); if (!b) return;
+      if (!confirm('Revii la versiunea aleasa? Meniul publicat si ciorna devin acea versiune, iar clientii o vad imediat.')) return;
+      setMeniuStare('Se revine...');
+      const { data, error } = await _supabase.rpc('restaureaza_meniu', { p_versiune: Number(b.dataset.revino) });
+      if (error) { setMeniuStare('Nu s-a putut reveni: ' + error.message, 'var(--danger)'); return; }
+      fullMenu = [];
+      await logActivity('meniu_modificat', null, { revenire: true, modificate: data && data.modificate });
+      await loadMeniu();
+      setMeniuStare(`✓ Revenit: ${data.modificate || 0} modificate, ${data.noi || 0} noi, ${data.ascunse || 0} ascunse.`, 'var(--success)');
+  });
+
+  document.getElementById('btnRestaureazaFisier').addEventListener('click', () => document.getElementById('fisierBackup').click());
+  document.getElementById('fisierBackup').addEventListener('change', async (e) => {
+      const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return;
+      let json;
+      try { json = JSON.parse(await f.text()); } catch(ex) { setMeniuStare('Fisierul nu e o copie de siguranta valida.', 'var(--danger)'); return; }
+      const n = Array.isArray(json.meniu) ? json.meniu.length : (Array.isArray(json.produse) ? json.produse.length : 0);
+      if (!n) { setMeniuStare('Fisierul nu contine un meniu.', 'var(--danger)'); return; }
+      if (!confirm(`Copia din ${json.exportat_la ? new Date(json.exportat_la).toLocaleString('ro-RO') : 'fisier'} are ${n} produse. O pun in ciorna (clientii nu vad nimic pana la „Publica”)?`)) return;
+      const { error } = await _supabase.rpc('restaureaza_din_backup', { p_backup: json });
+      if (error) { setMeniuStare('Nu s-a putut restaura: ' + error.message, 'var(--danger)'); return; }
+      await loadMeniu();
+      setMeniuStare(`✓ Copia e in ciorna (${n} produse). Verific-o si apasa „Publica”.`, 'var(--warning)');
+  });
+
+  document.getElementById('btnPublicaMeniu').addEventListener('click', publicaMeniu);
+  document.getElementById('btnVersiuniMeniu').addEventListener('click', arataVersiuni);
   document.getElementById('btnSalveazaMeniu').addEventListener('click', salveazaMeniu);
 
   // --- Sincronizare live intre dispozitive -------------------------------
@@ -3102,6 +3465,14 @@
                   loadZoneOspatari().then(() => renderOrders());
               } else if (a === 'curatare_miezul_noptii') {
                   deconectareLaInchidere();
+              } else if (a === 'comanda_uitata') {
+                  alarmaComandaUitata(p.new.detalii);
+              } else if (a === 'setari_chei' || a === 'setari_limite' || a === 'setari_alerte') {
+                  if (currentTab === 'admin') { loadChei(); loadLimite(); loadAlerte(); }
+              } else if (a === 'meniul_zilei' || a === 'meniu_publicat') {
+                  fullMenu = [];
+                  if (currentTab === 'admin') loadMeniulZilei();
+                  if (currentTab === 'stock') loadFullMenuForStock();
               } else if (a === 'config_mese') {
                   if (typeof renderTablesGrid === 'function') renderTablesGrid();
               }
@@ -3416,6 +3787,11 @@
                : order.status === 'acceptata' ? `<br><span class="stare-pill acceptata">● ${faraOspatari ? 'acceptata — se pregateste si se duce' : 'acceptata, in lucru'}</span>`
                : order.status === 'gata'      ? `<br><span class="stare-pill gata">● gata, de dus la masa</span>`
                : gataDeDus(order)             ? `<br><span class="stare-pill gata">● gata, de dus la masa</span>` : '';
+          if (order.status === 'noua' && order.alerta_uitata_la) {
+              card.classList.add('uitata');
+              pill += `<br><span class="stare-pill uitata">⏰ uitata — neacceptata de ${Math.max(1, Math.floor((Date.now() - new Date(order.created_at).getTime()) / 60000))} min</span>`;
+          }
+          if (order.atentie === 'suma_mare' && activa) pill += `<br><span class="stare-pill suma">⚠️ suma mare — confirma la masa</span>`;
           // cat mai poate fi modificata de client / ospatar (regula e pe server)
           if (activa) pill += `<br><span class="fereastra${(order.status !== 'noua' && secundeRamase(order) <= 0) ? ' expirata' : ''}" data-fereastra="${order.id}">✏️ ${textFereastra(order)}</span>`;
       }
@@ -3574,6 +3950,8 @@
           inchideAnulare();
           renderOrders(); updateMapBadge(); updatePaymentAlertBadge(); sincronizeazaAlarma();
           if (currentTab === 'admin') calculateDirectorStats();
+          const o = allOrders[idx];
+          arataInapoi(`❌ Anulata · ${o ? etichetaMasaVorbita(o) : 'comanda'}`, () => revino(id, 'anulare'));
       } finally { btn.disabled = false; btn.textContent = 'Anuleaza comanda'; }
   });
 
@@ -3760,6 +4138,147 @@
       loadCodLuna(true);
   });
 
+  // --- Meniul zilei (manager si director) -----------------------------------
+  async function loadMeniulZilei() {
+      const sel = document.getElementById('mzProdus'), st = document.getElementById('mzStare');
+      if (!sel || !esteConducere()) return;
+      const { data, error } = await _supabase.from('meniu_produse')
+          .select('id_produs,nume,pret,zilei,zilei_pret,zilei_pana_la')
+          .eq('activ', true).is('sters_la', null).order('ordine');
+      if (error) { st.textContent = error.message; return; }
+      const ales = sel.value;
+      sel.innerHTML = '<option value="">Alege produsul…</option>' + (data || []).map(p =>
+          `<option value="${escapeHTML(p.id_produs)}">${escapeHTML(p.nume)} — ${Number(p.pret).toFixed(2)} lei</option>`).join('');
+      if (ales) sel.value = ales;
+      const z = (data || []).find(p => p.zilei);
+      if (!z) { st.textContent = 'Acum nu e pus niciun meniu al zilei.'; return; }
+      const expirat = z.zilei_pana_la && new Date(z.zilei_pana_la).getTime() < Date.now();
+      st.textContent = `Acum: „${z.nume}”${z.zilei_pret != null ? ' la ' + Number(z.zilei_pret).toFixed(2) + ' lei (normal ' + Number(z.pret).toFixed(2) + ')' : ''}`
+        + (z.zilei_pana_la ? `, pana la ${new Date(z.zilei_pana_la).toLocaleString('ro-RO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}` : '')
+        + (expirat ? ' — a expirat, produsul e la pretul normal' : '');
+  }
+  const btnMzPune = document.getElementById('btnMzPune');
+  if (btnMzPune) btnMzPune.addEventListener('click', async () => {
+      const id = document.getElementById('mzProdus').value, st = document.getElementById('mzStare');
+      if (!id) { st.textContent = 'Alege intai produsul.'; return; }
+      const pretTxt = document.getElementById('mzPret').value.trim();
+      const pret = pretTxt === '' ? null : Math.round(parseFloat(pretTxt) * 100) / 100;
+      if (pret !== null && (isNaN(pret) || pret < 0)) { st.textContent = 'Pretul special nu e valid.'; return; }
+      const ora = document.getElementById('mzPana').value || '23:59';
+      const pana = new Date(); const [hh, mm] = ora.split(':').map(Number); pana.setHours(hh, mm, 0, 0);
+      if (pana.getTime() < Date.now()) { st.textContent = 'Ora aleasa a trecut deja. Alege o ora de mai tarziu.'; return; }
+      const { data, error } = await _supabase.rpc('seteaza_meniul_zilei', { p_id: id, p_pret: pret, p_pana_la: pana.toISOString() });
+      if (error) { st.textContent = 'Nu s-a putut pune: ' + error.message; return; }
+      fullMenu = [];
+      await loadMeniulZilei();
+  });
+  const btnMzScoate = document.getElementById('btnMzScoate');
+  if (btnMzScoate) btnMzScoate.addEventListener('click', async () => {
+      const st = document.getElementById('mzStare');
+      const { error } = await _supabase.rpc('seteaza_meniul_zilei', { p_id: null });
+      if (error) { st.textContent = 'Nu s-a putut scoate: ' + error.message; return; }
+      fullMenu = [];
+      await loadMeniulZilei();
+  });
+
+  // --- Cod unic pe masa (director) --------------------------------------------
+  async function loadChei() {
+      const cb = document.getElementById('cheiActiv');
+      if (!cb || userRole !== 'director') return;
+      const { data } = await _supabase.from('jurnal_activitate').select('detalii').eq('actiune', 'setari_chei')
+          .order('created_at', { ascending: false }).limit(1);
+      const activ = !!(data && data[0] && data[0].detalii && data[0].detalii.activ);
+      cb.checked = activ;
+      document.getElementById('cheiStare').textContent = activ
+        ? 'Pornit: clientii pot comanda doar de pe telefoane care au scanat codul de pe masa.'
+        : 'Oprit: clientii pot scrie numarul mesei de mana.';
+  }
+  const cbChei = document.getElementById('cheiActiv');
+  if (cbChei) cbChei.addEventListener('change', async (e) => {
+      const activ = e.target.checked;
+      if (activ && !confirm('Pornesti codul pe masa? Din clipa asta comenzile clientilor trec DOAR daca au scanat codurile QR noi (cu cheie). Codurile vechi nu mai merg pentru comanda.')) { e.target.checked = false; return; }
+      const ok = await logActivity('setari_chei', null, { activ });
+      if (ok === false) { e.target.checked = !activ; alert('Nu s-a putut salva. Doar directorul poate schimba asta.'); return; }
+      await loadChei();
+  });
+  function bazaMeniu() { return location.href.replace(/[#?].*$/, '').replace(/dashboard\.html$/, ''); }
+  async function arataChei(regen) {
+      const ta = document.getElementById('cheiLista'), st = document.getElementById('cheiStare');
+      const { data, error } = regen
+          ? await _supabase.rpc('chei_mese_regenereaza', { p_masa: null })
+          : await _supabase.rpc('chei_mese_lista');
+      if (error) { st.textContent = error.message; return; }
+      const mese = (data && data.mese) || [];
+      if (!mese.length) { st.textContent = 'Nu exista mese in planul salii (Sala → editeaza harta) — cheile se fac dupa mese.'; return; }
+      ta.value = 'masa\tlink pentru codul QR\n' + mese.map(m => `${m.masa}\t${bazaMeniu()}index.html?mesa=${encodeURIComponent(m.masa)}&k=${m.cheie}`).join('\n');
+      ta.style.display = 'block';
+      document.getElementById('btnCheiCopiaza').style.display = 'inline-flex';
+      st.textContent = `${mese.length} mese. Lipeste lista in unealta de coduri QR (qr/) — fiecare masa isi primeste codul cu cheia ei.`;
+  }
+  const btnCheiArata = document.getElementById('btnCheiArata');
+  if (btnCheiArata) btnCheiArata.addEventListener('click', () => arataChei(false));
+  const btnCheiNoi = document.getElementById('btnCheiNoi');
+  if (btnCheiNoi) btnCheiNoi.addEventListener('click', () => {
+      if (!confirm('Chei noi pentru TOATE mesele? Codurile QR de pe mese nu vor mai merge pentru comanda pana nu le printezi din nou.')) return;
+      arataChei(true);
+  });
+  const btnCheiCopiaza = document.getElementById('btnCheiCopiaza');
+  if (btnCheiCopiaza) btnCheiCopiaza.addEventListener('click', async () => {
+      const ta = document.getElementById('cheiLista');
+      try { await navigator.clipboard.writeText(ta.value); document.getElementById('cheiStare').textContent = 'Lista e copiata.'; }
+      catch(e) { ta.select(); document.execCommand && document.execCommand('copy'); }
+  });
+
+  // --- Limite pentru comenzile clientilor (director) --------------------------
+  async function loadLimite() {
+      if (!document.getElementById('limNeacceptate') || userRole !== 'director') return;
+      const { data } = await _supabase.from('jurnal_activitate').select('detalii').eq('actiune', 'setari_limite')
+          .order('created_at', { ascending: false }).limit(1);
+      const d = (data && data[0] && data[0].detalii) || {};
+      document.getElementById('limNeacceptate').value = d.max_neacceptate || 3;
+      document.getElementById('limRitm').value = d.max_10min || 8;
+      document.getElementById('limProduse').value = d.max_produse || 30;
+      document.getElementById('limPrag').value = d.prag_lei || 500;
+      document.getElementById('limiteStare').textContent = data && data.length ? 'Limitele de mai sus sunt active.' : 'Limitele implicite (3 / 8 / 30 / 500 lei) sunt active.';
+  }
+  const btnLimite = document.getElementById('btnLimite');
+  if (btnLimite) btnLimite.addEventListener('click', async () => {
+      const n = id => parseInt(document.getElementById(id).value, 10);
+      const d = { max_neacceptate: n('limNeacceptate'), max_10min: n('limRitm'), max_produse: n('limProduse'), prag_lei: n('limPrag') };
+      if ([d.max_neacceptate, d.max_10min, d.max_produse, d.prag_lei].some(x => isNaN(x) || x <= 0)) { document.getElementById('limiteStare').textContent = 'Toate campurile trebuie sa fie numere pozitive.'; return; }
+      const ok = await logActivity('setari_limite', null, d);
+      document.getElementById('limiteStare').textContent = ok === false ? 'Nu s-a putut salva. Doar directorul poate schimba limitele.' : '✓ Limite salvate.';
+  });
+
+  // --- Alerta „comanda uitata" (director) --------------------------------------
+  async function loadAlerte() {
+      const sel = document.getElementById('minuteUitata');
+      if (!sel || userRole !== 'director') return;
+      const { data } = await _supabase.from('jurnal_activitate').select('detalii').eq('actiune', 'setari_alerte')
+          .order('created_at', { ascending: false }).limit(1);
+      const m = (data && data[0] && data[0].detalii && parseInt(data[0].detalii.minute_uitata, 10)) || 5;
+      sel.value = String([3, 5, 7, 10, 15].includes(m) ? m : 5);
+      document.getElementById('uitataStare').textContent = `O comanda neacceptata de ${m} minute e anuntata ca uitata.`;
+  }
+  const selUitata = document.getElementById('minuteUitata');
+  if (selUitata) selUitata.addEventListener('change', async (e) => {
+      const ok = await logActivity('setari_alerte', null, { minute_uitata: parseInt(e.target.value, 10) });
+      if (ok === false) { alert('Nu s-a putut salva. Doar directorul poate schimba asta.'); }
+      await loadAlerte();
+  });
+
+  // serverul (cron) a gasit o comanda uitata: suna tare la toata lumea din
+  // tura; directorul primeste doar un bip
+  function alarmaComandaUitata(d) {
+      d = d || {};
+      const text = `⏰ Comanda uitata la ${d.mesa ? 'masa ' + d.mesa : 'o masa'}: neacceptata de ${d.minute || '?'} minute`;
+      if (userRole === 'director') { bipScurt(1); }
+      else { sunetAlerta(3); rosteste(text, 500, 8000); showBackgroundAlert('⏰ Comanda uitata', text); }
+      const b = document.getElementById('uitataBanner');
+      if (b) { b.textContent = text; b.style.display = 'block'; clearTimeout(b._t); b._t = setTimeout(() => { b.style.display = 'none'; }, 60000); }
+      loadOrders();
+  }
+
   // --- Angajatii (numele pentru anulari) ------------------------------------
   // Directorul scrie numele echipei (Sef → Personal); la anulare, cine
   // anuleaza isi alege numele din lista. Sta in jurnal ca `setari_angajati`,
@@ -3807,9 +4326,52 @@
       if (o && out) out.textContent = textRest(id, totalMasa(o.mesa));
   });
 
+  // --- „Inapoi" 10 secunde -------------------------------------------------
+  // Dupa Gata / bon confirmat / anulare apare jos o bara cu „Inapoi" (ca la
+  // Gmail). Serverul (`revino_comanda`) accepta doar ce ai facut TU, in
+  // ultimele 25 de secunde; dupa aia ramane cum e.
+  let inapoiFn = null, inapoiTick = null;
+  function arataInapoi(text, fn) {
+      const bar = document.getElementById('inapoiBar'); if (!bar) return;
+      ascundeInapoi();
+      inapoiFn = fn; let sec = 10;
+      document.getElementById('inapoiText').textContent = text;
+      document.getElementById('inapoiSec').textContent = sec;
+      bar.hidden = false;
+      inapoiTick = setInterval(() => {
+          sec--; document.getElementById('inapoiSec').textContent = sec;
+          if (sec <= 0) ascundeInapoi();
+      }, 1000);
+  }
+  function ascundeInapoi() {
+      clearInterval(inapoiTick); inapoiTick = null; inapoiFn = null;
+      const bar = document.getElementById('inapoiBar'); if (bar) bar.hidden = true;
+  }
+  document.getElementById('inapoiBtn').addEventListener('click', async () => {
+      const fn = inapoiFn; ascundeInapoi();
+      if (fn) await fn();
+  });
+  async function revino(id, ce) {
+      const { data, error } = await _supabase.rpc('revino_comanda', { p_id: id, p_ce: ce });
+      if (error) { alert('Nu s-a putut reveni: ' + error.message); return false; }
+      if (!data || data.ok === false) { alert((data && data.eroare) || 'Nu s-a putut reveni.'); return false; }
+      const idx = allOrders.findIndex(o => o.id === id);
+      if (idx !== -1) {
+          if (ce === 'bon') Object.assign(allOrders[idx], { bon_scos: false, bon_scos_de: null, bon_scos_la: null });
+          else if (ce === 'anulare') Object.assign(allOrders[idx], { status: data.status, motiv_anulare: null, anulat_de: null });
+          else Object.assign(allOrders[idx], { status: data.status, confirmada_la: data.status === 'finalizata' ? allOrders[idx].confirmada_la : null });
+      }
+      renderOrders(); updateMapBadge(); updatePaymentAlertBadge(); sincronizeazaAlarma();
+      if (currentTab === 'admin') calculateDirectorStats();
+      return true;
+  }
+
   window.updateOrderStatus = async function(id, status) {
       const order = allOrders.find(o => o.id === id);
       if (status === 'acceptata') opresteBazait();
+      // comanda mare: barul o accepta abia dupa ce a confirmat cu masa
+      if (status === 'acceptata' && order && order.atentie === 'suma_mare'
+          && !confirm(`Comanda de la ${etichetaMasaVorbita(order)} e mare (${Number(order.total || 0).toFixed(2)} lei). Ai confirmat cu masa ca e reala?`)) { sincronizeazaAlarma(); return; }
       if (status === 'anulata') { deschideAnulare(id); return; }
       const updatePayload = { status };
       // cine o inchide ramane pe comanda (ospatarul, sau barul in modul fara ospatari)
@@ -3830,6 +4392,9 @@
           updatePaymentAlertBadge();
           sincronizeazaAlarma();
           logActivity('estado_cambiado', id, { status, mesa: order ? order.mesa : null, productos: order ? order.produse : null, sectiune: order ? order.sectiune : null, grup_comanda: order ? order.grup_comanda : null });
+          if ((status === 'finalizata' || status === 'gata') && order && !esteAlerta(order)) {
+              arataInapoi(`${status === 'gata' ? '✓ Gata de dus' : '✓ Gata'} · ${etichetaMasaVorbita(order)}`, () => revino(id, 'status'));
+          }
       }
   };
 
@@ -3853,6 +4418,7 @@
       renderOrders();
       if (currentTab === 'admin') calculateDirectorStats();
       logActivity('ticket_confirmado', id, { bon_scos: newState, mesa: order.mesa, total: order.total });
+      if (newState) arataInapoi(`🧾 Bon confirmat · ${etichetaMasaVorbita(order)}`, async () => { for (const oid of ids) await revino(oid, 'bon'); });
   };
 
   async function loadFullMenuForStock() {
@@ -4473,7 +5039,17 @@
           tura_start: '<span style="color:var(--success)">🕒 A intrat in tura</span>',
           tura_stop: '<span style="color:var(--text-muted)">🕒 A iesit din tura</span>',
           meniu_modificat: '<span style="color:var(--accent)">🍸 Meniu modificat</span>',
-          stoc_modificat: '<span style="color:var(--warning)">📦 Stoc</span>'
+          meniu_publicat: '<span style="color:var(--accent)">🚀 Meniu publicat</span>',
+          meniul_zilei: '🍽️ Meniul zilei',
+          stoc_modificat: '<span style="color:var(--warning)">📦 Stoc</span>',
+          conectare: '🔓 Conectare',
+          dispozitiv_nou: '<span style="color:var(--danger)">🔐 Dispozitiv nou (conducere)</span>',
+          revenire: '<span style="color:var(--warning)">↩ Inapoi</span>',
+          comanda_uitata: '<span style="color:var(--danger)">⏰ Comanda uitata</span>',
+          chei_regenerate: '🔑 Chei de masa noi',
+          setari_chei: '🔑 Cod pe masa',
+          setari_limite: '🚧 Limite comenzi',
+          setari_alerte: '⏰ Alerta comanda uitata'
       };
       
       listEl.innerHTML = data.map(log => {
@@ -4510,6 +5086,15 @@
               if (log.actiune === 'comanda_modificata')
                   detText += `${escapeHTML(textDiferente(log.detalii.inainte, log.detalii.dupa))} · ${Number(log.detalii.total_inainte||0).toFixed(2)} → ${Number(log.detalii.total_dupa||0).toFixed(2)} lei`;
               if (log.actiune === 'stoc_modificat') detText += log.detalii.epuizat ? `produs ${escapeHTML(log.detalii.id_produs)} blocat` : `produs ${escapeHTML(log.detalii.id_produs)} deblocat`;
+              if (log.actiune === 'conectare' || log.actiune === 'dispozitiv_nou') detText += `${escapeHTML(log.detalii.dispozitiv || '')}${log.detalii.ip ? ' · IP ' + escapeHTML(log.detalii.ip) : ''}${log.detalii.nou ? ' · <b>dispozitiv nou</b>' : ''}`;
+              if (log.actiune === 'revenire') detText += `${escapeHTML(log.detalii.ce || '')}: ${escapeHTML(log.detalii.de_la || '')} → ${escapeHTML(log.detalii.la || '')}`;
+              if (log.actiune === 'comanda_uitata') detText += `neacceptata de ${log.detalii.minute || '?'} minute (${escapeHTML(log.detalii.sectiune || '')}, ${Number(log.detalii.total || 0).toFixed(2)} lei)`;
+              if (log.actiune === 'meniu_publicat') detText += `${log.detalii.noi || 0} noi, ${log.detalii.modificate || 0} modificate, ${log.detalii.ascunse || 0} ascunse${log.detalii.revenire_la ? ' · revenire la ' + new Date(log.detalii.revenire_la).toLocaleString('ro-RO', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : ''}`;
+              if (log.actiune === 'meniul_zilei') detText += log.detalii.nume ? `${escapeHTML(log.detalii.nume)}${log.detalii.pret != null ? ' la ' + Number(log.detalii.pret).toFixed(2) + ' lei' : ''}${log.detalii.pana_la ? ' pana la ' + new Date(log.detalii.pana_la).toLocaleTimeString('ro-RO', {hour:'2-digit', minute:'2-digit'}) : ''}` : 'scos';
+              if (log.actiune === 'setari_chei') detText += log.detalii.activ ? '(pornit)' : '(oprit)';
+              if (log.actiune === 'setari_limite') detText += `${log.detalii.max_neacceptate} neconfirmate · ${log.detalii.max_10min} in 10 min · ${log.detalii.max_produse} bucati · prag ${log.detalii.prag_lei} lei`;
+              if (log.actiune === 'setari_alerte') detText += `${log.detalii.minute_uitata} minute`;
+              if (log.actiune === 'chei_regenerate') detText += log.detalii.masa ? `masa ${escapeHTML(log.detalii.masa)}` : 'toate mesele';
           }
 
           return `

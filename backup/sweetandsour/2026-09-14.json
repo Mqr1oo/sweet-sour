@@ -1,0 +1,3216 @@
+{
+ "ciorna": null,
+ "exportat_la": "2026-09-14T18:46:09.72651+00:00",
+ "meniu": [
+  {
+   "activ": true,
+   "alergeni": [
+    "Ou"
+   ],
+   "categorie": "Semnatura",
+   "descriere": "Cocktailul casei: gin infuzat cu citrice, sirop de bergamota si un strop de lichior de vin negru care se aseaza in pahar.",
+   "etichete": [],
+   "id_produs": "1",
+   "imagine": "images/1.webp",
+   "ingrediente": [
+    "Gin",
+    "Suc de lamaie",
+    "Sirop de bergamota",
+    "Lichior de vin negru",
+    "Albus (optional)"
+   ],
+   "nume": "Sweet & Sour",
+   "nume_variante": [
+    "sweet & sour",
+    "sweet & sour"
+   ],
+   "ordine": 10,
+   "pret": 38.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Ou"
+     ],
+     "descriere": "The house cocktail: citrus-infused gin, bergamot syrup and a float of red wine liqueur.",
+     "ingrediente": [
+      "Gin",
+      "Suc de lamaie",
+      "Sirop de bergamota",
+      "Lichior de vin negru",
+      "Albus (optional)"
+     ],
+     "nume": "Sweet & Sour"
+    }
+   },
+   "volum": "280 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Fructe cu coaja lemnoasa"
+   ],
+   "categorie": "Semnatura",
+   "descriere": "Bourbon, amaretto si cafea rece, servit lung peste gheata. Se comanda cel mai des cand porneste tonomatul.",
+   "etichete": [],
+   "id_produs": "2",
+   "imagine": "images/2.webp",
+   "ingrediente": [
+    "Bourbon",
+    "Amaretto",
+    "Cafea rece",
+    "Sirop de zahar ars"
+   ],
+   "nume": "Tonomat",
+   "nume_variante": [
+    "tonomat",
+    "jukebox"
+   ],
+   "ordine": 20,
+   "pret": 36.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Fructe cu coaja lemnoasa"
+     ],
+     "descriere": "Bourbon, amaretto and cold brew coffee, served long over ice.",
+     "ingrediente": [
+      "Bourbon",
+      "Amaretto",
+      "Cafea rece",
+      "Sirop de zahar ars"
+     ],
+     "nume": "Jukebox"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Semnatura",
+   "descriere": "Vodka artizanala, afine de munte, cimbrisor si tonic. Amar la inceput, dulce la final.",
+   "etichete": [],
+   "id_produs": "3",
+   "imagine": "images/3.webp",
+   "ingrediente": [
+    "Vodka",
+    "Afine",
+    "Cimbrisor",
+    "Tonic",
+    "Lamaie verde"
+   ],
+   "nume": "Ceahlau",
+   "nume_variante": [
+    "ceahlau",
+    "ceahlau"
+   ],
+   "ordine": 30,
+   "pret": 34.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Craft vodka, mountain blueberries, wild thyme and tonic.",
+     "ingrediente": [
+      "Vodka",
+      "Afine",
+      "Cimbrisor",
+      "Tonic",
+      "Lamaie verde"
+     ],
+     "nume": "Ceahlau"
+    }
+   },
+   "volum": "250 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Clasicul italian, in parti egale. Gin, vermut rosu si bitter, racit pe un cub mare.",
+   "etichete": [],
+   "id_produs": "4",
+   "imagine": "images/4.webp",
+   "ingrediente": [
+    "Gin",
+    "Vermut rosu",
+    "Bitter Campari",
+    "Coaja de portocala"
+   ],
+   "nume": "Negroni",
+   "nume_variante": [
+    "negroni",
+    "negroni"
+   ],
+   "ordine": 40,
+   "pret": 30.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "The Italian classic in equal parts, over one large cube.",
+     "ingrediente": [
+      "Gin",
+      "Vermut rosu",
+      "Bitter Campari",
+      "Coaja de portocala"
+     ],
+     "nume": "Negroni"
+    }
+   },
+   "volum": "200 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Bourbon, zahar si bitter de Angostura, amestecat lung pana se rotunjeste.",
+   "etichete": [],
+   "id_produs": "5",
+   "imagine": "images/5.webp",
+   "ingrediente": [
+    "Bourbon",
+    "Zahar",
+    "Bitter Angostura",
+    "Coaja de portocala"
+   ],
+   "nume": "Old Fashioned",
+   "nume_variante": [
+    "old fashioned",
+    "old fashioned"
+   ],
+   "ordine": 50,
+   "pret": 30.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Bourbon, sugar and Angostura bitters, stirred long until round.",
+     "ingrediente": [
+      "Bourbon",
+      "Zahar",
+      "Bitter Angostura",
+      "Coaja de portocala"
+     ],
+     "nume": "Old Fashioned"
+    }
+   },
+   "volum": "220 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Rom alb, menta proaspata, lamaie verde si sifon. Se face la comanda, nu din sirop.",
+   "etichete": [],
+   "id_produs": "6",
+   "imagine": "images/6.webp",
+   "ingrediente": [
+    "Rom alb",
+    "Menta",
+    "Lamaie verde",
+    "Zahar",
+    "Sifon"
+   ],
+   "nume": "Mojito",
+   "nume_variante": [
+    "mojito",
+    "mojito"
+   ],
+   "ordine": 60,
+   "pret": 28.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "White rum, fresh mint, lime and soda. Built to order.",
+     "ingrediente": [
+      "Rom alb",
+      "Menta",
+      "Lamaie verde",
+      "Zahar",
+      "Sifon"
+     ],
+     "nume": "Mojito"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Cocktailuri",
+   "descriere": "Aperol, prosecco si sifon, cu felie de portocala. Bautura de terasa.",
+   "etichete": [],
+   "id_produs": "7",
+   "imagine": "images/7.webp",
+   "ingrediente": [
+    "Aperol",
+    "Prosecco",
+    "Sifon",
+    "Portocala"
+   ],
+   "nume": "Aperol Spritz",
+   "nume_variante": [
+    "aperol spritz",
+    "aperol spritz"
+   ],
+   "ordine": 70,
+   "pret": 29.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "Aperol, prosecco and soda with an orange slice.",
+     "ingrediente": [
+      "Aperol",
+      "Prosecco",
+      "Sifon",
+      "Portocala"
+     ],
+     "nume": "Aperol Spritz"
+    }
+   },
+   "volum": "250 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Vodka, lichior de cafea si un espresso proaspat, agitat pana face spuma.",
+   "etichete": [],
+   "id_produs": "8",
+   "imagine": "images/8.webp",
+   "ingrediente": [
+    "Vodka",
+    "Lichior de cafea",
+    "Espresso",
+    "Sirop de zahar"
+   ],
+   "nume": "Espresso Martini",
+   "nume_variante": [
+    "espresso martini",
+    "espresso martini"
+   ],
+   "ordine": 80,
+   "pret": 30.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Vodka, coffee liqueur and a fresh espresso, shaken to a foam.",
+     "ingrediente": [
+      "Vodka",
+      "Lichior de cafea",
+      "Espresso",
+      "Sirop de zahar"
+     ],
+     "nume": "Espresso Martini"
+    }
+   },
+   "volum": "180 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Ou"
+   ],
+   "categorie": "Cocktailuri",
+   "descriere": "Whisky, lamaie, zahar si albus, cu cateva picaturi de bitter deasupra.",
+   "etichete": [],
+   "id_produs": "9",
+   "imagine": "images/9.webp",
+   "ingrediente": [
+    "Whisky",
+    "Suc de lamaie",
+    "Zahar",
+    "Albus de ou",
+    "Bitter"
+   ],
+   "nume": "Whisky Sour",
+   "nume_variante": [
+    "whisky sour",
+    "whisky sour"
+   ],
+   "ordine": 90,
+   "pret": 29.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Ou"
+     ],
+     "descriere": "Whisky, lemon, sugar and egg white, with bitters on top.",
+     "ingrediente": [
+      "Whisky",
+      "Suc de lamaie",
+      "Zahar",
+      "Albus de ou",
+      "Bitter"
+     ],
+     "nume": "Whisky Sour"
+    }
+   },
+   "volum": "200 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Gin la alegere, tonic premium, ienibahar si citrice. Spune-i barmanului ce gin vrei.",
+   "etichete": [],
+   "id_produs": "10",
+   "imagine": "images/10.webp",
+   "ingrediente": [
+    "Gin",
+    "Tonic",
+    "Ienibahar",
+    "Lamaie verde"
+   ],
+   "nume": "Gin Tonic",
+   "nume_variante": [
+    "gin tonic",
+    "gin & tonic"
+   ],
+   "ordine": 100,
+   "pret": 28.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Your choice of gin, premium tonic, allspice and citrus.",
+     "ingrediente": [
+      "Gin",
+      "Tonic",
+      "Ienibahar",
+      "Lamaie verde"
+     ],
+     "nume": "Gin & Tonic"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Trei ingrediente, nimic in plus: rom alb, lamaie verde, zahar. Servit foarte rece.",
+   "etichete": [],
+   "id_produs": "11",
+   "imagine": "images/11.webp",
+   "ingrediente": [
+    "Rom alb",
+    "Lamaie verde",
+    "Sirop de zahar"
+   ],
+   "nume": "Daiquiri",
+   "nume_variante": [
+    "daiquiri",
+    "daiquiri"
+   ],
+   "ordine": 110,
+   "pret": 30.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Three ingredients, nothing more. Served very cold.",
+     "ingrediente": [
+      "Rom alb",
+      "Lamaie verde",
+      "Sirop de zahar"
+     ],
+     "nume": "Daiquiri"
+    }
+   },
+   "volum": "160 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Rom, cola si multa lamaie verde. Simplu si corect facut.",
+   "etichete": [],
+   "id_produs": "12",
+   "imagine": "images/12.webp",
+   "ingrediente": [
+    "Rom",
+    "Cola",
+    "Lamaie verde"
+   ],
+   "nume": "Cuba Libre",
+   "nume_variante": [
+    "cuba libre",
+    "cuba libre"
+   ],
+   "ordine": 120,
+   "pret": 27.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Rum, cola and plenty of lime.",
+     "ingrediente": [
+      "Rom",
+      "Cola",
+      "Lamaie verde"
+     ],
+     "nume": "Cuba Libre"
+    }
+   },
+   "volum": "280 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Fara alcool: menta, lamaie verde, zahar si sifon.",
+   "etichete": [],
+   "id_produs": "13",
+   "imagine": "images/13.webp",
+   "ingrediente": [
+    "Menta",
+    "Lamaie verde",
+    "Zahar",
+    "Sifon"
+   ],
+   "nume": "Virgin Mojito",
+   "nume_variante": [
+    "virgin mojito",
+    "virgin mojito"
+   ],
+   "ordine": 130,
+   "pret": 26.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Alcohol free: mint, lime, sugar and soda.",
+     "ingrediente": [
+      "Menta",
+      "Lamaie verde",
+      "Zahar",
+      "Sifon"
+     ],
+     "nume": "Virgin Mojito"
+    }
+   },
+   "volum": "250 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Shot-uri",
+   "descriere": "Tequila blanco, cu sare si lamaie alaturi.",
+   "etichete": [],
+   "id_produs": "14",
+   "imagine": "images/14.webp",
+   "ingrediente": [
+    "Tequila",
+    "Sare",
+    "Lamaie"
+   ],
+   "nume": "Tequila",
+   "nume_variante": [
+    "tequila",
+    "tequila"
+   ],
+   "ordine": 140,
+   "pret": 12.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Tequila blanco, with salt and lemon.",
+     "ingrediente": [
+      "Tequila",
+      "Sare",
+      "Lamaie"
+     ],
+     "nume": "Tequila"
+    }
+   },
+   "volum": "40 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Shot-uri",
+   "descriere": "Servit foarte rece, direct din congelator.",
+   "etichete": [],
+   "id_produs": "15",
+   "imagine": "images/15.webp",
+   "ingrediente": [
+    "Jagermeister"
+   ],
+   "nume": "Jagermeister",
+   "nume_variante": [
+    "jagermeister",
+    "jagermeister"
+   ],
+   "ordine": 150,
+   "pret": 13.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Served ice cold, straight from the freezer.",
+     "ingrediente": [
+      "Jagermeister"
+     ],
+     "nume": "Jagermeister"
+    }
+   },
+   "volum": "40 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Shot-uri",
+   "descriere": "Anason, servit clasic sau flambat.",
+   "etichete": [],
+   "id_produs": "16",
+   "imagine": "images/16.webp",
+   "ingrediente": [
+    "Sambuca"
+   ],
+   "nume": "Sambuca",
+   "nume_variante": [
+    "sambuca",
+    "sambuca"
+   ],
+   "ordine": 160,
+   "pret": 12.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Anise, served plain or flamed.",
+     "ingrediente": [
+      "Sambuca"
+     ],
+     "nume": "Sambuca"
+    }
+   },
+   "volum": "40 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Shot-uri",
+   "descriere": "Trei straturi: lichior de cafea, Baileys si triple sec.",
+   "etichete": [],
+   "id_produs": "17",
+   "imagine": "images/17.webp",
+   "ingrediente": [
+    "Lichior de cafea",
+    "Baileys",
+    "Triple sec"
+   ],
+   "nume": "B-52",
+   "nume_variante": [
+    "b-52",
+    "b-52"
+   ],
+   "ordine": 170,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Three layers: coffee liqueur, Baileys and triple sec.",
+     "ingrediente": [
+      "Lichior de cafea",
+      "Baileys",
+      "Triple sec"
+     ],
+     "nume": "B-52"
+    }
+   },
+   "volum": "40 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Shot-uri",
+   "descriere": "Tuica de casa, din Neamt. Se bea incet.",
+   "etichete": [],
+   "id_produs": "18",
+   "imagine": "images/18.webp",
+   "ingrediente": [
+    "Tuica de prune"
+   ],
+   "nume": "Tuica de prune",
+   "nume_variante": [
+    "tuica de prune",
+    "plum brandy"
+   ],
+   "ordine": 180,
+   "pret": 10.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "House plum brandy from Neamt county.",
+     "ingrediente": [
+      "Tuica de prune"
+     ],
+     "nume": "Plum Brandy"
+    }
+   },
+   "volum": "50 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Gluten"
+   ],
+   "categorie": "Bere & Cidru",
+   "descriere": "Bere blonda la halba, trasa proaspat.",
+   "etichete": [],
+   "id_produs": "19",
+   "imagine": "images/19.webp",
+   "ingrediente": [
+    "Bere blonda"
+   ],
+   "nume": "Bere draft blonda",
+   "nume_variante": [
+    "bere draft blonda",
+    "draft lager"
+   ],
+   "ordine": 190,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten"
+     ],
+     "descriere": "Lager on tap, freshly poured.",
+     "ingrediente": [
+      "Bere blonda"
+     ],
+     "nume": "Draft Lager"
+    }
+   },
+   "volum": "500 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Gluten"
+   ],
+   "categorie": "Bere & Cidru",
+   "descriere": "Bere IPA de la o berarie mica, amaruie si aromata.",
+   "etichete": [],
+   "id_produs": "20",
+   "imagine": "images/20.webp",
+   "ingrediente": [
+    "Bere IPA"
+   ],
+   "nume": "IPA artizanala",
+   "nume_variante": [
+    "ipa artizanala",
+    "craft ipa"
+   ],
+   "ordine": 200,
+   "pret": 16.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten"
+     ],
+     "descriere": "IPA from a small brewery, bitter and aromatic.",
+     "ingrediente": [
+      "Bere IPA"
+     ],
+     "nume": "Craft IPA"
+    }
+   },
+   "volum": "330 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Gluten"
+   ],
+   "categorie": "Bere & Cidru",
+   "descriere": "Optiune fara alcool, la sticla.",
+   "etichete": [],
+   "id_produs": "21",
+   "imagine": "images/21.webp",
+   "ingrediente": [
+    "Bere fara alcool"
+   ],
+   "nume": "Bere fara alcool",
+   "nume_variante": [
+    "bere fara alcool",
+    "alcohol-free beer"
+   ],
+   "ordine": 210,
+   "pret": 15.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten"
+     ],
+     "descriere": "Alcohol-free option, bottled.",
+     "ingrediente": [
+      "Bere fara alcool"
+     ],
+     "nume": "Alcohol-free Beer"
+    }
+   },
+   "volum": "330 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Bere & Cidru",
+   "descriere": "Cidru sec de mere, servit rece.",
+   "etichete": [],
+   "id_produs": "22",
+   "imagine": "images/22.webp",
+   "ingrediente": [
+    "Cidru de mere"
+   ],
+   "nume": "Cidru de mere",
+   "nume_variante": [
+    "cidru de mere",
+    "apple cider"
+   ],
+   "ordine": 220,
+   "pret": 17.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "Dry apple cider, served cold.",
+     "ingrediente": [
+      "Cidru de mere"
+     ],
+     "nume": "Apple Cider"
+    }
+   },
+   "volum": "330 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Vinuri",
+   "descriere": "Feteasca neagra, sec. Intreaba de recolta zilei.",
+   "etichete": [],
+   "id_produs": "23",
+   "imagine": "images/23.webp",
+   "ingrediente": [
+    "Vin rosu"
+   ],
+   "nume": "Vin rosu la pahar",
+   "nume_variante": [
+    "vin rosu la pahar",
+    "red wine by the glass"
+   ],
+   "ordine": 230,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "Feteasca Neagra, dry.",
+     "ingrediente": [
+      "Vin rosu"
+     ],
+     "nume": "Red Wine by the Glass"
+    }
+   },
+   "volum": "150 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Vinuri",
+   "descriere": "Feteasca regala, sec, servit rece.",
+   "etichete": [],
+   "id_produs": "24",
+   "imagine": "images/24.webp",
+   "ingrediente": [
+    "Vin alb"
+   ],
+   "nume": "Vin alb la pahar",
+   "nume_variante": [
+    "vin alb la pahar",
+    "white wine by the glass"
+   ],
+   "ordine": 240,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "Feteasca Regala, dry, served chilled.",
+     "ingrediente": [
+      "Vin alb"
+     ],
+     "nume": "White Wine by the Glass"
+    }
+   },
+   "volum": "150 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Vinuri",
+   "descriere": "Spumant italian, la pahar.",
+   "etichete": [],
+   "id_produs": "25",
+   "imagine": "images/25.webp",
+   "ingrediente": [
+    "Prosecco"
+   ],
+   "nume": "Prosecco",
+   "nume_variante": [
+    "prosecco",
+    "prosecco"
+   ],
+   "ordine": 250,
+   "pret": 22.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "Italian sparkling wine by the glass.",
+     "ingrediente": [
+      "Prosecco"
+     ],
+     "nume": "Prosecco"
+    }
+   },
+   "volum": "125 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cafea & Ceai",
+   "descriere": "Un shot scurt, din boabe prajite local.",
+   "etichete": [],
+   "id_produs": "26",
+   "imagine": "images/26.webp",
+   "ingrediente": [
+    "Cafea"
+   ],
+   "nume": "Espresso",
+   "nume_variante": [
+    "espresso",
+    "espresso"
+   ],
+   "ordine": 260,
+   "pret": 9.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "A short shot, from locally roasted beans.",
+     "ingrediente": [
+      "Cafea"
+     ],
+     "nume": "Espresso"
+    }
+   },
+   "volum": "30 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Cafea & Ceai",
+   "descriere": "Espresso cu lapte spumat.",
+   "etichete": [],
+   "id_produs": "27",
+   "imagine": "images/27.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte"
+   ],
+   "nume": "Cappuccino",
+   "nume_variante": [
+    "cappuccino",
+    "cappuccino"
+   ],
+   "ordine": 270,
+   "pret": 13.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Espresso with steamed milk.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte"
+     ],
+     "nume": "Cappuccino"
+    }
+   },
+   "volum": "180 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Cafea & Ceai",
+   "descriere": "Espresso dublu peste gheata, cu lapte sau simplu.",
+   "etichete": [],
+   "id_produs": "28",
+   "imagine": "images/28.webp",
+   "ingrediente": [
+    "Cafea",
+    "Gheata",
+    "Lapte"
+   ],
+   "nume": "Cafea cu gheata",
+   "nume_variante": [
+    "cafea cu gheata",
+    "iced coffee"
+   ],
+   "ordine": 280,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Double espresso over ice.",
+     "ingrediente": [
+      "Cafea",
+      "Gheata",
+      "Lapte"
+     ],
+     "nume": "Iced Coffee"
+    }
+   },
+   "volum": "300 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Cafea & Ceai",
+   "descriere": "Alege dintre negru, verde, menta sau fructe de padure.",
+   "etichete": [],
+   "id_produs": "29",
+   "imagine": "images/29.webp",
+   "ingrediente": [
+    "Ceai"
+   ],
+   "nume": "Ceai la ceainic",
+   "nume_variante": [
+    "ceai la ceainic",
+    "pot of tea"
+   ],
+   "ordine": 290,
+   "pret": 11.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Black, green, mint or forest fruit.",
+     "ingrediente": [
+      "Ceai"
+     ],
+     "nume": "Pot of Tea"
+    }
+   },
+   "volum": "400 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Racoritoare",
+   "descriere": "Plata sau carbogazoasa.",
+   "etichete": [],
+   "id_produs": "30",
+   "imagine": "images/30.webp",
+   "ingrediente": [
+    "Apa minerala"
+   ],
+   "nume": "Apa minerala",
+   "nume_variante": [
+    "apa minerala",
+    "mineral water"
+   ],
+   "ordine": 300,
+   "pret": 9.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Still or sparkling.",
+     "ingrediente": [
+      "Apa minerala"
+     ],
+     "nume": "Mineral Water"
+    }
+   },
+   "volum": "330 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Racoritoare",
+   "descriere": "Bauturi carbogazoase la sticla.",
+   "etichete": [],
+   "id_produs": "31",
+   "imagine": "images/31.webp",
+   "ingrediente": [
+    "Bautura carbogazoasa"
+   ],
+   "nume": "Cola / Fanta / Sprite",
+   "nume_variante": [
+    "cola / fanta / sprite",
+    "cola / fanta / sprite"
+   ],
+   "ordine": 310,
+   "pret": 11.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Bottled soft drinks.",
+     "ingrediente": [
+      "Bautura carbogazoasa"
+     ],
+     "nume": "Cola / Fanta / Sprite"
+    }
+   },
+   "volum": "330 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Racoritoare",
+   "descriere": "Lamaie stoarsa pe loc, menta si sifon. Se poate face si cu zmeura.",
+   "etichete": [],
+   "id_produs": "32",
+   "imagine": "images/32.webp",
+   "ingrediente": [
+    "Lamaie",
+    "Menta",
+    "Zahar",
+    "Sifon"
+   ],
+   "nume": "Limonada casei",
+   "nume_variante": [
+    "limonada casei",
+    "house lemonade"
+   ],
+   "ordine": 320,
+   "pret": 16.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Lemons squeezed to order, mint and soda.",
+     "ingrediente": [
+      "Lamaie",
+      "Menta",
+      "Zahar",
+      "Sifon"
+     ],
+     "nume": "House Lemonade"
+    }
+   },
+   "volum": "400 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [],
+   "categorie": "Racoritoare",
+   "descriere": "Stors la comanda.",
+   "etichete": [],
+   "id_produs": "33",
+   "imagine": "images/33.webp",
+   "ingrediente": [
+    "Portocale"
+   ],
+   "nume": "Suc natural de portocale",
+   "nume_variante": [
+    "suc natural de portocale",
+    "fresh orange juice"
+   ],
+   "ordine": 330,
+   "pret": 12.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Squeezed to order.",
+     "ingrediente": [
+      "Portocale"
+     ],
+     "nume": "Fresh Orange Juice"
+    }
+   },
+   "volum": "250 ml"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Arahide"
+   ],
+   "categorie": "Snacks",
+   "descriere": "Alune sarate, prajite in casa.",
+   "etichete": [],
+   "id_produs": "34",
+   "imagine": "images/34.webp",
+   "ingrediente": [
+    "Alune",
+    "Sare"
+   ],
+   "nume": "Alune prajite",
+   "nume_variante": [
+    "alune prajite",
+    "roasted peanuts"
+   ],
+   "ordine": 340,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Arahide"
+     ],
+     "descriere": "Salted peanuts, roasted in house.",
+     "ingrediente": [
+      "Alune",
+      "Sare"
+     ],
+     "nume": "Roasted Peanuts"
+    }
+   },
+   "volum": "120 g"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte",
+    "Ou"
+   ],
+   "categorie": "Snacks",
+   "descriere": "Cartofi copti cu rozmarin, cu sos de usturoi.",
+   "etichete": [],
+   "id_produs": "35",
+   "imagine": "images/35.webp",
+   "ingrediente": [
+    "Cartofi",
+    "Rozmarin",
+    "Sos de usturoi"
+   ],
+   "nume": "Cartofi wedges",
+   "nume_variante": [
+    "cartofi wedges",
+    "potato wedges"
+   ],
+   "ordine": 350,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte",
+      "Ou"
+     ],
+     "descriere": "Baked potatoes with rosemary and garlic dip.",
+     "ingrediente": [
+      "Cartofi",
+      "Rozmarin",
+      "Sos de usturoi"
+     ],
+     "nume": "Potato Wedges"
+    }
+   },
+   "volum": "150 g"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte",
+    "Fructe cu coaja lemnoasa",
+    "Gluten"
+   ],
+   "categorie": "Snacks",
+   "descriere": "Branzeturi locale, nuci si dulceata de casa.",
+   "etichete": [],
+   "id_produs": "36",
+   "imagine": "images/36.webp",
+   "ingrediente": [
+    "Branzeturi",
+    "Nuci",
+    "Dulceata",
+    "Paine"
+   ],
+   "nume": "Platou de branzeturi",
+   "nume_variante": [
+    "platou de branzeturi",
+    "cheese board"
+   ],
+   "ordine": 360,
+   "pret": 34.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte",
+      "Fructe cu coaja lemnoasa",
+      "Gluten"
+     ],
+     "descriere": "Local cheeses, walnuts and house preserve.",
+     "ingrediente": [
+      "Branzeturi",
+      "Nuci",
+      "Dulceata",
+      "Paine"
+     ],
+     "nume": "Cheese Board"
+    }
+   },
+   "volum": "250 g"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Snacks",
+   "descriere": "Nachos cu sos de branza si jalapeno.",
+   "etichete": [],
+   "id_produs": "37",
+   "imagine": "images/37.webp",
+   "ingrediente": [
+    "Nachos",
+    "Sos de branza",
+    "Jalapeno"
+   ],
+   "nume": "Nachos cu branza",
+   "nume_variante": [
+    "nachos cu branza",
+    "cheese nachos"
+   ],
+   "ordine": 370,
+   "pret": 22.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Nachos with cheese sauce and jalapenos.",
+     "ingrediente": [
+      "Nachos",
+      "Sos de branza",
+      "Jalapeno"
+     ],
+     "nume": "Cheese Nachos"
+    }
+   },
+   "volum": "200 g"
+  },
+  {
+   "activ": true,
+   "alergeni": [
+    "Gluten"
+   ],
+   "categorie": "Snacks",
+   "descriere": "Paine prajita, rosii, busuioc si ulei de masline.",
+   "etichete": [],
+   "id_produs": "38",
+   "imagine": "images/38.webp",
+   "ingrediente": [
+    "Paine",
+    "Rosii",
+    "Busuioc",
+    "Ulei de masline"
+   ],
+   "nume": "Bruschete cu rosii",
+   "nume_variante": [
+    "bruschete cu rosii",
+    "tomato bruschetta"
+   ],
+   "ordine": 380,
+   "pret": 26.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters": false,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten"
+     ],
+     "descriere": "Toasted bread, tomatoes, basil and olive oil.",
+     "ingrediente": [
+      "Paine",
+      "Rosii",
+      "Busuioc",
+      "Ulei de masline"
+     ],
+     "nume": "Tomato Bruschetta"
+    }
+   },
+   "volum": "180 g"
+  }
+ ],
+ "meniu_complet": [
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Ou"
+   ],
+   "categorie": "Semnatura",
+   "descriere": "Cocktailul casei: gin infuzat cu citrice, sirop de bergamota si un strop de lichior de vin negru care se aseaza in pahar.",
+   "etichete": [],
+   "id_produs": "1",
+   "imagine": "images/1.webp",
+   "ingrediente": [
+    "Gin",
+    "Suc de lamaie",
+    "Sirop de bergamota",
+    "Lichior de vin negru",
+    "Albus (optional)"
+   ],
+   "nume": "Sweet & Sour",
+   "nume_variante": [
+    "sweet & sour",
+    "sweet & sour"
+   ],
+   "ordine": 10,
+   "pret": 38.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Ou"
+     ],
+     "descriere": "The house cocktail: citrus-infused gin, bergamot syrup and a float of red wine liqueur.",
+     "ingrediente": [
+      "Gin",
+      "Suc de lamaie",
+      "Sirop de bergamota",
+      "Lichior de vin negru",
+      "Albus (optional)"
+     ],
+     "nume": "Sweet & Sour"
+    }
+   },
+   "volum": "280 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Fructe cu coaja lemnoasa"
+   ],
+   "categorie": "Semnatura",
+   "descriere": "Bourbon, amaretto si cafea rece, servit lung peste gheata. Se comanda cel mai des cand porneste tonomatul.",
+   "etichete": [],
+   "id_produs": "2",
+   "imagine": "images/2.webp",
+   "ingrediente": [
+    "Bourbon",
+    "Amaretto",
+    "Cafea rece",
+    "Sirop de zahar ars"
+   ],
+   "nume": "Tonomat",
+   "nume_variante": [
+    "tonomat",
+    "jukebox"
+   ],
+   "ordine": 20,
+   "pret": 36.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Fructe cu coaja lemnoasa"
+     ],
+     "descriere": "Bourbon, amaretto and cold brew coffee, served long over ice.",
+     "ingrediente": [
+      "Bourbon",
+      "Amaretto",
+      "Cafea rece",
+      "Sirop de zahar ars"
+     ],
+     "nume": "Jukebox"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Semnatura",
+   "descriere": "Vodka artizanala, afine de munte, cimbrisor si tonic. Amar la inceput, dulce la final.",
+   "etichete": [],
+   "id_produs": "3",
+   "imagine": "images/3.webp",
+   "ingrediente": [
+    "Vodka",
+    "Afine",
+    "Cimbrisor",
+    "Tonic",
+    "Lamaie verde"
+   ],
+   "nume": "Ceahlau",
+   "nume_variante": [
+    "ceahlau",
+    "ceahlau"
+   ],
+   "ordine": 30,
+   "pret": 34.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": true,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Craft vodka, mountain blueberries, wild thyme and tonic.",
+     "ingrediente": [
+      "Vodka",
+      "Afine",
+      "Cimbrisor",
+      "Tonic",
+      "Lamaie verde"
+     ],
+     "nume": "Ceahlau"
+    }
+   },
+   "volum": "250 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Clasicul italian, in parti egale. Gin, vermut rosu si bitter, racit pe un cub mare.",
+   "etichete": [],
+   "id_produs": "4",
+   "imagine": "images/4.webp",
+   "ingrediente": [
+    "Gin",
+    "Vermut rosu",
+    "Bitter Campari",
+    "Coaja de portocala"
+   ],
+   "nume": "Negroni",
+   "nume_variante": [
+    "negroni",
+    "negroni"
+   ],
+   "ordine": 40,
+   "pret": 30.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "The Italian classic in equal parts, over one large cube.",
+     "ingrediente": [
+      "Gin",
+      "Vermut rosu",
+      "Bitter Campari",
+      "Coaja de portocala"
+     ],
+     "nume": "Negroni"
+    }
+   },
+   "volum": "200 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Bourbon, zahar si bitter de Angostura, amestecat lung pana se rotunjeste.",
+   "etichete": [],
+   "id_produs": "5",
+   "imagine": "images/5.webp",
+   "ingrediente": [
+    "Bourbon",
+    "Zahar",
+    "Bitter Angostura",
+    "Coaja de portocala"
+   ],
+   "nume": "Old Fashioned",
+   "nume_variante": [
+    "old fashioned",
+    "old fashioned"
+   ],
+   "ordine": 50,
+   "pret": 30.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Bourbon, sugar and Angostura bitters, stirred long until round.",
+     "ingrediente": [
+      "Bourbon",
+      "Zahar",
+      "Bitter Angostura",
+      "Coaja de portocala"
+     ],
+     "nume": "Old Fashioned"
+    }
+   },
+   "volum": "220 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Rom alb, menta proaspata, lamaie verde si sifon. Se face la comanda, nu din sirop.",
+   "etichete": [],
+   "id_produs": "6",
+   "imagine": "images/6.webp",
+   "ingrediente": [
+    "Rom alb",
+    "Menta",
+    "Lamaie verde",
+    "Zahar",
+    "Sifon"
+   ],
+   "nume": "Mojito",
+   "nume_variante": [
+    "mojito",
+    "mojito"
+   ],
+   "ordine": 60,
+   "pret": 28.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "White rum, fresh mint, lime and soda. Built to order.",
+     "ingrediente": [
+      "Rom alb",
+      "Menta",
+      "Lamaie verde",
+      "Zahar",
+      "Sifon"
+     ],
+     "nume": "Mojito"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Cocktailuri",
+   "descriere": "Aperol, prosecco si sifon, cu felie de portocala. Bautura de terasa.",
+   "etichete": [],
+   "id_produs": "7",
+   "imagine": "images/7.webp",
+   "ingrediente": [
+    "Aperol",
+    "Prosecco",
+    "Sifon",
+    "Portocala"
+   ],
+   "nume": "Aperol Spritz",
+   "nume_variante": [
+    "aperol spritz",
+    "aperol spritz"
+   ],
+   "ordine": 70,
+   "pret": 29.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "Aperol, prosecco and soda with an orange slice.",
+     "ingrediente": [
+      "Aperol",
+      "Prosecco",
+      "Sifon",
+      "Portocala"
+     ],
+     "nume": "Aperol Spritz"
+    }
+   },
+   "volum": "250 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Vodka, lichior de cafea si un espresso proaspat, agitat pana face spuma.",
+   "etichete": [],
+   "id_produs": "8",
+   "imagine": "images/8.webp",
+   "ingrediente": [
+    "Vodka",
+    "Lichior de cafea",
+    "Espresso",
+    "Sirop de zahar"
+   ],
+   "nume": "Espresso Martini",
+   "nume_variante": [
+    "espresso martini",
+    "espresso martini"
+   ],
+   "ordine": 80,
+   "pret": 30.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Vodka, coffee liqueur and a fresh espresso, shaken to a foam.",
+     "ingrediente": [
+      "Vodka",
+      "Lichior de cafea",
+      "Espresso",
+      "Sirop de zahar"
+     ],
+     "nume": "Espresso Martini"
+    }
+   },
+   "volum": "180 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Ou"
+   ],
+   "categorie": "Cocktailuri",
+   "descriere": "Whisky, lamaie, zahar si albus, cu cateva picaturi de bitter deasupra.",
+   "etichete": [],
+   "id_produs": "9",
+   "imagine": "images/9.webp",
+   "ingrediente": [
+    "Whisky",
+    "Suc de lamaie",
+    "Zahar",
+    "Albus de ou",
+    "Bitter"
+   ],
+   "nume": "Whisky Sour",
+   "nume_variante": [
+    "whisky sour",
+    "whisky sour"
+   ],
+   "ordine": 90,
+   "pret": 29.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Ou"
+     ],
+     "descriere": "Whisky, lemon, sugar and egg white, with bitters on top.",
+     "ingrediente": [
+      "Whisky",
+      "Suc de lamaie",
+      "Zahar",
+      "Albus de ou",
+      "Bitter"
+     ],
+     "nume": "Whisky Sour"
+    }
+   },
+   "volum": "200 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Gin la alegere, tonic premium, ienibahar si citrice. Spune-i barmanului ce gin vrei.",
+   "etichete": [],
+   "id_produs": "10",
+   "imagine": "images/10.webp",
+   "ingrediente": [
+    "Gin",
+    "Tonic",
+    "Ienibahar",
+    "Lamaie verde"
+   ],
+   "nume": "Gin Tonic",
+   "nume_variante": [
+    "gin tonic",
+    "gin & tonic"
+   ],
+   "ordine": 100,
+   "pret": 28.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Your choice of gin, premium tonic, allspice and citrus.",
+     "ingrediente": [
+      "Gin",
+      "Tonic",
+      "Ienibahar",
+      "Lamaie verde"
+     ],
+     "nume": "Gin & Tonic"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Trei ingrediente, nimic in plus: rom alb, lamaie verde, zahar. Servit foarte rece.",
+   "etichete": [],
+   "id_produs": "11",
+   "imagine": "images/11.webp",
+   "ingrediente": [
+    "Rom alb",
+    "Lamaie verde",
+    "Sirop de zahar"
+   ],
+   "nume": "Daiquiri",
+   "nume_variante": [
+    "daiquiri",
+    "daiquiri"
+   ],
+   "ordine": 110,
+   "pret": 30.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Three ingredients, nothing more. Served very cold.",
+     "ingrediente": [
+      "Rom alb",
+      "Lamaie verde",
+      "Sirop de zahar"
+     ],
+     "nume": "Daiquiri"
+    }
+   },
+   "volum": "160 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Rom, cola si multa lamaie verde. Simplu si corect facut.",
+   "etichete": [],
+   "id_produs": "12",
+   "imagine": "images/12.webp",
+   "ingrediente": [
+    "Rom",
+    "Cola",
+    "Lamaie verde"
+   ],
+   "nume": "Cuba Libre",
+   "nume_variante": [
+    "cuba libre",
+    "cuba libre"
+   ],
+   "ordine": 120,
+   "pret": 27.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Rum, cola and plenty of lime.",
+     "ingrediente": [
+      "Rom",
+      "Cola",
+      "Lamaie verde"
+     ],
+     "nume": "Cuba Libre"
+    }
+   },
+   "volum": "280 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Cocktailuri",
+   "descriere": "Fara alcool: menta, lamaie verde, zahar si sifon.",
+   "etichete": [],
+   "id_produs": "13",
+   "imagine": "images/13.webp",
+   "ingrediente": [
+    "Menta",
+    "Lamaie verde",
+    "Zahar",
+    "Sifon"
+   ],
+   "nume": "Virgin Mojito",
+   "nume_variante": [
+    "virgin mojito",
+    "virgin mojito"
+   ],
+   "ordine": 130,
+   "pret": 26.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Alcohol free: mint, lime, sugar and soda.",
+     "ingrediente": [
+      "Menta",
+      "Lamaie verde",
+      "Zahar",
+      "Sifon"
+     ],
+     "nume": "Virgin Mojito"
+    }
+   },
+   "volum": "250 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Shot-uri",
+   "descriere": "Tequila blanco, cu sare si lamaie alaturi.",
+   "etichete": [],
+   "id_produs": "14",
+   "imagine": "images/14.webp",
+   "ingrediente": [
+    "Tequila",
+    "Sare",
+    "Lamaie"
+   ],
+   "nume": "Tequila",
+   "nume_variante": [
+    "tequila",
+    "tequila"
+   ],
+   "ordine": 140,
+   "pret": 12.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Tequila blanco, with salt and lemon.",
+     "ingrediente": [
+      "Tequila",
+      "Sare",
+      "Lamaie"
+     ],
+     "nume": "Tequila"
+    }
+   },
+   "volum": "40 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Shot-uri",
+   "descriere": "Servit foarte rece, direct din congelator.",
+   "etichete": [],
+   "id_produs": "15",
+   "imagine": "images/15.webp",
+   "ingrediente": [
+    "Jagermeister"
+   ],
+   "nume": "Jagermeister",
+   "nume_variante": [
+    "jagermeister",
+    "jagermeister"
+   ],
+   "ordine": 150,
+   "pret": 13.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Served ice cold, straight from the freezer.",
+     "ingrediente": [
+      "Jagermeister"
+     ],
+     "nume": "Jagermeister"
+    }
+   },
+   "volum": "40 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Shot-uri",
+   "descriere": "Anason, servit clasic sau flambat.",
+   "etichete": [],
+   "id_produs": "16",
+   "imagine": "images/16.webp",
+   "ingrediente": [
+    "Sambuca"
+   ],
+   "nume": "Sambuca",
+   "nume_variante": [
+    "sambuca",
+    "sambuca"
+   ],
+   "ordine": 160,
+   "pret": 12.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Anise, served plain or flamed.",
+     "ingrediente": [
+      "Sambuca"
+     ],
+     "nume": "Sambuca"
+    }
+   },
+   "volum": "40 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Shot-uri",
+   "descriere": "Trei straturi: lichior de cafea, Baileys si triple sec.",
+   "etichete": [],
+   "id_produs": "17",
+   "imagine": "images/17.webp",
+   "ingrediente": [
+    "Lichior de cafea",
+    "Baileys",
+    "Triple sec"
+   ],
+   "nume": "B-52",
+   "nume_variante": [
+    "b-52",
+    "b-52"
+   ],
+   "ordine": 170,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Three layers: coffee liqueur, Baileys and triple sec.",
+     "ingrediente": [
+      "Lichior de cafea",
+      "Baileys",
+      "Triple sec"
+     ],
+     "nume": "B-52"
+    }
+   },
+   "volum": "40 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Shot-uri",
+   "descriere": "Tuica de casa, din Neamt. Se bea incet.",
+   "etichete": [],
+   "id_produs": "18",
+   "imagine": "images/18.webp",
+   "ingrediente": [
+    "Tuica de prune"
+   ],
+   "nume": "Tuica de prune",
+   "nume_variante": [
+    "tuica de prune",
+    "plum brandy"
+   ],
+   "ordine": 180,
+   "pret": 10.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "House plum brandy from Neamt county.",
+     "ingrediente": [
+      "Tuica de prune"
+     ],
+     "nume": "Plum Brandy"
+    }
+   },
+   "volum": "50 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Gluten"
+   ],
+   "categorie": "Bere & Cidru",
+   "descriere": "Bere blonda la halba, trasa proaspat.",
+   "etichete": [],
+   "id_produs": "19",
+   "imagine": "images/19.webp",
+   "ingrediente": [
+    "Bere blonda"
+   ],
+   "nume": "Bere draft blonda",
+   "nume_variante": [
+    "bere draft blonda",
+    "draft lager"
+   ],
+   "ordine": 190,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten"
+     ],
+     "descriere": "Lager on tap, freshly poured.",
+     "ingrediente": [
+      "Bere blonda"
+     ],
+     "nume": "Draft Lager"
+    }
+   },
+   "volum": "500 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Gluten"
+   ],
+   "categorie": "Bere & Cidru",
+   "descriere": "Bere IPA de la o berarie mica, amaruie si aromata.",
+   "etichete": [],
+   "id_produs": "20",
+   "imagine": "images/20.webp",
+   "ingrediente": [
+    "Bere IPA"
+   ],
+   "nume": "IPA artizanala",
+   "nume_variante": [
+    "ipa artizanala",
+    "craft ipa"
+   ],
+   "ordine": 200,
+   "pret": 16.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten"
+     ],
+     "descriere": "IPA from a small brewery, bitter and aromatic.",
+     "ingrediente": [
+      "Bere IPA"
+     ],
+     "nume": "Craft IPA"
+    }
+   },
+   "volum": "330 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Gluten"
+   ],
+   "categorie": "Bere & Cidru",
+   "descriere": "Optiune fara alcool, la sticla.",
+   "etichete": [],
+   "id_produs": "21",
+   "imagine": "images/21.webp",
+   "ingrediente": [
+    "Bere fara alcool"
+   ],
+   "nume": "Bere fara alcool",
+   "nume_variante": [
+    "bere fara alcool",
+    "alcohol-free beer"
+   ],
+   "ordine": 210,
+   "pret": 15.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten"
+     ],
+     "descriere": "Alcohol-free option, bottled.",
+     "ingrediente": [
+      "Bere fara alcool"
+     ],
+     "nume": "Alcohol-free Beer"
+    }
+   },
+   "volum": "330 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Bere & Cidru",
+   "descriere": "Cidru sec de mere, servit rece.",
+   "etichete": [],
+   "id_produs": "22",
+   "imagine": "images/22.webp",
+   "ingrediente": [
+    "Cidru de mere"
+   ],
+   "nume": "Cidru de mere",
+   "nume_variante": [
+    "cidru de mere",
+    "apple cider"
+   ],
+   "ordine": 220,
+   "pret": 17.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "Dry apple cider, served cold.",
+     "ingrediente": [
+      "Cidru de mere"
+     ],
+     "nume": "Apple Cider"
+    }
+   },
+   "volum": "330 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Vinuri",
+   "descriere": "Feteasca neagra, sec. Intreaba de recolta zilei.",
+   "etichete": [],
+   "id_produs": "23",
+   "imagine": "images/23.webp",
+   "ingrediente": [
+    "Vin rosu"
+   ],
+   "nume": "Vin rosu la pahar",
+   "nume_variante": [
+    "vin rosu la pahar",
+    "red wine by the glass"
+   ],
+   "ordine": 230,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "Feteasca Neagra, dry.",
+     "ingrediente": [
+      "Vin rosu"
+     ],
+     "nume": "Red Wine by the Glass"
+    }
+   },
+   "volum": "150 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Vinuri",
+   "descriere": "Feteasca regala, sec, servit rece.",
+   "etichete": [],
+   "id_produs": "24",
+   "imagine": "images/24.webp",
+   "ingrediente": [
+    "Vin alb"
+   ],
+   "nume": "Vin alb la pahar",
+   "nume_variante": [
+    "vin alb la pahar",
+    "white wine by the glass"
+   ],
+   "ordine": 240,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "Feteasca Regala, dry, served chilled.",
+     "ingrediente": [
+      "Vin alb"
+     ],
+     "nume": "White Wine by the Glass"
+    }
+   },
+   "volum": "150 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Sulfiti"
+   ],
+   "categorie": "Vinuri",
+   "descriere": "Spumant italian, la pahar.",
+   "etichete": [],
+   "id_produs": "25",
+   "imagine": "images/25.webp",
+   "ingrediente": [
+    "Prosecco"
+   ],
+   "nume": "Prosecco",
+   "nume_variante": [
+    "prosecco",
+    "prosecco"
+   ],
+   "ordine": 250,
+   "pret": 22.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Sulfiti"
+     ],
+     "descriere": "Italian sparkling wine by the glass.",
+     "ingrediente": [
+      "Prosecco"
+     ],
+     "nume": "Prosecco"
+    }
+   },
+   "volum": "125 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Cafea & Ceai",
+   "descriere": "Un shot scurt, din boabe prajite local.",
+   "etichete": [],
+   "id_produs": "26",
+   "imagine": "images/26.webp",
+   "ingrediente": [
+    "Cafea"
+   ],
+   "nume": "Espresso",
+   "nume_variante": [
+    "espresso",
+    "espresso"
+   ],
+   "ordine": 260,
+   "pret": 9.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "A short shot, from locally roasted beans.",
+     "ingrediente": [
+      "Cafea"
+     ],
+     "nume": "Espresso"
+    }
+   },
+   "volum": "30 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Cafea & Ceai",
+   "descriere": "Espresso cu lapte spumat.",
+   "etichete": [],
+   "id_produs": "27",
+   "imagine": "images/27.webp",
+   "ingrediente": [
+    "Cafea",
+    "Lapte"
+   ],
+   "nume": "Cappuccino",
+   "nume_variante": [
+    "cappuccino",
+    "cappuccino"
+   ],
+   "ordine": 270,
+   "pret": 13.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Espresso with steamed milk.",
+     "ingrediente": [
+      "Cafea",
+      "Lapte"
+     ],
+     "nume": "Cappuccino"
+    }
+   },
+   "volum": "180 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Cafea & Ceai",
+   "descriere": "Espresso dublu peste gheata, cu lapte sau simplu.",
+   "etichete": [],
+   "id_produs": "28",
+   "imagine": "images/28.webp",
+   "ingrediente": [
+    "Cafea",
+    "Gheata",
+    "Lapte"
+   ],
+   "nume": "Cafea cu gheata",
+   "nume_variante": [
+    "cafea cu gheata",
+    "iced coffee"
+   ],
+   "ordine": 280,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Double espresso over ice.",
+     "ingrediente": [
+      "Cafea",
+      "Gheata",
+      "Lapte"
+     ],
+     "nume": "Iced Coffee"
+    }
+   },
+   "volum": "300 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Cafea & Ceai",
+   "descriere": "Alege dintre negru, verde, menta sau fructe de padure.",
+   "etichete": [],
+   "id_produs": "29",
+   "imagine": "images/29.webp",
+   "ingrediente": [
+    "Ceai"
+   ],
+   "nume": "Ceai la ceainic",
+   "nume_variante": [
+    "ceai la ceainic",
+    "pot of tea"
+   ],
+   "ordine": 290,
+   "pret": 11.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Black, green, mint or forest fruit.",
+     "ingrediente": [
+      "Ceai"
+     ],
+     "nume": "Pot of Tea"
+    }
+   },
+   "volum": "400 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Racoritoare",
+   "descriere": "Plata sau carbogazoasa.",
+   "etichete": [],
+   "id_produs": "30",
+   "imagine": "images/30.webp",
+   "ingrediente": [
+    "Apa minerala"
+   ],
+   "nume": "Apa minerala",
+   "nume_variante": [
+    "apa minerala",
+    "mineral water"
+   ],
+   "ordine": 300,
+   "pret": 9.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Still or sparkling.",
+     "ingrediente": [
+      "Apa minerala"
+     ],
+     "nume": "Mineral Water"
+    }
+   },
+   "volum": "330 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Racoritoare",
+   "descriere": "Bauturi carbogazoase la sticla.",
+   "etichete": [],
+   "id_produs": "31",
+   "imagine": "images/31.webp",
+   "ingrediente": [
+    "Bautura carbogazoasa"
+   ],
+   "nume": "Cola / Fanta / Sprite",
+   "nume_variante": [
+    "cola / fanta / sprite",
+    "cola / fanta / sprite"
+   ],
+   "ordine": 310,
+   "pret": 11.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Bottled soft drinks.",
+     "ingrediente": [
+      "Bautura carbogazoasa"
+     ],
+     "nume": "Cola / Fanta / Sprite"
+    }
+   },
+   "volum": "330 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Racoritoare",
+   "descriere": "Lamaie stoarsa pe loc, menta si sifon. Se poate face si cu zmeura.",
+   "etichete": [],
+   "id_produs": "32",
+   "imagine": "images/32.webp",
+   "ingrediente": [
+    "Lamaie",
+    "Menta",
+    "Zahar",
+    "Sifon"
+   ],
+   "nume": "Limonada casei",
+   "nume_variante": [
+    "limonada casei",
+    "house lemonade"
+   ],
+   "ordine": 320,
+   "pret": 16.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Lemons squeezed to order, mint and soda.",
+     "ingrediente": [
+      "Lamaie",
+      "Menta",
+      "Zahar",
+      "Sifon"
+     ],
+     "nume": "House Lemonade"
+    }
+   },
+   "volum": "400 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [],
+   "categorie": "Racoritoare",
+   "descriere": "Stors la comanda.",
+   "etichete": [],
+   "id_produs": "33",
+   "imagine": "images/33.webp",
+   "ingrediente": [
+    "Portocale"
+   ],
+   "nume": "Suc natural de portocale",
+   "nume_variante": [
+    "suc natural de portocale",
+    "fresh orange juice"
+   ],
+   "ordine": 330,
+   "pret": 12.0,
+   "pret_variabil": false,
+   "sectiune": "bar",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [],
+     "descriere": "Squeezed to order.",
+     "ingrediente": [
+      "Portocale"
+     ],
+     "nume": "Fresh Orange Juice"
+    }
+   },
+   "volum": "250 ml",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Arahide"
+   ],
+   "categorie": "Snacks",
+   "descriere": "Alune sarate, prajite in casa.",
+   "etichete": [],
+   "id_produs": "34",
+   "imagine": "images/34.webp",
+   "ingrediente": [
+    "Alune",
+    "Sare"
+   ],
+   "nume": "Alune prajite",
+   "nume_variante": [
+    "alune prajite",
+    "roasted peanuts"
+   ],
+   "ordine": 340,
+   "pret": 14.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Arahide"
+     ],
+     "descriere": "Salted peanuts, roasted in house.",
+     "ingrediente": [
+      "Alune",
+      "Sare"
+     ],
+     "nume": "Roasted Peanuts"
+    }
+   },
+   "volum": "120 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Lapte",
+    "Ou"
+   ],
+   "categorie": "Snacks",
+   "descriere": "Cartofi copti cu rozmarin, cu sos de usturoi.",
+   "etichete": [],
+   "id_produs": "35",
+   "imagine": "images/35.webp",
+   "ingrediente": [
+    "Cartofi",
+    "Rozmarin",
+    "Sos de usturoi"
+   ],
+   "nume": "Cartofi wedges",
+   "nume_variante": [
+    "cartofi wedges",
+    "potato wedges"
+   ],
+   "ordine": 350,
+   "pret": 18.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte",
+      "Ou"
+     ],
+     "descriere": "Baked potatoes with rosemary and garlic dip.",
+     "ingrediente": [
+      "Cartofi",
+      "Rozmarin",
+      "Sos de usturoi"
+     ],
+     "nume": "Potato Wedges"
+    }
+   },
+   "volum": "150 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Lapte",
+    "Fructe cu coaja lemnoasa",
+    "Gluten"
+   ],
+   "categorie": "Snacks",
+   "descriere": "Branzeturi locale, nuci si dulceata de casa.",
+   "etichete": [],
+   "id_produs": "36",
+   "imagine": "images/36.webp",
+   "ingrediente": [
+    "Branzeturi",
+    "Nuci",
+    "Dulceata",
+    "Paine"
+   ],
+   "nume": "Platou de branzeturi",
+   "nume_variante": [
+    "platou de branzeturi",
+    "cheese board"
+   ],
+   "ordine": 360,
+   "pret": 34.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte",
+      "Fructe cu coaja lemnoasa",
+      "Gluten"
+     ],
+     "descriere": "Local cheeses, walnuts and house preserve.",
+     "ingrediente": [
+      "Branzeturi",
+      "Nuci",
+      "Dulceata",
+      "Paine"
+     ],
+     "nume": "Cheese Board"
+    }
+   },
+   "volum": "250 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Lapte"
+   ],
+   "categorie": "Snacks",
+   "descriere": "Nachos cu sos de branza si jalapeno.",
+   "etichete": [],
+   "id_produs": "37",
+   "imagine": "images/37.webp",
+   "ingrediente": [
+    "Nachos",
+    "Sos de branza",
+    "Jalapeno"
+   ],
+   "nume": "Nachos cu branza",
+   "nume_variante": [
+    "nachos cu branza",
+    "cheese nachos"
+   ],
+   "ordine": 370,
+   "pret": 22.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Lapte"
+     ],
+     "descriere": "Nachos with cheese sauce and jalapenos.",
+     "ingrediente": [
+      "Nachos",
+      "Sos de branza",
+      "Jalapeno"
+     ],
+     "nume": "Cheese Nachos"
+    }
+   },
+   "volum": "200 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  },
+  {
+   "activ": true,
+   "actualizat_la": "2026-09-09T12:18:37.142427+00:00",
+   "alergeni": [
+    "Gluten"
+   ],
+   "categorie": "Snacks",
+   "descriere": "Paine prajita, rosii, busuioc si ulei de masline.",
+   "etichete": [],
+   "id_produs": "38",
+   "imagine": "images/38.webp",
+   "ingrediente": [
+    "Paine",
+    "Rosii",
+    "Busuioc",
+    "Ulei de masline"
+   ],
+   "nume": "Bruschete cu rosii",
+   "nume_variante": [
+    "bruschete cu rosii",
+    "tomato bruschetta"
+   ],
+   "ordine": 380,
+   "pret": 26.0,
+   "pret_variabil": false,
+   "sectiune": "bucatarie",
+   "semnatura": false,
+   "sters_la": null,
+   "traduceri": {
+    "en": {
+     "alergeni": [
+      "Gluten"
+     ],
+     "descriere": "Toasted bread, tomatoes, basil and olive oil.",
+     "ingrediente": [
+      "Paine",
+      "Rosii",
+      "Busuioc",
+      "Ulei de masline"
+     ],
+     "nume": "Tomato Bruschetta"
+    }
+   },
+   "volum": "180 g",
+   "zilei": false,
+   "zilei_pana_la": null,
+   "zilei_pret": null
+  }
+ ],
+ "setari": {
+  "config_mese": {
+   "zones": [
+    {
+     "mese": [
+      {
+       "numar": "45",
+       "scaune": 5
+      }
+     ],
+     "nume": "Terasa"
+    },
+    {
+     "mese": [
+      {
+       "numar": "20",
+       "scaune": 6
+      },
+      {
+       "numar": "30",
+       "scaune": 4
+      },
+      {
+       "numar": "40",
+       "scaune": 6
+      },
+      {
+       "numar": "10",
+       "scaune": 4
+      }
+     ],
+     "nume": "Sala Principala"
+    }
+   ]
+  },
+  "setari_bucatarie": {
+   "faraBucatarie": true
+  },
+  "setari_busy": {
+   "isBusy": false
+  },
+  "setari_ospatari": {
+   "faraOspatari": false
+  },
+  "setari_zi": {
+   "oraReset": 19,
+   "zile": [
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    19
+   ]
+  }
+ },
+ "stoc_epuizat": [],
+ "versiune": 1,
+ "versiuni_meniu": 0
+}

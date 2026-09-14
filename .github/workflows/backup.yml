@@ -1,0 +1,45 @@
+# Zilnic: tine proiectele Supabase treze (planul gratuit le pune pe pauza
+# dupa o saptamana fara cereri) si salveaza o copie a meniului si a
+# setarilor fiecarui local in backup/<local>/. Daca ceva nu raspunde,
+# rularea esueaza si GitHub trimite email — monitorizare gratuita.
+#
+# Secret necesar (Settings -> Secrets and variables -> Actions):
+#   CHEIE_BACKUP = aceeasi cheie ca secretul `cheie_backup` din Vault-ul
+#   fiecarui proiect Supabase. Fara ea se face doar tinutul treaz.
+name: Copie de siguranta si tinut treaz
+
+on:
+  schedule:
+    - cron: '17 3 * * *'   # 03:17 UTC = 06:17 ora Romaniei
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Tine proiectele treze si descarca copiile
+        env:
+          CHEIE_BACKUP: ${{ secrets.CHEIE_BACKUP }}
+        run: python3 backup/salveaza.py
+
+      - name: Salveaza copiile in repo
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add backup/
+          if git diff --cached --quiet; then
+            echo "Nimic nou de salvat."
+          else
+            git commit -m "Copie de siguranta $(date -u +%Y-%m-%d)"
+            git push
+          fi
