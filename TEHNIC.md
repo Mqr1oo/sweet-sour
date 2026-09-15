@@ -608,28 +608,15 @@ nou: două rânduri în `_redirects` cu un prefix liber și un rând în lista
 site-ului" în unealtă și refaci codurile — ce face linkul lung e gazda
 `…workers.dev`, nu calea.
 
-Ce mai poate:
-
-- **Numere de masă** scrise de mână (fără bază, deci fără cheie) ca listă
-  (`1, 2, 5`), ca interval (`1-12`) sau ca nume (`Terasa1`, `Bar2`).
-- **Numele localului** scris pe fiecare cod.
-- **Descărcare SVG**, individual sau toate odată. SVG înseamnă că poți mări
-  codul la orice dimensiune fără să se pixeleze — de la autocolant de 5 cm la
-  panou de perete.
-- **Simbol contactless (NFC)** opțional, dacă pui și tag-uri NFC pe mese.
-- **Chenar punctat** pentru tăiere, și printare 3 pe rând.
-
-Totul se generează în browser. Nu trimite nimic nicăieri și merge fără internet
-odată încărcată pagina — utilă când trebuie să reprintezi un cod și netul e picat.
-
-Simbolul contactless e desenat generic (trei unde). Nu e N-Mark-ul oficial NFC
-Forum, care e marcă înregistrată.
-
-Codul duce la `.../m3/index.html?mesa=4`, deci clientul nu mai scrie
-numărul mesei și nu mai ajung comenzi la masa greșită.
-
-**Scanează un cod cu telefonul înainte să printezi 40.** Dacă adresa de bază e
-greșită, afli acum, nu după ce le-ai lipit pe mese.
+**Fișierele sunt coduri curate**: SVG cu o singură cale (patratelele negre
+unite în dreptunghiuri), fără fundal, fără text, latura în mm (o alegi, implicit
+30) — se importă direct în Bambu Studio sau în orice program; și PNG cu fundal
+transparent (24 px pe patratel). „Descarcă tot" dă un ZIP (scris de mână în
+pagină, fără bibliotecă: `svg/`, `png/`, `linkuri.txt` cu masa și linkul).
+Numărul mesei nu e pe cod — îl scrii tu pe obiect; lasă în jur o margine goală
+de măcar 3 mm pe culoarea de fundal, altfel telefonul nu citește codul.
+Numerele de masă se pot scrie și de mână (fără bază, deci fără cheie): listă
+(`1, 2, 5`), interval (`1-12`) sau nume (`Terasa1`, `Bar2`).
 
 ## Panoul directorului
 
