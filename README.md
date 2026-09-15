@@ -123,7 +123,7 @@ date: chiar dacă cineva ar umbla la aplicație, serverul refuză ce nu are voie
 | **Bucătărie** | primește comenzile de mâncare, le acceptă, le închide; poate marca produse ca terminate |
 | **Ospătar** | vede ce e de dus la masă și cererile de la mese; modifică sau anulează comenzi (cu codul lunii); ia comenzi în numele clientului; își alege zona |
 | **Manager** | lucrează: modifică orice comandă, anulează fără cod, are **codul lunii**, pornește „ora de vârf", aranjează sala, blochează produse din stoc; **nu** vede datele personalului |
-| **Director** | **⭐ nu lucrează cu comenzile**: nu vede panoul de comenzi și nici stocul, nu e deranjat de nicio alarmă. Are încasările zilei, rapoartele, anulările, turele, setările, meniul, sala și istoricul zilei |
+| **Director** | **⭐ nu lucrează cu comenzile**: nu vede panoul de comenzi și nici stocul, nu e deranjat de nicio alarmă. Are încasările și rapoartele pe zi sau pe lună, anulările, turele, setările, meniul, sala și istoricul pe zile |
 
 Rolurile se dau doar de la consolă, nu din aplicație — nimeni nu-și poate da
 singur alt rol.
@@ -149,11 +149,14 @@ singur alt rol.
   cardul clipește galben și telefonul spune ce s-a schimbat.
 - **Notificări** și când telefonul e blocat sau aplicația e închisă (dacă le
   pornește).
-- **Istoric**: comenzile terminate și anulate **din ziua de lucru curentă**.
-  La ora de închidere dispar din panou, iar din baza de date se șterg singure
-  la 2 zile — nu există niciun buton de șters. Barul **confirmă bonul** pe
-  fiecare — bifa rămâne pe numele lui, cu ora, și nu se mai poate scoate de
-  la bar (doar managerul, dacă a fost o greșeală).
+- **Istoric**: comenzile terminate și anulate, **pe zile de lucru**. Se
+  deschide pe azi (de la ultima închidere); cu săgețile sau din calendar
+  vezi orice zi din luna aceasta și din luna trecută. Nu există niciun buton
+  de șters: baza păstrează luna în curs și luna trecută, iar pe 1 ale lunii
+  șterge singură luna de dinainte. Barul **confirmă bonul** pe fiecare — bifa
+  rămâne pe numele lui, cu ora, și nu se mai poate scoate de la bar (doar
+  managerul, dacă a fost o greșeală); se poate bifa și pe o zi trecută, dar
+  anularea (retur) se face doar pe ziua curentă.
 - **Stoc**: s-a terminat ceva? Îl blochezi și dispare pe loc din meniul
   clienților.
 - **Comandă rapidă** (meniu): barul sau ospătarul trimite o comandă în numele
@@ -254,8 +257,9 @@ Anularea înseamnă bani lipsă din casă, deci e cea mai păzită acțiune:
 - **Se poate anula și o comandă deja dusă la masă** (retur): ✕ e și în
   Istoric.
 - **Ce rămâne**: cine (nume + cont), când, de ce, cu ce cod — în raportul
-  directorului, 3 zile. Clientul vede pe telefon cine și de ce. Managerul
-  aude pe loc fiecare anulare făcută de personal.
+  directorului, pe zi sau pe lună (luna în curs și luna trecută). Clientul
+  vede pe telefon cine și de ce. Managerul aude pe loc fiecare anulare
+  făcută de personal.
 - Nu există nicio cale ocolită: chiar și direct în baza de date, o anulare
   fără motiv e refuzată.
 
@@ -288,25 +292,32 @@ anulare** făcută de bar sau ospătari, cu numele și motivul. Ce **nu** vede:
 rapoartele pe angajat, turele, feedback-ul clienților.
 
 **Directorul** nu lucrează cu comenzile: nu are panoul de comenzi și nici
-stocul, nicio alarmă. Intră direct în „Șef" și are tot ce ține de bani și de
-oameni, **pe ziua de lucru curentă** (istoricul nu se păstrează de la o zi la
-alta):
+stocul, nicio alarmă. Intră direct în **Panoul șefului**, care în bara lui
+are patru taburi mari, separate — Sinteză, Meniu, Personal, Setări — plus
+Sala și Istoricul:
 
-- **Sinteză**: încasările zilei (după bonurile confirmate), comenzi
-  finalizate, câte sunt fără bon, bar vs bucătărie, grafic pe ore, top 5
-  produse. Export Excel.
+- **Sinteză**: încasările (după bonurile confirmate), comenzi finalizate,
+  câte sunt fără bon, bar vs bucătărie, graficul încasărilor (pe ore pentru
+  azi, pe zile pentru o lună), top 5 produse și **⭐ harta orelor de vârf**
+  (zi a săptămânii × oră, ultimele 4 săptămâni — când să pui oameni în
+  plus). Sus alegi perioada: **Azi / Luna aceasta / Luna trecută**; Excel-ul
+  se descarcă pe perioada aleasă.
 - **Meniu**: editorul de produse (nume, categorie, preț, descriere,
   ingrediente, alergeni, traducere în engleză, activ/inactiv).
-- **Setări**: toate cele de mai jos.
 - **Personal**: lista de angajați (numele pentru anulări), ture azi (cine,
   cât, pe ce zonă), raport pe angajat (comenzi, încasări, anulări, procent),
   **anulările: cine, când, de ce, cu ce cod** (și încercările cu cod greșit),
   bonuri neconfirmate pe angajat, bonuri confirmate pe barman, părerile
-  clienților.
+  clienților — tot pe perioada aleasă (azi / luna aceasta / luna trecută).
+- **Setări**: toate cele de mai jos.
 
-Nu mai există un jurnal de activitate în panou și nici un buton de șters
-istoricul: comenzile închise se șterg singure la 2 zile, acțiunile
-personalului la 3 zile, iar în panou se vede doar ziua de lucru curentă.
+Managerul vede aceleași cifre în tabul „Șef" (Sinteză și Setările lui).
+
+Nu există un jurnal de activitate în panou și nici un buton de șters
+istoricul. Baza păstrează comenzile închise **luna în curs și luna trecută**
+(pe 1 ale lunii se șterge singură luna de dinainte); acțiunile mărunte ale
+personalului (acceptări, „Gata", bonuri) se șterg la 3 zile, anulările rămân
+cât comenzile.
 
 ---
 
@@ -426,16 +437,16 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
 ## 14. Datele personale și legea (GDPR)
 
 **Pentru clienți**: nu se cere nimic personal. Se rețin masa, produsele,
-observațiile și ora — și se șterg singure la 2 zile după închiderea comenzii
-(pachet: numele și telefonul, 48 de ore). Primul ecran cere acordul pentru
+observațiile și ora — luna în curs și luna trecută, pentru statisticile
+localului, apoi se șterg singure (pachet: numele și telefonul, 48 de ore). Primul ecran cere acordul pentru
 stocarea locală. Politica de confidențialitate și termenii sunt în meniu, în
 română și engleză, cu localul ca **operator** (vânzătorul, răspunzător de
 alergeni și de produse) și platforma ca **furnizor tehnic**. Nu se folosesc
 camera, microfonul, locația, nu se fac poze.
 
 **Pentru personal**: panoul are „Informare date personal (GDPR)" — cine
-răspunde de date, ce se reține (acțiunile din panou 3 zile, numele la
-anulare, codul folosit, zonele, turele), de ce, cât timp, cine vede, ce
+răspunde de date, ce se reține (acțiunile din panou 3 zile; comenzile
+lucrate și anulările, luna în curs și luna trecută; zonele, turele), de ce, cât timp, cine vede, ce
 drepturi au, unde se plâng. **⭐ Se printează cu loc de semnătură** —
 angajatul semnează un exemplar înainte să folosească panoul, cum cere legea.
 

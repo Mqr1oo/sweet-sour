@@ -49,6 +49,38 @@
   .nav-item.active .badge-count { background: rgba(255,255,255,0.2); }
   .badge-count.badge-full { background: var(--danger); color: white; }
   .badge-count.badge-ok { background: rgba(16, 185, 129, 0.25); color: var(--success); }
+
+  /* Panoul sefului: pentru director, taburile lui (Sinteza, Meniu, Personal,
+     Setari) stau intr-un grup cu titlu si chenar, primele in bara. Pentru
+     manager grupul e invizibil (display: contents) si ramane doar „Sef". */
+  .nav-grup-sef { display: contents; }
+  .nav-grup-sef .nav-titlu { display: none; }
+  body.rol-director .nav-grup-sef {
+      display: block; order: -1; margin-bottom: 22px; padding: 12px 10px 6px; border-radius: 20px;
+      background: rgba(255,255,255,0.035); border: 1px solid var(--accent-glow);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  body.rol-director .nav-grup-sef .nav-titlu {
+      display: block; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--accent); padding: 2px 8px 12px;
+  }
+  body.rol-director .nav-grup-sef .nav-item { font-size: 16px; padding: 15px 16px; margin-bottom: 6px; }
+  body.rol-director .nav-grup-sef .nav-item:last-child { margin-bottom: 0; }
+  body.rol-director .nav-grup-sef .nav-icon { font-size: 24px; }
+  body.rol-director .nav-grup-sef .nav-item.active { box-shadow: 0 6px 18px var(--accent-glow); }
+  body.rol-director aside .brand { order: -2; }   /* sigla ramane deasupra grupului */
+
+  /* Istoric: alegerea zilei (azi live, zilele trecute din baza) */
+  .istoric-bara { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; padding: 10px 12px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; }
+  .ist-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text); border-radius: 10px;
+      padding: 9px 12px; font-weight: 700; font-size: 14px; cursor: pointer; font-family: inherit; }
+  .ist-btn:disabled { opacity: 0.35; cursor: default; }
+  .ist-btn.active { background: var(--accent); color: #16110a; border-color: var(--accent); }
+  .ist-data { background: rgba(0,0,0,0.35); border: 1px solid var(--border); color: var(--text); border-radius: 10px;
+      padding: 8px 10px; font-family: 'Space Mono', monospace; font-size: 13px; color-scheme: dark; }
+  .ist-eticheta { font-weight: 700; font-size: 14px; }
+  .ist-text { margin-left: auto; font-size: 12.5px; color: var(--text-muted); font-family: 'Space Mono', monospace; }
   
   .user-info { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-muted); line-height: 1.6;}
   .logout-btn { color: var(--danger); cursor: pointer; padding: 8px 0 0; font-weight: 600; display: inline-block;}
@@ -204,7 +236,18 @@
 
   .linked-cancel-badge { margin-top:10px; background: rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); color:#fca5a5; font-size:12px; font-weight:700; padding:8px 10px; border-radius:10px; display:flex; align-items:center; gap:6px; }
 
-  /* --- Heatmap --- */
+  /* --- Harta orelor de varf --- */
+  .heatmap-wrap { overflow-x: auto; }
+  .heatmap-table { border-collapse: collapse; margin-top: 6px; }
+  .heatmap-table th { font-size: 10.5px; color: var(--text-muted); font-weight:600; padding: 3px 5px; text-align:center; font-family:'Space Mono', monospace; }
+  .heatmap-table td { text-align:center; }
+  .heatmap-hourlabel { font-size: 10.5px; color: var(--text-muted); font-family:'Space Mono', monospace; padding-right: 8px; text-align:right !important; white-space:nowrap; }
+  .heatmap-cell { width: 30px; height: 22px; border-radius: 5px; cursor: default; }
+  .heatmap-legend { display:flex; align-items:center; gap:8px; margin-top:14px; font-size:12px; color:var(--text-muted); }
+  .heatmap-legend .hl-scale { display:flex; }
+  .heatmap-legend .hl-scale div { width:18px; height:12px; }
+  .heatmap-best { margin-top:14px; padding:14px 16px; background: rgba(22,132,78,0.1); border:1px solid rgba(22,132,78,0.3); border-radius: 12px; font-size: 13.5px; color: var(--text); }
+  .heatmap-best b { color: var(--accent); }
 
   @media (max-width: 800px) {
       body { flex-direction: column; }
@@ -242,11 +285,18 @@
       .stat-label { font-size: 11px; }
       .dash-panel { padding: 16px; border-radius: 16px; margin-bottom: 16px; }
       .dash-panel h3 { font-size: 15.5px; margin-bottom: 12px; flex-wrap: wrap; }
-      #adminView > div[style*="justify-content: space-between"] { flex-direction: column; align-items: stretch !important; gap: 10px !important; }
-      #adminView .time-toggle { width: 100%; }
-      #adminView .time-toggle button { flex: 1; }
-      #adminView > div[style*="display: flex"][style*="gap: 10px"] { flex-wrap: wrap; }
-      #adminView button[onclick^="export"] { flex: 1 1 auto; font-size: 12px !important; padding: 10px 12px !important; }
+      .adm-cap.adm-on { flex-direction: column; align-items: stretch; gap: 10px; }
+      .adm-cap .adm-actiuni { flex-wrap: wrap; }
+      .adm-cap .time-toggle { width: 100%; }
+      .adm-cap .time-toggle button { flex: 1; padding: 8px 6px; font-size: 12px; }
+      .adm-cap button[onclick^="export"] { flex: 1 1 auto; font-size: 12px !important; padding: 10px 12px !important; }
+      .heatmap-cell { width: 22px; height: 18px; }
+      .ist-text { margin-left: 0; width: 100%; }
+      body.rol-director .nav-grup-sef { display: contents; }
+      body.rol-director .nav-grup-sef .nav-titlu { display: none; }
+      body.rol-director .nav-grup-sef > .nav-item { order: -1; font-size: 11px; padding: 8px 4px; margin: 0; }
+      body.rol-director .nav-grup-sef .nav-icon { font-size: 22px; }
+      body.rol-director .nav-grup-sef .nav-item.active { box-shadow: none; }
       .table-logs { font-size: 12.5px; }
       .table-logs th, .table-logs td { padding: 10px 8px; }
       .tables-grid { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 10px; }
@@ -281,6 +331,11 @@
   body.rol-manager .adm-tab[data-grup="meniu"]{ display:none !important; }
   .dash-panel[data-grup].adm-on{display:block}
   .stats-grid[data-grup].adm-on{display:grid}
+  .adm-cap{display:none; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:16px}
+  .adm-cap.adm-on{display:flex}
+  .adm-cap .adm-actiuni{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  /* directorul are sectiunile ca taburi in bara laterala, nu ca pastile */
+  body.rol-director .adm-tabs{display:none}
 
   /* Setarile, pe sectiuni (dupa cat de des le folosesti) si pe doua coloane
      cand e loc. Sectiunea poarta grupul, panourile din ea nu. */
@@ -578,9 +633,24 @@
       <div class="nav-icon">📦</div>
       <div class="nav-text">Stoc</div>
   </div>
-  <div class="nav-item" id="navAdmin" style="display:none;">
-      <div class="nav-icon">📊</div>
-      <div class="nav-text">Sef</div>
+  <div class="nav-grup-sef" id="navGrupSef">
+    <div class="nav-titlu">Panoul sefului</div>
+    <div class="nav-item" id="navAdmin" style="display:none;">
+        <div class="nav-icon">📊</div>
+        <div class="nav-text">Sef</div>
+    </div>
+    <div class="nav-item" id="navSefMeniu" style="display:none;">
+        <div class="nav-icon">🍸</div>
+        <div class="nav-text">Meniu</div>
+    </div>
+    <div class="nav-item" id="navSefPersonal" style="display:none;">
+        <div class="nav-icon">👥</div>
+        <div class="nav-text">Personal</div>
+    </div>
+    <div class="nav-item" id="navSefSetari" style="display:none;">
+        <div class="nav-icon">⚙️</div>
+        <div class="nav-text">Setari</div>
+    </div>
   </div>
   
   <div class="user-info">
@@ -625,6 +695,14 @@
   </div>
   
   <div class="content-area">
+    <div id="istoricBara" class="istoric-bara" style="display:none;">
+      <button type="button" class="ist-btn" id="istInapoi" title="Ziua dinainte">◀</button>
+      <input type="date" id="istZi" class="ist-data" aria-label="Ziua">
+      <button type="button" class="ist-btn" id="istInainte" title="Ziua urmatoare">▶</button>
+      <button type="button" class="ist-btn active" id="istAzi">Azi</button>
+      <span class="ist-eticheta" id="istEticheta"></span>
+      <span class="ist-text" id="istText"></span>
+    </div>
     <div id="ordersView" class="grid-comenzi"></div>
 
     <div id="mapView" style="display:none;">
@@ -665,10 +743,25 @@
     </div>
 
     <div id="adminView" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-          <div><h2 style="font-size: 24px; font-weight: 700;">Rezumat activitate</h2></div>
-          <div style="display: flex; gap: 10px; align-items: center;">
+      <div class="adm-cap" data-grup="sinteza">
+          <div><h2 style="font-size: 24px; font-weight: 700;">Rezumat activitate</h2><p class="perioada-text" style="color:var(--text-muted); font-size:13px; margin-top:4px;"></p></div>
+          <div class="adm-actiuni">
+              <div class="time-toggle perioada">
+                  <button type="button" class="active" data-mod="today">Azi</button>
+                  <button type="button" data-mod="month">Luna aceasta</button>
+                  <button type="button" data-mod="lastmonth">Luna trecuta</button>
+              </div>
               <button class="btn-action" style="background:var(--accent); color:white; font-size:13px; padding: 10px 16px;" onclick="exportCSV()">📥 Descarca Excel</button>
+          </div>
+      </div>
+      <div class="adm-cap" data-grup="personal">
+          <div><h2 style="font-size: 24px; font-weight: 700;">Personal</h2><p class="perioada-text" style="color:var(--text-muted); font-size:13px; margin-top:4px;"></p></div>
+          <div class="adm-actiuni">
+              <div class="time-toggle perioada">
+                  <button type="button" class="active" data-mod="today">Azi</button>
+                  <button type="button" data-mod="month">Luna aceasta</button>
+                  <button type="button" data-mod="lastmonth">Luna trecuta</button>
+              </div>
           </div>
       </div>
 
@@ -995,9 +1088,23 @@
           <ul class="top-list" id="topProductsList"></ul>
       </div>
 
+      <div data-grup="sinteza" class="dash-panel">
+         <h3>🔥 Harta orelor de varf</h3>
+         <p style="color:var(--text-muted); font-size:13px; margin-bottom:6px;">Cate comenzi au intrat pe fiecare zi a saptamanii si ora, in ultimele 4 saptamani. Cu cat e mai inchis, cu atat a fost mai aglomerat — te ajuta sa decizi cand pui oameni in plus.</p>
+         <div class="heatmap-wrap">
+            <div id="heatmapContainer">Se incarca...</div>
+         </div>
+         <div class="heatmap-legend">
+            <span>Mai putin</span>
+            <div class="hl-scale" id="heatmapScale"></div>
+            <span>Mai mult</span>
+         </div>
+         <div class="heatmap-best" id="heatmapBest"></div>
+      </div>
+
       <div data-grup="personal" class="dash-panel">
           <h3>👤 Raport pe angajat</h3>
-          <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Incasari generate, comenzi gestionate si rata de anulare pentru fiecare membru al echipei, in perioada selectata (Azi / Luna aceasta).</p>
+          <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Incasari generate, comenzi gestionate si rata de anulare pentru fiecare membru al echipei, in perioada aleasa sus (azi, luna aceasta sau luna trecuta).</p>
           <div class="table-responsive">
             <table class="staff-table">
               <thead>
@@ -1010,7 +1117,7 @@
 
       <div data-grup="personal" class="dash-panel" style="border-color: var(--danger);">
           <h3 style="color: var(--danger);">❌ Anulari: cine, cand, de ce</h3>
-          <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Fiecare anulare din perioada selectata: cine (numele ales + contul), cand, de ce, si daca a fost cu codul lunii de la manager. Se vad si incercarile cu cod gresit.</p>
+          <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Fiecare anulare din perioada aleasa sus: cine (numele ales + contul), cand, de ce, si daca a fost cu codul lunii de la manager. Se vad si incercarile cu cod gresit.</p>
           <div id="fraudList"><span style="color:var(--text-muted); font-size:13.5px;">Se analizeaza istoricul...</span></div>
       </div>
 
@@ -2213,9 +2320,16 @@
         // angajati) raman ale directorului; el schimba doar ora de varf si
         // harta meselor. Regula e si in RLS.
         if (userRole === 'manager') document.body.classList.add('rol-manager');
-        // directorul nu sta pe panoul de comenzi: intra direct in „Sef"
-        // (cifre, meniu, setari); Sala si Istoricul zilei raman.
-        if (userRole === 'director') { document.getElementById('navActive').style.display = 'none'; switchTab('admin'); }
+        // directorul nu sta pe panoul de comenzi: intra direct in „Sef", iar
+        // sectiunile lui (Sinteza, Meniu, Personal, Setari) sunt taburi
+        // separate in bara; Sala si Istoricul raman.
+        if (userRole === 'director') {
+            document.body.classList.add('rol-director');
+            document.getElementById('navActive').style.display = 'none';
+            document.querySelector('#navAdmin .nav-text').textContent = 'Sinteza';
+            ['navSefMeniu', 'navSefPersonal', 'navSefSetari'].forEach(id => document.getElementById(id).style.display = 'flex');
+            switchTab('admin');
+        }
     }
     
     if(userRole === 'ospatar' || userRole === 'manager') { document.getElementById('navMeniu').style.display = 'flex'; }
@@ -2228,7 +2342,8 @@
     loadBusyMode();
     loadFaraOspatari().then(() => renderOrders());
     loadFaraBucatarie().then(() => { renderOrders(); sincronizeazaAlarma(); });
-    loadOraReset().then(() => { if (currentTab === 'admin') calculateDirectorStats(); });
+    // ora de inchidere decide de unde incepe „azi": cand o aflam, recitim comenzile
+    loadOraReset().then(() => { loadOrders(); if (currentTab === 'admin') calculateDirectorStats(); });
     loadFereastra().then(() => renderOrders());
     loadEliberare().then(() => { if (currentTab === 'map') renderTablesGrid(); });
     loadComenziPachet();
@@ -2254,14 +2369,18 @@
     setTimeout(() => pornesteGhidDashboard(false), 1400);
   }
 
-  const navItems = ['navActive', 'navHistory', 'navStock', 'navAdmin', 'navMeniu', 'navMap'];
-  navItems.forEach(id => {
+  // tab-ul fiecarui buton din bara; „admin:grup" deschide direct o sectiune a
+  // panoului sefului (directorul le are ca taburi separate)
+  const NAV = { navActive: 'active', navMap: 'map', navHistory: 'history', navMeniu: 'meniu', navStock: 'stock',
+                navAdmin: 'admin', navSefMeniu: 'admin:meniu', navSefPersonal: 'admin:personal', navSefSetari: 'admin:setari' };
+  Object.keys(NAV).forEach(id => {
       const el = document.getElementById(id);
-      if(el) el.addEventListener('click', () => switchTab(id.replace('nav', '').toLowerCase()));
+      if(el) el.addEventListener('click', () => switchTab(NAV[id]));
   });
 
   function switchTab(tab) {
-    const previousTab = currentTab;
+    const [baza, grup] = String(tab).split(':');
+    tab = baza;
     currentTab = tab;
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
@@ -2275,6 +2394,7 @@
     document.getElementById('adminView').style.display = 'none';
     document.getElementById('meniuView').style.display = 'none';
     document.getElementById('mapView').style.display = 'none';
+    document.getElementById('istoricBara').style.display = 'none';
 
     document.querySelector('.content-area').scrollTop = 0;
 
@@ -2287,19 +2407,24 @@
     } else if(tab === 'history') {
         document.getElementById('navHistory').classList.add('active');
         document.getElementById('pageTitle').textContent = userRole === 'ospatar' ? 'Comenzile mele' : 'Istoric & bonuri';
-        document.getElementById('ordersView').style.display = 'grid'; 
+        document.getElementById('ordersView').style.display = 'grid';
+        document.getElementById('istoricBara').style.display = 'flex';
+        actualizeazaBaraIstoric();
         renderOrders();
-    } else if(tab === 'stock') {
+} else if(tab === 'stock') {
         document.getElementById('navStock').classList.add('active');
         document.getElementById('pageTitle').textContent = 'Gestiune stoc';
         document.getElementById('stockView').style.display = 'block';
         loadFullMenuForStock();
     } else if(tab === 'admin') {
-        document.getElementById('navAdmin').classList.add('active');
-        document.getElementById('pageTitle').textContent = 'Panoul sefului';
+        const g = grup || 'sinteza';
+        const navId = userRole === 'director'
+            ? ({ meniu: 'navSefMeniu', personal: 'navSefPersonal', setari: 'navSefSetari' }[g] || 'navAdmin') : 'navAdmin';
+        document.getElementById(navId).classList.add('active');
+        document.getElementById('pageTitle').textContent = userRole === 'director'
+            ? 'Sef · ' + ({ sinteza: 'Sinteza', meniu: 'Meniu', personal: 'Personal', setari: 'Setari' }[g] || g) : 'Panoul sefului';
         document.getElementById('adminView').style.display = 'block';
-        calculateDirectorStats();
-        admArata('sinteza');
+        admArata(g);
     } else if(tab === 'meniu') {
         document.getElementById('navMeniu').classList.add('active');
         document.getElementById('pageTitle').textContent = 'Meniu - comanda rapida';
@@ -2874,10 +2999,10 @@
           p.classList.toggle('adm-on', p.dataset.grup === grup);
       });
 
-      if (grup === 'sinteza')  { calculateDirectorStats(); }
+      if (grup === 'sinteza')  { calculateDirectorStats(); renderHeatmap(); }
       if (grup === 'meniu')    { loadMeniu(); }
       if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); loadEliberare(); loadCodLuna(); loadMeniulZilei(); loadSecuritate(); loadChei(); loadLimite(); loadAlerte(); }
-      if (grup === 'personal') { loadFeedbacks(); loadAngajati(); }
+      if (grup === 'personal') { loadFeedbacks(); loadAngajati(); calculateDirectorStats(); }
   }
 
   document.getElementById('admTabs').addEventListener('click', (e) => {
@@ -3408,7 +3533,7 @@
               } else if (a === 'setari_busy') {
                   loadBusyMode();
               } else if (a === 'setari_zi') {
-                  loadOraReset().then(() => { if (currentTab === 'admin') calculateDirectorStats(); });
+                  loadOraReset().then(() => { loadOrders(); if (currentTab === 'admin') calculateDirectorStats(); if (currentTab === 'history') actualizeazaBaraIstoric(); });
               } else if (a === 'setari_modificare') {
                   loadFereastra().then(() => renderOrders());
               } else if (a === 'setari_eliberare') {
@@ -3499,7 +3624,13 @@
 
   let primaIncarcare = true;
   async function loadOrders() {
-    const { data, error } = await _supabase.from('comenzi').select('*').order('created_at', { ascending: false }).limit(500);
+    // doar ce e „viu": comenzile deschise plus cele inchise din ziua de lucru
+    // curenta. Zilele trecute si lunile se citesc din baza doar cand le ceri
+    // (Istoric, Sinteza), ca sa nu caram o luna de comenzi la fiecare minut.
+    const deLa = new Date(inceputZi()).toISOString();
+    const { data, error } = await _supabase.from('comenzi').select('*')
+        .or(`status.in.(noua,acceptata,gata),created_at.gte.${deLa}`)
+        .order('created_at', { ascending: false }).limit(1000);
     if(error) console.error("Error loading orders:", error);
     if(data) {
       // comenzi aparute cat n-am avut legatura (telefon blocat, net picat):
@@ -3512,6 +3643,7 @@
       allOrders.forEach(o => { const v = vechi.get(o.id); if (v && v._modificataLa) { o._modificataLa = v._modificataLa; o._modificareText = v._modificareText; o._modificareDe = v._modificareDe; } });
       primaIncarcare = false;
       renderOrders(); if (currentTab === 'map') renderTablesGrid(); updateMapBadge();
+      if (currentTab === 'admin') calculateDirectorStats();
       noi.forEach(o => {
           const isAlert = esteAlerta(o);
           if (esteConducere() || o.sectiune === userRole || (userRole === 'bar' && faraBucatarie)
@@ -3542,7 +3674,7 @@
   // Asa seful vede legate cele doua parti: daca se anuleaza cea de bar, se vede si la bucatarie, si invers.
   function getLinkedCancelledSibling(order) {
       if(!order.grup_comanda) return null;
-      const sibling = allOrders.find(o => o.id !== order.id && o.grup_comanda === order.grup_comanda && o.status === 'anulata');
+      const sibling = sursaComenzi().find(o => o.id !== order.id && o.grup_comanda === order.grup_comanda && o.status === 'anulata');
       return sibling || null;
   }
 
@@ -3558,7 +3690,7 @@
     const GATA_DE_DUS_MS = 10 * 60000;
     const gataDeDus = (o) => !faraOspatari && o.status === 'finalizata' && o.finalizata_la
         && Date.now() - new Date(o.finalizata_la).getTime() < GATA_DE_DUS_MS && !esteAlerta(o);
-    let viewOrders = allOrders.filter(o => {
+    let viewOrders = sursaComenzi().filter(o => {
         if(esteConducere()) return true;
         if(userRole === 'bar' && currentTab === 'history') return true;
 
@@ -3584,14 +3716,19 @@
         const rang = (o) => (gataDeDus(o) ? 0 : o.status === 'noua' ? 1 : 2) + (esteZonaMea(o) ? 0 : 10);
         viewOrders.sort((a, b) => rang(a) - rang(b));
     } else {
-        // istoricul e al zilei de lucru: de la ultima inchidere incoace. Ce e
-        // mai vechi nu se mai vede (si se sterge singur din baza la 2 zile).
-        const deLa = inceputZi();
-        viewOrders = viewOrders.filter(o => (o.status === 'finalizata' || o.status === 'anulata')
-                                            && new Date(o.created_at).getTime() >= deLa);
+        // istoricul e pe zile de lucru: azi (live, de la ultima inchidere) sau
+        // ziua aleasa din bara de sus (citita din baza)
+        const [deLa, panaLa] = intervalIstoric();
+        viewOrders = viewOrders.filter(o => {
+            if (o.status !== 'finalizata' && o.status !== 'anulata') return false;
+            const t = new Date(o.created_at).getTime();
+            return t >= deLa && t < panaLa;
+        });
         if(userRole === 'ospatar') {
             viewOrders = viewOrders.filter(o => o.creat_de === currentUserEmail || o.preluat_de === currentUserEmail);
         }
+        const istText = document.getElementById('istText');
+        if (istText) istText.textContent = `${viewOrders.filter(o => o.status === 'finalizata' && !esteAlerta(o)).length} finalizate · ${viewOrders.filter(o => o.status === 'anulata').length} anulate`;
     }
     
     if(filterText) viewOrders = viewOrders.filter(o => String(o.mesa || '').toLowerCase().includes(filterText));
@@ -3711,7 +3848,7 @@
                 <label class="bon-check ${order.bon_scos ? 'checked' : ''}" ${poateSchimba ? `onclick="event.preventDefault(); toggleBon(${order.id}, ${!order.bon_scos});"` : 'style="cursor:default;"'}>
                    <input type="checkbox" ${order.bon_scos ? 'checked' : ''} tabindex="-1">
                    ${order.bon_scos ? bonInfo : '🧾 Confirma bonul'}
-                </label>${btnAnuleaza}
+                </label>${ziIstoric ? '' : btnAnuleaza}
               `;
           } else if (userRole === 'director' && !isAlert && order.status === 'finalizata') {
               footerHtml = `<div class="status-text" style="color:${order.bon_scos ? 'var(--success)' : 'var(--warning)'}; font-weight: 700;">${bonInfo || '⚠️ Bon in asteptare (bar)'}</div>`;
@@ -3934,8 +4071,9 @@
         { h: '2. Ce date, de ce si cat timp', tabel: [
           ['Email-ul contului si rolul (bar, bucatarie, ospatar, manager, director)', 'ca sa intri in panou si sa vezi doar ce e treaba rolului tau', 'cat timp ai cont'],
           ['Jurnalul de activitate: fiecare actiune din panou (acceptare, „Gata" / „Preluata", modificare de comanda, confirmarea bonului, setari), cu ora exacta', 'evidenta comenzilor si a banilor, raspundere, rezolvarea reclamatiilor — interesul legitim al localului (art. 6 alin. 1 lit. f GDPR)', '3 zile, apoi se sterge automat'],
-          ['Numele ales si motivul, cand anulezi o comanda', 'sa se stie cine si de ce a anulat: o anulare inseamna bani lipsa din casa', '3 zile, in jurnal'],
-          ['Codul lunii (6 cifre) folosit la anulare — se scrie doar daca a fost bun sau gresit, nu codul in sine', 'dovada ca managerul a fost de acord cu anularea; incercarile cu cod gresit se vad, ca sa se previna anularile false (art. 6 alin. 1 lit. f)', '3 zile, in jurnal'],
+          ['Contul tau pe comenzile pe care le-ai lucrat: cine a creat-o, cine a preluat-o, cine a confirmat bonul', 'rapoartele pe angajat si evidenta banilor, pe zi si pe luna', 'luna in curs si luna trecuta; pe 1 ale lunii se sterge luna de dinainte'],
+          ['Numele ales si motivul, cand anulezi o comanda', 'sa se stie cine si de ce a anulat: o anulare inseamna bani lipsa din casa', 'luna in curs si luna trecuta, in jurnal'],
+          ['Codul lunii (6 cifre) folosit la anulare — se scrie doar daca a fost bun sau gresit, nu codul in sine', 'dovada ca managerul a fost de acord cu anularea; incercarile cu cod gresit se vad, ca sa se previna anularile false (art. 6 alin. 1 lit. f)', 'luna in curs si luna trecuta, in jurnal'],
           ['Zonele pe care le acoperi in tura (ospatari)', 'ca barul si colegii sa stie cine raspunde de care mese', '3 zile'],
           ['Ora la care ai intrat in panou si ora la care ai iesit (se scriu singure: la intrarea in cont, la deconectare si la inchiderea zilei)', 'informativ, pentru director: cine a fost pe tura; nu inlocuieste pontajul oficial', '3 zile'],
           ['Tipul dispozitivului, browserul si adresa IP de la care intri in cont (fara continut)', 'siguranta contului: conducerea e anuntata cand un cont de conducere intra de pe un dispozitiv nou', '90 de zile'],
@@ -3943,7 +4081,7 @@
         { h: '3. Ce NU se face', p: [
           `Panoul <b>nu</b> foloseste camera, microfonul sau locatia telefonului tau, <b>nu</b> face poze si <b>nu</b> urmareste ce faci in afara aplicatiei. Nu se ia nicio decizie automata despre tine pe baza acestor date. Sesiunea ta se inchide automat la ora inchiderii localului: a doua zi intri din nou cu contul tau, ca sa fie clar cine a fost pe tura.` ] },
         { h: '4. Cine vede datele', p: [
-          `Directorul localului vede anularile si rapoartele pe angajat (pe ziua de lucru). Managerul vede comenzile, cateva setari si codul lunii, dar nu datele personalului. Colegii vad doar comenzile pe care le lucreaza si zonele pe care le acopera fiecare. Regulile sunt aplicate in baza de date, nu doar in ecran. Datele nu se transmit nimanui altcuiva.` ] },
+          `Directorul localului vede anularile si rapoartele pe angajat (pe zi si pe luna). Managerul vede comenzile, cateva setari si codul lunii, dar nu datele personalului. Colegii vad doar comenzile pe care le lucreaza si zonele pe care le acopera fiecare. Regulile sunt aplicate in baza de date, nu doar in ecran. Datele nu se transmit nimanui altcuiva.` ] },
         { h: '5. Drepturile tale', p: [
           `Ai dreptul de acces (sa primesti o copie), rectificare, stergere, restrictionare, <b>opozitie</b> fata de prelucrarea bazata pe interes legitim si dreptul de a te plange la Autoritatea Nationala de Supraveghere a Prelucrarii Datelor cu Caracter Personal (ANSPDCP, B-dul G-ral Gheorghe Magheru 28-30, Bucuresti, <b>www.dataprotection.ro</b>). Cererile se trimit la <b>${contact}</b>; raspunsul vine in cel mult 30 de zile.` ] },
         { h: '6. Informarea', p: [
@@ -3976,7 +4114,7 @@
         <h1>Informare privind prelucrarea datelor personalului</h1>
         <p><b>${escapeHTML(c.OPERATOR || c.NUME || 'Localul')}</b>${c.ADRESA ? ', ' + escapeHTML(c.ADRESA) : ''} · panoul de comenzi · versiunea ${VERSIUNE_INFORMARE}</p>
         ${htmlInformare()}
-        <div class="semn"><p><b>Am luat la cunostinta</b> continutul acestei informari: actiunile mele din panoul de comenzi raman 3 zile in jurnalul localului, pe contul meu, si pot fi vazute de director.</p>
+        <div class="semn"><p><b>Am luat la cunostinta</b> continutul acestei informari: actiunile mele din panoul de comenzi raman 3 zile in jurnalul localului, iar comenzile pe care le-am lucrat si anularile mele raman luna in curs si luna trecuta, pe contul meu, si pot fi vazute de director.</p>
         <div>Nume si prenume: ______________________________________</div>
         <div>Functia: ____________________ &nbsp;&nbsp; Data: ____________________</div>
         <div>Semnatura angajat: ____________________ &nbsp;&nbsp; Semnatura angajator: ____________________</div></div>
@@ -4336,19 +4474,21 @@
   // de la bar — daca s-a gresit, o scoate directorul, si ramane in jurnal.
   window.toggleBon = async function(id, newState) {
       if(userRole !== 'bar' && userRole !== 'manager') return;
-      const order = allOrders.find(o => o.id === id);
+      const lista = sursaComenzi();   // comanda poate fi dintr-o zi trecuta (Istoric)
+      const order = lista.find(o => o.id === id);
       if (!order) return;
-      const ids = order.grup_comanda ? allOrders.filter(o => o.grup_comanda === order.grup_comanda).map(o => o.id) : [id];
+      const ids = order.grup_comanda ? lista.filter(o => o.grup_comanda === order.grup_comanda).map(o => o.id) : [id];
       if (!newState) {
           if (userRole !== 'manager') { alert('Bonul confirmat ramane pe numele tau. Daca e o greseala, spune-i managerului.'); return; }
           if (!confirm(`Scoti confirmarea bonului de la ${etichetaMasaVorbita(order)}? Ramane in jurnal.`)) return;
       } else {
-          const total = ids.reduce((s, oid) => { const o = allOrders.find(x => x.id === oid); return s + Number(o && o.total || 0); }, 0);
+          const total = ids.reduce((s, oid) => { const o = lista.find(x => x.id === oid); return s + Number(o && o.total || 0); }, 0);
           if (!confirm(`Confirmi ca ai scos bonul pentru ${etichetaMasaVorbita(order)} (${total.toFixed(2)} lei)?\nRamane scris pe numele tau si nu se mai poate scoate de la bar.`)) return;
       }
       const { data, error } = await _supabase.from('comenzi').update({ bon_scos: newState }).in('id', ids).select('id,bon_scos,bon_scos_de,bon_scos_la');
       if (error) { alert('Nu s-a putut salva: ' + error.message); return; }
-      (data || []).forEach(r => { const idx = allOrders.findIndex(o => o.id === r.id); if(idx !== -1) Object.assign(allOrders[idx], r); });
+      (data || []).forEach(r => { const o = lista.find(x => x.id === r.id); if (o) Object.assign(o, r); });
+      perioadaCache.la = 0;   // statisticile pe luna se recitesc
       renderOrders();
       if (currentTab === 'admin') calculateDirectorStats();
       logActivity('ticket_confirmado', id, { bon_scos: newState, mesa: order.mesa, total: order.total });
@@ -4411,14 +4551,15 @@
       return '"' + s.replace(/"/g, '""') + '"';
   };
 
-  window.exportCSV = function() {
+  window.exportCSV = async function() {
       const now = new Date();
-      const cutoff = statsMode === 'today' ? inceputZi() : inceputLuna();
+      const [deLa, panaLa] = perioadaStats();
+      let lista;
+      try { lista = await comenziPerioada(); } catch (e) { alert('Nu am putut citi comenzile. Incearca din nou.'); return; }
+      const filteredOrders = lista.filter(o => { const t = new Date(o.created_at).getTime(); return t >= deLa && t < panaLa; });
 
-      const filteredOrders = allOrders.filter(o => new Date(o.created_at).getTime() >= cutoff);
-      
-      let csvContent = '\uFEFF'; 
-      csvContent += "ID,Data,Ora,Masa,Stare,Total (lei),Bon scos,Bon gratis,Produse,Responsabil\n";
+      let csvContent = '\uFEFF';
+csvContent += "ID,Data,Ora,Masa,Stare,Total (lei),Bon scos,Bon gratis,Produse,Responsabil\n";
 
       filteredOrders.forEach(o => {
           const dt = new Date(o.created_at);
@@ -4437,7 +4578,8 @@
       const link = document.createElement("a");
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
-      link.setAttribute("download", `Raport_comenzi_${statsMode === 'today' ? 'azi' : 'luna'}_${now.toISOString().slice(0,10)}.csv`);
+      const sufix = statsMode === 'today' ? 'azi' : statsMode === 'month' ? 'luna' : 'luna_trecuta';
+      link.setAttribute("download", `Raport_comenzi_${sufix}_${now.toISOString().slice(0,10)}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -4474,46 +4616,119 @@
       const ultimaLunaTrecuta = new Date(azi.getFullYear(), azi.getMonth(), 0);
       return Math.min(sfarsitZi(ultimaLunaTrecuta).getTime(), Date.now());
   }
+  // luna trecuta incepe la inchiderea ultimei zile de acum doua luni
+  function inceputLunaTrecuta() {
+      const azi = ziLucru(new Date());
+      return sfarsitZi(new Date(azi.getFullYear(), azi.getMonth() - 1, 0)).getTime();
+  }
 
-  function calculateDirectorStats() {
-      const istoric = allOrders.filter(o => o.status === 'finalizata' && !esteAlerta(o));
+  // --- Perioada statisticilor: azi / luna aceasta / luna trecuta -----------
+  // „Azi" vine din `allOrders` (live). Lunile se citesc din baza cand le ceri
+  // si se tin 5 minute, ca sa nu recitim o luna de comenzi la fiecare bifa
+  // (o bifa de bon data de aici goleste memoria, ca sa se vada pe loc).
+  // Baza pastreaza luna in curs si luna trecuta (cron-ul `curatare-zilnica`).
+  function perioadaStats() {
+      if (statsMode === 'month')     return [inceputLuna(), Infinity];
+      if (statsMode === 'lastmonth') return [inceputLunaTrecuta(), inceputLuna()];
+      return [inceputZi(), Infinity];
+  }
+  // „Marti, 15 septembrie" — cu zilele noastre, fara diacritice
+  function ziFrumos(zi) {
+      return `${ZILE_SAPT[zi.getDay()]}, ${zi.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long' })}`;
+  }
+  function textPerioada() {
+      const mare = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+      const azi = ziLucru(new Date());
+      const luna = (d) => mare(d.toLocaleDateString('ro-RO', { month: 'long', year: 'numeric' }));
+      if (statsMode === 'month')     return `${luna(azi)} — de pe 1 pana azi`;
+      if (statsMode === 'lastmonth') return `${luna(new Date(azi.getFullYear(), azi.getMonth() - 1, 1))} — luna intreaga`;
+      return `Azi, ${ziFrumos(azi)} — de la ultima inchidere`;
+  }
+  function setPerioada(mod) {
+      statsMode = mod;
+      document.querySelectorAll('.perioada button').forEach(b => b.classList.toggle('active', b.dataset.mod === mod));
+      calculateDirectorStats();
+  }
+  document.getElementById('adminView').addEventListener('click', (e) => {
+      const b = e.target.closest('.perioada button[data-mod]');
+      if (b) setPerioada(b.dataset.mod);
+  });
+
+  // citeste toate randurile unei interogari, in pagini de 1000 (limita PostgREST)
+  async function citesteTot(fa, pas = 1000, maxim = 20000) {
+      let tot = [];
+      for (let de = 0; de < maxim; de += pas) {
+          const { data, error } = await fa().range(de, de + pas - 1);
+          if (error) throw error;
+          tot = tot.concat(data || []);
+          if (!data || data.length < pas) break;
+      }
+      return tot;
+  }
+  // comenzile inchise (finalizate, anulate) dintr-un interval [deLa, panaLa)
+  function citesteComenzi(deLa, panaLa) {
+      return citesteTot(() => {
+          let q = _supabase.from('comenzi').select('*').in('status', ['finalizata', 'anulata'])
+              .gte('created_at', new Date(deLa).toISOString());
+          if (isFinite(panaLa)) q = q.lt('created_at', new Date(panaLa).toISOString());
+          return q.order('created_at', { ascending: false }).order('id', { ascending: false });
+      });
+  }
+  let perioadaCache = { cheie: '', la: 0, comenzi: [] };
+  async function comenziPerioada() {
+      if (statsMode === 'today') return allOrders;
+      const [deLa, panaLa] = perioadaStats();
+      const cheie = `${statsMode}:${deLa}:${panaLa}`;
+      if (perioadaCache.cheie === cheie && Date.now() - perioadaCache.la < 5 * 60000) return perioadaCache.comenzi;
+      const comenzi = await citesteComenzi(deLa, panaLa);
+      perioadaCache = { cheie, la: Date.now(), comenzi };
+      return comenzi;
+  }
+
+  async function calculateDirectorStats() {
+      const mod = statsMode, [deLa, panaLa] = perioadaStats();
+      document.querySelectorAll('.perioada-text').forEach(e => e.textContent = textPerioada());
+      let lista;
+      try { lista = await comenziPerioada(); } catch (e) { console.log('statistici:', e); lista = []; }
+      if (mod !== statsMode) return;   // s-a schimbat perioada cat asteptam
+      const inPerioada = (o) => { const t = new Date(o.created_at).getTime(); return t >= deLa && t < panaLa; };
+      const istoric = lista.filter(o => o.status === 'finalizata' && !esteAlerta(o) && inPerioada(o));
       let total = 0, kitchenTotal = 0, barTotal = 0, nrPerioada = 0, pendingBonCount = 0, productCounts = {}, pendingByStaff = {}, bonuriByStaff = {};
 
-      const cutoff = statsMode === 'today' ? inceputZi() : inceputLuna();
-
+      // graficul: azi pe ore, pe luna pe zile de lucru; `t` = primul moment
+      // din grupa, ca sa iasa in ordine cronologica (ziua trece de miezul noptii)
       let chartData = {};
 
       istoric.forEach(order => {
           const orderTime = new Date(order.created_at).getTime();
-          if (orderTime >= cutoff) {
-              const val = Number(order.total);
-              nrPerioada++;
-              
-              if (order.bon_scos) {
-                  const barman = numeScurt(order.bon_scos_de) || 'necunoscut';
-                  if (!bonuriByStaff[barman]) bonuriByStaff[barman] = { n: 0, suma: 0 };
-                  bonuriByStaff[barman].n++; bonuriByStaff[barman].suma += order.comp_motiv ? 0 : val;
-                  if(!order.comp_motiv) {
-                      total += val;
-                      if (order.sectiune === 'bucatarie') kitchenTotal += val; else barTotal += val;
+          const val = Number(order.total);
+          nrPerioada++;
 
-                                            let dKey = statsMode === 'today'
-                          ? new Date(order.created_at).toLocaleTimeString('ro-RO', {hour:'2-digit', minute:'2-digit'})
-                          : ziLucru(order.created_at).toLocaleDateString('ro-RO', {day:'2-digit', month:'2-digit'});
-                      chartData[dKey] = (chartData[dKey] || 0) + val;
-                  }
-              } else {
-                  pendingBonCount++; 
-                  const responsabil = order.creat_de || order.preluat_de || 'necunoscut';
-                  pendingByStaff[responsabil] = (pendingByStaff[responsabil] || 0) + 1;
+          if (order.bon_scos) {
+              const barman = numeScurt(order.bon_scos_de) || 'necunoscut';
+              if (!bonuriByStaff[barman]) bonuriByStaff[barman] = { n: 0, suma: 0 };
+              bonuriByStaff[barman].n++; bonuriByStaff[barman].suma += order.comp_motiv ? 0 : val;
+              if(!order.comp_motiv) {
+                  total += val;
+                  if (order.sectiune === 'bucatarie') kitchenTotal += val; else barTotal += val;
+
+                  const dKey = statsMode === 'today'
+                      ? String(new Date(order.created_at).getHours()).padStart(2, '0') + ':00'
+                      : ziLucru(order.created_at).toLocaleDateString('ro-RO', {day:'2-digit', month:'2-digit'});
+                  const g = chartData[dKey] || (chartData[dKey] = { suma: 0, t: orderTime });
+                  g.suma += val; if (orderTime < g.t) g.t = orderTime;
               }
-
-              order.produse.forEach(p => { 
-                  if(p.cantitate > 0) {
-                      productCounts[p.nume] = (productCounts[p.nume]||0) + p.cantitate; 
-                  }
-              });
+          } else {
+              pendingBonCount++;
+              const responsabil = order.creat_de || order.preluat_de || 'necunoscut';
+              pendingByStaff[responsabil] = (pendingByStaff[responsabil] || 0) + 1;
           }
+
+          order.produse.forEach(p => {
+              if(p.cantitate > 0) {
+                  productCounts[p.nume] = (productCounts[p.nume]||0) + p.cantitate;
+              }
+          });
       });
 
       document.getElementById('statRevenue').textContent = `${total.toFixed(2)} lei`;
@@ -4523,14 +4738,14 @@
 
       const chartContainer = document.getElementById('revenueChartBars');
       chartContainer.innerHTML = '';
-      const chartEntries = Object.entries(chartData);
-      
+      const chartEntries = Object.entries(chartData).sort((a, b) => a[1].t - b[1].t).map(([k, g]) => [k, g.suma]);
+
       if(chartEntries.length === 0) {
           chartContainer.innerHTML = `<div style="width:100%; text-align:center; color:var(--text-muted); font-size:13px; padding-top:60px;">Nu exista incasari pentru aceasta perioada</div>`;
       } else {
           let maxVal = Math.max(...chartEntries.map(e => e[1]), 10);
           chartEntries.forEach(([label, amount]) => {
-              let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
+let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
               chartContainer.innerHTML += `
                 <div class="chart-bar-wrap" title="${amount.toFixed(2)} lei">
                    <div style="font-size:10px; color:var(--text-muted); margin-bottom:4px; font-family:'Space Mono',monospace;">${Math.round(amount)} lei</div>
@@ -4558,7 +4773,7 @@
           lista.forEach(([n, v]) => bonuriEl.innerHTML += `<li class="top-item"><span class="top-name">${escapeHTML(n)} <span style="color:var(--text-muted); font-size:12px;">· ${v.suma.toFixed(2)} lei</span></span><span class="badge-count" style="margin-left:0; background: var(--success); color: white;">${v.n}</span></li>`);
       }
 
-      if (userRole === 'director') { renderStaffReport(cutoff); renderFraudList(cutoff); renderTureAzi(); }
+      if (userRole === 'director') { renderStaffReport(lista.filter(inPerioada)); renderFraudList(deLa, panaLa); renderTureAzi(); }
   }
 
   // Cine a fost in tura azi (intrarile si iesirile din cont)
@@ -4592,12 +4807,8 @@
   // Grupeaza dupa angajatul responsabil de fiecare comanda (cine a creat-o, sau cine a preluat-o/servit-o).
   // Pentru fiecare calculeaza: numar de comenzi, incasari generate (acelasi criteriu ca la statisticile generale:
   // finalizate, cu bon, care nu sunt gratuite), numarul de anulari si procentul de anulare din totalul gestionat.
-  function renderStaffReport(cutoff) {
-      const relevant = allOrders.filter(o => {
-          if(o.produse.some(p => p.nume.includes('ALERTĂ'))) return false;
-          if(new Date(o.created_at).getTime() < cutoff) return false;
-          return o.status === 'finalizata' || o.status === 'anulata';
-      });
+  function renderStaffReport(lista) {
+      const relevant = lista.filter(o => !esteAlerta(o) && (o.status === 'finalizata' || o.status === 'anulata'));
 
       let staffMap = {}; // { email: { comenzi, incasari, anulate } }
       relevant.forEach(o => {
@@ -4642,15 +4853,15 @@
   // Tiparul asta e semnalul clasic de frauda: produsul a iesit din bucatarie/bar, dar comanda
   // s-a anulat in sistem. Se atribuie utilizatorului care a facut trecerea la "anulata" (log.utilizator
   // real al acelei actiuni, nu neaparat cel care a creat comanda).
-  async function renderFraudList(cutoff) {
+  async function renderFraudList(deLa, panaLa) {
       const listEl = document.getElementById('fraudList');
       try {
-          const { data: logs, error } = await _supabase.from('jurnal_activitate')
+          let q = _supabase.from('jurnal_activitate')
             .select('*')
             .in('actiune', ['pedido_cancelado', 'comanda_anulata_client', 'cod_anulare_gresit'])
-            .gte('created_at', new Date(cutoff).toISOString())
-            .order('created_at', { ascending: false })
-            .limit(300);
+            .gte('created_at', new Date(deLa).toISOString());
+          if (isFinite(panaLa)) q = q.lt('created_at', new Date(panaLa).toISOString());
+          const { data: logs, error } = await q.order('created_at', { ascending: false }).limit(500);
           if(error || !logs) { listEl.innerHTML = '<span style="color:var(--text-muted); font-size:13.5px;">Nu am putut incarca istoricul.</span>'; return; }
           if(!logs.length) {
               listEl.innerHTML = '<span style="color:var(--success); font-size:13.5px;">✅ Nicio anulare in aceasta perioada.</span>';
@@ -4689,8 +4900,135 @@
   }
 
   // --- HARTA ORELOR DE VARF (zi a saptamanii x ora) ---
-  // Numara comenzile (finalizate, nu alerte) din ultimele 60 de zile, grupate pe zi a saptamanii
-  // si ora de creare. Ajuta la decizia de a suplimenta personalul (ex. vineri/sambata seara).
+  // Numara comenzile (nu alertele, care au totalul 0) din ultimele 4 saptamani
+  // — exact 4 din fiecare zi a saptamanii, ca sa nu fie o zi avantajata —
+  // grupate pe zi a saptamanii si ora. Ajuta la decizia de a pune oameni in plus.
+  async function renderHeatmap() {
+      const container = document.getElementById('heatmapContainer');
+      const scaleEl = document.getElementById('heatmapScale');
+      const bestEl = document.getElementById('heatmapBest');
+      if (!container) return;
+      container.innerHTML = 'Se incarca...';
+
+      try {
+          const since = new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString();
+          const data = await citesteTot(() => _supabase.from('comenzi').select('id, created_at')
+              .gt('total', 0).gte('created_at', since)
+              .order('created_at', { ascending: true }).order('id', { ascending: true }));
+
+          // matrix[ziSaptamanii][ora] = comenzi. 0 = duminica ... 6 = sambata
+          let matrix = Array.from({length:7}, () => Array(24).fill(0));
+          data.forEach(o => {
+              const d = new Date(o.created_at);
+              matrix[d.getDay()][d.getHours()]++;
+          });
+
+          const dayNames = ['Dum','Lun','Mar','Mie','Joi','Vin','Sam'];
+          let maxVal = 0;
+          matrix.forEach(row => row.forEach(v => { if(v > maxVal) maxVal = v; }));
+
+          function colorFor(v) {
+              if(v === 0 || maxVal === 0) return 'rgba(255,255,255,0.04)';
+              const intensity = v / maxVal;
+              const alpha = 0.12 + intensity * 0.78;
+              return `rgba(22, 132, 78, ${alpha.toFixed(2)})`;
+          }
+
+          // doar orele cu activitate (10:00 - 01:00), ca sa nu lungim tabelul degeaba
+          const hoursToShow = [10,11,12,13,14,15,16,17,18,19,20,21,22,23,0,1];
+
+          let html = '<table class="heatmap-table"><thead><tr><th></th>';
+          dayNames.forEach(d => html += `<th>${d}</th>`);
+          html += '</tr></thead><tbody>';
+
+          hoursToShow.forEach(h => {
+              html += `<tr><td class="heatmap-hourlabel">${String(h).padStart(2,'0')}:00</td>`;
+              for(let day = 0; day < 7; day++) {
+                  const v = matrix[day][h];
+                  html += `<td><div class="heatmap-cell" style="background:${colorFor(v)};" title="${dayNames[day]} ${String(h).padStart(2,'0')}:00 — ${v} comenzi"></div></td>`;
+              }
+              html += '</tr>';
+          });
+          html += '</tbody></table>';
+          container.innerHTML = html;
+
+          scaleEl.innerHTML = '';
+          for(let i = 0; i <= 5; i++) {
+              const alpha = 0.12 + (i/5) * 0.78;
+              scaleEl.innerHTML += `<div style="background: rgba(22,132,78,${alpha.toFixed(2)});"></div>`;
+          }
+
+          // primele 3 combinatii zi+ora cu cele mai multe comenzi, ca recomandare directa
+          let flat = [];
+          matrix.forEach((row, day) => row.forEach((v, h) => { if(v > 0) flat.push({day, h, v}); }));
+          flat.sort((a,b) => b.v - a.v);
+          const top3 = flat.slice(0,3);
+
+          if(top3.length === 0) {
+              bestEl.innerHTML = 'Inca nu sunt destule comenzi ca sa putem calcula orele de varf.';
+          } else {
+              bestEl.innerHTML = '📌 Cele mai aglomerate momente (merita personal in plus): ' +
+                  top3.map(x => `<b>${dayNames[x.day]} ${String(x.h).padStart(2,'0')}:00h</b> (${x.v} comenzi)`).join(' · ');
+          }
+      } catch(e) {
+          container.innerHTML = '<span style="color:var(--text-muted); font-size:13px;">Nu am putut incarca harta orelor.</span>';
+      }
+  }
+
+  // --- Istoric pe zile ----------------------------------------------------
+  // Azi se vede live (din `allOrders`); o zi trecuta se citeste din baza cand
+  // o alegi. Se poate merge inapoi pana pe 1 ale lunii trecute — atat tine
+  // baza (cron-ul `curatare-zilnica`).
+  let ziIstoric = null;                        // null = ziua de lucru curenta
+  let istoricZi = { cheie: '', comenzi: [] };  // comenzile zilei alese
+  const cheieZi = (zi) => `${zi.getFullYear()}-${String(zi.getMonth() + 1).padStart(2, '0')}-${String(zi.getDate()).padStart(2, '0')}`;
+  const ziDinCheie = (s) => { const [a, l, z] = s.split('-').map(Number); return new Date(a, l - 1, z); };
+  function primaZiPastrata() { const azi = ziLucru(new Date()); return new Date(azi.getFullYear(), azi.getMonth() - 1, 1); }
+  function intervalIstoric() {
+      if (!ziIstoric) return [inceputZi(), Infinity];
+      const ieri = new Date(ziIstoric); ieri.setDate(ieri.getDate() - 1);
+      return [sfarsitZi(ieri).getTime(), sfarsitZi(ziIstoric).getTime()];
+  }
+  function sursaComenzi() { return (currentTab === 'history' && ziIstoric) ? istoricZi.comenzi : allOrders; }
+
+  async function alegeZiIstoric(zi) {
+      const azi = ziLucru(new Date()), min = primaZiPastrata();
+      if (zi > azi) zi = azi;
+      if (zi < min) zi = min;
+      const esteAzi = cheieZi(zi) === cheieZi(azi);
+      ziIstoric = esteAzi ? null : zi;
+      actualizeazaBaraIstoric();
+      if (!esteAzi && istoricZi.cheie !== cheieZi(zi)) {
+          istoricZi = { cheie: cheieZi(zi), comenzi: [] };
+          document.getElementById('istText').textContent = 'Se incarca...';
+          const ieri = new Date(zi); ieri.setDate(ieri.getDate() - 1);
+          try {
+              const comenzi = await citesteComenzi(sfarsitZi(ieri).getTime(), sfarsitZi(zi).getTime());
+              if (istoricZi.cheie !== cheieZi(zi)) return;   // intre timp s-a ales alta zi
+              istoricZi.comenzi = await attachTakeawayContacts(comenzi);
+          } catch (e) {
+              document.getElementById('istText').textContent = 'Nu am putut incarca ziua. Incearca din nou.';
+              return;
+          }
+      }
+      renderOrders();
+  }
+  function actualizeazaBaraIstoric() {
+      const azi = ziLucru(new Date()), zi = ziIstoric || azi;
+      const inp = document.getElementById('istZi');
+      inp.min = cheieZi(primaZiPastrata()); inp.max = cheieZi(azi); inp.value = cheieZi(zi);
+      document.getElementById('istInainte').disabled = !ziIstoric;
+      document.getElementById('istInapoi').disabled = cheieZi(zi) <= inp.min;
+      document.getElementById('istAzi').classList.toggle('active', !ziIstoric);
+      const ieri = new Date(azi); ieri.setDate(ieri.getDate() - 1);
+      // azi: butonul „Azi" e deja aprins, nu mai scriem si eticheta
+      document.getElementById('istEticheta').textContent = !ziIstoric ? '' : cheieZi(zi) === cheieZi(ieri) ? 'Ieri' : ziFrumos(zi);
+  }
+  document.getElementById('istZi').addEventListener('change', (e) => { if (e.target.value) alegeZiIstoric(ziDinCheie(e.target.value)); });
+  document.getElementById('istInapoi').addEventListener('click', () => { const z = new Date(ziIstoric || ziLucru(new Date())); z.setDate(z.getDate() - 1); alegeZiIstoric(z); });
+  document.getElementById('istInainte').addEventListener('click', () => { if (!ziIstoric) return; const z = new Date(ziIstoric); z.setDate(z.getDate() + 1); alegeZiIstoric(z); });
+  document.getElementById('istAzi').addEventListener('click', () => alegeZiIstoric(ziLucru(new Date())));
+
   async function loadMeniuForOspatar() {
       try { if(fullMenu.length === 0) fullMenu = await incarcaMeniuComun(); } catch(e) { return; }
       const { data: stocDB } = await _supabase.from('stoc_produse').select('*');
@@ -4892,6 +5230,8 @@
           }
       })
       .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'comenzi' }, p => {
+          // curatenia din baza sterge mii de comenzi vechi deodata: nu ne privesc
+          if (!allOrders.some(o => o.id === p.old.id)) return;
           allOrders = allOrders.filter(o => o.id !== p.old.id);
           renderOrders();
           if (currentTab === 'map') renderTablesGrid();
@@ -5225,9 +5565,16 @@
       pasi.push({ el: '#navMeniu', titlu: 'Meniu', text: 'Trimiti o comanda in numele clientului, ca de pe telefon.' });
       if (rol !== 'director') pasi.push({ el: '#navStock', titlu: 'Stoc', text: 'S-a terminat ceva? Il blochezi si dispare din meniul clientilor.' });
       pasi.push({ el: '#navHistory', titlu: 'Istoric',
-          text: rol === 'bar' ? 'Comenzile terminate azi. Aici confirmi ca ai scos bonul — ramane pe numele tau.' : 'Comenzile terminate si anulate azi. La inchidere dispar; din baza se sterg la 2 zile.' });
-      pasi.push({ el: '#navAdmin', titlu: 'Sef',
-          text: rol === 'manager' ? 'Incasari, codul lunii pentru anulari, „ora de varf".' : 'Incasari, meniul, setarile, angajatii, codul lunii, rapoartele si anularile.' });
+          text: rol === 'bar' ? 'Comenzile terminate azi. Aici confirmi ca ai scos bonul — ramane pe numele tau. Cu sagetile vezi si zilele trecute.'
+                              : 'Comenzile terminate si anulate, pe zile: azi sau orice zi din luna asta si luna trecuta.' });
+      if (rol === 'director') {
+          pasi.push({ el: '#navAdmin', titlu: 'Sinteza', text: 'Incasari, comenzi, top produse si harta orelor de varf — pe azi, luna aceasta sau luna trecuta. Excel de aici.' });
+          pasi.push({ el: '#navSefMeniu', titlu: 'Meniu', text: 'Meniul clientilor: produse, preturi, descrieri. Lucrezi pe ciorna si publici cand esti gata.' });
+          pasi.push({ el: '#navSefPersonal', titlu: 'Personal', text: 'Raportul pe angajat, anularile (cine, cand, de ce), turele de azi, parerile clientilor, lista de angajati.' });
+          pasi.push({ el: '#navSefSetari', titlu: 'Setari', text: 'Meniul zilei, ora de varf, codul lunii, ora de inchidere, comenzile la pachet, codul pe masa.' });
+      } else {
+          pasi.push({ el: '#navAdmin', titlu: 'Sef', text: 'Incasari, codul lunii pentru anulari, „ora de varf".' });
+      }
       pasi.push({ el: mobil ? '#btnNotificariMobile' : '#btnNotificari', titlu: 'Notificari',
           text: 'Porneste-le ca sa primesti comenzile si cu telefonul blocat.' });
       return pasi;

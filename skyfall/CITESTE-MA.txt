@@ -8,7 +8,8 @@ Sablon pentru un local nou.
    13_cod_lunar_delogare_zone.sql, 14_timp_eliberare.sql,
    15_tura_automata.sql, 16_securitate.sql, 17_functii_noi.sql (inlocuieste
    <REF> cu ref-ul proiectului), 18_inregistrare_inchisa.sql,
-   19_chei_dezvoltator.sql si 20_istoric_scurt.sql (12 nu mai e necesar).
+   19_chei_dezvoltator.sql, 20_istoric_scurt.sql si 21_istoric_lunar.sql
+   (12 nu mai e necesar).
    Apoi Vault -> secret
    `cheie_backup` (aceeasi cheie ca in GitHub si ca in unealta qr/).
 3. Completeaza config.js: URL, cheie, nume, slogan, culori, link recenzie,

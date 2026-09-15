@@ -68,8 +68,10 @@ Trei fișiere din rădăcină spun Cloudflare-ului cum să servească:
    ref-ul proiectului înainte de rulare), `18_inregistrare_inchisa.sql`
    (înregistrarea publică refuzată și din bază), `19_chei_dezvoltator.sql`
    (cheile meselor le face dezvoltatorul, chei de 8 caractere, curățarea
-   istoricului pg_cron) și `20_istoric_scurt.sql` (jurnalul 3 zile, fără
-   ștergere manuală a comenzilor, stocul nu e al directorului). Pe M3 și
+   istoricului pg_cron), `20_istoric_scurt.sql` (jurnalul 3 zile, fără
+   ștergere manuală a comenzilor, stocul nu e al directorului) și
+   `21_istoric_lunar.sql` (comenzile închise: luna în curs + luna trecută,
+   anulările la fel). Pe M3 și
    Sweet & Sour a existat și un `12_poze_14_zile` (cron + funcție edge
    `curata-poze`) — a fost înlocuit de 13 și nu se mai rulează pe un proiect
    nou. Toate sunt deja aplicate pe M3 și Sweet & Sour.
@@ -1103,6 +1105,66 @@ aceasta" (`statsMode` rămâne `'today'`) și „Harta orelor de vârf"
 pașii Comenzi / O comandă / Stoc. Informarea GDPR a personalului (versiunea
 15 septembrie 2026) spune 3 zile, cu un rând nou pentru dispozitiv/IP la
 conectare (90 de zile); politica clientului spune 3 zile la jurnal.
+
+## Runda 17 — statistici pe zi / lună, istoric pe zile, taburile directorului
+
+Utilizatorul s-a răzgândit față de runda 16: vrea statisticile pe zi **și**
+pe lună înapoi, istoricul filtrabil pe zilele trecute, ștergerea „o dată pe
+lună", iar taburile șefului separate și mai vizibile.
+
+**Baza** (migrația 21, ambele proiecte): `curatare-zilnica` șterge comenzile
+închise cu `created_at` mai vechi de **1 ale lunii trecute, ora României**
+(`date_trunc('month', now() at time zone 'Europe/Bucharest') - interval
+'1 month'`, convertit înapoi cu `at time zone`) — deci baza ține luna în curs
+și luna trecută, iar pe 1 pleacă luna de dinainte. Jurnalul rămâne la 3 zile
+cu excepțiile din 20, plus anulările (`pedido_cancelado`,
+`comanda_anulata_client`, `cod_anulare_gresit`), care se țin cât comenzile
+(raportul „Anulări" pe lună). Testat într-o tranzacție derulată înapoi cu
+rânduri datate manual (jurnalul are trigger care forțează `created_at`, deci
+datarea se face cu UPDATE după INSERT).
+
+**Panoul**:
+
+- `loadOrders` nu mai ia „ultimele 500": ia comenzile deschise plus cele
+  închise din ziua de lucru curentă (`.or('status.in.(noua,acceptata,gata),
+  created_at.gte.<inceputZi>')`, limită 1000) și rulează din nou după
+  `loadOraReset` (ora de închidere mută începutul zilei). `allOrders` = ziua
+  curentă; tot ce e mai vechi se citește la cerere. Handler-ul realtime de
+  DELETE ignoră comenzile pe care nu le are (curățenia lunară șterge mii de
+  rânduri deodată).
+- Citire paginată: `citesteTot(fa)` (pagini de 1000 cu `.range`, PostgREST
+  taie la 1000), `citesteComenzi(deLa, panaLa)` (finalizate + anulate,
+  interval `[deLa, panaLa)`).
+- Statistici: `statsMode` = `today | month | lastmonth`; `perioadaStats()`
+  dă intervalul (`inceputZi`, `inceputLuna`, `inceputLunaTrecuta` — toate pe
+  zile de lucru, adică de la ora de închidere); `comenziPerioada()` = azi din
+  `allOrders`, lunile din baza cu cache de 5 minute (`perioadaCache`, golit
+  la bifa de bon). `calculateDirectorStats` e `async`, ignoră rezultatul dacă
+  perioada s-a schimbat între timp; graficul e pe ore (azi) sau pe zile de
+  lucru (lună), sortat cronologic. `exportCSV` folosește aceeași listă.
+  Butoanele `.perioada` (două seturi identice: capul Sintezei și al
+  Personalului, `.adm-cap[data-grup]`) sunt sincronizate de `setPerioada`.
+- `renderHeatmap` e înapoi: ultimele **4 săptămâni** (exact 4 din fiecare zi
+  a săptămânii), citește doar `id, created_at` cu `total > 0` (alertele au
+  totalul 0).
+- Istoric pe zile: bara `#istoricBara` (◀ / `<input type=date>` / ▶ / Azi),
+  `ziIstoric` (null = azi, live) și `istoricZi` (comenzile zilei alese, din
+  baza); `intervalIstoric()`, `sursaComenzi()` (lista din care se randează),
+  `alegeZiIstoric(zi)`, `actualizeazaBaraIstoric()`. Limitele calendarului:
+  1 ale lunii trecute … azi. Pe o zi trecută bonul se poate bifa (`toggleBon`
+  caută în `sursaComenzi()`), dar ✕ (retur) nu apare.
+- Directorul: `body.rol-director`; grupul `.nav-grup-sef` din bară (titlu
+  „Panoul șefului", `order:-1`, chenar) cu `navAdmin` (etichetă „Sinteza"),
+  `navSefMeniu`, `navSefPersonal`, `navSefSetari` → `switchTab('admin:grup')`
+  (`NAV` mapează id-urile la taburi); pastilele `.adm-tabs` sunt ascunse
+  pentru el, managerul le păstrează. Pe mobil grupul e `display: contents`
+  și itemii lui vin primii în bara de jos (6 taburi). Titlurile de pagină:
+  „Șef · Sinteza / Meniu / Personal / Setari".
+- Zilele săptămânii se scriu din `ZILE_SAPT` (`ziFrumos`), nu din
+  `toLocaleDateString`, ca să nu apară diacritice.
+- Informarea GDPR a personalului (aceeași versiune, 15 septembrie 2026) are
+  un rând nou pentru contul de pe comenzi (luna în curs și luna trecută) și
+  anulările la fel; politica clientului spune luna în curs și luna trecută.
 
 ## Înainte de deschidere
 
