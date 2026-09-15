@@ -15,14 +15,28 @@ Platforma/
 │  ├─ dashboard.html     panoul de personal
 │  ├─ config.js          ⚠️ SINGURUL fișier care diferă între localuri
 │  ├─ manifest.json, sw.js, icons/, images/
-├─ qr/                   generator de coduri QR (unealtă separată)
+├─ qr/                   generator de coduri QR (unealta dezvoltatorului, doar local — în .gitignore)
 ├─ exemplu/              demo de prezentare, fără backend
 ├─ skyfall/              șablon gata de completat
 └─ supabase/             SQL + scripturi, comune tuturor localurilor
 ```
 
-Publici tot folderul `Platforma/` pe Cloudflare Pages. Rutarea pe cale merge
-din prima, fără configurare: numele folderului **este** calea din URL.
+Publici tot folderul `Platforma/` pe Cloudflare (Workers cu fișiere statice,
+legat de GitHub — la fiecare push pe `main` se publică singur, în ~40 s).
+Rutarea pe cale merge din prima: numele folderului **este** calea din URL.
+Trei fișiere din rădăcină spun Cloudflare-ului cum să servească:
+
+- `wrangler.jsonc` — numele worker-ului (`sweet-sour`), `assets.directory = "."`,
+  `not_found_handling = "404-page"` (altfel paginile 404 proprii nu sunt
+  servite), fără URL-uri de previzualizare. **Fără el**, `npx wrangler deploy`
+  ghicește setările și publică tot folderul — inclusiv `.git/` (istoricul
+  întreg, descărcabil de oricine), `backup/` și documentația. S-a întâmplat
+  până pe 15 septembrie 2026; istoricul nu conținea secrete.
+- `.assetsignore` — ce NU se publică: `.git`, `.github`, `backup`, `supabase`,
+  `qr`, `README.md`, `TEHNIC.md`, `wrangler.jsonc`.
+- `_headers` (antetele de securitate) și `_redirects` (linkurile scurte din
+  codurile QR, vezi „Coduri QR pentru mese"). Amândouă sunt citite de
+  Cloudflare și nu apar pe site.
 
 ## Cum adaugi un local nou
 
@@ -51,8 +65,10 @@ din prima, fără configurare: numele folderului **este** calea din URL.
    etichete, produse ascunse, ciornă/publicare/versiuni, cod unic pe masă,
    limite anti-abuz, comandă uitată, „înapoi", al doilea factor, jurnal de
    conectări, `export_backup` — vezi „Runda 14"; înlocuiește `<REF>` cu
-   ref-ul proiectului înainte de rulare) și `18_inregistrare_inchisa.sql`
-   (înregistrarea publică refuzată și din bază). Pe M3 și
+   ref-ul proiectului înainte de rulare), `18_inregistrare_inchisa.sql`
+   (înregistrarea publică refuzată și din bază) și `19_chei_dezvoltator.sql`
+   (cheile meselor le face dezvoltatorul, chei de 8 caractere, curățarea
+   istoricului pg_cron). Pe M3 și
    Sweet & Sour a existat și un `12_poze_14_zile` (cron + funcție edge
    `curata-poze`) — a fost înlocuit de 13 și nu se mai rulează pe un proiect
    nou. Toate sunt deja aplicate pe M3 și Sweet & Sour.
@@ -547,7 +563,8 @@ coloana `ordine`. Adaugi o categorie nouă din dashboard și apare singură în 
 
 ## Paginile 404
 
-Cloudflare Pages servește, la o adresă lipsă, **cel mai apropiat `404.html`**:
+Cloudflare servește, la o adresă lipsă, **cel mai apropiat `404.html`** (pe
+Workers doar cu `not_found_handling = "404-page"` în `wrangler.jsonc`):
 pentru `/m3/masa-99` caută `/m3/404.html`, apoi `/404.html`. De aceea sunt
 două feluri de pagini:
 
@@ -568,14 +585,33 @@ rădăcina e `/<repo>/`.
 
 ## Coduri QR pentru mese
 
-Unealtă separată, la `domeniu.ro/qr/`. Nu mai e în dashboard: e ceva ce faci o
-dată, la deschidere sau când mai adaugi mese, nu în timpul turei — n-avea ce
-căuta lângă comenzile active.
+Unealta **dezvoltatorului**, nu a directorului: `qr/index.html`, doar pe
+calculatorul tău (folderul e în `.gitignore`, nu ajunge pe site). O deschizi
+în browser, alegi localul (își citește `config.js`), scrii **cheia
+dezvoltatorului** (cea din Vault, `cheie_backup` — aceeași cu secretul
+`CHEIE_BACKUP` din GitHub) și apeși „Ia mesele și cheile din baza": unealta
+cheamă `chei_mese_dezvoltator(cheie, regenereaza)` și primește mesele din
+planul sălii cu cheia fiecăreia (cele lipsă se creează pe loc). De acolo:
+„Chei noi pentru toate mesele" sau pentru una singură (codurile vechi nu mai
+merg pentru comandă cât e pornit codul unic), apoi „Generează codurile".
+Directorul nu vede cheile și nu le poate reface din panou — doar pornește sau
+oprește opțiunea din Setări. Așa codurile lipite pe mese nu se strică din
+greșeală; când directorul adaugă mese noi în Sală, îți cere coduri pentru ele.
 
-Ce poate:
+**Linkul din cod** e scurt: `domeniu/s/12/ab12cd34` (Sweet & Sour, masa 12,
+cheia) sau `domeniu/m/12/…` (M3) — regulile sunt în `_redirects` din
+rădăcină (`/s/:masa/:cheie → /sweetandsour/?m=:masa&k=:cheie`, 302), iar
+clientul înțelege `?m=` și, pentru codurile mai vechi, `?mesa=`. Fără cheie,
+`domeniu/s/12`. Cheia are 8 caractere (litere mici + cifre). Pentru un local
+nou: două rânduri în `_redirects` cu un prefix liber și un rând în lista
+`LOCALURI` din unealtă. Când localul are domeniul lui, schimbi „Adresa
+site-ului" în unealtă și refaci codurile — ce face linkul lung e gazda
+`…workers.dev`, nu calea.
 
-- **Numere de masă** scrise ca listă (`1, 2, 5`), ca interval (`1-12`) sau ca
-  nume (`Terasa1`, `Bar2`). Le poți amesteca.
+Ce mai poate:
+
+- **Numere de masă** scrise de mână (fără bază, deci fără cheie) ca listă
+  (`1, 2, 5`), ca interval (`1-12`) sau ca nume (`Terasa1`, `Bar2`).
 - **Numele localului** scris pe fiecare cod.
 - **Descărcare SVG**, individual sau toate odată. SVG înseamnă că poți mări
   codul la orice dimensiune fără să se pixeleze — de la autocolant de 5 cm la
@@ -808,16 +844,18 @@ serverului. Clientul reîncarcă meniul cu un `setTimeout` de 500 ms după
 evenimentele realtime, ca o publicare (38 de rânduri) să însemne o singură
 reîncărcare.
 
-**Cod unic pe masă.** `chei_mese (masa, cheie)` — fără niciun grant;
-`chei_mese_lista()` (manager, director; creează cheile lipsă după
-`config_mese`), `chei_mese_regenereaza(masa|null)` (director). Setarea
+**Cod unic pe masă.** `chei_mese (masa, cheie)` — fără niciun grant.
+Din runda 15 cheile le vede și le reface doar dezvoltatorul, prin
+`chei_mese_dezvoltator(cheie, regenereaza)` (anonim, cu cheia din Vault);
+`chei_mese_lista()` și `chei_mese_regenereaza()` au rămas în bază, dar fără
+drept de execuție pentru personal. Setarea
 `setari_chei {activ}` e citită și de anonim, ca telefonul să spună dinainte
 „scanează codul". `sanitize_comanda_insert` (acum security definer) cere, când
 e activ, `comenzi.cheie_masa` egală cu cheia mesei; coloana e golită înainte
 de scriere, deci nu ajunge nicăieri. Clientul ia `?mesa=4&k=…` din QR, îl ține
 14 ore în `localStorage` (`STORE + 'cheie'`) și îl trimite la comenzi și la
-cererile de ospătar; cu cheie, numărul mesei e blocat în fereastră. Unealta
-`qr/` primește lista din panou (`masa<TAB>link`) și face codurile cu cheie.
+cererile de ospătar; cu cheie, numărul mesei e blocat în fereastră. Codurile
+le face unealta `qr/` (vezi „Coduri QR pentru mese").
 Erorile serverului au `hint` (`cod_masa`, `limita_neacceptate`,
 `limita_ritm`, `limita_produse`, `alerta_recenta`), pe care clientul îl
 traduce în engleză (`mesajEroareComanda`).
@@ -1007,6 +1045,51 @@ barul și bucătăria închid singure comenzile și preiau cererile de la mese.
 Rezervat strict directorului, ca un ospătar să nu poată ieși singur din propriul
 flux de răspundere.
 
+## Runda 15 — setări pe secțiuni, chei la dezvoltator, Cloudflare curat
+
+**Setările** (Șef → Setări) sunt împărțite în trei secțiuni, după cât de des
+se folosesc: „Zi de zi" (meniul zilei, codul lunii, ore de vârf, închide
+bucătăria), „Cum lucrează localul" (ora de închidere, mod fără ospătari,
+fereastra de modificare, cât stă masa după notă, alerta „comandă uitată",
+comenzi la pachet — toată secțiunea doar pentru director) și „Siguranță" (al
+doilea factor, cod unic pe masă, limite). Pe ecrane de peste 1080 px
+panourile stau pe două coloane (`.setari-grila`; `.lat` = pe toată lățimea).
+Secțiunea (`<section class="setari-sectiune" data-grup="setari">`) poartă
+grupul, panourile din ea nu — `admArata` comută secțiunile.
+
+**Cheile meselor** (migrația 19, pe ambele proiecte): `cheie_noua()` dă 8
+caractere `[a-z0-9]`; `chei_mese_dezvoltator(p_cheie, p_regenereaza)` —
+anonim, verifică cheia cu `cheie_dezvoltator_ok` (Vault `cheie_backup`,
+`pg_sleep(0.5)` la cheie greșită), reface toate cheile (`'*'`) sau una
+(numărul mesei), creează cheile lipsă din `config_mese` și întoarce
+`{activ, mese:[{masa, cheie, creata_la}]}`; scrie în jurnal
+`chei_regenerate` ca „dezvoltator" (trigger-ul `force_jurnal_utilizator`
+respectă `app.jurnal_utilizator`, un GUC pe care îl pot seta doar funcțiile
+serverului). Din panou au dispărut lista de chei și „Chei noi": linkul pe
+care îl construia (`bazaMeniu()`) ieșea `…/sweetandsour/dashboardindex.html`
+pe adresa fără `.html`, deci nu mergea. Cheile de pe ambele proiecte au fost
+refăcute în formatul scurt pe 15 septembrie 2026 (opțiunea era oprită).
+
+**Linkuri scurte**: `_redirects` (`/s/:masa/:cheie`, `/s/:masa`, `/m/…`),
+clientul citește `?m=` sau `?mesa=`. Testat pe site: `/s/20/<cheie>` → 302 →
+`/sweetandsour/?m=20&k=<cheie>`, cheia ajunge în `localStorage`, comanda cu
+cheie trece, fără cheie / cu cheie greșită / cu cheia altei mese e refuzată
+cu `hint = 'cod_masa'`.
+
+**Cloudflare**: `wrangler.jsonc` + `.assetsignore` (vezi „Structura").
+Înainte, `.git/`, `backup/`, `README.md`, `TEHNIC.md` și `.github/` erau
+publice, iar 404-urile veneau goale.
+
+**Mărunțiș**: `search_path` fixat și pe `luna_curenta`, `pret_curent`,
+`seteaza_finalizata_la` (ultimele avertismente ale linterului); job pg_cron
+`curatare-cron-istoric` (duminica 04:30, șterge `cron.job_run_details` mai
+vechi de 7 zile — două joburi pe minut făceau ~1 milion de rânduri pe an);
+`split_takeaway_contact` scrie „🥡 La pachet" pe ambele proiecte. Avertismentele
+rămase ale linterului sunt intenționate: funcțiile `security definer` apelabile
+de anonim (`export_backup`, `chei_mese_dezvoltator`, `client_modifica_comanda`)
+își verifică singure cheia/token-ul, iar tabelele fără politici RLS
+(`chei_mese`, `coduri_anulare`, `meniu_ciorna`) se citesc doar prin funcții.
+
 ## Înainte de deschidere
 
 1. Authentication → Providers → Email: **Allow new users to sign up** = oprit.
@@ -1018,8 +1101,9 @@ flux de răspundere.
 3. GitHub → Settings → Secrets and variables → Actions → `CHEIE_BACKUP`
    (cheia din Vault `cheie_backup`), altfel copiile nu se fac.
 4. Directorul și managerul își activează al doilea factor (Șef → Setări).
-5. Dacă vrei codul unic pe masă: lista din panou → `qr/` → printezi și
-   lipești codurile noi → abia apoi pornești opțiunea.
+5. Codurile QR le faci tu din `qr/` (cu cheia dezvoltatorului) și le
+   printezi; dacă localul vrea codul unic pe masă, directorul pornește
+   opțiunea abia după ce codurile cu cheie sunt lipite pe mese.
 6. Testează un ciclu complet: comandă de pe un telefon, o vezi la bar pe altul,
    „Gata" → ospătar → „Servit". Înainte să fie clienți în local.
 

@@ -7,11 +7,16 @@ Sablon pentru un local nou.
    09_manager.sql, 10_anulare_simpla.sql, 11_zile_angajati_poze.sql si
    13_cod_lunar_delogare_zone.sql, 14_timp_eliberare.sql,
    15_tura_automata.sql, 16_securitate.sql, 17_functii_noi.sql (inlocuieste
-   <REF> cu ref-ul proiectului) si 18_inregistrare_inchisa.sql (12 nu mai e
-   necesar). Apoi Vault -> secret `cheie_backup` (aceeasi cheie ca in GitHub).
+   <REF> cu ref-ul proiectului), 18_inregistrare_inchisa.sql si
+   19_chei_dezvoltator.sql (12 nu mai e necesar). Apoi Vault -> secret
+   `cheie_backup` (aceeasi cheie ca in GitHub si ca in unealta qr/).
 3. Completeaza config.js: URL, cheie, nume, slogan, culori, link recenzie,
    plus firma localului (OPERATOR, ADRESA, EMAIL_GDPR) si firma ta
    (PLATFORMA, EMAIL_PLATFORMA) pentru politica si termeni.
 4. Pune sigla in icons/logo.png si genereaza icon-192/512 din ea.
 5. Adauga produsele din dashboard -> Meniu. Pozele merg in images/<id>.webp.
 6. Adauga localul in index.html din radacina (pagina de start).
+7. Coduri QR: doua randuri in _redirects din radacina (un prefix liber, ex.
+   /b/:masa/:cheie si /b/:masa -> /bistro/?m=...) si un rand in LOCALURI din
+   qr/index.html (folder, nume, prefix). Apoi qr/ -> alegi localul -> cheia
+   dezvoltatorului -> „Ia mesele si cheile din baza" -> „Genereaza codurile".

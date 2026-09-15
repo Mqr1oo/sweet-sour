@@ -309,24 +309,37 @@ tot ce ține de bani și de oameni:
 
 ## 10. Setările localului
 
-Toate în Șef → Setări. **Doar directorul** le schimbă (managerul: doar „ora de
-vârf"):
+Toate în Șef → Setări, în trei secțiuni, după cât de des le folosești.
+**Doar directorul** le schimbă (managerul vede doar ce e marcat „și
+managerul"):
+
+**Zi de zi**
 
 | Setare | Ce face |
 |---|---|
-| **Codul de anulare al lunii** | îl vede managerul și directorul; „Cod nou" dacă s-a aflat |
-| **Ora de închidere, pe zile** | o oră pentru fiecare zi a săptămânii (vineri se închide mai târziu decât marți); vezi „Închiderea zilei" |
-| **Cât stă masa după notă** | 5–60 de minute până se eliberează singură (implicit 15) |
-| **Fereastra de modificare** | câte minute după acceptare mai poate modifica ospătarul o comandă |
-| **Închide bucătăria** | mâncarea merge la bar; panoul barului își schimbă numele |
-| **Ore de vârf** | avertisment roșu la clienți: așteptarea e mai mare |
-| **Mod fără ospătari** | barul închide singur comenzile („Preluată") și preia cererile de la mese |
-| **Comenzi la pachet** | pornit/oprit; oprit = clientul nici nu e întrebat |
 | **Meniul zilei** (și managerul) | un produs în capul meniului, cu preț special și ora până la care ține; dispare singur |
-| **Al doilea factor** (și managerul) | codul din aplicația de autentificare, la fiecare intrare, pentru contul tău |
-| **Cod unic pe masă** | comenzile de la clienți trec doar de pe telefoane care au scanat codul QR de pe masă (coduri QR cu cheie) |
-| **Limite pentru comenzile clienților** | câte comenzi neconfirmate pe masă, câte în 10 minute, câte bucăți într-o comandă, pragul „sumă mare" |
+| **Codul de anulare al lunii** (și managerul) | îl vede managerul și directorul; „Cod nou" dacă s-a aflat |
+| **Ore de vârf** (și managerul) | avertisment roșu la clienți: așteptarea e mai mare |
+| **Închide bucătăria** | mâncarea merge la bar; panoul barului își schimbă numele |
+
+**Cum lucrează localul** (se setează o dată)
+
+| Setare | Ce face |
+|---|---|
+| **Ora de închidere, pe zile** | o oră pentru fiecare zi a săptămânii (vineri se închide mai târziu decât marți); vezi „Închiderea zilei" |
+| **Mod fără ospătari** | barul închide singur comenzile („Preluată") și preia cererile de la mese |
+| **Fereastra de modificare** | câte minute după acceptare mai poate modifica ospătarul o comandă |
+| **Cât stă masa după notă** | 5–60 de minute până se eliberează singură (implicit 15) |
 | **Alerta „comandă uitată"** | după câte minute o comandă neacceptată sună la toată lumea și trimite notificare |
+| **Comenzi la pachet** | pornit/oprit; oprit = clientul nici nu e întrebat |
+
+**Siguranță**
+
+| Setare | Ce face |
+|---|---|
+| **Al doilea factor** (și managerul) | codul din aplicația de autentificare, la fiecare intrare, pentru contul tău |
+| **Cod unic pe masă** | comenzile de la clienți trec doar de pe telefoane care au scanat codul QR de pe masă. Codurile QR cu cheie le face dezvoltatorul; pornești opțiunea abia după ce sunt lipite pe mese |
+| **Limite pentru comenzile clienților** | câte comenzi neconfirmate pe masă, câte în 10 minute, câte bucăți într-o comandă, pragul „sumă mare" |
 
 ---
 
@@ -359,8 +372,10 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
 - **Stocul**: barul, bucătăria sau șefii blochează un produs terminat —
   apare pe loc „Stoc epuizat" la clienți, revine când îl deblochezi.
 - Categoriile se fac singure din produse, în ordinea lor.
-- **Coduri QR**: un generator (separat) face codul fiecărei mese cu numele
-  localului pe el, la orice dimensiune, gata de print.
+- **Coduri QR**: le face dezvoltatorul, cu o unealtă separată — codul
+  fiecărei mese, cu numele localului pe el, la orice dimensiune, gata de
+  print. Linkul din cod e scurt (`…/s/12/…`). Dacă adaugi mese noi în Sală,
+  cere coduri și pentru ele.
 - **Ciornă → Publică → Versiuni.** Directorul lucrează pe o ciornă:
   modifică, „Salvează ciorna" de câte ori vrea (clienții nu văd nimic), apoi
   apasă „Publică" o singură dată. Fiecare publicare păstrează versiunea de
