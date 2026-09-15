@@ -1193,12 +1193,17 @@ ospătari" → ospătarii zonei). Testat pe Sweet & Sour cu o cerere reală
 (`trimise: 2`, apoi ștearsă).
 
 **M3 (cjav) n-avea push deloc** (nici funcție, nici trigger, nici
-`service_role_key` în Vault). Acum are funcția și migrația 22; îi lipsesc
-secretele, pe care le pune utilizatorul: Vault → `service_role_key` (cheia
-service_role a proiectului) și Edge Functions → Secrets → `VAPID_PUBLIC_KEY`,
-`VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`. Perechea VAPID pentru M3 e generată
-local în `supabase/m3_vapid.txt` (neversionat); cheia publică e deja în
-`m3/config.js` (`VAPID_PUBLIC`). Panoul citește `SS_CONFIG.VAPID_PUBLIC` (cu
+`service_role_key` în Vault). Acum are funcția, migrația 22 și secretele
+VAPID (puse de utilizator din `supabase/m3_vapid.txt`, neversionat; cheia
+publică e în `m3/config.js`, `VAPID_PUBLIC`). Ca să nu fie nevoie de
+`service_role_key` în Vault, `trimite_push` folosește ca rezervă cheia
+dezvoltatorului (`cheie_backup`), iar funcția o verifică prin
+`cheie_dezvoltator_ok`; pentru asta funcția de pe cjav e publicată cu
+`verify_jwt = false` (cheia nu e JWT, poarta Supabase o refuza cu
+`UNAUTHORIZED_INVALID_JWT_FORMAT`) — verificarea e în funcție. Pe wnwl rămâne
+`service_role_key` + `verify_jwt = true`. Fără secretele VAPID funcția
+răspunde 500 „Lipsesc secretele VAPID…" în loc să cadă la pornire. Testat pe
+cjav: `200 {trimise: 0, motiv: niciun dispozitiv}`. Panoul citește `SS_CONFIG.VAPID_PUBLIC` (cu
 cheia Sweet & Sour ca rezervă) și, dacă abonamentul existent e făcut cu altă
 cheie, se dezabonează și se reabonează singur (`reabonare()`).
 
