@@ -64,7 +64,11 @@ def main():
             date = cerere(url + '/rest/v1/rpc/export_backup', apikey, {'p_cheie': cheie_backup})
         except urllib.error.HTTPError as e:
             esecuri += 1
-            print(f'[{nume}] copia a esuat ({e.code}): {e.read().decode()[:200]}')
+            corp = e.read().decode()[:200]
+            if 'Cheie invalida' in corp:
+                print(f'[{nume}] cheia CHEIE_BACKUP din GitHub nu e aceeasi cu secretul `cheie_backup` din Vault-ul proiectului')
+            else:
+                print(f'[{nume}] copia a esuat ({e.code}): {corp}')
             continue
         except Exception as e:
             esecuri += 1
