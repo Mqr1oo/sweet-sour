@@ -1,0 +1,14 @@
+# Cloudflare Workers publica tot folderul ca fisiere statice. Ce e aici NU
+# ajunge pe site (altfel istoricul git, copiile de siguranta si documentatia
+# interna ar fi descarcabile de oricine).
+.git
+.github
+.gitignore
+.assetsignore
+.claude
+backup
+supabase
+qr
+README.md
+TEHNIC.md
+wrangler.jsonc
