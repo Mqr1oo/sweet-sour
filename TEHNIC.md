@@ -66,9 +66,10 @@ Trei fișiere din rădăcină spun Cloudflare-ului cum să servească:
    limite anti-abuz, comandă uitată, „înapoi", al doilea factor, jurnal de
    conectări, `export_backup` — vezi „Runda 14"; înlocuiește `<REF>` cu
    ref-ul proiectului înainte de rulare), `18_inregistrare_inchisa.sql`
-   (înregistrarea publică refuzată și din bază) și `19_chei_dezvoltator.sql`
+   (înregistrarea publică refuzată și din bază), `19_chei_dezvoltator.sql`
    (cheile meselor le face dezvoltatorul, chei de 8 caractere, curățarea
-   istoricului pg_cron). Pe M3 și
+   istoricului pg_cron) și `20_istoric_scurt.sql` (jurnalul 3 zile, fără
+   ștergere manuală a comenzilor, stocul nu e al directorului). Pe M3 și
    Sweet & Sour a existat și un `12_poze_14_zile` (cron + funcție edge
    `curata-poze`) — a fost înlocuit de 13 și nu se mai rulează pe un proiect
    nou. Toate sunt deja aplicate pe M3 și Sweet & Sour.
@@ -1076,6 +1077,32 @@ rămase ale linterului sunt intenționate: funcțiile `security definer` apelabi
 de anonim (`export_backup`, `chei_mese_dezvoltator`, `client_modifica_comanda`)
 își verifică singure cheia/token-ul, iar tabelele fără politici RLS
 (`chei_mese`, `coduri_anulare`, `meniu_ciorna`) se citesc doar prin funcții.
+
+## Runda 16 — istoric scurt, fără jurnal în panou, directorul fără comenzi și stoc
+
+Cerința: istoricul să dispară la închidere, să se șteargă singur, fără buton
+de ștergere; jurnalul de activitate să nu mai fie în panou; directorul să nu
+vadă panoul de comenzi și nici stocul.
+
+**Baza** (migrația 20, ambele proiecte): cron-ul `curatare-zilnica` șterge
+comenzile închise la 2 zile (ca înainte) și rândurile din `jurnal_activitate`
+la **3 zile**, cu trei excepții — `setari_%` și `config_mese` rămân mereu,
+`conectare` 90 de zile (pe ele se sprijină alerta „dispozitiv nou", care
+compară amprenta browserului cu cele din ultimele 90 de zile), `feedback_client`
+30 de zile (părerile clienților, afișate în Personal). Politica de ștergere pe
+`comenzi` a rămas doar pentru alertele de ospătar (`delete alerte staff`) —
+directorul nu mai poate șterge comenzi nici din API. `stoc_produse`: insert /
+update doar bar, bucătărie, manager; delete doar manager.
+
+**Panoul**: `renderOrders` filtrează istoricul cu `inceputZi()` (de la ultima
+închidere); au dispărut tab-ul și vederea „Jurnal" (`loadJurnal`,
+`exportLogsCSV`), „Zona de risc" (`btnWipeHistory`, grupul `risc`), „Luna
+aceasta" (`statsMode` rămâne `'today'`) și „Harta orelor de vârf"
+(`renderHeatmap` — cu 2 zile de date n-avea ce arăta). Directorul: `navActive`
+și `navStock` ascunse, intră direct cu `switchTab('admin')`; turul sare peste
+pașii Comenzi / O comandă / Stoc. Informarea GDPR a personalului (versiunea
+15 septembrie 2026) spune 3 zile, cu un rând nou pentru dispozitiv/IP la
+conectare (90 de zile); politica clientului spune 3 zile la jurnal.
 
 ## Înainte de deschidere
 

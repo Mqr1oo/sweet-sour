@@ -122,8 +122,8 @@ date: chiar dacă cineva ar umbla la aplicație, serverul refuză ce nu are voie
 | **Bar** | primește comenzile de băuturi, le acceptă, le închide; aude cererile de la mese; confirmă bonurile; anulează cu codul lunii |
 | **Bucătărie** | primește comenzile de mâncare, le acceptă, le închide; poate marca produse ca terminate |
 | **Ospătar** | vede ce e de dus la masă și cererile de la mese; modifică sau anulează comenzi (cu codul lunii); ia comenzi în numele clientului; își alege zona |
-| **Manager** | lucrează: modifică orice comandă, anulează fără cod, are **codul lunii**, pornește „ora de vârf", aranjează sala; **nu** vede jurnalul și datele personalului |
-| **Director** | **⭐ doar observă**: nu e deranjat de nicio alarmă, nu confirmă, nu modifică, nu anulează. Are încasările, rapoartele, jurnalul complet, anulările, turele, setările, meniul |
+| **Manager** | lucrează: modifică orice comandă, anulează fără cod, are **codul lunii**, pornește „ora de vârf", aranjează sala, blochează produse din stoc; **nu** vede datele personalului |
+| **Director** | **⭐ nu lucrează cu comenzile**: nu vede panoul de comenzi și nici stocul, nu e deranjat de nicio alarmă. Are încasările zilei, rapoartele, anulările, turele, setările, meniul, sala și istoricul zilei |
 
 Rolurile se dau doar de la consolă, nu din aplicație — nimeni nu-și poate da
 singur alt rol.
@@ -149,7 +149,9 @@ singur alt rol.
   cardul clipește galben și telefonul spune ce s-a schimbat.
 - **Notificări** și când telefonul e blocat sau aplicația e închisă (dacă le
   pornește).
-- **Istoric**: comenzile terminate și anulate. Barul **confirmă bonul** pe
+- **Istoric**: comenzile terminate și anulate **din ziua de lucru curentă**.
+  La ora de închidere dispar din panou, iar din baza de date se șterg singure
+  la 2 zile — nu există niciun buton de șters. Barul **confirmă bonul** pe
   fiecare — bifa rămâne pe numele lui, cu ora, și nu se mai poate scoate de
   la bar (doar managerul, dacă a fost o greșeală).
 - **Stoc**: s-a terminat ceva? Îl blochezi și dispare pe loc din meniul
@@ -251,8 +253,8 @@ Anularea înseamnă bani lipsă din casă, deci e cea mai păzită acțiune:
   istoricul directorului**, cu numele și masa.
 - **Se poate anula și o comandă deja dusă la masă** (retur): ✕ e și în
   Istoric.
-- **Ce rămâne**: cine (nume + cont), când, de ce, cu ce cod — în istoricul
-  directorului, 30 de zile. Clientul vede pe telefon cine și de ce. Managerul
+- **Ce rămâne**: cine (nume + cont), când, de ce, cu ce cod — în raportul
+  directorului, 3 zile. Clientul vede pe telefon cine și de ce. Managerul
   aude pe loc fiecare anulare făcută de personal.
 - Nu există nicio cale ocolită: chiar și direct în baza de date, o anulare
   fără motiv e refuzată.
@@ -283,16 +285,16 @@ cod, are codul lunii și îl dă când e de acord, scoate confirmarea unui bon
 greșit, pornește „ora de vârf" (avertisment pentru clienți), aranjează sala,
 blochează produse din stoc. Nu e deranjat de comenzi noi, dar **aude fiecare
 anulare** făcută de bar sau ospătari, cu numele și motivul. Ce **nu** vede:
-jurnalul, rapoartele pe angajat, turele, feedback-ul clienților — și nu poate
-șterge istoricul.
+rapoartele pe angajat, turele, feedback-ul clienților.
 
-**Directorul** e cel care *observă*: nicio alarmă, niciun buton de lucru. Are
-tot ce ține de bani și de oameni:
+**Directorul** nu lucrează cu comenzile: nu are panoul de comenzi și nici
+stocul, nicio alarmă. Intră direct în „Șef" și are tot ce ține de bani și de
+oameni, **pe ziua de lucru curentă** (istoricul nu se păstrează de la o zi la
+alta):
 
-- **Sinteză**: încasări (după bonurile confirmate), comenzi finalizate, câte
-  sunt fără bon, bar vs bucătărie, grafic pe ore (azi) sau pe zile (luna),
-  top 5 produse, **⭐ harta orelor de vârf** (zi a săptămânii × oră, ultimele
-  60 de zile — când să pui oameni în plus). Export Excel și CSV.
+- **Sinteză**: încasările zilei (după bonurile confirmate), comenzi
+  finalizate, câte sunt fără bon, bar vs bucătărie, grafic pe ore, top 5
+  produse. Export Excel.
 - **Meniu**: editorul de produse (nume, categorie, preț, descriere,
   ingrediente, alergeni, traducere în engleză, activ/inactiv).
 - **Setări**: toate cele de mai jos.
@@ -301,9 +303,10 @@ tot ce ține de bani și de oameni:
   **anulările: cine, când, de ce, cu ce cod** (și încercările cu cod greșit),
   bonuri neconfirmate pe angajat, bonuri confirmate pe barman, părerile
   clienților.
-- **Jurnal**: fiecare acțiune din local, cu ora și cu cine — inclusiv ce au
-  scos clienții din comenzi de pe telefon.
-- **Zona de risc**: șterge tot istoricul (doar el).
+
+Nu mai există un jurnal de activitate în panou și nici un buton de șters
+istoricul: comenzile închise se șterg singure la 2 zile, acțiunile
+personalului la 3 zile, iar în panou se vede doar ziua de lucru curentă.
 
 ---
 
@@ -369,8 +372,9 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
 - Produsele au: nume, categorie, bar/bucătărie, preț (sau „preț variabil"),
   volum, ingrediente, alergeni, descriere, traducere în engleză, poză,
   „semnătura casei", activ/inactiv.
-- **Stocul**: barul, bucătăria sau șefii blochează un produs terminat —
+- **Stocul**: barul, bucătăria sau managerul blochează un produs terminat —
   apare pe loc „Stoc epuizat" la clienți, revine când îl deblochezi.
+  Directorul nu vede stocul și nu poate umbla la el.
 - Categoriile se fac singure din produse, în ordinea lor.
 - **Coduri QR**: le face dezvoltatorul, cu o unealtă separată — codul
   fiecărei mese, cu numele localului pe el, la orice dimensiune, gata de
@@ -430,7 +434,7 @@ alergeni și de produse) și platforma ca **furnizor tehnic**. Nu se folosesc
 camera, microfonul, locația, nu se fac poze.
 
 **Pentru personal**: panoul are „Informare date personal (GDPR)" — cine
-răspunde de date, ce se reține (jurnalul acțiunilor 30 de zile, numele la
+răspunde de date, ce se reține (acțiunile din panou 3 zile, numele la
 anulare, codul folosit, zonele, turele), de ce, cât timp, cine vede, ce
 drepturi au, unde se plâng. **⭐ Se printează cu loc de semnătură** —
 angajatul semnează un exemplar înainte să folosească panoul, cum cere legea.
@@ -466,7 +470,5 @@ Toate se pot adăuga când e nevoie.
 - **Codul lunii** — cele 6 cifre ale managerului, fără de care barul și
   ospătarii nu pot anula.
 - **Zona** — bucata din sală de care răspunde un ospătar.
-- **Jurnal** — istoricul fiecărei acțiuni, cu ora și cu cine; doar
-  directorul îl vede.
 - **Ora de închidere** — când se resetează ziua: mesele se eliberează,
   conturile ies, „Azi" începe de aici.

@@ -205,17 +205,6 @@
   .linked-cancel-badge { margin-top:10px; background: rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); color:#fca5a5; font-size:12px; font-weight:700; padding:8px 10px; border-radius:10px; display:flex; align-items:center; gap:6px; }
 
   /* --- Heatmap --- */
-  .heatmap-wrap { overflow-x: auto; }
-  .heatmap-table { border-collapse: collapse; margin-top: 6px; }
-  .heatmap-table th { font-size: 10.5px; color: var(--text-muted); font-weight:600; padding: 3px 5px; text-align:center; font-family:'Space Mono', monospace; }
-  .heatmap-table td { text-align:center; }
-  .heatmap-hourlabel { font-size: 10.5px; color: var(--text-muted); font-family:'Space Mono', monospace; padding-right: 8px; text-align:right !important; white-space:nowrap; }
-  .heatmap-cell { width: 30px; height: 22px; border-radius: 5px; cursor: default; }
-  .heatmap-legend { display:flex; align-items:center; gap:8px; margin-top:14px; font-size:12px; color:var(--text-muted); }
-  .heatmap-legend .hl-scale { display:flex; }
-  .heatmap-legend .hl-scale div { width:18px; height:12px; }
-  .heatmap-best { margin-top:14px; padding:14px 16px; background: rgba(22,132,78,0.1); border:1px solid rgba(22,132,78,0.3); border-radius: 12px; font-size: 13.5px; color: var(--text); }
-  .heatmap-best b { color: var(--accent); }
 
   @media (max-width: 800px) {
       body { flex-direction: column; }
@@ -266,7 +255,6 @@
       .top-item { font-size: 13.5px; padding: 10px 0; }
       .staff-table { font-size: 12.5px; }
       .staff-table th, .staff-table td { padding: 8px 6px; }
-      .heatmap-cell { width: 22px; height: 18px; }
   }
 
   /* Sub-taburile panoului directorului */
@@ -290,7 +278,7 @@
   .dash-panel[data-grup], .stats-grid[data-grup]{display:none}
   /* managerul nu vede ce e doar al directorului (RLS-ul refuza oricum scrierea) */
   body.rol-manager [data-director], body.rol-manager .adm-tab[data-grup="personal"],
-  body.rol-manager .adm-tab[data-grup="risc"], body.rol-manager .adm-tab[data-grup="meniu"]{ display:none !important; }
+  body.rol-manager .adm-tab[data-grup="meniu"]{ display:none !important; }
   .dash-panel[data-grup].adm-on{display:block}
   .stats-grid[data-grup].adm-on{display:grid}
 
@@ -594,10 +582,6 @@
       <div class="nav-icon">📊</div>
       <div class="nav-text">Sef</div>
   </div>
-  <div class="nav-item" id="navJurnal" style="display:none;">
-      <div class="nav-icon">🕵️</div>
-      <div class="nav-text">Jurnal</div>
-  </div>
   
   <div class="user-info">
     <div style="opacity: 0.7; margin-bottom: 4px;">Conectat ca:</div>
@@ -685,11 +669,6 @@
           <div><h2 style="font-size: 24px; font-weight: 700;">Rezumat activitate</h2></div>
           <div style="display: flex; gap: 10px; align-items: center;">
               <button class="btn-action" style="background:var(--accent); color:white; font-size:13px; padding: 10px 16px;" onclick="exportCSV()">📥 Descarca Excel</button>
-              <button class="btn-action" style="background:var(--blue); color:white; font-size:13px; padding: 10px 16px;" onclick="exportLogsCSV()">📥 Descarca jurnalul (CSV)</button>
-              <div class="time-toggle">
-                  <button class="active" id="btnStatsToday">Azi</button>
-                  <button id="btnStatsMonth">Luna aceasta</button>
-              </div>
           </div>
       </div>
 
@@ -698,7 +677,6 @@
         <button class="adm-tab" data-grup="meniu">🍸 Meniu</button>
         <button class="adm-tab" data-grup="setari">⚙️ Setari</button>
         <button class="adm-tab" data-grup="personal">👤 Personal</button>
-        <button class="adm-tab" data-grup="risc">🗑️ Risc</button>
       </div>
 
 
@@ -712,20 +690,6 @@
       <div data-grup="sinteza" class="dash-panel" id="chartPanel">
          <h3 id="chartTitle">📈 Evolutia incasarilor</h3>
          <div class="chart-container" id="revenueChartBars"></div>
-      </div>
-
-      <div data-grup="sinteza" class="dash-panel">
-         <h3>🔥 Harta orelor de varf</h3>
-         <p style="color:var(--text-muted); font-size:13px; margin-bottom:6px;">Numarul de comenzi pe zi a saptamanii si ora, din ultimele 60 de zile. Cu cat e mai inchis, cu atat a fost mai aglomerat — foloseste-l ca sa decizi cand suplimentezi personalul.</p>
-         <div class="heatmap-wrap">
-            <div id="heatmapContainer">Se incarca...</div>
-         </div>
-         <div class="heatmap-legend">
-            <span>Mai putin</span>
-            <div class="hl-scale" id="heatmapScale"></div>
-            <span>Mai mult</span>
-         </div>
-         <div class="heatmap-best" id="heatmapBest"></div>
       </div>
 
       <section class="setari-sectiune" data-grup="setari">
@@ -1068,11 +1032,6 @@
           <ul class="top-list" id="bonuriByStaffList"></ul>
       </div>
 
-      <div data-grup="risc" class="dash-panel" style="border-color: var(--danger);">
-          <h3 style="color: var(--danger);">🗑️ Zona de risc</h3>
-          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Sterge definitiv din Supabase tot istoricul comenzilor finalizate si anulate. Actiunea nu poate fi anulata. Comenzile active nu sunt afectate.</p>
-          <button id="btnWipeHistory" class="btn-action" style="display:none; background:rgba(239,68,68,0.15); color:var(--danger); border:1px solid rgba(239,68,68,0.4); width:100%;">🗑️ Sterge tot istoricul</button>
-      </div>
     </div>
 
     <div id="meniuView" style="display: none;">
@@ -1090,26 +1049,6 @@
       </div>
     </div>
 
-    <div id="jurnalView" style="display: none;">
-      <div class="dash-panel">
-        <h3>🕵️ Jurnal de activitate (audit)</h3>
-        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Fiecare actiune se salveaza cu ora exacta. Se pastreaza 30 de zile.</p>
-        
-        <div class="table-responsive">
-          <table class="table-logs">
-            <thead>
-              <tr>
-                <th>Data / ora</th>
-                <th>Angajat</th>
-                <th>Actiune</th>
-                <th>Detalii (masa / motiv)</th>
-              </tr>
-            </thead>
-            <tbody id="jurnalList"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
   </div>
 </main>
 
@@ -2248,7 +2187,8 @@
     // rolul e cel din staff_roles; UI-ul si RLS-ul vad acum acelasi lucru
     userRole = ['director','manager','bucatarie','ospatar','bar'].includes(rol) ? rol : 'ospatar';
 
-    if(userRole === 'bucatarie' || userRole === 'bar' || esteConducere()) {
+    // stocul e treaba celor care lucreaza (bar, bucatarie, manager), nu a directorului
+    if(userRole === 'bucatarie' || userRole === 'bar' || userRole === 'manager') {
         document.getElementById('navStock').style.display = 'flex';
     }
 
@@ -2264,17 +2204,18 @@
     
     if(esteConducere()) {
         document.getElementById('navAdmin').style.display = 'flex'; 
-        if (userRole === 'director') document.getElementById('navJurnal').style.display = 'flex';
         document.getElementById('btnEditMap').style.display = 'inline-flex';
         document.getElementById('btnAddZone').style.display = 'inline-flex';
         document.getElementById('btnDeleteZone').style.display = 'inline-flex';
-        if (userRole === 'director') document.getElementById('btnWipeHistory').style.display = 'inline-flex';
         if (userRole === 'director') document.getElementById('feedbackPanel').style.display = 'block';
-        // managerul lucreaza, dar meniul, jurnalul, datele personalului, stergerea
-        // istoricului si setarile grele (bucatarie, fereastra, pachet, fara
-        // ospatari, ora de inchidere, angajati) raman ale directorului; el
-        // schimba doar ora de varf si harta meselor. Regula e si in RLS.
+        // managerul lucreaza, dar meniul, datele personalului si setarile grele
+        // (bucatarie, fereastra, pachet, fara ospatari, ora de inchidere,
+        // angajati) raman ale directorului; el schimba doar ora de varf si
+        // harta meselor. Regula e si in RLS.
         if (userRole === 'manager') document.body.classList.add('rol-manager');
+        // directorul nu sta pe panoul de comenzi: intra direct in „Sef"
+        // (cifre, meniu, setari); Sala si Istoricul zilei raman.
+        if (userRole === 'director') { document.getElementById('navActive').style.display = 'none'; switchTab('admin'); }
     }
     
     if(userRole === 'ospatar' || userRole === 'manager') { document.getElementById('navMeniu').style.display = 'flex'; }
@@ -2313,7 +2254,7 @@
     setTimeout(() => pornesteGhidDashboard(false), 1400);
   }
 
-  const navItems = ['navActive', 'navHistory', 'navStock', 'navAdmin', 'navMeniu', 'navJurnal', 'navMap'];
+  const navItems = ['navActive', 'navHistory', 'navStock', 'navAdmin', 'navMeniu', 'navMap'];
   navItems.forEach(id => {
       const el = document.getElementById(id);
       if(el) el.addEventListener('click', () => switchTab(id.replace('nav', '').toLowerCase()));
@@ -2324,10 +2265,6 @@
     currentTab = tab;
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
-    if (previousTab === 'jurnal' && tab !== 'jurnal') {
-        const jl = document.getElementById('jurnalList');
-        if (jl) jl.innerHTML = '';
-    }
     
     const showSearch = (tab === 'active' || tab === 'history');
     document.getElementById('tableFilterInputDesc').style.display = showSearch ? 'block' : 'none';
@@ -2337,7 +2274,6 @@
     document.getElementById('stockView').style.display = 'none'; 
     document.getElementById('adminView').style.display = 'none';
     document.getElementById('meniuView').style.display = 'none';
-    document.getElementById('jurnalView').style.display = 'none';
     document.getElementById('mapView').style.display = 'none';
 
     document.querySelector('.content-area').scrollTop = 0;
@@ -2363,18 +2299,12 @@
         document.getElementById('pageTitle').textContent = 'Panoul sefului';
         document.getElementById('adminView').style.display = 'block';
         calculateDirectorStats();
-        renderHeatmap();
         admArata('sinteza');
     } else if(tab === 'meniu') {
         document.getElementById('navMeniu').classList.add('active');
         document.getElementById('pageTitle').textContent = 'Meniu - comanda rapida';
         document.getElementById('meniuView').style.display = 'block';
         loadMeniuForOspatar();
-    } else if(tab === 'jurnal') {
-        document.getElementById('navJurnal').classList.add('active');
-        document.getElementById('pageTitle').textContent = 'Jurnal de activitate';
-        document.getElementById('jurnalView').style.display = 'block';
-        loadJurnal();
     } else if(tab === 'map') {
         document.getElementById('navMap').classList.add('active');
         document.getElementById('pageTitle').textContent = 'Planul salii';
@@ -2944,7 +2874,7 @@
           p.classList.toggle('adm-on', p.dataset.grup === grup);
       });
 
-      if (grup === 'sinteza')  { calculateDirectorStats(); renderHeatmap(); }
+      if (grup === 'sinteza')  { calculateDirectorStats(); }
       if (grup === 'meniu')    { loadMeniu(); }
       if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); loadEliberare(); loadCodLuna(); loadMeniulZilei(); loadSecuritate(); loadChei(); loadLimite(); loadAlerte(); }
       if (grup === 'personal') { loadFeedbacks(); loadAngajati(); }
@@ -3654,7 +3584,11 @@
         const rang = (o) => (gataDeDus(o) ? 0 : o.status === 'noua' ? 1 : 2) + (esteZonaMea(o) ? 0 : 10);
         viewOrders.sort((a, b) => rang(a) - rang(b));
     } else {
-        viewOrders = viewOrders.filter(o => o.status === 'finalizata' || o.status === 'anulata');
+        // istoricul e al zilei de lucru: de la ultima inchidere incoace. Ce e
+        // mai vechi nu se mai vede (si se sterge singur din baza la 2 zile).
+        const deLa = inceputZi();
+        viewOrders = viewOrders.filter(o => (o.status === 'finalizata' || o.status === 'anulata')
+                                            && new Date(o.created_at).getTime() >= deLa);
         if(userRole === 'ospatar') {
             viewOrders = viewOrders.filter(o => o.creat_de === currentUserEmail || o.preluat_de === currentUserEmail);
         }
@@ -3986,7 +3920,7 @@
   // face din config.js, ca sa fie acelasi la toate localurile, si se poate
   // printa cu loc de semnatura: art. 13 GDPR cere informarea inainte de
   // prelucrare.
-  const VERSIUNE_INFORMARE = '12 septembrie 2026';
+  const VERSIUNE_INFORMARE = '15 septembrie 2026';
   function sectiuniInformare() {
       const c = window.SS_CONFIG || {};
       const local = escapeHTML(c.OPERATOR || c.NUME || 'localul');
@@ -3999,16 +3933,17 @@
           `Panoul e pus la dispozitie de <b>${platforma}</b>, care actioneaza doar ca <b>persoana imputernicita</b> (art. 28 GDPR): gazduieste si transmite datele in numele localului, pe instructiunile lui, si nu le foloseste in niciun alt scop. Datele stau la Supabase, in centre de date din Uniunea Europeana, pe conexiune criptata.` ] },
         { h: '2. Ce date, de ce si cat timp', tabel: [
           ['Email-ul contului si rolul (bar, bucatarie, ospatar, manager, director)', 'ca sa intri in panou si sa vezi doar ce e treaba rolului tau', 'cat timp ai cont'],
-          ['Jurnalul de activitate: fiecare actiune din panou (acceptare, „Gata" / „Preluata", modificare de comanda, confirmarea bonului, setari), cu ora exacta', 'evidenta comenzilor si a banilor, raspundere, rezolvarea reclamatiilor — interesul legitim al localului (art. 6 alin. 1 lit. f GDPR)', '30 de zile, apoi se sterge automat'],
-          ['Numele ales si motivul, cand anulezi o comanda', 'sa se stie cine si de ce a anulat: o anulare inseamna bani lipsa din casa', '30 de zile, in jurnal'],
-          ['Codul lunii (6 cifre) folosit la anulare — se scrie doar daca a fost bun sau gresit, nu codul in sine', 'dovada ca managerul a fost de acord cu anularea; incercarile cu cod gresit se vad, ca sa se previna anularile false (art. 6 alin. 1 lit. f)', '30 de zile, in jurnal'],
-          ['Zonele pe care le acoperi in tura (ospatari)', 'ca barul si colegii sa stie cine raspunde de care mese', '30 de zile'],
-          ['Ora la care ai intrat in panou si ora la care ai iesit (se scriu singure: la intrarea in cont, la deconectare si la inchiderea zilei)', 'informativ, pentru director: cine a fost pe tura; nu inlocuieste pontajul oficial', '30 de zile'],
+          ['Jurnalul de activitate: fiecare actiune din panou (acceptare, „Gata" / „Preluata", modificare de comanda, confirmarea bonului, setari), cu ora exacta', 'evidenta comenzilor si a banilor, raspundere, rezolvarea reclamatiilor — interesul legitim al localului (art. 6 alin. 1 lit. f GDPR)', '3 zile, apoi se sterge automat'],
+          ['Numele ales si motivul, cand anulezi o comanda', 'sa se stie cine si de ce a anulat: o anulare inseamna bani lipsa din casa', '3 zile, in jurnal'],
+          ['Codul lunii (6 cifre) folosit la anulare — se scrie doar daca a fost bun sau gresit, nu codul in sine', 'dovada ca managerul a fost de acord cu anularea; incercarile cu cod gresit se vad, ca sa se previna anularile false (art. 6 alin. 1 lit. f)', '3 zile, in jurnal'],
+          ['Zonele pe care le acoperi in tura (ospatari)', 'ca barul si colegii sa stie cine raspunde de care mese', '3 zile'],
+          ['Ora la care ai intrat in panou si ora la care ai iesit (se scriu singure: la intrarea in cont, la deconectare si la inchiderea zilei)', 'informativ, pentru director: cine a fost pe tura; nu inlocuieste pontajul oficial', '3 zile'],
+          ['Tipul dispozitivului, browserul si adresa IP de la care intri in cont (fara continut)', 'siguranta contului: conducerea e anuntata cand un cont de conducere intra de pe un dispozitiv nou', '90 de zile'],
           ['Abonamentul la notificari push (o adresa tehnica, fara continut)', 'sa primesti comenzile si cand telefonul e blocat — doar daca le activezi tu', 'pana te deconectezi sau le revoci din telefon'] ] },
         { h: '3. Ce NU se face', p: [
           `Panoul <b>nu</b> foloseste camera, microfonul sau locatia telefonului tau, <b>nu</b> face poze si <b>nu</b> urmareste ce faci in afara aplicatiei. Nu se ia nicio decizie automata despre tine pe baza acestor date. Sesiunea ta se inchide automat la ora inchiderii localului: a doua zi intri din nou cu contul tau, ca sa fie clar cine a fost pe tura.` ] },
         { h: '4. Cine vede datele', p: [
-          `Directorul localului vede jurnalul, anularile si rapoartele pe angajat. Managerul vede comenzile, cateva setari si codul lunii, dar nu jurnalul si nu datele personalului. Colegii vad doar comenzile pe care le lucreaza si zonele pe care le acopera fiecare. Regulile sunt aplicate in baza de date, nu doar in ecran. Datele nu se transmit nimanui altcuiva.` ] },
+          `Directorul localului vede anularile si rapoartele pe angajat (pe ziua de lucru). Managerul vede comenzile, cateva setari si codul lunii, dar nu datele personalului. Colegii vad doar comenzile pe care le lucreaza si zonele pe care le acopera fiecare. Regulile sunt aplicate in baza de date, nu doar in ecran. Datele nu se transmit nimanui altcuiva.` ] },
         { h: '5. Drepturile tale', p: [
           `Ai dreptul de acces (sa primesti o copie), rectificare, stergere, restrictionare, <b>opozitie</b> fata de prelucrarea bazata pe interes legitim si dreptul de a te plange la Autoritatea Nationala de Supraveghere a Prelucrarii Datelor cu Caracter Personal (ANSPDCP, B-dul G-ral Gheorghe Magheru 28-30, Bucuresti, <b>www.dataprotection.ro</b>). Cererile se trimit la <b>${contact}</b>; raspunsul vine in cel mult 30 de zile.` ] },
         { h: '6. Informarea', p: [
@@ -4041,7 +3976,7 @@
         <h1>Informare privind prelucrarea datelor personalului</h1>
         <p><b>${escapeHTML(c.OPERATOR || c.NUME || 'Localul')}</b>${c.ADRESA ? ', ' + escapeHTML(c.ADRESA) : ''} · panoul de comenzi · versiunea ${VERSIUNE_INFORMARE}</p>
         ${htmlInformare()}
-        <div class="semn"><p><b>Am luat la cunostinta</b> continutul acestei informari: actiunile mele din panoul de comenzi raman 30 de zile in jurnalul localului, pe contul meu, si pot fi vazute de director.</p>
+        <div class="semn"><p><b>Am luat la cunostinta</b> continutul acestei informari: actiunile mele din panoul de comenzi raman 3 zile in jurnalul localului, pe contul meu, si pot fi vazute de director.</p>
         <div>Nume si prenume: ______________________________________</div>
         <div>Functia: ____________________ &nbsp;&nbsp; Data: ____________________</div>
         <div>Semnatura angajat: ____________________ &nbsp;&nbsp; Semnatura angajator: ____________________</div></div>
@@ -4466,14 +4401,6 @@
       loadFullMenuForStock();
   };
 
-  document.getElementById('btnStatsToday').addEventListener('click', (e) => {
-      document.getElementById('btnStatsMonth').classList.remove('active');
-      e.target.classList.add('active'); statsMode = 'today'; calculateDirectorStats();
-  });
-  document.getElementById('btnStatsMonth').addEventListener('click', (e) => {
-      document.getElementById('btnStatsToday').classList.remove('active');
-      e.target.classList.add('active'); statsMode = 'month'; calculateDirectorStats();
-  });
 
   // o celula CSV: ghilimelele din nume se dubleaza, altfel Excel rupe randul;
   // un text care incepe cu = + - @ (sau tab) ar fi rulat ca formula de Excel
@@ -4516,54 +4443,6 @@
       document.body.removeChild(link);
   };
 
-  window.exportLogsCSV = async function() {
-      const { data, error } = await _supabase.from('jurnal_activitate').select('*').order('created_at', { ascending: false }).limit(2000);
-      if(error || !data) { alert('Eroare la descarcarea jurnalului'); return; }
-
-      let csvContent = '\uFEFF';
-      csvContent += "ID,Data,Ora,Utilizator,Actiune,Detalii\n";
-      data.forEach(l => {
-          const dt = new Date(l.created_at);
-          const fDate = dt.toLocaleDateString('ro-RO');
-          const fTime = dt.toLocaleTimeString('ro-RO');
-          const detStr = JSON.stringify(l.detalii || {});
-          csvContent += [l.id, fDate, fTime, l.utilizator, l.actiune, detStr].map(csvCelula).join(',') + '\n';
-      });
-
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", `Jurnal_${new Date().toISOString().slice(0,10)}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-  };
-
-  const btnWipeHistoryEl = document.getElementById('btnWipeHistory');
-  if(btnWipeHistoryEl) {
-      btnWipeHistoryEl.addEventListener('click', async () => {
-          if(!esteConducere()) return;
-          const typed = prompt('Aceasta actiune va sterge DEFINITIV tot istoricul de comenzi (finalizate si anulate) din Supabase.\n\nScrie STERGE ca sa confirmi:');
-          if(typed !== 'STERGE') { if(typed !== null) alert('Anulat. Nu ai scris exact "STERGE".'); return; }
-
-          btnWipeHistoryEl.disabled = true;
-          btnWipeHistoryEl.textContent = 'Se sterge...';
-          const { error } = await _supabase.from('comenzi').delete().in('status', ['finalizata', 'anulata']);
-          btnWipeHistoryEl.disabled = false;
-          btnWipeHistoryEl.textContent = '🗑️ Sterge tot istoricul';
-
-          if(error) {
-              alert('Eroare la stergerea istoricului: ' + error.message);
-              return;
-          }
-          await logActivity('historial_eliminado', null, { por: currentUserEmail });
-          allOrders = allOrders.filter(o => o.status !== 'finalizata' && o.status !== 'anulata');
-          renderOrders();
-          calculateDirectorStats();
-          alert('Istoricul a fost sters.');
-      });
-  }
 
   // „Azi" incepe la ora de inchidere aleasa de director, nu la miezul noptii:
   // daca localul inchide la 3, comenzile de la 1 noaptea sunt tot ale serii.
@@ -4812,78 +4691,6 @@
   // --- HARTA ORELOR DE VARF (zi a saptamanii x ora) ---
   // Numara comenzile (finalizate, nu alerte) din ultimele 60 de zile, grupate pe zi a saptamanii
   // si ora de creare. Ajuta la decizia de a suplimenta personalul (ex. vineri/sambata seara).
-  async function renderHeatmap() {
-      const container = document.getElementById('heatmapContainer');
-      const scaleEl = document.getElementById('heatmapScale');
-      const bestEl = document.getElementById('heatmapBest');
-      container.innerHTML = 'Se incarca...';
-
-      try {
-          const since = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString();
-          const { data, error } = await _supabase.from('comenzi').select('created_at, produse').gte('created_at', since).limit(5000);
-          if(error || !data) { container.innerHTML = '<span style="color:var(--text-muted); font-size:13px;">Nu am putut incarca harta orelor.</span>'; return; }
-
-          const relevant = data.filter(o => !(o.produse || []).some(p => p.nume && p.nume.includes('ALERTĂ')));
-
-          // matrix[weekday][hour] = count. Weekday: 0=Duminica ... 6=Sambata
-          let matrix = Array.from({length:7}, () => Array(24).fill(0));
-          relevant.forEach(o => {
-              const d = new Date(o.created_at);
-              matrix[d.getDay()][d.getHours()]++;
-          });
-
-          const dayNames = ['Dum','Lun','Mar','Mie','Joi','Vin','Sam'];
-          let maxVal = 0;
-          matrix.forEach(row => row.forEach(v => { if(v > maxVal) maxVal = v; }));
-
-          function colorFor(v) {
-              if(v === 0 || maxVal === 0) return 'rgba(255,255,255,0.04)';
-              const intensity = v / maxVal;
-              const alpha = 0.12 + intensity * 0.78;
-              return `rgba(22, 132, 78, ${alpha.toFixed(2)})`;
-          }
-
-          // Aratam doar orele cu activitate (10:00 - 01:00), ca sa nu lungim tabelul degeaba
-          const hoursToShow = [10,11,12,13,14,15,16,17,18,19,20,21,22,23,0,1];
-
-          let html = '<table class="heatmap-table"><thead><tr><th></th>';
-          dayNames.forEach(d => html += `<th>${d}</th>`);
-          html += '</tr></thead><tbody>';
-
-          hoursToShow.forEach(h => {
-              html += `<tr><td class="heatmap-hourlabel">${String(h).padStart(2,'0')}:00</td>`;
-              for(let day = 0; day < 7; day++) {
-                  const v = matrix[day][h];
-                  html += `<td><div class="heatmap-cell" style="background:${colorFor(v)};" title="${dayNames[day]} ${String(h).padStart(2,'0')}:00 — ${v} comenzi"></div></td>`;
-              }
-              html += '</tr>';
-          });
-          html += '</tbody></table>';
-          container.innerHTML = html;
-
-          scaleEl.innerHTML = '';
-          for(let i = 0; i <= 5; i++) {
-              const alpha = 0.12 + (i/5) * 0.78;
-              scaleEl.innerHTML += `<div style="background: rgba(22,132,78,${alpha.toFixed(2)});"></div>`;
-          }
-
-          // Gaseste primele 3 combinatii zi+ora cu cele mai multe comenzi, pentru o recomandare directa
-          let flat = [];
-          matrix.forEach((row, day) => row.forEach((v, h) => { if(v > 0) flat.push({day, h, v}); }));
-          flat.sort((a,b) => b.v - a.v);
-          const top3 = flat.slice(0,3);
-
-          if(top3.length === 0) {
-              bestEl.innerHTML = 'Inca nu sunt destule comenzi in istoric ca sa putem calcula orele de varf.';
-          } else {
-              bestEl.innerHTML = '📌 Cele mai aglomerate momente (merita personal in plus): ' +
-                  top3.map(x => `<b>${dayNames[x.day]} ${String(x.h).padStart(2,'0')}:00h</b> (${x.v} comenzi)`).join(' · ');
-          }
-      } catch(e) {
-          container.innerHTML = '<span style="color:var(--text-muted); font-size:13px;">Eroare la calculul hartii orelor.</span>';
-      }
-  }
-
   async function loadMeniuForOspatar() {
       try { if(fullMenu.length === 0) fullMenu = await incarcaMeniuComun(); } catch(e) { return; }
       const { data: stocDB } = await _supabase.from('stoc_produse').select('*');
@@ -4996,116 +4803,6 @@
       loadMeniuForOspatar();
       alert('Comanda a fost trimisa la masa ' + mesa + '!');
   });
-
-  async function loadJurnal() {
-      const { data, error } = await _supabase.from('jurnal_activitate').select('*').order('created_at', { ascending: false }).limit(200);
-      const listEl = document.getElementById('jurnalList');
-      if(error) { 
-          listEl.innerHTML = `<tr><td colspan="4" style="color:var(--danger); text-align:center;">Eroare la incarcarea jurnalului.</td></tr>`; 
-          return; 
-      }
-      if(!data || data.length === 0) { 
-          listEl.innerHTML = `<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Inca niciun eveniment.</td></tr>`; 
-          return; 
-      }
-      
-      const actionLabels = { 
-          pedido_cancelado: '<span style="color:var(--danger)">❌ Anulata</span>', 
-          estado_cambiado: '<span style="color:var(--success)">🔄 Stare</span>', 
-          ticket_confirmado: '<span style="color:var(--text)">🧾 Bon</span>', 
-          pedido_gratis: '<span style="color:var(--warning)">🎁 Gratis</span>', 
-          pedido_creado_camarero: '<span style="color:var(--blue)">📋 Meniu nou</span>',
-          config_mese: '<span style="color:var(--warning)">🗺️ Editare sala</span>',
-          mesa_liberada: '<span style="color:var(--success)">🔓 Masa eliberata</span>',
-          setari_busy: '<span style="color:var(--warning)">🔥 Mod aglomerat</span>',
-          feedback_client: '<span style="color:var(--success)">💬 Feedback</span>',
-          historial_eliminado: '<span style="color:var(--danger)">🗑️ Istoric sters</span>',
-          limpieza_medianoche: '<span style="color:var(--purple)">🌙 Inchidere automata</span>',
-          curatare_miezul_noptii: '<span style="color:var(--purple)">🌙 Inchiderea zilei</span>',
-          comanda_modificata: '<span style="color:var(--warning)">✏️ Comanda modificata</span>',
-          comanda_modificata_client: '<span style="color:var(--warning)">📱 Client: a scos produse</span>',
-          comanda_anulata_client: '<span style="color:var(--danger)">📱 Client: a anulat</span>',
-          setari_ospatari: '<span style="color:var(--warning)">🙋 Mod fara ospatari</span>',
-          setari_bucatarie: '<span style="color:var(--warning)">🍳 Bucatarie</span>',
-          setari_zi: '<span style="color:var(--warning)">🕐 Ora de inchidere</span>',
-          setari_modificare: '<span style="color:var(--warning)">✏️ Fereastra de modificare</span>',
-          setari_eliberare: '<span style="color:var(--warning)">⏱️ Timpul de eliberare a mesei</span>',
-          setari_pachet: '<span style="color:var(--warning)">🥡 Comenzi la pachet</span>',
-          setari_angajati: '<span style="color:var(--warning)">👥 Lista de angajati</span>',
-          cod_anulare_gresit: '<span style="color:var(--danger)">🔐 Cod de anulare gresit</span>',
-          cod_anulare_nou: '<span style="color:var(--warning)">🔐 Cod de anulare nou</span>',
-          zona_ospatar: '<span style="color:var(--blue)">📍 Zona ospatarului</span>',
-          tura_start: '<span style="color:var(--success)">🕒 A intrat in tura</span>',
-          tura_stop: '<span style="color:var(--text-muted)">🕒 A iesit din tura</span>',
-          meniu_modificat: '<span style="color:var(--accent)">🍸 Meniu modificat</span>',
-          meniu_publicat: '<span style="color:var(--accent)">🚀 Meniu publicat</span>',
-          meniul_zilei: '🍽️ Meniul zilei',
-          stoc_modificat: '<span style="color:var(--warning)">📦 Stoc</span>',
-          conectare: '🔓 Conectare',
-          dispozitiv_nou: '<span style="color:var(--danger)">🔐 Dispozitiv nou (conducere)</span>',
-          revenire: '<span style="color:var(--warning)">↩ Inapoi</span>',
-          comanda_uitata: '<span style="color:var(--danger)">⏰ Comanda uitata</span>',
-          chei_regenerate: '🔑 Chei de masa noi',
-          setari_chei: '🔑 Cod pe masa',
-          setari_limite: '🚧 Limite comenzi',
-          setari_alerte: '⏰ Alerta comanda uitata'
-      };
-      
-      listEl.innerHTML = data.map(log => {
-          const t = new Date(log.created_at).toLocaleString('ro-RO', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
-          const label = actionLabels[log.actiune] || escapeHTML(log.actiune);
-          
-          let detText = "";
-          if (log.detalii) {
-              if (log.detalii.mesa) detText += `Masa ${escapeHTML(log.detalii.mesa)} `;
-              if (log.detalii.motivo) detText += `(${escapeHTML(log.detalii.motivo)}) `;
-              if (log.actiune === 'feedback_client') detText += `(${escapeHTML(log.detalii.rating)} stele)`;
-              if (log.actiune === 'setari_busy') detText += log.detalii.isBusy ? '(pornit)' : '(oprit)';
-              if (log.actiune === 'setari_ospatari') detText += log.detalii.faraOspatari ? '(pornit)' : '(oprit)';
-              if (log.actiune === 'setari_bucatarie') detText += log.detalii.faraBucatarie ? '(inchisa)' : '(deschisa)';
-              if (log.actiune === 'setari_zi') detText += Array.isArray(log.detalii.zile)
-                  ? 'ore de inchidere: ' + [1, 2, 3, 4, 5, 6, 0].map(z => `${ZILE_SAPT[z].slice(0, 2)} ${String(log.detalii.zile[z]).padStart(2, '0')}`).join(', ')
-                  : `ziua se inchide la ${String(log.detalii.oraReset).padStart(2,'0')}:00`;
-              if (log.actiune === 'setari_modificare') detText += `${log.detalii.minute} minute`;
-              if (log.actiune === 'setari_eliberare') detText += `${log.detalii.minute} minute dupa nota`;
-              if (log.actiune === 'setari_pachet') detText += log.detalii.activ ? '(pornite)' : '(oprite)';
-              if (log.actiune === 'tura_stop' && log.detalii.ore != null) detText += `${log.detalii.ore} ore`;
-              if (log.actiune === 'pedido_cancelado') detText += `· ${escapeHTML(log.detalii.nume || '')}${log.detalii.rol ? ' (' + escapeHTML(log.detalii.rol) + ')' : ''}${log.detalii.status_inainte === 'finalizata' ? ' · retur' : ''}${log.detalii.cod_validat ? ' · cu codul lunii' : ''} `;
-              if (log.actiune === 'cod_anulare_gresit') detText += `· ${escapeHTML(log.detalii.nume || '')} a incercat cu un cod gresit`;
-              if (log.actiune === 'cod_anulare_nou') detText += `luna ${escapeHTML(log.detalii.luna || '')}`;
-              if (log.actiune === 'zona_ospatar') detText += Array.isArray(log.detalii.zone) && log.detalii.zone.length ? log.detalii.zone.map(escapeHTML).join(', ') : 'toate zonele';
-              if (log.actiune === 'setari_angajati') detText += Array.isArray(log.detalii.nume) ? log.detalii.nume.map(escapeHTML).join(', ') : '';
-              if (log.actiune === 'curatare_miezul_noptii' && log.detalii.sesiuni_inchise != null) detText += ` · ${log.detalii.sesiuni_inchise} conturi deconectate`;
-              if (log.actiune === 'ticket_confirmado') detText += log.detalii.bon_scos ? `bon confirmat${log.detalii.total != null ? ' · ' + Number(log.detalii.total).toFixed(2) + ' lei' : ''}` : 'confirmarea bonului scoasa';
-              if (log.actiune === 'mesa_liberada') detText += log.detalii.automat ? '(automat)' : '(manual)';
-              if (log.actiune === 'estado_cambiado' && log.detalii.status) detText += `→ ${escapeHTML(log.detalii.status)} `;
-              if (log.actiune === 'curatare_miezul_noptii') detText += `${escapeHTML(log.detalii.data || '')} · ${log.detalii.comenzi_expirate || 0} comenzi ramase deschise, expirate`;
-              if ((log.actiune === 'comanda_modificata_client' || log.actiune === 'comanda_anulata_client') && Array.isArray(log.detalii.sterse))
-                  detText += log.detalii.sterse.map(x => `−${x.scos} ${escapeHTML(x.nume)}`).join(', ');
-              if (log.actiune === 'comanda_modificata')
-                  detText += `${escapeHTML(textDiferente(log.detalii.inainte, log.detalii.dupa))} · ${Number(log.detalii.total_inainte||0).toFixed(2)} → ${Number(log.detalii.total_dupa||0).toFixed(2)} lei`;
-              if (log.actiune === 'stoc_modificat') detText += log.detalii.epuizat ? `produs ${escapeHTML(log.detalii.id_produs)} blocat` : `produs ${escapeHTML(log.detalii.id_produs)} deblocat`;
-              if (log.actiune === 'conectare' || log.actiune === 'dispozitiv_nou') detText += `${escapeHTML(log.detalii.dispozitiv || '')}${log.detalii.ip ? ' · IP ' + escapeHTML(log.detalii.ip) : ''}${log.detalii.nou ? ' · <b>dispozitiv nou</b>' : ''}`;
-              if (log.actiune === 'revenire') detText += `${escapeHTML(log.detalii.ce || '')}: ${escapeHTML(log.detalii.de_la || '')} → ${escapeHTML(log.detalii.la || '')}`;
-              if (log.actiune === 'comanda_uitata') detText += `neacceptata de ${log.detalii.minute || '?'} minute (${escapeHTML(log.detalii.sectiune || '')}, ${Number(log.detalii.total || 0).toFixed(2)} lei)`;
-              if (log.actiune === 'meniu_publicat') detText += `${log.detalii.noi || 0} noi, ${log.detalii.modificate || 0} modificate, ${log.detalii.ascunse || 0} ascunse${log.detalii.revenire_la ? ' · revenire la ' + new Date(log.detalii.revenire_la).toLocaleString('ro-RO', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : ''}`;
-              if (log.actiune === 'meniul_zilei') detText += log.detalii.nume ? `${escapeHTML(log.detalii.nume)}${log.detalii.pret != null ? ' la ' + Number(log.detalii.pret).toFixed(2) + ' lei' : ''}${log.detalii.pana_la ? ' pana la ' + new Date(log.detalii.pana_la).toLocaleTimeString('ro-RO', {hour:'2-digit', minute:'2-digit'}) : ''}` : 'scos';
-              if (log.actiune === 'setari_chei') detText += log.detalii.activ ? '(pornit)' : '(oprit)';
-              if (log.actiune === 'setari_limite') detText += `${log.detalii.max_neacceptate} neconfirmate · ${log.detalii.max_10min} in 10 min · ${log.detalii.max_produse} bucati · prag ${log.detalii.prag_lei} lei`;
-              if (log.actiune === 'setari_alerte') detText += `${log.detalii.minute_uitata} minute`;
-              if (log.actiune === 'chei_regenerate') detText += log.detalii.masa ? `masa ${escapeHTML(log.detalii.masa)}` : 'toate mesele';
-          }
-
-          return `
-            <tr>
-              <td style="font-family:'Space Mono', monospace;">${t}</td>
-              <td style="font-weight: 600;">👤 ${escapeHTML(log.utilizator)}</td>
-              <td>${label}</td>
-              <td style="color: var(--text-muted); font-size: 13px;">${detText || '-'}</td>
-            </tr>
-          `;
-      }).join('');
-  }
 
   let canalIntrerupt = false;
   function subscribeRealtime() {
@@ -5502,16 +5199,14 @@
       const rol = userRole, mobil = window.innerWidth <= 800;
       const pasi = [];
       pasi.push({ el: null, titlu: 'Bun venit', text: 'Un tur de 30 de secunde. Il reiei oricand din „❓ Ghid rapid".' });
-      pasi.push({ el: '#navActive', titlu: 'Comenzi',
+      if (rol !== 'director') pasi.push({ el: '#navActive', titlu: 'Comenzi',
           text: rol === 'ospatar'
             ? 'Ce e de dus la masa si cererile de la mese (nota, ajutor). Comenzile in lucru apar mai sters.'
             : 'Comenzile intra aici in timp real. Numarul de pe iconita: cate sunt active.' });
-      pasi.push({ el: () => document.getElementById('cardDemoGhid') || document.querySelector('#ordersView .order-card') || document.getElementById('ordersView'),
+      if (rol !== 'director') pasi.push({ el: () => document.getElementById('cardDemoGhid') || document.querySelector('#ordersView .order-card') || document.getElementById('ordersView'),
           titlu: 'O comanda',
           text: rol === 'ospatar'
             ? 'Cand barul apasa „Gata", telefonul spune masa: du-o. ✏️ modifica daca clientul se razgandeste, ✕ anuleaza (cu motiv, numele tau si codul lunii de la manager).'
-            : rol === 'director'
-            ? 'Tu doar observi. Nu esti anuntat, nu confirmi, nu modifici. Totul se vede in timp real, iar cifrele sunt in „Sef".'
             : rol === 'manager'
             ? 'Nu esti anuntat de comenzi noi, dar afli de fiecare anulare, cu numele si motivul. Barul si ospatarii anuleaza doar cu codul lunii — il ai in Sef → Setari.'
             : 'Comanda noua: bip, masa (cu vocea pornita) si ding-dong pana apesi „Accepta". „Gata" cand e facuta. ✏️ modifica, ✕ anuleaza (cu motiv, numele tau si codul lunii).',
@@ -5528,12 +5223,11 @@
       pasi.push({ el: '#navMap', titlu: 'Sala',
           text: 'Mesele si de cand stau. Verde: ok. Portocaliu: treci pe la ea. Rosu: prea mult. Mov: a cerut nota. Atinge o masa: totalul ei, cererea de nota, sau o eliberezi.' });
       pasi.push({ el: '#navMeniu', titlu: 'Meniu', text: 'Trimiti o comanda in numele clientului, ca de pe telefon.' });
-      pasi.push({ el: '#navStock', titlu: 'Stoc', text: 'S-a terminat ceva? Il blochezi si dispare din meniul clientilor.' });
+      if (rol !== 'director') pasi.push({ el: '#navStock', titlu: 'Stoc', text: 'S-a terminat ceva? Il blochezi si dispare din meniul clientilor.' });
       pasi.push({ el: '#navHistory', titlu: 'Istoric',
-          text: rol === 'bar' ? 'Comenzile terminate. Aici confirmi ca ai scos bonul — ramane pe numele tau.' : 'Comenzile terminate si anulate.' });
+          text: rol === 'bar' ? 'Comenzile terminate azi. Aici confirmi ca ai scos bonul — ramane pe numele tau.' : 'Comenzile terminate si anulate azi. La inchidere dispar; din baza se sterg la 2 zile.' });
       pasi.push({ el: '#navAdmin', titlu: 'Sef',
           text: rol === 'manager' ? 'Incasari, codul lunii pentru anulari, „ora de varf".' : 'Incasari, meniul, setarile, angajatii, codul lunii, rapoartele si anularile.' });
-      pasi.push({ el: '#navJurnal', titlu: 'Jurnal', text: 'Fiecare actiune, cu ora si cine a facut-o.' });
       pasi.push({ el: mobil ? '#btnNotificariMobile' : '#btnNotificari', titlu: 'Notificari',
           text: 'Porneste-le ca sa primesti comenzile si cu telefonul blocat.' });
       return pasi;
