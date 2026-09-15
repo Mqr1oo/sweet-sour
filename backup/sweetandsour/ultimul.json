@@ -1499,7 +1499,7 @@
    "volum": "180 g"
   }
  ],
- "exportat_la": "2026-09-15T08:45:42.06456+00:00",
+ "exportat_la": "2026-09-15T14:07:22.381825+00:00",
  "meniu": [
   {
    "activ": true,
@@ -4692,6 +4692,9 @@
   },
   "setari_busy": {
    "isBusy": false
+  },
+  "setari_chei": {
+   "activ": false
   },
   "setari_ospatari": {
    "faraOspatari": false
