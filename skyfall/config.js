@@ -8,6 +8,10 @@
 window.SS_CONFIG = {
   SUPABASE_URL: 'https://INLOCUIESTE-CU-PROIECTUL-TAU.supabase.co',
   SUPABASE_KEY: 'sb_publishable_INLOCUIESTE_CU_CHEIA_TA',
+  // Cheia publica VAPID a notificarilor push (perechea ei privata sta in
+  // secretele functiei edge `notifica-comanda`, in Supabase). Fiecare local
+  // are perechea lui.
+  VAPID_PUBLIC: 'INLOCUIESTE_CU_CHEIA_PUBLICA_VAPID',
 
   NUME:      'Skyfall',
   SUBTITLU:  '',

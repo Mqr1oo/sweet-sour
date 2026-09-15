@@ -8,8 +8,12 @@ Sablon pentru un local nou.
    13_cod_lunar_delogare_zone.sql, 14_timp_eliberare.sql,
    15_tura_automata.sql, 16_securitate.sql, 17_functii_noi.sql (inlocuieste
    <REF> cu ref-ul proiectului), 18_inregistrare_inchisa.sql,
-   19_chei_dezvoltator.sql, 20_istoric_scurt.sql si 21_istoric_lunar.sql
-   (12 nu mai e necesar).
+   19_chei_dezvoltator.sql, 20_istoric_scurt.sql, 21_istoric_lunar.sql si
+   22_push_ospatari.sql (cu <REF>; 12 nu mai e necesar). Pentru notificari
+   push: deploy la functia supabase/functions/notifica-comanda, secretele
+   VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY / VAPID_SUBJECT la functie (pereche
+   noua pentru fiecare local), cheia publica in config.js (VAPID_PUBLIC) si
+   secretul service_role_key in Vault.
    Apoi Vault -> secret
    `cheie_backup` (aceeasi cheie ca in GitHub si ca in unealta qr/).
 3. Completeaza config.js: URL, cheie, nume, slogan, culori, link recenzie,

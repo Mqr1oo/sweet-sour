@@ -71,7 +71,8 @@ Trei fișiere din rădăcină spun Cloudflare-ului cum să servească:
    istoricului pg_cron), `20_istoric_scurt.sql` (jurnalul 3 zile, fără
    ștergere manuală a comenzilor, stocul nu e al directorului) și
    `21_istoric_lunar.sql` (comenzile închise: luna în curs + luna trecută,
-   anulările la fel). Pe M3 și
+   anulările la fel) și `22_push_ospatari.sql` (push și pentru ospătari, pe
+   zona lor; `<REF>` de înlocuit). Pe M3 și
    Sweet & Sour a existat și un `12_poze_14_zile` (cron + funcție edge
    `curata-poze`) — a fost înlocuit de 13 și nu se mai rulează pe un proiect
    nou. Toate sunt deja aplicate pe M3 și Sweet & Sour.
@@ -1165,6 +1166,77 @@ datarea se face cu UPDATE după INSERT).
 - Informarea GDPR a personalului (aceeași versiune, 15 septembrie 2026) are
   un rând nou pentru contul de pe comenzi (luna în curs și luna trecută) și
   anulările la fel; politica clientului spune luna în curs și luna trecută.
+
+## Runda 18 — push pentru ospătari, taburi în Comenzi, notificările cerute la intrare
+
+Cerința: notificările nu veneau cu telefonul blocat (ospătarul nu era
+destinatar de push deloc — funcția trimitea doar la bar / bucătărie); cererile
+de la mese să nu se piardă sub comenzi; alte zone fără sunet, într-un tab;
+X la căutare; vocea în antet în locul „?"-ului; „?" ascuns; meniul de comandă
+rapidă mai compact; bara clientului să rămână după „Gata" și să arate mai
+bine; linkurile meselor pentru NFC.
+
+**Push (server)**: funcția edge `notifica-comanda` v8 (repo:
+`supabase/functions/notifica-comanda/index.ts`, deploy pe ambele proiecte)
+primește `{ record, tip?, roluri, uids }` și trimite la
+`push_subscriptions` cu `rol in roluri` **sau** `uid in uids`; `tip: 'gata'`
+dă titlul „🍽️ Masa X — comanda e gata". Migrația 22 (ambele proiecte):
+`setare_bool(actiune, camp)`, `ospatari_pentru_masa(mesa)` (uid-urile
+ospătarilor **în tură** — ultimul eveniment `tura_start`/`tura_stop` din 24 h
+e start — a căror zonă aleasă după `tura_start` conține zona mesei din
+`config_mese`; fără zone / listă goală = toți), `trimite_push(jsonb)` (cheia
+service_role din Vault, pg_net, timeout 8 s), `trimite_notificare_comanda`
+(INSERT: cererile → bar + ospătarii zonei, dacă nu e „fără ospătari";
+comenzile → secțiune, bucătăria închisă → bar) și `trimite_notificare_gata`
+(UPDATE la `finalizata` din noua/acceptata/gata, nu alertă, nu „fără
+ospătari" → ospătarii zonei). Testat pe Sweet & Sour cu o cerere reală
+(`trimise: 2`, apoi ștearsă).
+
+**M3 (cjav) n-avea push deloc** (nici funcție, nici trigger, nici
+`service_role_key` în Vault). Acum are funcția și migrația 22; îi lipsesc
+secretele, pe care le pune utilizatorul: Vault → `service_role_key` (cheia
+service_role a proiectului) și Edge Functions → Secrets → `VAPID_PUBLIC_KEY`,
+`VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`. Perechea VAPID pentru M3 e generată
+local în `supabase/m3_vapid.txt` (neversionat); cheia publică e deja în
+`m3/config.js` (`VAPID_PUBLIC`). Panoul citește `SS_CONFIG.VAPID_PUBLIC` (cu
+cheia Sweet & Sour ca rezervă) și, dacă abonamentul existent e făcut cu altă
+cheie, se dezabonează și se reabonează singur (`reabonare()`).
+
+**Panoul**:
+
+- Notificări: fără butoane. `ensureNotificationPermission()` la intrare:
+  `granted` → `reabonare()`; `default` → fereastra `#modalNotificari`
+  („Pornește notificările" cheamă `Notification.requestPermission()` dintr-un
+  click; „Mai târziu" amână 6 h, `localStorage.notif_amanat`); `denied` →
+  textul `#notifStare` în bara laterală și în meniul contului. Ghidul și
+  fereastra zonei așteaptă închiderea ei (`dupaNotificari`). Directorul nu e
+  întrebat.
+- Antetul de telefon: `#btnVoceMobile` (🔊 / 🔇) în locul 🔕 și ❓; butonul
+  lat „Voce" de sub căutare a dispărut. Numele contului (`#mobileUserDisplay`,
+  buton) deschide `#modalCont`: notificări (stare + pornire), ghid, GDPR,
+  deconectare.
+- Căutarea: `.cauta-wrap` + `.cauta-x` (apare când e text), golește ambele
+  câmpuri.
+- Comenzi: `#comenziTaburi` cu `subTab` = `comenzi | cereri | altele`;
+  `renderOrders` împarte comenzile active în grupuri (`cuZone` = ospătar cu
+  zonă aleasă și >1 zone): „Zona mea / Comenzi", „Cereri" (bar, ospătar,
+  conducere), „Alte zone" (ospătar). Bulina de pe Comenzi = de făcut (gata /
+  de dus) + cereri. Bannerul `#paymentAlertBanner` și `updatePaymentAlertBadge`
+  au dispărut; cardurile nu mai sunt „șterse" (`.alta-zona`).
+- Alte zone = liniște: `playAlertAndVibrate`, handler-ele realtime de INSERT
+  și UPDATE („gata") și `loadOrders` ignoră comenzile din alte zone pentru
+  ospătar (`esteZonaMea`).
+- Comanda rapidă: `.cr-cap` (masa 96 px + nota pe un rând, căutarea sub),
+  rânduri `.cr-item` mai scunde, lista fără `max-height`, `.cr-foot` sticky.
+- Meniul clientului: bara `#liveTracker` cu pași (`.t-pasi`, `.t-linie`,
+  `.t-pas.facut/.acum`), text `stVine` (4 min după `finalizata`, moment ținut
+  în `c.servita_la` pentru că `finalizata_la` nu e vizibil pentru anon), apoi
+  `stServita`, după 15 min clasa `mic`; `setInterval` de 30 s. Comenzile
+  sesiunii stau în `localStorage` (`{la, comenzi}`), 8 ore, doar pentru masa
+  curentă (`incarcaComenziSesiune`).
+- Linkurile meselor (QR / NFC) sunt în `qr/linkuri_<local>.txt`
+  (neversionat), luate din `chei_mese`: `/s/<masa>/<cheie>` (Sweet & Sour),
+  `/m/<masa>/<cheie>` (M3).
 
 ## Înainte de deschidere
 

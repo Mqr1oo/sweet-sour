@@ -12,6 +12,10 @@ window.SS_CONFIG = {
   // --- Supabase (proiect propriu, separat de M3) ---
   SUPABASE_URL: 'https://wnwllyyhtkufcejzjeay.supabase.co',
   SUPABASE_KEY: 'sb_publishable_yCycz19M9_HmXlRN1xjn1Q_5YhFtZPh',
+  // Cheia publica VAPID a notificarilor push (perechea ei privata sta in
+  // secretele functiei edge `notifica-comanda`, in Supabase). Fiecare local
+  // are perechea lui.
+  VAPID_PUBLIC: 'BHKSXTQuMn8UiJ4E4udL6kNbE74nAhjHYzs5DYE9m2OIeLFNJNiClyUfbeSr3iexGcxS3IQgnF6wmYYplYVa3lU',
 
   // --- Identitate ---
   NUME:      'Sweet & Sour',

@@ -62,9 +62,14 @@ Scanează codul QR de pe masă și îi apare meniul, în culorile localului.
   văd schimbarea în aceeași secundă, fără să dea refresh.
 - **Coșul**: plus / minus pe fiecare produs, observații („fără zahăr"), apoi
   „Trimite comanda". Prima dată i se cere **numărul mesei** (scris pe cod).
-- **⭐ Urmărirea comenzii**: sus pe ecran apare o bară „Comanda ta" care
-  spune exact unde e: *trimisă — așteaptă să fie văzută* → *acceptată — vine*
-  → *preluată, poftă bună*. Nu mai stă să se întrebe dacă i-a ajuns comanda.
+- **⭐ Urmărirea comenzii**: sus pe ecran apare o bară „Comanda ta" cu trei
+  pași — *Trimisă · Acceptată · La masă* — și linia care se umple: *trimisă —
+  așteaptă să fie văzută* → *acceptată — urmează să vină* → *e gata — vine la
+  masă acum* (câteva minute după „Gata") → *servită, poftă bună*. După un
+  sfert de oră se strânge într-un rând, dar rămâne (apasă pe ea: vezi
+  comanda, scoți ceva, împarți nota). Comanda rămâne în telefon 8 ore, pentru
+  aceeași masă: dacă scanează din nou codul sau i se închide browserul, o
+  regăsește.
 - **Poate scoate ceva de pe telefon** cât timp comanda încă n-a fost
   acceptată de bar (s-a răzgândit, a greșit). După ce barul a acceptat-o,
   butoanele dispar și apare **„🙋 Cheamă ospătarul să schimbe comanda"** —
@@ -94,7 +99,7 @@ O comandă trece prin **trei stări**, iar clientul le vede pe toate:
 |---|---|---|
 | **Trimisă** | intră singură | „Trimisă — așteaptă să fie văzută" |
 | **Acceptată** | barul / bucătăria apasă **„✓ Acceptă"** | „Acceptată — vine acum" |
-| **Preluată** | barul apasă **„Gata"** (cu ospătari) sau **„Preluată"** (fără ospătari) | „Preluată. Poftă bună!" |
+| **Gata / Preluată** | barul apasă **„Gata"** (cu ospătari) sau **„Preluată"** (fără ospătari) | „E gata — vine la masă acum", apoi „Servită. Poftă bună!" |
 
 De ce doi pași și nu unul: „Acceptă" înseamnă *am văzut-o, o fac* — oprește
 alarma și îl liniștește pe client. „Gata / Preluată" înseamnă *a plecat de la
@@ -139,16 +144,25 @@ singur alt rol.
   română, cu diacritice ca să sune corect), apoi ding-dong continuu până
   acceptă cineva. Masa se spune o singură dată, chiar dacă comanda are și bar
   și bucătărie.
-- **Cererile de la mese** („Masa 4 cere nota, cash", „Masa 6 cere ajutor",
-  „Masa 3 vrea să schimbe comanda — trimite ospătarul") sună **doar la bar**,
-  cu un sunet diferit de comandă, ca barmanul să știe fără să se uite.
+- **Taburi în Comenzi**: comenzile și **cererile de la mese** (nota, ajutor,
+  „vrea să schimbe comanda") stau separat — tabul „Cereri" are o bulină
+  albastră cât are ceva. Nu mai există bannerul mare de sus.
+- **Cererile de la mese** sună **la bar**, cu un sunet diferit de comandă, și
+  ajung și la ospătarul zonei (vezi mai jos).
 - **Voce ON / OFF**: pornit, spune masa la fiecare comandă și cerere
   (bucătăria aude și produsele, barul observațiile). Oprit: doar bipurile și
-  alarma. Butonul ține minte alegerea.
+  alarma. Pe telefon e butonul 🔊 / 🔇 din antet; ține minte alegerea.
 - **Dacă clientul scoate ceva** de pe telefon cât comanda e neacceptată,
   cardul clipește galben și telefonul spune ce s-a schimbat.
-- **Notificări** și când telefonul e blocat sau aplicația e închisă (dacă le
-  pornește).
+- **Notificări și cu telefonul blocat sau aplicația închisă**: la prima
+  intrare panoul cere voie („Pornește notificările" → „Permite"); nu mai
+  există niciun buton de pornit. Barul și bucătăria primesc comenzile noi,
+  ospătarul primește cererile de la mesele lui și „comanda e gata — du-o la
+  masă". Pe iPhone merg doar cu aplicația pusă pe ecranul principal; pe
+  Android, dacă nu vin, scoate Chrome de la „optimizarea bateriei".
+- **Căutarea** (masă / la pachet) are un ✕ care o golește.
+- **Contul tău** (pe telefon, apasă pe numele tău): ghidul rapid, starea
+  notificărilor, informarea GDPR, deconectarea.
 - **Istoric**: comenzile terminate și anulate, **pe zile de lucru**. Se
   deschide pe azi (de la ultima închidere); cu săgețile sau din calendar
   vezi orice zi din luna aceasta și din luna trecută. Nu există niciun buton
@@ -181,11 +195,15 @@ Același panou, dar cu ce-l privește pe el:
   loc. Cât e neacceptată, oricând; după, în „fereastra de modificare" pusă de
   director.
 - **⭐ Zona mea**: își bifează zonele de care răspunde (Terasă, Interior…).
-  Comenzile din zona lui apar primele și îl anunță; cele din alte zone rămân
-  vizibile, mai șterse, cu „📍 Interior · Maria" (cine le acoperă) — și le
-  poate lua oricând dacă e nevoie (colegul e la fumat). Zona i se cere
-  singură, la prima intrare din zi (dacă închide fereastra fără să aleagă,
-  azi răspunde de toate zonele); o schimbă oricând din „📍 Zona mea".
+  În Comenzi are trei taburi: **„Zona mea"** (comenzile lui, de dus la masă),
+  **„Cereri"** (nota, ajutor, din zona lui) și **„Alte zone"** — comenzile și
+  cererile colegilor, cu „📍 Interior · Maria" (cine le acoperă): **nu-l
+  anunță deloc** (nici sunet, nici notificare), dar le vede și le poate lua
+  oricând dacă e nevoie (colegul e la fumat). Zona i se cere singură, la
+  prima intrare din zi (dacă închide fereastra fără să aleagă, azi răspunde de
+  toate zonele); o schimbă oricând din „📍 Zona mea".
+- **Comandă rapidă** compactă: masa și nota pe un rând, căutarea sub ele, ca
+  să încapă cât mai multe produse; totalul și „Trimite" rămân lipite jos.
 - **Tura se ține singură**: nu apasă nimic. Când intră în cont a intrat în
   tură; când se deconectează (sau la ora închiderii, când toată lumea iese
   automat) a ieșit. Directorul vede cine a fost în tură, cât, și pe ce zonă.

@@ -12,6 +12,10 @@ window.SS_CONFIG = {
   // --- Supabase ---
   SUPABASE_URL: 'https://cjavzdnsebbkiiefigvi.supabase.co',
   SUPABASE_KEY: 'sb_publishable_2pItY__W7_6nbKWy_ZMytw_t4EfovN8',
+  // Cheia publica VAPID a notificarilor push (perechea ei privata sta in
+  // secretele functiei edge `notifica-comanda`, in Supabase). Fiecare local
+  // are perechea lui.
+  VAPID_PUBLIC: 'BCnmguFlRijM1qd8HEsmI1NIE-jwTdhP9561ORavSG28DPIZagHMXV8vA4cHvHBwsyWcJjZhxHbMaIeup52DMo0',
 
   // --- Identitate ---
   NUME:      'M3',

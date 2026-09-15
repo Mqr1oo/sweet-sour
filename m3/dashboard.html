@@ -101,8 +101,40 @@
   .btn-sound-toggle { padding: 10px 20px; border-radius: 100px; font-weight: 700; font-size: 14px; cursor: pointer; border: none; transition: 0.3s; background: rgba(239, 68, 68, 0.15); color: var(--danger); display: none; }
   .btn-sound-toggle.on { background: rgba(16, 185, 129, 0.15); color: var(--success); }
 
-  .payment-alert-banner { background: rgba(59, 130, 246, 0.15); color: var(--blue); border-bottom: 1px solid rgba(59,130,246,0.3); text-align: center; padding: 10px 16px; font-weight: 700; font-size: 13.5px; cursor: pointer; animation: pulseBanner 1.6s infinite; flex-shrink: 0; }
-  @keyframes pulseBanner { 0% { background: rgba(59, 130, 246, 0.15); } 50% { background: rgba(59, 130, 246, 0.3); } 100% { background: rgba(59, 130, 246, 0.15); } }
+  /* Cautarea are un X care o goleste */
+  .cauta-wrap { position: relative; display: inline-block; }
+  .cauta-wrap .table-filter { padding-right: 40px; }
+  .cauta-x { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border-radius: 50%;
+      border: none; background: rgba(255,255,255,0.12); color: var(--text); font-size: 14px; font-weight: 700; cursor: pointer;
+      display: none; align-items: center; justify-content: center; font-family: inherit; }
+  .cauta-wrap.are-text .cauta-x { display: flex; }
+
+  /* Taburile din Comenzi: zona mea / cereri (nota, ajutor) / alte zone */
+  .sub-taburi { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .sub-tab { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 14px; border-radius: 14px;
+      border: 1px solid var(--border); background: var(--bg-card); color: var(--text-muted); font-weight: 700; font-size: 14px; cursor: pointer; font-family: inherit; }
+  .sub-tab.active { background: var(--accent); color: #16110a; border-color: var(--accent); }
+  .sub-tab .nr { min-width: 22px; padding: 2px 7px; border-radius: 100px; font-size: 12px; font-family: 'Space Mono', monospace; background: rgba(255,255,255,0.12); }
+  .sub-tab.active .nr { background: rgba(0,0,0,0.25); }
+  .sub-tab.atentie:not(.active) .nr { background: var(--blue); color: white; animation: pulseNr 1.4s infinite; }
+  @keyframes pulseNr { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+
+  /* Comanda rapida (ospatar): campurile mici, ca sa incapa produsele */
+  .cr-cap { display: grid; grid-template-columns: 96px 1fr; gap: 8px; margin-bottom: 8px; }
+  .cr-cap .cr-cauta { grid-column: 1 / -1; }
+  .cr-cap .table-filter { width: 100%; padding: 9px 12px; font-size: 14px; border-radius: 12px; background: rgba(0,0,0,0.3); }
+  .cr-item { padding: 9px 0 !important; }
+  .cr-item .s-name { font-size: 14px !important; }
+  .cr-item .btn-action { width: 34px !important; height: 34px !important; }
+  #meniuListContainer { max-height: none; }
+  .cr-foot { position: sticky; bottom: -16px; background: var(--bg-card); padding: 12px 0 4px; margin-top: 12px; border-top: 1px solid var(--border); }
+  .btn-ico.on { color: var(--success); border-color: rgba(16,185,129,.45); background: rgba(16,185,129,.10); }
+  .notif-stare { margin-top: 10px; font-size: 12px; color: var(--warning); display: none; line-height: 1.4; }
+  .notif-stare.on { display: block; }
+  .cont-rand { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 4px; border: none; border-bottom: 1px solid var(--border);
+      background: none; color: var(--text); font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer; }
+  .cont-rand small { display: block; color: var(--text-muted); font-weight: 500; font-size: 12px; margin-top: 2px; }
+  .cont-rand:last-child { border-bottom: none; }
 
   .mobile-brand-area { display: none; flex-direction: column; }
   .mobile-brand { font-size: 16px; font-weight: 700; color: var(--accent); }
@@ -257,6 +289,16 @@
       .mobile-logout { display: block; }
       .mobile-search-container { padding: 16px 20px 0; background: var(--bg); position: sticky; top: 0; z-index: 5; }
       .table-filter { width: 100%; padding: 14px 20px; font-size: 16px; border-radius: 14px; background: var(--bg-card); }
+      .cauta-wrap { display: block; }
+      .cauta-wrap .table-filter { padding-right: 46px; }
+      .cauta-x { right: 12px; width: 30px; height: 30px; }
+      .sub-tab { flex: 1 1 0; min-width: 0; padding: 9px 4px; font-size: 12.5px; gap: 5px; }
+      .sub-tab .ico { display: none; }
+      .sub-tab .txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .cr-cap .table-filter { padding: 10px 12px; font-size: 15px; }
+      .cr-foot { bottom: calc(-16px - env(safe-area-inset-bottom)); }
+      .cr-foot > div { white-space: nowrap; }
+      .cr-foot .btn-action { padding: 12px 16px !important; font-size: 14px; }
       .content-area { padding: 16px 20px calc(80px + env(safe-area-inset-bottom)); }
       .grid-comenzi { grid-template-columns: 1fr; gap: 16px; }
       aside { 
@@ -657,7 +699,7 @@
     <div style="opacity: 0.7; margin-bottom: 4px;">Conectat ca:</div>
     <b id="userEmailDisplay" style="color: var(--text); font-size: 14px;">...</b>
     <div class="logout-btn" id="btnLogout">Deconectare</div>
-    <button id="btnNotificari" class="btn-notif">🔕 Activeaza notificarile</button>
+    <div class="notif-stare" id="notifStare"></div>
     <button id="btnGhid" class="btn-notif">❓ Ghid rapid (cum functioneaza)</button>
     <button id="btnZona" class="btn-notif" style="display:none;">📍 Zona mea: toate</button>
     <div style="margin-top:10px;"><a href="#" onclick="document.getElementById('privacyOverlay').classList.add('open')" style="color:var(--text-muted); font-size:11px; text-decoration:underline;">Informare date personal (GDPR)</a></div>
@@ -669,32 +711,27 @@
     <h2 class="page-title" id="pageTitle">Comenzi active</h2>
     <div class="header-actions">
         <button id="btnToggleSound" class="btn-sound-toggle" title="Pornita: spune masa la fiecare comanda si cerere. Oprita: doar bipuri si alarma.">🔇 Voce: OFF</button>
-        <input type="text" id="tableFilterInputDesc" class="table-filter" placeholder="🔍 Cauta masa / la pachet...">
+        <span class="cauta-wrap"><input type="text" id="tableFilterInputDesc" class="table-filter" placeholder="🔍 Cauta masa / la pachet..."><button type="button" class="cauta-x" data-cauta-x aria-label="Sterge cautarea">✕</button></span>
     </div>
     
     <div class="mobile-brand-area">
         <span class="mobile-brand"><img src="icons/logo.png" alt="M3" style="height:26px;width:auto;vertical-align:middle"></span>
-        <span class="mobile-user" id="mobileUserDisplay">...</span>
+        <button type="button" class="mobile-user" id="mobileUserDisplay" style="background:none; border:none; padding:0; text-align:left; cursor:pointer; text-decoration:underline dotted;">...</button>
     </div>
     <div class="mobile-actions">
-        <button class="btn-ico" id="btnNotificariMobile" title="Notificari">🔕</button>
-        <button class="btn-ico" id="btnGhidMobile" title="Ghid rapid">❓</button>
+        <button class="btn-ico" id="btnVoceMobile" title="Voce: spune masa la fiecare comanda si cerere" style="display:none;">🔇</button>
         <button class="btn-ico" id="btnZonaMobile" title="Zona mea" style="display:none;">📍</button>
         <button class="mobile-logout" id="btnMobileLogout">Iesire</button>
     </div>
   </header>
 
   <div id="offlineBar">⚠️ Fara conexiune la internet — comenzile nu se actualizeaza. Se reia singur cand revine netul.</div>
-  <div id="paymentAlertBanner" class="payment-alert-banner" style="display:none;">
-      💳 <span id="paymentAlertCount">0</span> mese vor sa plateasca — apasa ca sa vezi
-  </div>
-  
   <div class="mobile-search-container" id="mobileSearchWrap">
-      <button id="btnToggleSoundMobile" class="btn-sound-toggle" style="width: 100%; margin-bottom: 10px;">🔇 Voce: OFF</button>
-      <input type="text" id="tableFilterInputMob" class="table-filter" placeholder="🔍 Cauta masa / la pachet...">
+      <span class="cauta-wrap"><input type="text" id="tableFilterInputMob" class="table-filter" placeholder="🔍 Cauta masa / la pachet..."><button type="button" class="cauta-x" data-cauta-x aria-label="Sterge cautarea">✕</button></span>
   </div>
-  
+
   <div class="content-area">
+    <div id="comenziTaburi" class="sub-taburi" style="display:none;"></div>
     <div id="istoricBara" class="istoric-bara" style="display:none;">
       <button type="button" class="ist-btn" id="istInapoi" title="Ziua dinainte">◀</button>
       <input type="date" id="istZi" class="ist-data" aria-label="Ziua">
@@ -1143,13 +1180,15 @@
 
     <div id="meniuView" style="display: none;">
       <div class="dash-panel">
-        <h3>📋 Trimite comanda rapida</h3>
-        <input type="text" id="meniuTableInput" class="table-filter" style="width:100%; margin-bottom:16px;" placeholder="Numarul mesei (ex: 4)">
-        <input type="text" id="meniuNoteInput" class="table-filter" style="width:100%; margin-bottom:16px;" placeholder="Nota pentru bucatarie / bar (ex: fara ceapa)...">
-        <input type="text" id="meniuSearchInput" class="table-filter" style="width:100%; margin-bottom:16px;" placeholder="🔍 Cauta produs...">
+        <h3 style="margin-bottom:10px;">📋 Trimite comanda rapida</h3>
+        <div class="cr-cap">
+          <input type="text" id="meniuTableInput" class="table-filter" inputmode="numeric" placeholder="Masa">
+          <input type="text" id="meniuNoteInput" class="table-filter" placeholder="Nota pentru bar / bucatarie (ex: fara ceapa)">
+          <input type="text" id="meniuSearchInput" class="table-filter cr-cauta" placeholder="🔍 Cauta produs...">
+        </div>
 
         <div class="stock-list" id="meniuListContainer">Se incarca...</div>
-        <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; gap:12px;">
+        <div class="cr-foot" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
           <div style="font-family:'Space Mono',monospace; font-weight:700;">Total: <span id="meniuTotal">0.00</span> lei</div>
           <button class="btn-action btn-done" style="flex:0 0 auto; padding:14px 26px;" id="btnMeniuTrimite">Trimite comanda</button>
         </div>
@@ -1211,11 +1250,34 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modalNotificari">
+  <div class="modal" style="max-width:420px; text-align:left;">
+    <h2 style="margin-bottom:4px;">🔔 Notificari</h2>
+    <p class="mp-sub" id="notifText">Ca sa afli de comenzi si de cererile de la mese si cand telefonul e blocat sau aplicatia e inchisa, panoul are nevoie de voie sa trimita notificari. Apasa mai jos, apoi „Permite".</p>
+    <div class="mp-actiuni">
+      <button class="btn-primary" id="notifPorneste" style="width:auto;padding:12px 22px;">Porneste notificarile</button>
+      <button id="notifMaiTarziu" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font:inherit;padding:12px 16px;">Mai tarziu</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalCont">
+  <div class="modal" style="max-width:420px; text-align:left;">
+    <button class="modal-close" id="contInchide">&times;</button>
+    <h2 style="margin-bottom:2px; font-size:18px;">Contul tau</h2>
+    <p class="mp-sub" id="contSub" style="margin-bottom:8px;"></p>
+    <button type="button" class="cont-rand" id="contNotif">🔔 <span>Notificari<small id="contNotifStare"></small></span></button>
+    <button type="button" class="cont-rand" id="contGhid">❓ <span>Ghid rapid<small>Cum functioneaza panoul, in 30 de secunde</small></span></button>
+    <button type="button" class="cont-rand" id="contGdpr">📄 <span>Informare date personal (GDPR)</span></button>
+    <button type="button" class="cont-rand" id="contIesire" style="color:var(--danger);">🚪 <span>Deconectare</span></button>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modalZona">
   <div class="modal" style="max-width:420px; text-align:left;">
     <button class="modal-close" id="zonaInchide">&times;</button>
     <h2 style="margin-bottom:4px;">📍 Zona mea</h2>
-    <p class="mp-sub">Alege zonele de care raspunzi in tura asta. Comenzile din ele apar primele si te anunta; cele din alte zone raman vizibile, mai sterse, si le poti lua daca e nevoie. Daca inchizi fara sa alegi, azi raspunzi de toate zonele. Poti schimba oricand din „📍 Zona mea".</p>
+    <p class="mp-sub">Alege zonele de care raspunzi in tura asta. Comenzile si cererile din ele te anunta (si cu telefonul blocat); cele din alte zone stau in tabul „Alte zone", fara sunet, si le poti lua daca e nevoie. Daca inchizi fara sa alegi, azi raspunzi de toate zonele. Poti schimba oricand din „📍 Zona mea".</p>
     <div id="zonaLista" style="margin-top:12px;"></div>
     <div class="mp-actiuni">
       <button class="btn-primary" id="zonaSalveaza" style="width:auto;padding:12px 22px;">Salveaza</button>
@@ -1383,8 +1445,15 @@
 
   const searchDesc = document.getElementById('tableFilterInputDesc');
   const searchMob = document.getElementById('tableFilterInputMob');
-  searchDesc.addEventListener('input', (e) => { searchMob.value = e.target.value; renderOrders(); });
-  searchMob.addEventListener('input', (e) => { searchDesc.value = e.target.value; renderOrders(); });
+  function arataX() {
+      [searchDesc, searchMob].forEach(i => i.closest('.cauta-wrap').classList.toggle('are-text', !!i.value));
+  }
+  searchDesc.addEventListener('input', (e) => { searchMob.value = e.target.value; arataX(); renderOrders(); });
+  searchMob.addEventListener('input', (e) => { searchDesc.value = e.target.value; arataX(); renderOrders(); });
+  document.querySelectorAll('[data-cauta-x]').forEach(b => b.addEventListener('click', () => {
+      searchDesc.value = ''; searchMob.value = ''; arataX(); renderOrders();
+      (window.innerWidth <= 800 ? searchMob : searchDesc).focus();
+  }));
 
   function getSearchTerm() {
       return (window.innerWidth <= 800 ? searchMob.value : searchDesc.value).toLowerCase();
@@ -1393,11 +1462,10 @@
 
 
   function aplicaVoceUI() {
-      const text = soundEnabled ? '🔊 Voce: ON' : '🔇 Voce: OFF';
-      ['btnToggleSound', 'btnToggleSoundMobile'].forEach(id => {
-          const b = document.getElementById(id); if (!b) return;
-          b.textContent = text; b.classList.toggle('on', soundEnabled);
-      });
+      const b = document.getElementById('btnToggleSound');
+      if (b) { b.textContent = soundEnabled ? '🔊 Voce: ON' : '🔇 Voce: OFF'; b.classList.toggle('on', soundEnabled); }
+      const m = document.getElementById('btnVoceMobile');
+      if (m) { m.textContent = soundEnabled ? '🔊' : '🔇'; m.classList.toggle('on', soundEnabled); m.title = soundEnabled ? 'Voce: pornita (spune masa)' : 'Voce: oprita (doar bipuri)'; }
   }
   function initSoundToggle() {
       const toggleFn = () => {
@@ -1409,7 +1477,7 @@
           else bipScurt(1);
       };
       document.getElementById('btnToggleSound').addEventListener('click', toggleFn);
-      document.getElementById('btnToggleSoundMobile').addEventListener('click', toggleFn);
+      document.getElementById('btnVoceMobile').addEventListener('click', toggleFn);
       aplicaVoceUI();
   }
   initSoundToggle();
@@ -1456,7 +1524,10 @@
   // cu aplicația complet închisă.
   // =========================================================================
 
-  const VAPID_PUBLIC_KEY = 'BHKSXTQuMn8UiJ4E4udL6kNbE74nAhjHYzs5DYE9m2OIeLFNJNiClyUfbeSr3iexGcxS3IQgnF6wmYYplYVa3lU';
+  // cheia publica a localului (config.js); perechea ei privata e in secretele
+  // functiei edge. Daca telefonul e abonat cu alta cheie, se reaboneaza singur.
+  const VAPID_PUBLIC_KEY = (window.SS_CONFIG && window.SS_CONFIG.VAPID_PUBLIC)
+      || 'BHKSXTQuMn8UiJ4E4udL6kNbE74nAhjHYzs5DYE9m2OIeLFNJNiClyUfbeSr3iexGcxS3IQgnF6wmYYplYVa3lU';
 
   function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -1492,6 +1563,20 @@
     return true;
   }
 
+  // Abonamentul push al telefonului, salvat pe server. Daca era facut cu alta
+  // cheie (localul si-a schimbat perechea VAPID), il refacem.
+  async function reabonare() {
+    const reg = await navigator.serviceWorker.ready;
+    const cheie = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+    let sub = await reg.pushManager.getSubscription();
+    if (sub && sub.options && sub.options.applicationServerKey) {
+      const veche = new Uint8Array(sub.options.applicationServerKey);
+      if (veche.length !== cheie.length || veche.some((b, i) => b !== cheie[i])) { try { await sub.unsubscribe(); } catch (e) {} sub = null; }
+    }
+    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: cheie });
+    return salveazaAbonament(sub);
+  }
+
   // Trebuie apelată dintr-un click. Fără gest, browserele o ignoră.
   async function activeazaNotificari(silentios) {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
@@ -1508,21 +1593,12 @@
     try {
       const perm = await Notification.requestPermission();
       if (perm !== 'granted') {
-        if (!silentios) alert('Notificarile sunt blocate. Porneste-le din setarile browserului.');
+        if (!silentios) alert('Notificarile sunt blocate. Porneste-le din setarile telefonului, la browser (Chrome / Safari).');
+        arataStareNotificari();
         return false;
       }
-
-      const reg = await navigator.serviceWorker.ready;
-      let sub = await reg.pushManager.getSubscription();
-      if (!sub) {
-        sub = await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-        });
-      }
-      const ok = await salveazaAbonament(sub);
-      actualizeazaButonNotificari();
-      if (ok && !silentios) alert('✅ Notificarile sunt active pe acest dispozitiv.');
+      const ok = await reabonare();
+      arataStareNotificari();
       return ok;
     } catch (e) {
       console.error('activeazaNotificari:', e);
@@ -1531,21 +1607,39 @@
     }
   }
 
-  async function actualizeazaButonNotificari() {
-    const btn = document.getElementById('btnNotificari');
-    if (!btn) return;
-    let activ = false;
-    try {
-      if ('serviceWorker' in navigator && Notification.permission === 'granted') {
-        const reg = await navigator.serviceWorker.ready;
-        activ = !!(await reg.pushManager.getSubscription());
-      }
-    } catch (e) {}
-    btn.textContent = activ ? '🔔 Notificari active' : '🔕 Activeaza notificarile';
-    btn.classList.toggle('notif-activ', activ);
-    const m = document.getElementById('btnNotificariMobile');
-    if (m) { m.textContent = activ ? '🔔' : '🔕'; m.classList.toggle('notif-activ', activ); m.title = activ ? 'Notificari active' : 'Activeaza notificarile'; }
+  // starea, scrisa in bara laterala si in meniul contului (telefon)
+  function arataStareNotificari() {
+    const suportate = ('Notification' in window) && ('serviceWorker' in navigator) && ('PushManager' in window);
+    let text = '';
+    if (userRole === 'director') text = '';
+    else if (!suportate) text = 'Acest browser nu poate primi notificari.';
+    else if (esteIOS() && !esteInstalata()) text = 'Pe iPhone: adauga aplicatia pe ecranul principal ca sa primesti notificari.';
+    else if (Notification.permission === 'denied') text = '🔕 Notificarile sunt blocate din setarile telefonului (browser → notificari).';
+    else if (Notification.permission === 'default') text = '🔕 Notificarile nu sunt pornite inca.';
+    const s = document.getElementById('notifStare');
+    if (s) { s.textContent = text; s.classList.toggle('on', !!text); }
+    const cs = document.getElementById('contNotifStare');
+    if (cs) cs.textContent = text || (Notification.permission === 'granted' ? '🔔 Pornite pe acest telefon' : '');
   }
+
+  // Cine asteapta dupa fereastra de notificari (ghidul, alegerea zonei), ca
+  // sa nu se calce pe ecran
+  let dupaNotificari = [];
+  function inchideNotificari() {
+    document.getElementById('modalNotificari').classList.remove('open');
+    const d = dupaNotificari; dupaNotificari = [];
+    d.forEach(f => { try { f(); } catch (e) {} });
+  }
+  function notificariDeschise() { return document.getElementById('modalNotificari').classList.contains('open'); }
+  document.getElementById('notifPorneste').addEventListener('click', async () => {
+    const ok = await activeazaNotificari(false);
+    if (ok) inchideNotificari();
+    else if (Notification.permission !== 'default') inchideNotificari();
+  });
+  document.getElementById('notifMaiTarziu').addEventListener('click', () => {
+    try { localStorage.setItem('notif_amanat', String(Date.now())); } catch (e) {}
+    inchideNotificari();
+  });
 
   // Reînnoire tăcută când browserul invalidează abonamentul
   if ('serviceWorker' in navigator) {
@@ -1557,15 +1651,39 @@
     });
   }
 
+  // La intrare: daca telefonul poate primi notificari si nu s-a hotarat inca,
+  // intrebam pe loc (dintr-o fereastra, ca browserul cere un gest); daca a
+  // spus deja da, doar reimprospatam abonamentul pe server. Directorul nu
+  // primeste notificari, deci nu-l intrebam.
   function ensureNotificationPermission() {
-    // Dacă dispozitivul era deja abonat, doar reîmprospătăm rolul pe server.
-    if ('serviceWorker' in navigator && Notification.permission === 'granted') {
-      navigator.serviceWorker.ready.then(reg => reg.pushManager.getSubscription())
-        .then(s => { if (s) salveazaAbonament(s); })
-        .catch(() => {});
-    }
-    actualizeazaButonNotificari();
+    arataStareNotificari();
+    if (userRole === 'director') return;
+    if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    if (Notification.permission === 'granted') { reabonare().catch(e => console.log('push:', e)); return; }
+    if (Notification.permission === 'denied') return;
+    if (esteIOS() && !esteInstalata()) return;   // n-are rost pana nu e pe ecranul principal
+    let amanat = 0; try { amanat = Number(localStorage.getItem('notif_amanat') || 0); } catch (e) {}
+    if (Date.now() - amanat < 6 * 3600000) return;   // a zis „mai tarziu" azi: nu-l batem la cap
+    document.getElementById('modalNotificari').classList.add('open');
   }
+
+  // meniul contului (pe telefon, la apasarea pe nume): ghidul, notificarile, GDPR, iesirea
+  document.getElementById('mobileUserDisplay').addEventListener('click', () => {
+    document.getElementById('contSub').textContent = `${currentUserEmail || ''} · ${userRole || ''}`;
+    arataStareNotificari();
+    document.getElementById('modalCont').classList.add('open');
+  });
+  const inchideCont = () => document.getElementById('modalCont').classList.remove('open');
+  document.getElementById('contInchide').addEventListener('click', inchideCont);
+  document.getElementById('modalCont').addEventListener('click', (e) => { if (e.target.id === 'modalCont') inchideCont(); });
+  document.getElementById('contGhid').addEventListener('click', () => { inchideCont(); pornesteGhidDashboard(true); });
+  document.getElementById('contGdpr').addEventListener('click', () => { inchideCont(); document.getElementById('privacyOverlay').classList.add('open'); });
+  document.getElementById('contIesire').addEventListener('click', () => { inchideCont(); document.getElementById('btnMobileLogout').click(); });
+  document.getElementById('contNotif').addEventListener('click', async () => {
+    if (Notification.permission === 'granted') { alert('Notificarile sunt pornite pe acest telefon.'); return; }
+    inchideCont();
+    await activeazaNotificari(false);
+  });
 
   // Notificare locală, pentru cazul în care aplicația e deschisă în alt tab.
   // Push-ul de pe server acoperă restul situațiilor.
@@ -2041,7 +2159,7 @@
               setTimeout(() => rosteste(textCerereVorbit(order)), 750);
           }
           if (userRole === 'ospatar') {
-              if (!esteZonaMea(order)) { bipScurt(1); return; }   // alta zona: doar un bip
+              if (!esteZonaMea(order)) return;   // alta zona: colegul ei e anuntat; tu doar o vezi in „Alte zone"
               if (navigator.vibrate) { try { navigator.vibrate([300, 150, 300]); } catch(e) {} }
               showBackgroundAlert('🔔 Cerere de la masa', `Masa ${order.mesa}: ` +
                   (order.produse || []).filter(p => p.cantitate > 0).map(p => p.nume).join(', '));
@@ -2280,10 +2398,7 @@
   document.getElementById('btnLogout').addEventListener('click', logoutFn);
   document.getElementById('btnMobileLogout').addEventListener('click', logoutFn);
 
-  document.getElementById('btnNotificari').addEventListener('click', () => activeazaNotificari(false));
-  document.getElementById('btnNotificariMobile').addEventListener('click', () => activeazaNotificari(false));
   document.getElementById('btnGhid').addEventListener('click', () => pornesteGhidDashboard(true));
-  document.getElementById('btnGhidMobile').addEventListener('click', () => pornesteGhidDashboard(true));
 
   let mediuPornit = false;
   function setupUserEnvironment(email, rol) {
@@ -2301,7 +2416,7 @@
 
     const showSound = (userRole === 'bar' || userRole === 'bucatarie' || userRole === 'ospatar' || userRole === 'manager');
     document.getElementById('btnToggleSound').style.display = showSound ? 'inline-flex' : 'none';
-    document.getElementById('btnToggleSoundMobile').style.display = showSound ? 'block' : 'none';
+    document.getElementById('btnVoceMobile').style.display = showSound ? 'inline-flex' : 'none';
 
     if(esteConducere() || userRole === 'ospatar' || userRole === 'bar') {
         document.getElementById('navMap').style.display = 'flex';
@@ -2334,7 +2449,6 @@
     
     if(userRole === 'ospatar' || userRole === 'manager') { document.getElementById('navMeniu').style.display = 'flex'; }
 
-    updatePaymentAlertBadge();
 
     ensureNotificationPermission();
     loadOrders(); 
@@ -2353,7 +2467,8 @@
         renderOrders();
         // prima intrare din zi a unui ospatar: isi alege zona si e in tura
         if (userRole === 'ospatar' && (salaConfig.zones || []).length > 1 && !zoneOspatari[currentUserEmail]) {
-            if (Tur.activ()) zonaDupaGhid = true; else deschideZona(true);
+            const deschide = () => { if (Tur.activ()) zonaDupaGhid = true; else deschideZona(true); };
+            if (notificariDeschise()) dupaNotificari.push(deschide); else deschide();
         }
     });
     if (userRole === 'ospatar') { document.getElementById('btnZona').style.display = 'block'; document.getElementById('btnZonaMobile').style.display = 'inline-flex'; }
@@ -2395,6 +2510,7 @@
     document.getElementById('meniuView').style.display = 'none';
     document.getElementById('mapView').style.display = 'none';
     document.getElementById('istoricBara').style.display = 'none';
+    document.getElementById('comenziTaburi').style.display = 'none';
 
     document.querySelector('.content-area').scrollTop = 0;
 
@@ -2446,7 +2562,6 @@
           currentZone = salaConfig.zones[0].nume;
       }
       updateMapBadge();
-      updatePaymentAlertBadge();
   }
 
   async function saveTablesConfig() {
@@ -2463,7 +2578,6 @@
           });
       }
       updateMapBadge();
-      updatePaymentAlertBadge();
       if(currentTab === 'map') renderTablesGrid();
   }
 
@@ -2699,7 +2813,6 @@
       freedTables[String(tableNr)] = Date.now();
       renderTablesGrid();
       updateMapBadge();
-      updatePaymentAlertBadge();
       cleanupTableAlerts(tableNr);
   }
 
@@ -2717,20 +2830,6 @@
       } catch(e) { console.log('cleanupTableAlerts error', e); }
   }
 
-  document.getElementById('paymentAlertBanner').addEventListener('click', () => { switchTab('active'); });
-
-  function updatePaymentAlertBadge() {
-      const banner = document.getElementById('paymentAlertBanner');
-      if(!banner) return;
-      if(!(userRole === 'bar' || userRole === 'ospatar' || esteConducere())) { banner.style.display = 'none'; return; }
-      const count = allOrders.filter(o => o.status === 'noua' && o.produse.some(p => p.nume.includes('ALERTĂ') && PAYMENT_ALERT_REGEX.test(p.nume))).length;
-      if(count > 0) {
-          document.getElementById('paymentAlertCount').textContent = count;
-          banner.style.display = 'block';
-      } else {
-          banner.style.display = 'none';
-      }
-  }
 
   function updateMapBadge() {
       const badge = document.getElementById('countMesasLibres');
@@ -2816,7 +2915,6 @@
       }
 
       updateMapBadge();
-      updatePaymentAlertBadge();
   }
 
   // --- Nota mesei, din panou ---------------------------------------------
@@ -3647,11 +3745,10 @@
       noi.forEach(o => {
           const isAlert = esteAlerta(o);
           if (esteConducere() || o.sectiune === userRole || (userRole === 'bar' && faraBucatarie)
-              || (isAlert && (userRole === 'ospatar' || userRole === 'bar'))) playAlertAndVibrate(o);
+              || (isAlert && (userRole === 'bar' || (userRole === 'ospatar' && esteZonaMea(o))))) playAlertAndVibrate(o);
       });
       sincronizeazaAlarma();
     }
-    updatePaymentAlertBadge();
   }
 
   // Legatura „live" se poate pierde fara sa afle nimeni (telefon blocat, net
@@ -3677,6 +3774,13 @@
       const sibling = sursaComenzi().find(o => o.id !== order.id && o.grup_comanda === order.grup_comanda && o.status === 'anulata');
       return sibling || null;
   }
+
+  let subTab = 'comenzi';   // comenzi | cereri | altele (taburile din Comenzi)
+  document.getElementById('comenziTaburi').addEventListener('click', (e) => {
+      const b = e.target.closest('.sub-tab[data-sub]'); if (!b) return;
+      subTab = b.dataset.sub; renderOrders();
+      document.querySelector('.content-area').scrollTop = 0;
+  });
 
   function renderOrders() {
     if(currentTab !== 'active' && currentTab !== 'history') return;
@@ -3706,14 +3810,34 @@
         return o.sectiune === userRole;
     });
 
+    let deFacut = null;   // ce numara bulina de pe „Comenzi"
     if(currentTab === 'active') {
         const vedeGata = userRole === 'ospatar'
               || (faraOspatari && (userRole === 'bar' || userRole === 'bucatarie'));
         viewOrders = viewOrders.filter(o => ACTIVE.includes(o.status) || (vedeGata && o.status === 'gata')
                                             || (userRole === 'ospatar' && gataDeDus(o)));
-        // de dus la masa primele (ospatar), apoi neacceptatele, apoi restul in
-        // ordinea intrarii; pentru ospatar, zona lui inaintea celorlalte
-        const rang = (o) => (gataDeDus(o) ? 0 : o.status === 'noua' ? 1 : 2) + (esteZonaMea(o) ? 0 : 10);
+        // Taburi: comenzile (ale zonei mele, la ospatar), cererile de la mese
+        // (nota, ajutor) si, pentru ospatarul cu zona aleasa, comenzile
+        // colegilor din alte zone — fara sunet, dar le poate lua.
+        const cuZone = userRole === 'ospatar' && zoneMele.length > 0 && (salaConfig.zones || []).length > 1;
+        const grupuri = {
+            comenzi: viewOrders.filter(o => !esteAlerta(o) && (!cuZone || esteZonaMea(o))),
+            cereri:  viewOrders.filter(o => esteAlerta(o) && (!cuZone || esteZonaMea(o))),
+            altele:  cuZone ? viewOrders.filter(o => !esteZonaMea(o)) : []
+        };
+        const taburi = [{ id: 'comenzi', ico: '🍽️', text: cuZone ? 'Zona mea' : 'Comenzi' }];
+        if (userRole === 'ospatar' || userRole === 'bar' || esteConducere()) taburi.push({ id: 'cereri', ico: '🙋', text: 'Cereri' });
+        if (cuZone) taburi.push({ id: 'altele', ico: '👥', text: 'Alte zone' });
+        if (!taburi.some(x => x.id === subTab)) subTab = 'comenzi';
+        const bara = document.getElementById('comenziTaburi');
+        bara.style.display = taburi.length > 1 ? 'flex' : 'none';
+        bara.innerHTML = taburi.map(x => `<button type="button" class="sub-tab${x.id === subTab ? ' active' : ''}${x.id === 'cereri' && grupuri.cereri.length ? ' atentie' : ''}" data-sub="${x.id}"><span class="ico">${x.ico}</span><span class="txt">${x.text}</span><span class="nr">${grupuri[x.id].length}</span></button>`).join('');
+        // pentru ospatar numaram doar ce are de facut el: de dus la masa si cereri
+        deFacut = (userRole === 'ospatar'
+            ? grupuri.comenzi.filter(o => o.status === 'gata' || gataDeDus(o)) : grupuri.comenzi).length + grupuri.cereri.length;
+        viewOrders = grupuri[subTab];
+        // de dus la masa primele (ospatar), apoi neacceptatele, apoi restul in ordinea intrarii
+        const rang = (o) => (gataDeDus(o) ? 0 : o.status === 'noua' ? 1 : 2);
         viewOrders.sort((a, b) => rang(a) - rang(b));
     } else {
         // istoricul e pe zile de lucru: azi (live, de la ultima inchidere) sau
@@ -3733,22 +3857,22 @@
     
     if(filterText) viewOrders = viewOrders.filter(o => String(o.mesa || '').toLowerCase().includes(filterText));
 
-    if(currentTab === 'active' && !filterText) {
-        // pentru ospatar numaram doar ce are de facut el: de dus la masa si cereri
-        const deFacut = userRole === 'ospatar'
-            ? viewOrders.filter(o => esteAlerta(o) || o.status === 'gata' || gataDeDus(o)) : viewOrders;
-        document.getElementById('countActive').textContent = deFacut.length;
-        document.getElementById('countActive').style.display = deFacut.length === 0 ? 'none' : 'inline-block';
+    if(currentTab === 'active' && deFacut !== null) {
+        document.getElementById('countActive').textContent = deFacut;
+        document.getElementById('countActive').style.display = deFacut === 0 ? 'none' : 'inline-block';
     }
-    
+
     if(viewOrders.length === 0) {
+        const gol = currentTab !== 'active' ? 'Nicio comanda aici.'
+                  : subTab === 'cereri' ? 'Nicio cerere de la mese acum.'
+                  : subTab === 'altele' ? 'Nicio comanda in alte zone.' : 'Nicio comanda aici.';
         return container.innerHTML = `
         <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 60px 20px;">
-            <div style="font-size: 40px; margin-bottom: 10px; opacity: 0.5;">🍽️</div>
-            Nicio comanda aici.
+            <div style="font-size: 40px; margin-bottom: 10px; opacity: 0.5;">${subTab === 'cereri' && currentTab === 'active' ? '🙋' : '🍽️'}</div>
+            ${gol}
         </div>`;
     }
-    
+
         viewOrders.forEach(order => {
       const isAlert = esteAlerta(order);
       const activa = ACTIVE.includes(order.status);
@@ -3776,7 +3900,6 @@
       let timeStr = new Date(order.created_at).toLocaleTimeString('ro-RO', {hour:'2-digit', minute:'2-digit'});
       let staffName = escapeHTML(order.preluat_de || order.creat_de || '');
       let staffLine = (staffName ? `<div style="font-size:11px; color:var(--text-muted); font-family:'Space Mono',monospace; margin-top:4px;">👤 ${staffName}</div>` : '') + (currentTab === 'active' ? zonaLine(order) : '');
-      if (currentTab === 'active' && !esteZonaMea(order)) card.classList.add('alta-zona');
 
             let footerHtml = '';
       const btnEdit = `<button class="btn-action btn-edit" title="Modifica comanda" onclick="deschideEditComanda(${order.id})">✏️</button>`;
@@ -3945,7 +4068,6 @@
       }
       checkAutoFreeTables();
       updateMapBadge();
-      updatePaymentAlertBadge();
       if(currentTab === 'map') renderTablesGrid();
   }
 
@@ -4045,7 +4167,7 @@
           const idx = allOrders.findIndex(o => o.id === id);
           if (idx !== -1) Object.assign(allOrders[idx], { status: 'anulata', motiv_anulare: data.motiv_anulare, anulat_de: data.anulat_de });
           inchideAnulare();
-          renderOrders(); updateMapBadge(); updatePaymentAlertBadge(); sincronizeazaAlarma();
+          renderOrders(); updateMapBadge(); sincronizeazaAlarma();
           if (currentTab === 'admin') calculateDirectorStats();
           const o = allOrders[idx];
           arataInapoi(`❌ Anulata · ${o ? etichetaMasaVorbita(o) : 'comanda'}`, () => revino(id, 'anulare'));
@@ -4433,7 +4555,7 @@
           else if (ce === 'anulare') Object.assign(allOrders[idx], { status: data.status, motiv_anulare: null, anulat_de: null });
           else Object.assign(allOrders[idx], { status: data.status, confirmada_la: data.status === 'finalizata' ? allOrders[idx].confirmada_la : null });
       }
-      renderOrders(); updateMapBadge(); updatePaymentAlertBadge(); sincronizeazaAlarma();
+      renderOrders(); updateMapBadge(); sincronizeazaAlarma();
       if (currentTab === 'admin') calculateDirectorStats();
       return true;
   }
@@ -4461,7 +4583,6 @@
           if(index !== -1) Object.assign(allOrders[index], updatePayload);
           renderOrders();
           updateMapBadge();
-          updatePaymentAlertBadge();
           sincronizeazaAlarma();
           logActivity('estado_cambiado', id, { status, mesa: order ? order.mesa : null, productos: order ? order.produse : null, sectiune: order ? order.sectiune : null, grup_comanda: order ? order.grup_comanda : null });
           if ((status === 'finalizata' || status === 'gata') && order && !esteAlerta(order)) {
@@ -5050,12 +5171,12 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
           const qty = meniuCart[item.imageNumber] || 0;
           const safeName = escapeHTML(item.name);
           container.innerHTML += `
-            <div class="stock-item" id="meniu-item-${item.imageNumber}">
+            <div class="stock-item cr-item" id="meniu-item-${item.imageNumber}">
               <div>
                  <div class="s-name" style="font-weight: 600; font-size: 15px;">${safeName}</div>
-                 <div style="font-size: 13px; color: var(--text-muted); margin-top:2px;">${Number(item.price).toFixed(2)} lei</div>
+                 <div style="font-size: 12.5px; color: var(--text-muted); margin-top:1px;">${Number(item.price).toFixed(2)} lei</div>
               </div>
-              <div style="display:flex; align-items:center; gap:10px;">
+              <div style="display:flex; align-items:center; gap:8px;">
                 <button class="btn-action" style="width:36px; height:36px; padding:0; background:rgba(255,255,255,0.06);" onclick="meniuChangeQty(${item.imageNumber}, -1)">−</button>
                 <span style="min-width:20px; text-align:center; font-family:'Space Mono',monospace; font-weight:700;">${qty}</span>
                 <button class="btn-action" style="width:36px; height:36px; padding:0; background:var(--accent);" onclick="meniuChangeQty(${item.imageNumber}, 1)">+</button>
@@ -5154,7 +5275,7 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
           }
           const isAlert = esteAlerta(p.new);
           const maPriveste = esteConducere() || p.new.sectiune === userRole
-              || (userRole === 'bar' && faraBucatarie) || (isAlert && (userRole === 'ospatar' || userRole === 'bar'));
+              || (userRole === 'bar' && faraBucatarie) || (isAlert && (userRole === 'bar' || (userRole === 'ospatar' && esteZonaMea(p.new))));
           if (maPriveste && p.new.status === 'noua') playAlertAndVibrate(p.new);
           // lista se reface pentru toti: ospatarul vede si comenzile in lucru
           renderOrders();
@@ -5163,7 +5284,6 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
           if(!isAlert) cleanupTableAlerts(p.new.mesa);
 
           updateMapBadge();
-          updatePaymentAlertBadge();
           sincronizeazaAlarma();
       })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'comenzi' }, p => {
@@ -5206,14 +5326,13 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
               renderOrders();
           }
           updateMapBadge();
-          updatePaymentAlertBadge();
           sincronizeazaAlarma();
 
           // barul a apasat „Gata": ospatarul aude bipul si masa, ca sa vina s-o ia
           if (userRole === 'ospatar' && !faraOspatari && !esteAlerta(p.new)
               && ((p.new.status === 'gata' && prevStatus !== 'gata')
                   || (p.new.status === 'finalizata' && ['noua', 'acceptata', 'gata'].includes(prevStatus)))) {
-              if (!esteZonaMea(p.new)) { bipScurt(1); return; }   // alta zona: colegul ei e anuntat; tu doar vezi
+              if (!esteZonaMea(p.new)) return;   // alta zona: colegul ei e anuntat; tu doar o vezi in „Alte zone"
               if (navigator.vibrate) { try { navigator.vibrate([400, 200, 400, 200, 800]); } catch(e) {} }
               bipScurt(2);
               const validItems = (p.new.produse || []).filter(x => x.cantitate > 0);
@@ -5236,7 +5355,6 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
           renderOrders();
           if (currentTab === 'map') renderTablesGrid();
           updateMapBadge();
-          updatePaymentAlertBadge();
           sincronizeazaAlarma();
       })
       .subscribe((stare) => {
@@ -5541,8 +5659,8 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
       pasi.push({ el: null, titlu: 'Bun venit', text: 'Un tur de 30 de secunde. Il reiei oricand din „❓ Ghid rapid".' });
       if (rol !== 'director') pasi.push({ el: '#navActive', titlu: 'Comenzi',
           text: rol === 'ospatar'
-            ? 'Ce e de dus la masa si cererile de la mese (nota, ajutor). Comenzile in lucru apar mai sters.'
-            : 'Comenzile intra aici in timp real. Numarul de pe iconita: cate sunt active.' });
+            ? 'Sus ai taburi: „Zona mea" (comenzile tale, de dus la masa), „Cereri" (nota, ajutor) si „Alte zone" (ale colegilor — fara sunet, dar le poti lua).'
+            : 'Comenzile intra aici in timp real; cererile de la mese au tabul lor. Numarul de pe iconita: cate sunt active.' });
       if (rol !== 'director') pasi.push({ el: () => document.getElementById('cardDemoGhid') || document.querySelector('#ordersView .order-card') || document.getElementById('ordersView'),
           titlu: 'O comanda',
           text: rol === 'ospatar'
@@ -5553,7 +5671,7 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
           inainte() { switchTab('active'); cardDemoGhid(true); },
           dupa() { cardDemoGhid(false); } });
       if (rol !== 'director') {
-          pasi.push({ el: mobil ? '#btnToggleSoundMobile' : '#btnToggleSound', titlu: 'Voce',
+          pasi.push({ el: mobil ? '#btnVoceMobile' : '#btnToggleSound', titlu: 'Voce',
               text: 'Pornita: telefonul spune masa. Oprita: doar bipuri. Tine minte ce ai ales.' });
       }
       if (rol === 'ospatar') {
@@ -5575,8 +5693,8 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
       } else {
           pasi.push({ el: '#navAdmin', titlu: 'Sef', text: 'Incasari, codul lunii pentru anulari, „ora de varf".' });
       }
-      pasi.push({ el: mobil ? '#btnNotificariMobile' : '#btnNotificari', titlu: 'Notificari',
-          text: 'Porneste-le ca sa primesti comenzile si cu telefonul blocat.' });
+      if (mobil) pasi.push({ el: '#mobileUserDisplay', titlu: 'Contul tau',
+          text: 'Apasa pe numele tau: ghidul asta, starea notificarilor, informarea GDPR, iesirea din cont.' });
       return pasi;
   }
 
@@ -5587,6 +5705,7 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
       if (!fortat && vazut) return;
       if (Tur.activ()) return;
       if (!fortat && document.getElementById('modalZona').classList.contains('open')) { ghidDupaZona = true; return; }
+      if (!fortat && notificariDeschise()) { dupaNotificari.push(() => pornesteGhidDashboard(false)); return; }
       Tur.start(pasiGhidDashboard(), { laFinal() {
           try { localStorage.setItem(cheie, '1'); } catch(e) {}
           if (zonaDupaGhid) { zonaDupaGhid = false; deschideZona(true); }

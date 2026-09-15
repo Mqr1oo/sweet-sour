@@ -240,8 +240,24 @@
   .t-head > span:first-child { white-space: nowrap; flex-shrink: 0; }
   .t-status { color: var(--pink-bright); animation: pulseText 2s infinite; text-align: right; line-height: 1.3; }
   @keyframes pulseText { 0% {opacity: 1;} 50% {opacity: 0.6;} 100% {opacity: 1;} }
-  .t-bar-bg { width: 100%; height: 5px; background: var(--paper-dim); border-radius: 10px; overflow: hidden; }
-  .t-bar-fill { height: 100%; background: var(--pink-main); width: 10%; transition: width 0.5s; }
+  /* pasii comenzii: trimisa → acceptata → la masa, cu linia care se umple */
+  .t-pasi { position: relative; display: flex; justify-content: space-between; margin: 10px 4px 2px; }
+  .t-pasi::before { content: ''; position: absolute; left: 9px; right: 9px; top: 7px; height: 3px; background: var(--paper-dim); border-radius: 3px; }
+  .t-linie { position: absolute; left: 9px; top: 7px; height: 3px; width: 0; background: var(--pink-bright); border-radius: 3px; transition: width 0.6s var(--ease-out); }
+  .t-pas { position: relative; display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.02em; color: var(--ink-soft); }
+  .t-pas:first-of-type { align-items: flex-start; } .t-pas:last-of-type { align-items: flex-end; }
+  .t-pas i { display: block; width: 17px; height: 17px; border-radius: 50%; background: var(--bg-card); border: 3px solid var(--paper-dim); box-sizing: border-box; transition: border-color 0.3s, background-color 0.3s; }
+  .t-pas.facut i { background: var(--pink-bright); border-color: var(--pink-bright); }
+  .t-pas.acum i { border-color: var(--pink-bright); animation: pulsPas 1.5s infinite; }
+  .t-pas.facut b, .t-pas.acum b { color: var(--ink); }
+  .t-pas b { font-weight: 700; }
+  @keyframes pulsPas { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--pink-bright) 55%, transparent); } 50% { box-shadow: 0 0 0 7px transparent; } }
+  .tracker-widget.anulata .t-linie, .tracker-widget.anulata .t-pas.facut i { background: var(--coral); border-color: var(--coral); }
+  /* dupa ce a fost servita, bara se strange intr-un rand */
+  .tracker-widget.mic { padding: 8px 14px; }
+  .tracker-widget.mic .t-pasi, .tracker-widget.mic .t-hint { display: none; }
+  .tracker-widget.mic .t-head { margin-bottom: 0; }
+  .tracker-widget.mic .t-status { animation: none; }
 
   .global-fav-btn { position: fixed; bottom: calc(20px + env(safe-area-inset-bottom)); right: 16px; height: 48px; background: rgba(20, 16, 13, 0.9); backdrop-filter: blur(14px) saturate(160%); border: 1.5px solid var(--pink-main); padding: 0 20px; gap: 8px; color: var(--ink); font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; border-radius: 100px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 90; transition: transform 0.4s var(--ease-out-fast), background-color 0.3s var(--ease-out), color 0.3s var(--ease-out); box-shadow: 0 6px 22px rgba(47, 63, 107, 0.42); }
   .global-fav-btn:active { transform: scale(0.92); transition-duration: 0.1s; }
@@ -676,8 +692,11 @@
       <span id="trackerTitle">Comanda ta ▸</span>
       <span class="t-status" id="trackerStatusText">Se trimite...</span>
   </div>
-  <div class="t-bar-bg">
-      <div class="t-bar-fill" id="trackerProgress"></div>
+  <div class="t-pasi" id="trackerPasi">
+      <div class="t-linie" id="trackerProgress"></div>
+      <span class="t-pas" data-pas="0"><i></i><b id="tp0">Trimisa</b></span>
+      <span class="t-pas" data-pas="1"><i></i><b id="tp1">Acceptata</b></span>
+      <span class="t-pas" data-pas="2"><i></i><b id="tp2">La masa</b></span>
   </div>
   <div class="t-hint" id="trackerHint">Apasa: vezi comanda · scoate ceva · imparte nota</div>
 </div>
@@ -1182,7 +1201,8 @@
       cartItemsLabel: 'produse alese', emptyCartHint: 'Nu ai ales nimic inca.',
       // starea comenzii (bara de sus) si fisa comenzii
       stNoua: '📨 Trimisa — asteapta sa fie vazuta', stAcceptata: '✅ Acceptata — am vazut comanda, urmeaza sa vina',
-      stGata: '✅ Acceptata — vine acum la masa', stServita: '✔️ Preluata. Pofta buna!', stAnulata: '❌ Anulata',
+      stGata: '✅ Acceptata — vine acum la masa', stVine: '🍽️ E gata — vine la masa acum', stServita: '✔️ Servita. Pofta buna!', stAnulata: '❌ Anulata',
+      tpTrimisa: 'Trimisa', tpAcceptata: 'Acceptata', tpLaMasa: 'La masa',
       // fara ospatari: cine pregateste o si aduce, deci nu mai exista „gata"
       stFaraOspBautura: '🍹 Acceptata — bautura vine din moment in moment', stFaraOspMancare: '🍳 Acceptata — mancarea se pregateste, vine in cateva minute',
       stFaraOspMixt: '✅ Acceptata — bauturile vin din moment in moment, mancarea in cateva minute',
@@ -1308,7 +1328,8 @@
       splitModeEqual: 'Equal parts', splitModeProduct: 'By product', splitProductHint: 'Assign each product to a person.', personLabel: 'Person',
       cartItemsLabel: 'items selected', emptyCartHint: 'You haven\'t picked anything yet.',
       stNoua: '📨 Sent — waiting to be seen', stAcceptata: '✅ Accepted — we\'ve seen your order, it\'s on its way',
-      stGata: '✅ Accepted — coming to your table now', stServita: '✔️ Delivered. Enjoy!', stAnulata: '❌ Cancelled',
+      stGata: '✅ Accepted — coming to your table now', stVine: '🍽️ Ready — coming to your table now', stServita: '✔️ Served. Enjoy!', stAnulata: '❌ Cancelled',
+      tpTrimisa: 'Sent', tpAcceptata: 'Accepted', tpLaMasa: 'At table',
       stFaraOspBautura: '🍹 Accepted — your drinks are on their way', stFaraOspMancare: '🍳 Accepted — your food is being prepared, a few minutes',
       stFaraOspMixt: '✅ Accepted — drinks any moment now, food in a few minutes',
       osTimp: (mm, ss) => `can still be changed for ${mm}:${ss}`, osTimpNoua: 'can be changed until accepted', osTimpExpirat: (m) => `the ${m}-minute window has passed`,
@@ -1409,6 +1430,9 @@
     document.getElementById('osSplitBtn').textContent = t.osSplitBtn;
     document.getElementById('osAddMore').textContent = t.osAddMore;
     document.getElementById('trackerHint').textContent = t.trackerHint;
+    document.getElementById('tp0').textContent = t.tpTrimisa;
+    document.getElementById('tp1').textContent = t.tpAcceptata;
+    document.getElementById('tp2').textContent = t.tpLaMasa;
 
     renderTagFilters();
     render();
@@ -2002,12 +2026,25 @@
   // poate imparti nota la final. Token-ul e secretul cu care telefonul
   // dovedeste serverului ca e comanda lui; in baza sta doar hash-ul lui.
 
+  // Raman in telefon (localStorage) 8 ore, pentru aceeasi masa: daca
+  // clientul scaneaza din nou codul sau i se inchide browserul, isi regaseste
+  // comanda. Alta masa sau alta zi = de la zero.
+  const COMENZI_MAX_MS = 8 * 3600000;
   function incarcaComenziSesiune() {
-      try { comenziSesiune = JSON.parse(sessionStorage.getItem(STORE + 'comenzi') || '[]'); } catch(e) { comenziSesiune = []; }
-      if (!Array.isArray(comenziSesiune)) comenziSesiune = [];
+      comenziSesiune = [];
+      try {
+          const brut = localStorage.getItem(STORE + 'comenzi') || sessionStorage.getItem(STORE + 'comenzi') || '[]';
+          const d = JSON.parse(brut);
+          const lista = Array.isArray(d) ? d : (d && Array.isArray(d.comenzi) ? d.comenzi : []);
+          const masa = sessionStorage.getItem(STORE + 'masa');
+          const acum = Date.now();
+          comenziSesiune = lista.filter(c => c && c.id && (!c.mesa || !masa || masa === 'stabilita' || String(c.mesa) === String(masa))
+              && (!c.created_at || acum - new Date(c.created_at).getTime() < COMENZI_MAX_MS));
+      } catch(e) { comenziSesiune = []; }
   }
   function salveazaComenziSesiune() {
-      try { sessionStorage.setItem(STORE + 'comenzi', JSON.stringify(comenziSesiune)); } catch(e) {}
+      try { localStorage.setItem(STORE + 'comenzi', JSON.stringify({ la: Date.now(), comenzi: comenziSesiune })); } catch(e) {}
+      try { sessionStorage.removeItem(STORE + 'comenzi'); } catch(e) {}
   }
 
   async function sha256Hex(text) {
@@ -2052,14 +2089,29 @@
       if (!st) { tracker.classList.remove('show'); return; }
       const statText = document.getElementById('trackerStatusText');
       const progress = document.getElementById('trackerProgress');
+      // dupa „Gata" bara ramane: intai „vine la masa" (cateva minute), apoi
+      // „servita"; dupa un sfert de ora se strange intr-un rand
+      const VINE_MS = 4 * 60000, MIC_MS = 15 * 60000;
+      const servite = comenziSesiune.filter(c => c.status === 'finalizata' && c.servita_la).map(c => c.servita_la);
+      const deCand = servite.length ? Date.now() - Math.max(...servite) : 0;
+      const eVine = st === 'finalizata' && deCand < VINE_MS;
       const harta = {
-          noua:       [t.stNoua, '25%'],
-          acceptata:  [t.stAcceptata, '60%'],
-          gata:       [t.stGata, '90%'],
-          finalizata: [t.stServita, '100%'],
-          anulata:    [t.stAnulata, '100%']
+          noua:       [t.stNoua, 0, 0],
+          acceptata:  [t.stAcceptata, 1, 50],
+          gata:       [t.stGata, 1, 75],
+          finalizata: [eVine ? t.stVine : t.stServita, eVine ? 2 : 3, 100],
+          anulata:    [t.stAnulata, -1, 0]
       };
       let text = harta[st][0];
+      // pasii: cei de dinainte sunt facuti, cel curent pulseaza
+      const pasCurent = harta[st][1];
+      tracker.querySelectorAll('.t-pas').forEach(p => {
+          const i = Number(p.dataset.pas);
+          p.classList.toggle('facut', pasCurent > i);
+          p.classList.toggle('acum', pasCurent === i);
+      });
+      tracker.classList.toggle('anulata', st === 'anulata');
+      tracker.classList.toggle('mic', st === 'finalizata' && !eVine && deCand >= MIC_MS);
       // fara ospatari nu exista „gata": cine pregateste o si aduce, deci ii
       // spunem clientului doar ca vine — bautura imediat, mancarea in cateva minute
       if (faraOspatariClient && (st === 'acceptata' || st === 'gata')) {
@@ -2074,9 +2126,8 @@
           if (parti.length) text = '❌ ' + parti.join('; ');
       }
       statText.textContent = text;
-      progress.style.width = harta[st][1];
+      progress.style.width = `calc((100% - 18px) * ${harta[st][2] / 100})`;
       statText.style.color = st === 'anulata' ? 'var(--coral)' : '';
-      progress.style.background = st === 'anulata' ? 'var(--coral)' : '';
       document.getElementById('trackerTitle').textContent = t.trackerTitle + ' ▸';
       tracker.classList.add('show');
       // antetul face loc exact cat e de inalta (textul poate lua doua randuri)
@@ -2085,6 +2136,7 @@
 
   // Un singur canal pentru toate comenzile din sesiune. Se reface cand se
   // adauga una noua.
+  setInterval(() => { if (comenziSesiune.length) actualizeazaTracker(); }, 30000);
   function urmaresteComenzi() {
       if (CFG.DEMO) { actualizeazaTracker(); return; }
       if (canalComenzi) { try { _supabase.removeChannel(canalComenzi); } catch(e) {} canalComenzi = null; }
@@ -2094,6 +2146,7 @@
       const laSchimbare = (p) => {
           const c = comenziSesiune.find(x => x.id === p.new.id); if (!c) return;
           const eraAnulata = c.status === 'anulata';
+          if (p.new.status === 'finalizata' && c.status !== 'finalizata') c.servita_la = Date.now();
           c.status = p.new.status; c.produse = p.new.produse; c.total = p.new.total;
           if (p.new.created_at) c.created_at = p.new.created_at;
           if (p.new.motiv_anulare !== undefined) c.motiv_anulare = p.new.motiv_anulare;
@@ -2141,8 +2194,11 @@
           const { data } = await _supabase.from('comenzi')
               .select('id,status,produse,total,mesa,created_at,sectiune,motiv_anulare,anulat_de').in('id', ids);
           const gasite = new Map((data || []).map(r => [r.id, r]));
-          comenziSesiune = comenziSesiune.filter(c => gasite.has(c.id)).map(c => Object.assign(c, gasite.get(c.id)))
-              .filter(c => c.status !== 'expirata');
+          comenziSesiune = comenziSesiune.filter(c => gasite.has(c.id)).map(c => {
+                  const r = gasite.get(c.id);
+                  if (r.status === 'finalizata' && !c.servita_la) c.servita_la = Date.now();
+                  return Object.assign(c, r);
+              }).filter(c => c.status !== 'expirata');
       } catch(e) {}
       salveazaComenziSesiune();
       urmaresteComenzi();
