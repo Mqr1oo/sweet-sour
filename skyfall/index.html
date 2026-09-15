@@ -973,13 +973,15 @@
   };
 
   const urlParams = new URLSearchParams(window.location.search);
-  if(urlParams.has('mesa')) {
-      sessionStorage.setItem(STORE + 'masa', urlParams.get('mesa'));
+  // ?m=12 (link scurt, din codul QR) sau ?mesa=12 (codurile mai vechi)
+  const masaDinLink = urlParams.get('m') || urlParams.get('mesa');
+  if(masaDinLink) {
+      sessionStorage.setItem(STORE + 'masa', masaDinLink);
       sessionStorage.setItem(STORE + 'mod', 'masa');
       // cheia mesei din codul QR: dovedeste ca telefonul a scanat codul de pe
       // masa aia (localul poate cere asta la comanda). Tine 14 ore.
       if (urlParams.has('k')) {
-          try { localStorage.setItem(STORE + 'cheie', JSON.stringify({ mesa: String(urlParams.get('mesa')), k: urlParams.get('k'), la: Date.now() })); } catch(e) {}
+          try { localStorage.setItem(STORE + 'cheie', JSON.stringify({ mesa: String(masaDinLink), k: urlParams.get('k'), la: Date.now() })); } catch(e) {}
       }
   }
   function cheieMasa(mesa) {

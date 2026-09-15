@@ -294,6 +294,20 @@
   .dash-panel[data-grup].adm-on{display:block}
   .stats-grid[data-grup].adm-on{display:grid}
 
+  /* Setarile, pe sectiuni (dupa cat de des le folosesti) si pe doua coloane
+     cand e loc. Sectiunea poarta grupul, panourile din ea nu. */
+  .setari-sectiune{display:none; margin-bottom:28px}
+  .setari-sectiune.adm-on{display:block}
+  .setari-titlu{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin:4px 0 14px; padding-bottom:8px; border-bottom:1px solid var(--border)}
+  .setari-titlu h4{margin:0; font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent)}
+  .setari-titlu p{margin:0; font-size:12.5px; color:var(--text-muted)}
+  .setari-grila{display:grid; grid-template-columns:1fr; gap:16px}
+  .setari-grila > .dash-panel{margin-bottom:0}
+  @media (min-width:1080px){
+    .setari-grila{grid-template-columns:1fr 1fr}
+    .setari-grila > .dash-panel.lat{grid-column:1 / -1}
+  }
+
   /* Mese: verde sub 60 min, portocaliu la 90 (verifica), rosu peste 2h. */
   .table-card.status-ok    { background: rgba(34,197,94,0.16);  border-color: var(--success) !important; }
   .table-card.status-check { background: rgba(245,158,11,0.24); border-color: var(--warning) !important;
@@ -714,221 +728,244 @@
          <div class="heatmap-best" id="heatmapBest"></div>
       </div>
 
-      <div data-grup="setari" class="dash-panel" data-director style="border-color: var(--danger);">
-         <h3 style="color: var(--danger);">🍳 Inchide bucataria</h3>
-         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-            <p style="color:var(--text-muted); font-size:13px; max-width:78%;">
-              Cand bucataria nu lucreaza, porneste asta. Tot ce ar fi mers la
-              bucatarie ajunge la panoul principal, cel de la bar, iar panoul
-              isi schimba numele ca sa se vada ca preia tot. Produsele raman in
-              meniu si clientii pot comanda in continuare — doar destinatia se
-              schimba. Daca vrei sa nu se mai poata comanda mancare deloc,
-              treci produsele pe inactiv din Meniu.
-            </p>
-            <label class="switch"><input type="checkbox" id="toggleFaraBucatarie"><span class="slider"></span></label>
-         </div>
-         <div id="faraBucatarieStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
-      </div>
+      <section class="setari-sectiune" data-grup="setari">
+        <div class="setari-titlu"><h4>Zi de zi</h4><p>Ce schimbi des: oferta zilei, o seara aglomerata, bucataria inchisa, codul de anulare.</p></div>
+        <div class="setari-grila">
+          <div class="dash-panel lat" style="border-color: var(--accent);">
+             <h3 style="color: var(--accent);">🍽️ Meniul zilei</h3>
+             <p style="color:var(--text-muted); font-size:13px;">
+               Un produs pus in capul meniului, cu pret special si ora pana la care
+               tine. Clientii il vad primul; dupa ora aleasa dispare singur si
+               produsul revine la pretul normal. Serverul calculeaza comanda cu
+               pretul special cat timp e valabil.
+             </p>
+             <div class="mz-rand">
+               <select id="mzProdus" style="flex:1; min-width:200px;"><option value="">Alege produsul…</option></select>
+               <input type="number" id="mzPret" placeholder="Pret special (lei)" step="0.01" min="0" style="width:170px;">
+               <input type="time" id="mzPana" value="16:00" style="width:130px;">
+               <button class="btn-primary" id="btnMzPune" style="width:auto; padding:10px 16px;">Pune</button>
+               <button class="btn-action" id="btnMzScoate" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;">Scoate</button>
+             </div>
+             <div id="mzStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+          <div class="dash-panel lat" style="border-color: var(--warning);">
+             <h3 style="color: var(--warning);">🔐 Codul de anulare al lunii</h3>
+             <p style="color:var(--text-muted); font-size:13px; margin-bottom:8px;">
+               Barul si ospatarii pot anula o comanda doar cu codul asta — il spui
+               tu, cand esti de acord cu anularea. Se schimba singur pe 1 ale
+               lunii. Daca s-a aflat, apasa „Cod nou". Codurile gresite raman in
+               istoricul directorului.
+             </p>
+             <div class="cod-luna" id="codLunaText">······</div>
+             <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+               <button class="btn-action" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;" id="btnCodNou">🔄 Cod nou</button>
+               <span id="codLunaStare" style="font-size:12px; color:var(--text-muted); font-family:'Space Mono',monospace;"></span>
+             </div>
+          </div>
+          <div class="dash-panel" style="border-color: var(--warning);">
+             <h3 style="color: var(--warning);">🔥 Ore de varf (avertizare bar)</h3>
+             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <p style="color:var(--text-muted); font-size:13px; max-width:80%;">Activeaza ca sa arati clientilor un avertisment rosu: barul e aglomerat si timpii de asteptare sunt mai mari decat de obicei.</p>
+                <label class="switch"><input type="checkbox" id="toggleBusyMode"><span class="slider"></span></label>
+             </div>
+          </div>
+          <div class="dash-panel" data-director style="border-color: var(--danger);">
+             <h3 style="color: var(--danger);">🍳 Inchide bucataria</h3>
+             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <p style="color:var(--text-muted); font-size:13px; max-width:78%;">
+                  Cand bucataria nu lucreaza, porneste asta. Tot ce ar fi mers la
+                  bucatarie ajunge la panoul principal, cel de la bar, iar panoul
+                  isi schimba numele ca sa se vada ca preia tot. Produsele raman in
+                  meniu si clientii pot comanda in continuare — doar destinatia se
+                  schimba. Daca vrei sa nu se mai poata comanda mancare deloc,
+                  treci produsele pe inactiv din Meniu.
+                </p>
+                <label class="switch"><input type="checkbox" id="toggleFaraBucatarie"><span class="slider"></span></label>
+             </div>
+             <div id="faraBucatarieStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+        </div>
+      </section>
 
-      <div data-grup="setari" class="dash-panel" data-director>
-         <h3>🕐 Ora de inchidere, pe zile</h3>
-         <p style="color:var(--text-muted); font-size:13px; margin-bottom:12px;">
-           La ora asta se reseteaza tot pentru ziua urmatoare: se elibereaza
-           toate mesele, comenzile ramase deschise se inchid, iar „Azi" din
-           rapoarte incepe de aici, iar toate conturile de personal ies din
-           aplicatie (a doua zi fiecare intra cu contul lui). Ora e a zilei in care ai deschis: daca
-           vineri inchizi la 4 dimineata (adica sambata), pui 04:00 la vineri.
-           Altfel comenzile de dupa miezul noptii ajung pe ziua urmatoare si
-           raportul de seara arata gresit.
-         </p>
-         <div class="ore-zile" id="oreZile"></div>
-         <div id="oraResetStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
-      </div>
+      <section class="setari-sectiune" data-grup="setari" data-director>
+        <div class="setari-titlu"><h4>Cum lucreaza localul</h4><p>Se seteaza o data, la inceput, si se schimba rar.</p></div>
+        <div class="setari-grila">
+          <div class="dash-panel lat" data-director>
+             <h3>🕐 Ora de inchidere, pe zile</h3>
+             <p style="color:var(--text-muted); font-size:13px; margin-bottom:12px;">
+               La ora asta se reseteaza tot pentru ziua urmatoare: se elibereaza
+               toate mesele, comenzile ramase deschise se inchid, iar „Azi" din
+               rapoarte incepe de aici, iar toate conturile de personal ies din
+               aplicatie (a doua zi fiecare intra cu contul lui). Ora e a zilei in care ai deschis: daca
+               vineri inchizi la 4 dimineata (adica sambata), pui 04:00 la vineri.
+               Altfel comenzile de dupa miezul noptii ajung pe ziua urmatoare si
+               raportul de seara arata gresit.
+             </p>
+             <div class="ore-zile" id="oreZile"></div>
+             <div id="oraResetStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+          <div class="dash-panel lat" data-director style="border-color: var(--blue);">
+             <h3 style="color: var(--blue);">🙋 Mod fara ospatari</h3>
+             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <p style="color:var(--text-muted); font-size:13px; max-width:80%;">
+                  Cu ospatari (oprit): barul si bucataria apasa „Accepta”,
+                  apoi „Gata” — comanda se inchide, iar telefonul ospatarului
+                  bipaie si spune masa, ca sa vina s-o ia. Fara ospatari (pornit):
+                  cine pregateste o si duce, si inchide cu „Preluata”. Clientul
+                  vede „acceptata — vine din moment in moment”, apoi „preluata”.
+                  Cererile de la mese (nota, ajutor) sunt anuntate mereu la bar.
+                  Nu se opreste singur — nu uita sa-l stingi cand revine tura normala.
+                </p>
+                <label class="switch"><input type="checkbox" id="toggleFaraOspatari"><span class="slider"></span></label>
+             </div>
+             <div id="faraOspatariStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+          <div class="dash-panel" data-director>
+             <h3>✏️ Fereastra de modificare</h3>
+             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <p style="color:var(--text-muted); font-size:13px; max-width:76%;">
+                  Cate minute dupa trimitere mai poate modifica ospatarul o
+                  comanda deja acceptata (cat e neacceptata, oricand). Clientul o
+                  poate modifica de pe telefon doar pana e acceptata; dupa, cheama
+                  ospatarul. Barul, bucataria si managerul o pot modifica oricand
+                  cat e deschisa.
+                </p>
+                <select id="fereastraMin" style="padding:11px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px;">
+                  <option value="3">3 minute</option>
+                  <option value="5">5 minute</option>
+                  <option value="10">10 minute</option>
+                  <option value="15">15 minute</option>
+                  <option value="30">30 minute</option>
+                </select>
+             </div>
+             <div id="fereastraStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+          <div class="dash-panel" data-director>
+             <h3>⏱️ Cat sta masa dupa nota</h3>
+             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <p style="color:var(--text-muted); font-size:13px; max-width:76%;">
+                  Din clipa in care o masa cere nota (de pe telefon sau pusa de
+                  personal), devine mov si are atatea minute sa plateasca si sa
+                  plece; apoi se elibereaza singura si totalul porneste de la zero
+                  pentru urmatorii clienti. Barul o poate elibera si mai devreme,
+                  din Sala.
+                </p>
+                <select id="minuteEliberare" style="padding:11px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px;">
+                  <option value="5">5 minute</option>
+                  <option value="10">10 minute</option>
+                  <option value="15">15 minute</option>
+                  <option value="20">20 minute</option>
+                  <option value="30">30 minute</option>
+                  <option value="45">45 minute</option>
+                  <option value="60">60 minute</option>
+                </select>
+             </div>
+             <div id="eliberareStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+          <div class="dash-panel" data-director style="border-color: var(--warning);">
+             <h3 style="color: var(--warning);">⏰ Alerta „comanda uitata"</h3>
+             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <p style="color:var(--text-muted); font-size:13px; max-width:76%;">
+                  O comanda neacceptata de atatea minute suna tare la toata lumea
+                  din tura si trimite notificare managerului si sectiunii, chiar
+                  daca nimeni n-are panoul deschis. Ramane in jurnal.
+                </p>
+                <select id="minuteUitata" class="lim-in">
+                  <option value="3">3 minute</option>
+                  <option value="5">5 minute</option>
+                  <option value="7">7 minute</option>
+                  <option value="10">10 minute</option>
+                  <option value="15">15 minute</option>
+                </select>
+             </div>
+             <div id="uitataStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+          <div class="dash-panel" data-director>
+             <h3>🥡 Comenzi la pachet</h3>
+             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <p style="color:var(--text-muted); font-size:13px; max-width:80%;">
+                  Oprit: clientul vede in meniu doar „Sunt la o masa”. Pornit: apare
+                  si „La pachet” (cu nume si telefon, sterse dupa 48 de ore).
+                </p>
+                <label class="switch"><input type="checkbox" id="toggleComenziPachet"><span class="slider"></span></label>
+             </div>
+             <div id="comenziPachetStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+        </div>
+      </section>
 
-      <div data-grup="setari" class="dash-panel" data-director>
-         <h3>⏱️ Cat sta masa dupa nota</h3>
-         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-            <p style="color:var(--text-muted); font-size:13px; max-width:76%;">
-              Din clipa in care o masa cere nota (de pe telefon sau pusa de
-              personal), devine mov si are atatea minute sa plateasca si sa
-              plece; apoi se elibereaza singura si totalul porneste de la zero
-              pentru urmatorii clienti. Barul o poate elibera si mai devreme,
-              din Sala.
-            </p>
-            <select id="minuteEliberare" style="padding:11px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px;">
-              <option value="5">5 minute</option>
-              <option value="10">10 minute</option>
-              <option value="15">15 minute</option>
-              <option value="20">20 minute</option>
-              <option value="30">30 minute</option>
-              <option value="45">45 minute</option>
-              <option value="60">60 minute</option>
-            </select>
-         </div>
-         <div id="eliberareStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
-      </div>
+      <section class="setari-sectiune" data-grup="setari">
+        <div class="setari-titlu"><h4>Siguranta</h4><p>Protectie pentru cont si impotriva comenzilor false.</p></div>
+        <div class="setari-grila">
+          <div class="dash-panel" style="border-color: var(--blue);">
+             <h3 style="color: var(--blue);">🔐 Al doilea factor pentru contul tau</h3>
+             <p style="color:var(--text-muted); font-size:13px;">
+               La intrare, pe langa parola, ti se cere un cod de 6 cifre din
+               aplicatia de autentificare de pe telefon (Google Authenticator,
+               Microsoft Authenticator, Authy). Daca cineva afla parola, tot nu
+               poate intra. Doar pentru contul cu care esti logat acum.
+             </p>
+             <div id="mfaStare" style="margin:10px 0; font-size:14px;">…</div>
+             <div id="mfaInrolare" style="display:none;">
+               <p style="font-size:13px; color:var(--text-muted);">1. Deschide aplicatia de autentificare si scaneaza codul (sau scrie cheia de mai jos). 2. Scrie codul de 6 cifre pe care ti-l arata.</p>
+               <div id="mfaQr"></div>
+               <div class="mfa-secret" id="mfaSecret"></div>
+               <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px;">
+                 <input type="text" id="mfaCodInrolare" class="lim-in" inputmode="numeric" maxlength="6" placeholder="000000" style="width:130px;">
+                 <button class="btn-primary" id="btnMfaConfirma" style="width:auto; padding:10px 16px;">Confirma</button>
+               </div>
+             </div>
+             <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+               <button class="btn-primary" id="btnMfaActiveaza" style="width:auto; padding:10px 16px; display:none;">Activeaza</button>
+               <button class="btn-action" id="btnMfaDezactiveaza" style="display:none; border:1px solid var(--danger); background:rgba(239,68,68,.12); color:var(--text); font-size:13px; padding:10px 14px;">Dezactiveaza</button>
+             </div>
+             <div id="mfaMesaj" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+          <div class="dash-panel" data-director style="border-color: var(--danger);">
+             <h3 style="color: var(--danger);">🔑 Cod unic pe masa (anti-farse)</h3>
+             <p style="color:var(--text-muted); font-size:13px;">
+               Pornit: o comanda de la client trece doar daca telefonul a scanat
+               codul QR de pe masa — fiecare masa are un cod ascuns in QR-ul ei,
+               deci nimeni nu mai poate comanda „de acasa" pe masa 7. Codurile QR
+               cu cheie le face si le tipareste dezvoltatorul; porneste optiunea
+               abia dupa ce sunt lipite pe mese, altfel clientii nu pot comanda.
+             </p>
+             <label class="mp-check" style="margin:8px 0;">
+               <input type="checkbox" id="cheiActiv"> Comenzile de la clienti cer codul de pe masa
+             </label>
+             <div id="cheiStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+          <div class="dash-panel lat" data-director>
+             <h3>🚧 Limite pentru comenzile de la clienti</h3>
+             <p style="color:var(--text-muted); font-size:13px;">
+               Aparare impotriva glumelor si a greselilor: peste limite, telefonul
+               clientului primeste un mesaj si e trimis la ospatar. Peste pragul in
+               lei comanda intra normal, dar cu semnul „suma mare — confirma la
+               masa" (barul o accepta abia dupa ce a confirmat).
+             </p>
+             <div class="limite-grid">
+               <label>Comenzi neconfirmate pe masa, in acelasi timp <input type="number" id="limNeacceptate" min="1" max="20" value="3"></label>
+               <label>Comenzi in 10 minute, pe masa <input type="number" id="limRitm" min="2" max="50" value="8"></label>
+               <label>Bucati intr-o singura comanda <input type="number" id="limProduse" min="5" max="200" value="30"></label>
+               <label>Prag „suma mare" (lei) <input type="number" id="limPrag" min="50" step="10" value="500"></label>
+             </div>
+             <button class="btn-primary" id="btnLimite" style="width:auto; padding:10px 16px;">Salveaza limitele</button>
+             <div id="limiteStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+        </div>
+      </section>
 
-      <div data-grup="setari" class="dash-panel" data-director>
-         <h3>✏️ Fereastra de modificare</h3>
-         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-            <p style="color:var(--text-muted); font-size:13px; max-width:76%;">
-              Cate minute dupa trimitere mai poate modifica ospatarul o
-              comanda deja acceptata (cat e neacceptata, oricand). Clientul o
-              poate modifica de pe telefon doar pana e acceptata; dupa, cheama
-              ospatarul. Barul, bucataria si managerul o pot modifica oricand
-              cat e deschisa.
-            </p>
-            <select id="fereastraMin" style="padding:11px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px;">
-              <option value="3">3 minute</option>
-              <option value="5">5 minute</option>
-              <option value="10">10 minute</option>
-              <option value="15">15 minute</option>
-              <option value="30">30 minute</option>
-            </select>
-         </div>
-         <div id="fereastraStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
-      </div>
 
-      <div data-grup="setari" class="dash-panel" style="border-color: var(--accent);">
-         <h3 style="color: var(--accent);">🍽️ Meniul zilei</h3>
-         <p style="color:var(--text-muted); font-size:13px;">
-           Un produs pus in capul meniului, cu pret special si ora pana la care
-           tine. Clientii il vad primul; dupa ora aleasa dispare singur si
-           produsul revine la pretul normal. Serverul calculeaza comanda cu
-           pretul special cat timp e valabil.
-         </p>
-         <div class="mz-rand">
-           <select id="mzProdus" style="flex:1; min-width:200px;"><option value="">Alege produsul…</option></select>
-           <input type="number" id="mzPret" placeholder="Pret special (lei)" step="0.01" min="0" style="width:170px;">
-           <input type="time" id="mzPana" value="16:00" style="width:130px;">
-           <button class="btn-primary" id="btnMzPune" style="width:auto; padding:10px 16px;">Pune</button>
-           <button class="btn-action" id="btnMzScoate" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;">Scoate</button>
-         </div>
-         <div id="mzStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
-      </div>
 
-      <div data-grup="setari" class="dash-panel" style="border-color: var(--blue);">
-         <h3 style="color: var(--blue);">🔐 Al doilea factor pentru contul tau</h3>
-         <p style="color:var(--text-muted); font-size:13px;">
-           La intrare, pe langa parola, ti se cere un cod de 6 cifre din
-           aplicatia de autentificare de pe telefon (Google Authenticator,
-           Microsoft Authenticator, Authy). Daca cineva afla parola, tot nu
-           poate intra. Doar pentru contul cu care esti logat acum.
-         </p>
-         <div id="mfaStare" style="margin:10px 0; font-size:14px;">…</div>
-         <div id="mfaInrolare" style="display:none;">
-           <p style="font-size:13px; color:var(--text-muted);">1. Deschide aplicatia de autentificare si scaneaza codul (sau scrie cheia de mai jos). 2. Scrie codul de 6 cifre pe care ti-l arata.</p>
-           <div id="mfaQr"></div>
-           <div class="mfa-secret" id="mfaSecret"></div>
-           <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px;">
-             <input type="text" id="mfaCodInrolare" class="lim-in" inputmode="numeric" maxlength="6" placeholder="000000" style="width:130px;">
-             <button class="btn-primary" id="btnMfaConfirma" style="width:auto; padding:10px 16px;">Confirma</button>
-           </div>
-         </div>
-         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-           <button class="btn-primary" id="btnMfaActiveaza" style="width:auto; padding:10px 16px; display:none;">Activeaza</button>
-           <button class="btn-action" id="btnMfaDezactiveaza" style="display:none; border:1px solid var(--danger); background:rgba(239,68,68,.12); color:var(--text); font-size:13px; padding:10px 14px;">Dezactiveaza</button>
-         </div>
-         <div id="mfaMesaj" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
-      </div>
 
-      <div data-grup="setari" class="dash-panel" data-director style="border-color: var(--danger);">
-         <h3 style="color: var(--danger);">🔑 Cod unic pe masa (anti-farse)</h3>
-         <p style="color:var(--text-muted); font-size:13px;">
-           Pornit: o comanda de la client trece doar daca telefonul a scanat
-           codul QR de pe masa — fiecare masa are un cod ascuns in QR. Nimeni
-           nu mai poate comanda „de acasa" pe masa 7. Ai nevoie de coduri QR
-           noi, facute din lista de mai jos (unealta din <code>qr/</code>);
-           porneste optiunea abia dupa ce le-ai lipit pe mese.
-         </p>
-         <label class="mp-check" style="margin:8px 0;">
-           <input type="checkbox" id="cheiActiv"> Comenzile de la clienti cer codul de pe masa
-         </label>
-         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-           <button class="btn-action" id="btnCheiArata" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;">📋 Lista pentru codurile QR</button>
-           <button class="btn-action" id="btnCheiCopiaza" style="display:none; border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;">Copiaza lista</button>
-           <button class="btn-action" id="btnCheiNoi" style="border:1px solid var(--danger); background:rgba(239,68,68,.12); color:var(--text); font-size:13px; padding:10px 14px;">Chei noi (toate)</button>
-         </div>
-         <textarea id="cheiLista" readonly style="display:none; width:100%; min-height:140px; margin-top:10px; padding:10px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:'Space Mono',monospace; font-size:12px;"></textarea>
-         <div id="cheiStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
-      </div>
 
-      <div data-grup="setari" class="dash-panel" data-director>
-         <h3>🚧 Limite pentru comenzile de la clienti</h3>
-         <p style="color:var(--text-muted); font-size:13px;">
-           Aparare impotriva glumelor si a greselilor: peste limite, telefonul
-           clientului primeste un mesaj si e trimis la ospatar. Peste pragul in
-           lei comanda intra normal, dar cu semnul „suma mare — confirma la
-           masa" (barul o accepta abia dupa ce a confirmat).
-         </p>
-         <div class="limite-grid">
-           <label>Comenzi neconfirmate pe masa, in acelasi timp <input type="number" id="limNeacceptate" min="1" max="20" value="3"></label>
-           <label>Comenzi in 10 minute, pe masa <input type="number" id="limRitm" min="2" max="50" value="8"></label>
-           <label>Bucati intr-o singura comanda <input type="number" id="limProduse" min="5" max="200" value="30"></label>
-           <label>Prag „suma mare" (lei) <input type="number" id="limPrag" min="50" step="10" value="500"></label>
-         </div>
-         <button class="btn-primary" id="btnLimite" style="width:auto; padding:10px 16px;">Salveaza limitele</button>
-         <div id="limiteStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
-      </div>
 
-      <div data-grup="setari" class="dash-panel" data-director style="border-color: var(--warning);">
-         <h3 style="color: var(--warning);">⏰ Alerta „comanda uitata"</h3>
-         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-            <p style="color:var(--text-muted); font-size:13px; max-width:76%;">
-              O comanda neacceptata de atatea minute suna tare la toata lumea
-              din tura si trimite notificare managerului si sectiunii, chiar
-              daca nimeni n-are panoul deschis. Ramane in jurnal.
-            </p>
-            <select id="minuteUitata" class="lim-in">
-              <option value="3">3 minute</option>
-              <option value="5">5 minute</option>
-              <option value="7">7 minute</option>
-              <option value="10">10 minute</option>
-              <option value="15">15 minute</option>
-            </select>
-         </div>
-         <div id="uitataStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
-      </div>
 
-      <div data-grup="setari" class="dash-panel" style="border-color: var(--warning);">
-         <h3 style="color: var(--warning);">🔐 Codul de anulare al lunii</h3>
-         <p style="color:var(--text-muted); font-size:13px; margin-bottom:8px;">
-           Barul si ospatarii pot anula o comanda doar cu codul asta — il spui
-           tu, cand esti de acord cu anularea. Se schimba singur pe 1 ale
-           lunii. Daca s-a aflat, apasa „Cod nou". Codurile gresite raman in
-           istoricul directorului.
-         </p>
-         <div class="cod-luna" id="codLunaText">······</div>
-         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-           <button class="btn-action" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;" id="btnCodNou">🔄 Cod nou</button>
-           <span id="codLunaStare" style="font-size:12px; color:var(--text-muted); font-family:'Space Mono',monospace;"></span>
-         </div>
-      </div>
 
-      <div data-grup="setari" class="dash-panel" style="border-color: var(--warning);">
-         <h3 style="color: var(--warning);">🔥 Ore de varf (avertizare bar)</h3>
-         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-            <p style="color:var(--text-muted); font-size:13px; max-width:80%;">Activeaza ca sa arati clientilor un avertisment rosu: barul e aglomerat si timpii de asteptare sunt mai mari decat de obicei.</p>
-            <label class="switch"><input type="checkbox" id="toggleBusyMode"><span class="slider"></span></label>
-         </div>
-      </div>
+
+
+
       
-      <div data-grup="setari" class="dash-panel" data-director style="border-color: var(--blue);">
-         <h3 style="color: var(--blue);">🙋 Mod fara ospatari</h3>
-         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-            <p style="color:var(--text-muted); font-size:13px; max-width:80%;">
-              Cu ospatari (oprit): barul si bucataria apasa „Accepta”,
-              apoi „Gata” — comanda se inchide, iar telefonul ospatarului
-              bipaie si spune masa, ca sa vina s-o ia. Fara ospatari (pornit):
-              cine pregateste o si duce, si inchide cu „Preluata”. Clientul
-              vede „acceptata — vine din moment in moment”, apoi „preluata”.
-              Cererile de la mese (nota, ajutor) sunt anuntate mereu la bar.
-              Nu se opreste singur — nu uita sa-l stingi cand revine tura normala.
-            </p>
-            <label class="switch"><input type="checkbox" id="toggleFaraOspatari"><span class="slider"></span></label>
-         </div>
-         <div id="faraOspatariStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
-      </div>
 
       <div data-grup="personal" class="dash-panel">
           <h3>👥 Angajati (numele pentru anulari)</h3>
@@ -946,17 +983,6 @@
           <ul class="top-list" id="tureAziList"></ul>
       </div>
 
-      <div data-grup="setari" class="dash-panel" data-director>
-         <h3>🥡 Comenzi la pachet</h3>
-         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-            <p style="color:var(--text-muted); font-size:13px; max-width:80%;">
-              Oprit: clientul vede in meniu doar „Sunt la o masa”. Pornit: apare
-              si „La pachet” (cu nume si telefon, sterse dupa 48 de ore).
-            </p>
-            <label class="switch"><input type="checkbox" id="toggleComenziPachet"><span class="slider"></span></label>
-         </div>
-         <div id="comenziPachetStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
-      </div>
 
       <div data-grup="meniu" class="dash-panel" style="border-color: var(--accent);">
           <h3 style="color: var(--accent);">🍸 Meniu</h3>
@@ -4196,37 +4222,10 @@
   const cbChei = document.getElementById('cheiActiv');
   if (cbChei) cbChei.addEventListener('change', async (e) => {
       const activ = e.target.checked;
-      if (activ && !confirm('Pornesti codul pe masa? Din clipa asta comenzile clientilor trec DOAR daca au scanat codurile QR noi (cu cheie). Codurile vechi nu mai merg pentru comanda.')) { e.target.checked = false; return; }
+      if (activ && !confirm('Pornesti codul pe masa? Din clipa asta comenzile clientilor trec DOAR de pe telefoane care au scanat codurile QR cu cheie, primite de la dezvoltator si lipite pe mese. Codurile QR vechi (fara cheie) nu mai merg pentru comanda.')) { e.target.checked = false; return; }
       const ok = await logActivity('setari_chei', null, { activ });
       if (ok === false) { e.target.checked = !activ; alert('Nu s-a putut salva. Doar directorul poate schimba asta.'); return; }
       await loadChei();
-  });
-  function bazaMeniu() { return location.href.replace(/[#?].*$/, '').replace(/dashboard\.html$/, ''); }
-  async function arataChei(regen) {
-      const ta = document.getElementById('cheiLista'), st = document.getElementById('cheiStare');
-      const { data, error } = regen
-          ? await _supabase.rpc('chei_mese_regenereaza', { p_masa: null })
-          : await _supabase.rpc('chei_mese_lista');
-      if (error) { st.textContent = error.message; return; }
-      const mese = (data && data.mese) || [];
-      if (!mese.length) { st.textContent = 'Nu exista mese in planul salii (Sala → editeaza harta) — cheile se fac dupa mese.'; return; }
-      ta.value = 'masa\tlink pentru codul QR\n' + mese.map(m => `${m.masa}\t${bazaMeniu()}index.html?mesa=${encodeURIComponent(m.masa)}&k=${m.cheie}`).join('\n');
-      ta.style.display = 'block';
-      document.getElementById('btnCheiCopiaza').style.display = 'inline-flex';
-      st.textContent = `${mese.length} mese. Lipeste lista in unealta de coduri QR (qr/) — fiecare masa isi primeste codul cu cheia ei.`;
-  }
-  const btnCheiArata = document.getElementById('btnCheiArata');
-  if (btnCheiArata) btnCheiArata.addEventListener('click', () => arataChei(false));
-  const btnCheiNoi = document.getElementById('btnCheiNoi');
-  if (btnCheiNoi) btnCheiNoi.addEventListener('click', () => {
-      if (!confirm('Chei noi pentru TOATE mesele? Codurile QR de pe mese nu vor mai merge pentru comanda pana nu le printezi din nou.')) return;
-      arataChei(true);
-  });
-  const btnCheiCopiaza = document.getElementById('btnCheiCopiaza');
-  if (btnCheiCopiaza) btnCheiCopiaza.addEventListener('click', async () => {
-      const ta = document.getElementById('cheiLista');
-      try { await navigator.clipboard.writeText(ta.value); document.getElementById('cheiStare').textContent = 'Lista e copiata.'; }
-      catch(e) { ta.select(); document.execCommand && document.execCommand('copy'); }
   });
 
   // --- Limite pentru comenzile clientilor (director) --------------------------
