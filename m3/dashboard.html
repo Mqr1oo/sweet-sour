@@ -461,6 +461,11 @@
 
   /* Traducere automata */
   .mp-f-row{ display:flex; gap:6px; align-items:stretch; }
+  .mp-poza{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .mp-poza img{ width:96px; height:96px; object-fit:cover; border-radius:12px; border:1px solid var(--border); background:var(--bg); }
+  .mp-poza .mp-poza-btns{ display:flex; flex-direction:column; gap:6px; }
+  .mp-poza .btn-action{ border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:9px 12px; cursor:pointer; border-radius:10px; }
+  .mp-poza .btn-action:disabled{ opacity:.5; cursor:default; }
   .mp-f-row input{ flex:1; min-width:0; }
   .mp-retradu{
     flex:0 0 auto; width:38px; border-radius:10px; border:1px solid var(--border);
@@ -1375,6 +1380,18 @@
         <textarea id="mpDesc" maxlength="240" rows="2" placeholder="Ce e, pe scurt. Ce vede clientul sub nume."></textarea>
         <span class="mp-hint" id="mpDescNr">0 / 240</span>
       </label>
+
+      <div class="mp-f mp-full">Poza
+        <div class="mp-poza">
+          <img id="mpPozaPrev" alt="" src="">
+          <div class="mp-poza-btns">
+            <button type="button" class="btn-action" id="mpPozaAlege">📷 Alege poza</button>
+            <button type="button" class="btn-action" id="mpPozaSterge">Scoate poza</button>
+            <input type="file" id="mpPozaFisier" accept="image/*" style="display:none;">
+          </div>
+          <span class="mp-hint" id="mpPozaStare">Orice poza de pe telefon: se micsoreaza si se urca singura. Patrat sau aproape patrat arata cel mai bine.</span>
+        </div>
+      </div>
 
       <label class="mp-f">Categorie <span class="mp-req">*</span>
         <input type="text" id="mpCat" list="mpCatLista" placeholder="Ex: Espresso Bar">
@@ -3482,6 +3499,8 @@
       document.getElementById('mpEroare').textContent = '';
       document.querySelectorAll('#modalProdusBox .gol').forEach(el => el.classList.remove('gol'));
       actualizeazaNrCaractere();
+      mpPoza = p ? (p.imagine || null) : null;
+      arataPoza(p ? p.id_produs : null);
       document.getElementById('modalProdus').classList.add('on');
       setTimeout(() => document.getElementById('mpNume').focus(), 60);
   }
@@ -3490,6 +3509,74 @@
       document.getElementById('modalProdus').classList.remove('on');
       mpIndex = null;
   }
+
+  // --- Poza produsului -------------------------------------------------------
+  // Directorul alege o poza de pe telefon; o micsoram aici (max 1000 px) si o
+  // facem WebP, apoi o urcam in Supabase Storage (bucket `poze`, public la
+  // citire). Adresa intra in `imagine` si ajunge la clienti la „Publica".
+  // Fara poza urcata, clientul vede images/<id>.webp din repo (daca exista).
+  let mpPoza = null;   // adresa pozei alese in formular (null = cea din repo)
+  const POZA_BUCKET = 'poze';
+  function arataPoza(idProdus) {
+      const img = document.getElementById('mpPozaPrev');
+      img.onerror = () => { img.onerror = null; img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96"><rect width="96" height="96" rx="12" fill="#222"/><text x="48" y="56" font-size="28" text-anchor="middle">📷</text></svg>'); };
+      img.src = mpPoza || (idProdus ? `images/${idProdus}.webp` : '') || 'data:,';
+      document.getElementById('mpPozaSterge').disabled = !mpPoza;
+  }
+  function caleDinAdresa(url) {
+      const m = /\/object\/public\/poze\/([^?]+)/.exec(url || '');
+      return m ? decodeURIComponent(m[1]) : null;
+  }
+  // micsoreaza si converteste in WebP, in telefon
+  function pregatestePoza(fisier) {
+      return new Promise((resolve, reject) => {
+          const url = URL.createObjectURL(fisier);
+          const im = new Image();
+          im.onload = () => {
+              URL.revokeObjectURL(url);
+              const MAX = 1000;
+              let w = im.naturalWidth, h = im.naturalHeight;
+              if (!w || !h) return reject(new Error('Poza nu se poate citi.'));
+              const s = Math.min(1, MAX / Math.max(w, h));
+              w = Math.round(w * s); h = Math.round(h * s);
+              const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+              cv.getContext('2d').drawImage(im, 0, 0, w, h);
+              cv.toBlob(b => b ? resolve(b) : reject(new Error('Nu s-a putut converti poza.')), 'image/webp', 0.84);
+          };
+          im.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Formatul pozei nu e recunoscut (incearca JPG sau PNG).')); };
+          im.src = url;
+      });
+  }
+  document.getElementById('mpPozaAlege').addEventListener('click', () => document.getElementById('mpPozaFisier').click());
+  document.getElementById('mpPozaFisier').addEventListener('change', async (e) => {
+      const f = e.target.files && e.target.files[0]; e.target.value = '';
+      if (!f) return;
+      const st = document.getElementById('mpPozaStare'), btn = document.getElementById('mpPozaAlege');
+      btn.disabled = true; st.textContent = 'Se pregateste poza...';
+      try {
+          const blob = await pregatestePoza(f);
+          st.textContent = `Se urca (${Math.round(blob.size / 1024)} KB)...`;
+          const cale = `produse/${(crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(36).slice(2))}.webp`;
+          const { error } = await _supabase.storage.from(POZA_BUCKET).upload(cale, blob, { contentType: 'image/webp', upsert: false, cacheControl: '31536000' });
+          if (error) throw error;
+          const veche = caleDinAdresa(mpPoza);
+          const { data } = _supabase.storage.from(POZA_BUCKET).getPublicUrl(cale);
+          mpPoza = data.publicUrl;
+          if (veche) _supabase.storage.from(POZA_BUCKET).remove([veche]).catch(() => {});
+          arataPoza(mpIndex !== null ? meniu[mpIndex].id_produs : null);
+          st.textContent = '✓ Poza e urcata. Apasa „Salveaza produsul", apoi „Publica" ca s-o vada clientii.';
+      } catch (err) {
+          st.textContent = 'Nu s-a putut urca poza: ' + (err.message || err) + (/(row-level|policy|permission)/i.test(err.message || '') ? ' (doar directorul poate urca poze)' : '');
+      } finally { btn.disabled = false; }
+  });
+  document.getElementById('mpPozaSterge').addEventListener('click', async () => {
+      if (!mpPoza) return;
+      const veche = caleDinAdresa(mpPoza);
+      mpPoza = null;
+      if (veche) _supabase.storage.from(POZA_BUCKET).remove([veche]).catch(() => {});
+      arataPoza(mpIndex !== null ? meniu[mpIndex].id_produs : null);
+      document.getElementById('mpPozaStare').textContent = 'Poza scoasa. Clientul vede poza standard (daca exista). Apasa „Salveaza produsul".';
+  });
 
   function actualizeazaNrCaractere() {
       const t = document.getElementById('mpDesc');
@@ -3596,6 +3683,7 @@
       p.alergeni    = alergeni;
       p.semnatura   = document.getElementById('mpSemn').checked;
       p.activ       = document.getElementById('mpActiv').checked;
+      p.imagine     = mpPoza || null;
       p.etichete    = [...document.querySelectorAll('#mpEtichete input:checked')].map(x => x.dataset.eticheta);
       // Ingredientele si alergenii se traduc mereu automat: n-are rost sa
       // ceri directorului sa le scrie de doua ori, in doua limbi.
