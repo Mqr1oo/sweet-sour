@@ -249,6 +249,23 @@
   .table-card.status-red { border-color: var(--danger); background: rgba(239, 68, 68, 0.16); box-shadow: 0 0 16px rgba(239,68,68,0.35), inset 0 0 12px rgba(239,68,68,0.15); animation: pulseRed 2s infinite; }
   .table-card.status-purple { border-color: var(--purple); background: rgba(168, 85, 247, 0.18); box-shadow: 0 0 16px rgba(168,85,247,0.4), inset 0 0 12px rgba(168,85,247,0.18); animation: pulsePurple 2s infinite; }
   .table-card.status-blue { border-color: var(--blue); background: rgba(59, 130, 246, 0.16); box-shadow: inset 0 0 12px rgba(59,130,246,0.2); }
+  .table-card.status-rezervata { border-color: #14b8a6; background: rgba(20, 184, 166, 0.14); box-shadow: inset 0 0 12px rgba(20,184,166,0.18); }
+  .table-card .t-rez { position:absolute; top:6px; right:6px; background:#14b8a6; color:#06201c; font-family:'Space Mono',monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:999px; }
+  .rz-lista { display:flex; flex-direction:column; gap:8px; max-height:40vh; overflow:auto; margin:10px 0; }
+  .rz-item { display:flex; gap:10px; align-items:center; padding:10px 12px; border:1px solid var(--border); border-radius:12px; background:rgba(255,255,255,.03); font-size:13px; text-align:left; }
+  .rz-item.acum { border-color:#14b8a6; }
+  .rz-item .rz-ora { font-family:'Space Mono',monospace; font-weight:700; font-size:15px; min-width:52px; }
+  .rz-item .rz-det { flex:1; min-width:0; }
+  .rz-item .rz-det small { display:block; color:var(--text-muted); }
+  .rz-item .rz-btn { background:none; border:1px solid var(--border); color:var(--text); border-radius:8px; padding:6px 9px; cursor:pointer; font:inherit; font-size:12px; white-space:nowrap; }
+  .rz-item .rz-btn.ok { color:var(--success); border-color:rgba(16,185,129,.4); }
+  .rz-item .rz-btn.nu { color:var(--danger); border-color:rgba(239,68,68,.4); }
+  .rz-form { display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:left; }
+  .rz-form label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--text-muted); }
+  .rz-form input, .rz-form select { padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px; }
+  .rz-form .lat { grid-column:1 / -1; }
+  .ta-rez { text-align:left; background:rgba(20,184,166,.10); border:1px solid rgba(20,184,166,.4); border-radius:12px; padding:10px 12px; margin-bottom:10px; font-size:13px; }
+  .ta-rez b { display:block; margin-bottom:2px; }
   .table-card.status-purple .t-timp[data-termen] { color:#f3e8ff; font-size:18px; }
   @media (max-width:800px){ .table-card.status-purple .t-timp[data-termen]{ font-size:16px; } }
   .table-card.editing-mode { border-style: dashed; }
@@ -781,6 +798,7 @@
             <p style="color:var(--text-muted); font-size:13px; line-height: 1.5;">Atinge o masa ocupata ca sa vezi comanda sau sa o eliberezi. <span id="salaFullMsg" style="display:none; color:var(--danger); font-weight:700;">· SALA PLINA</span></p>
           </div>
           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+             <button id="btnRezervari" class="btn-action" style="border:1px solid #14b8a6; color:#5eead4; background:rgba(20,184,166,.10); font-size:13px; padding: 10px 14px;">📅 Rezervari<span id="nrRezervari" class="badge-count" style="display:none; position:static; margin-left:8px;">0</span></button>
              <button id="btnAddZone" class="btn-action" style="border:1px solid var(--border); display:none; font-size:13px; padding: 10px 14px;">➕ Zona noua</button>
              <button id="btnDeleteZone" class="btn-action" style="border:1px solid var(--danger); color:var(--danger); background:transparent; display:none; font-size:13px; padding: 10px 14px;">🗑️ Sterge zona</button>
              <button id="btnEditMap" class="btn-action" style="border:1px solid var(--border); display:none; font-size:13px; padding: 10px 14px;">✏️ Editeaza mesele</button>
@@ -878,6 +896,20 @@
                <button class="btn-action" id="btnMzScoate" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;">Scoate toate</button>
              </div>
              <div id="mzStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+          <div class="dash-panel lat">
+             <h3>📅 Rezervari</h3>
+             <p style="color:var(--text-muted); font-size:13px;">
+               Rezervarile se pun din Sala (butonul „Rezervari"), de oricine din
+               personal. Aici alegi cu cate minute inainte se blocheaza masa
+               pentru clienti si cat tine o rezervare daca nimeni n-o inchide.
+             </p>
+             <div class="limite-grid">
+               <label>Masa se blocheaza cu (minute inainte) <input type="number" id="rezMinute" min="0" max="180" value="10"></label>
+               <label>O rezervare tine (minute) <input type="number" id="rezDurata" min="30" max="720" value="120"></label>
+             </div>
+             <button class="btn-primary" id="btnRezSetari" style="width:auto; padding:10px 16px;">Salveaza</button>
+             <div id="rezSetariStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
           </div>
           <div class="dash-panel lat" style="border-color: var(--warning);">
              <h3 style="color: var(--warning);">🔐 Codul de anulare al lunii</h3>
@@ -1265,11 +1297,36 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modalRezervari">
+  <div class="modal" style="max-width:520px; text-align:left;">
+    <button class="modal-close" id="rzInchide">&times;</button>
+    <h2 style="margin-bottom:4px;">📅 Rezervari</h2>
+    <p class="mp-sub">Cu <b id="rzMinInainte">10</b> minute inainte de ora rezervarii, masa se blocheaza pentru clienti (cine scaneaza codul ei e rugat sa aleaga alta masa). De la ora rezervarii masa apare ocupata in Sala si asteapta comanda oaspetilor. Se incheie singura dupa <b id="rzDurata">120</b> de minute sau cand o marchezi.</p>
+    <div class="rz-lista" id="rzLista"></div>
+    <div class="an-eticheta">Rezervare noua</div>
+    <div class="rz-form">
+      <label>Masa <select id="rzMasa"></select></label>
+      <label>Persoane <input type="number" id="rzPersoane" min="1" max="99" placeholder="4"></label>
+      <label>Data <input type="date" id="rzData"></label>
+      <label>Ora <input type="time" id="rzOra" value="19:00"></label>
+      <label class="lat">Nume (optional) <input type="text" id="rzNume" maxlength="60" placeholder="Pe ce nume"></label>
+      <label>Telefon (optional) <input type="tel" id="rzTelefon" maxlength="30" placeholder="07…"></label>
+      <label>Nota (optional) <input type="text" id="rzNota" maxlength="200" placeholder="Ex: aniversare, langa geam"></label>
+    </div>
+    <div class="mp-err" id="rzEroare"></div>
+    <div class="mp-actiuni">
+      <button class="btn-primary" id="rzAdauga" style="width:auto;padding:12px 22px;">Adauga rezervarea</button>
+    </div>
+    <p class="mp-sub" style="margin:10px 0 0;">Numele si telefonul se sterg singure la 2 zile dupa rezervare.</p>
+  </div>
+</div>
+
 <div class="modal-overlay" id="tableActionOverlay">
   <div class="modal" style="max-width:360px; text-align:center;">
     <button class="modal-close" onclick="document.getElementById('tableActionOverlay').classList.remove('open')">&times;</button>
     <h2 id="taTitle" style="margin-bottom:6px;">Masa</h2>
     <p id="taStatus" style="color:var(--text-muted); margin-bottom:12px; font-size:14px;">—</p>
+    <div id="taRez" class="ta-rez" style="display:none;"></div>
     <div id="taNota" class="ta-nota" style="display:none;"></div>
     <div id="taCereNota" style="display:none; margin-bottom:10px;">
       <div class="an-eticheta" style="text-align:left;">Clientul a cerut nota verbal? Pune cererea aici:</div>
@@ -2581,8 +2638,11 @@
 
 
     ensureNotificationPermission();
-    loadOrders(); 
-    loadFreedTables();
+    loadOrders();
+    loadRezervari();
+    loadRezSetari();
+    _supabase.channel('rezervari_live').on('postgres_changes', { event: '*', schema: 'public', table: 'rezervari' }, () => loadRezervari()).subscribe();
+loadFreedTables();
     loadBusyMode();
     loadFaraOspatari().then(() => renderOrders());
     loadFaraBucatarie().then(() => { renderOrders(); sincronizeazaAlarma(); });
@@ -2849,7 +2909,14 @@
 
       let ordersForTable = allOrders.filter(o => String(o.mesa) === strNr && o.status !== 'anulata' && new Date(o.created_at).getTime() > lastFreed);
 
-      if(ordersForTable.length === 0) return { status:'free', label:'Libera' };
+      if(ordersForTable.length === 0) {
+          // fara comenzi, dar cu rezervare: blocata (incepe in curand) sau
+          // inceputa (oaspetii au venit / sunt asteptati) — apare ocupata
+          const rz = rezervareMesei(strNr);
+          if (rz && rz.stare === 'blocata') return { status:'rezervata', label:`Rezervata de la ${oraRz(rz.r.de_la)} — blocata pentru clienti`, minute: 0, ocupata: 0, rezervare: rz };
+          if (rz && rz.stare === 'inceputa') return { status:'rezervata', label:`Rezervare de la ${oraRz(rz.r.de_la)} — asteapta comanda`, minute: 0, ocupata: Math.round((Date.now() - new Date(rz.r.de_la).getTime()) / 60000), rezervare: rz };
+          return { status:'free', label:'Libera' };
+      }
 
       let lastOrderTime = Math.max(...ordersForTable.map(o => new Date(o.created_at).getTime()));
 
@@ -2997,11 +3064,13 @@
           // fiecare masa ocupata isi arata timerul: de cand sta si de cand a
           // comandat ultima data (se reimprospateaza din minut in minut)
           // a cerut nota: numaratoarea inversa pana se elibereaza singura
-          const timp = st.status === 'free' ? '' : st.termen
+          const timp = (st.status === 'free' || st.status === 'rezervata') ? '' : st.termen
               ? `<div class="t-timp" title="ocupata de ${formatMinute(st.ocupata)} · ${escapeHTML(st.label)}">⏱ ${formatMinute(st.ocupata)}</div><div class="t-timp" data-termen="${st.termen}">💳 ${formatSecunde(st.termen)}</div>`
               : `<div class="t-timp" title="ocupata de ${formatMinute(st.ocupata)} · ultima comanda acum ${formatMinute(st.minute)}">⏱ ${formatMinute(st.ocupata)}${st.minute >= 10 && st.minute !== st.ocupata ? ` · ${formatMinute(st.minute)}` : ''}</div>`;
+          const rz = rezervareMesei(mesa.numar);
           card.innerHTML = `
              ${isEditingMap ? `<span class="t-del" data-action="del">✕</span>` : ''}
+             ${rz && !isEditingMap ? `<span class="t-rez" title="rezervata">📅 ${oraRz(rz.r.de_la)}</span>` : ''}
              <div class="t-num">${escapeHTML(mesa.numar)}</div>
              <div class="t-seats">🪑 ${escapeHTML(mesa.scaune)}</div>
              ${timp}
@@ -3046,6 +3115,138 @@
 
       updateMapBadge();
   }
+
+  // --- Rezervari -----------------------------------------------------------
+  // Le pune oricine din personal (bar, ospatar, manager, director) din Sala.
+  // Masa se blocheaza pentru clienti cu `minute_inainte` inainte de ora
+  // rezervarii si apare ocupata de la ora rezervarii pana la `durata_minute`
+  // (setari_rezervari, director / manager) sau pana o inchide personalul.
+  let rezervari = [];
+  let rezSetari = { minute_inainte: 10, durata_minute: 120 };
+  const oraRz = (x) => new Date(x).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+  const ziRz = (x) => new Date(x).toLocaleDateString('ro-RO', { day: '2-digit', month: '2-digit' });
+  async function loadRezervari() {
+      if (!document.getElementById('navMap') || getComputedStyle(document.getElementById('navMap')).display === 'none') return;
+      try {
+          const [{ data: s }, { data }] = await Promise.all([
+              _supabase.rpc('setari_rezervari'),
+              _supabase.from('rezervari').select('*').in('status', ['activa', 'sosita'])
+                  .gte('pana_la', new Date(Date.now() - 3600000).toISOString()).order('de_la').limit(200)
+          ]);
+          if (s) rezSetari = { minute_inainte: Number(s.minute_inainte) || 0, durata_minute: Number(s.durata_minute) || 120 };
+          rezervari = data || [];
+      } catch (e) { console.warn('rezervari:', e); }
+      const nr = document.getElementById('nrRezervari');
+      const azi = rezervari.filter(r => esteAzi(r.de_la)).length;
+      if (nr) { nr.textContent = azi; nr.style.display = azi ? 'inline-block' : 'none'; }
+      if (document.getElementById('modalRezervari').classList.contains('open')) randeazaRezervari();
+      if (currentTab === 'map') renderTablesGrid();
+  }
+  function esteAzi(x) { const d = new Date(x), a = new Date(); return d.getFullYear() === a.getFullYear() && d.getMonth() === a.getMonth() && d.getDate() === a.getDate(); }
+  // rezervarea de acum a mesei: blocata (incepe in curand), inceputa, sau
+  // urmeaza (azi, mai tarziu — doar eticheta pe card)
+  function rezervareMesei(mesa) {
+      const acum = Date.now();
+      const lista = rezervari.filter(r => String(r.mesa) === String(mesa) && r.status !== 'anulata' && new Date(r.pana_la).getTime() > acum)
+                             .sort((a, b) => new Date(a.de_la) - new Date(b.de_la));
+      const r = lista[0]; if (!r) return null;
+      const deLa = new Date(r.de_la).getTime();
+      if (acum >= deLa) return { r, stare: 'inceputa' };
+      if (acum >= deLa - rezSetari.minute_inainte * 60000) return { r, stare: 'blocata' };
+      if (esteAzi(r.de_la)) return { r, stare: 'urmeaza' };
+      return null;
+  }
+  function randeazaRezervari() {
+      const lista = document.getElementById('rzLista');
+      document.getElementById('rzMinInainte').textContent = rezSetari.minute_inainte;
+      document.getElementById('rzDurata').textContent = rezSetari.durata_minute;
+      const acum = Date.now();
+      const viitoare = rezervari.filter(r => new Date(r.pana_la).getTime() > acum);
+      if (!viitoare.length) { lista.innerHTML = '<div style="color:var(--text-muted); font-size:13px;">Nicio rezervare de acum incolo.</div>'; return; }
+      lista.innerHTML = viitoare.map(r => {
+          const st = rezervareMesei(r.mesa);
+          const acumA = st && st.r.id === r.id && st.stare !== 'urmeaza';
+          return `<div class="rz-item${acumA ? ' acum' : ''}">
+            <div class="rz-ora">${oraRz(r.de_la)}${esteAzi(r.de_la) ? '' : `<small style="display:block;font-size:10px;color:var(--text-muted);">${ziRz(r.de_la)}</small>`}</div>
+            <div class="rz-det"><b>Masa ${escapeHTML(r.mesa)}</b>${r.persoane ? ` · ${r.persoane} pers.` : ''}${r.nume ? ` · ${escapeHTML(r.nume)}` : ''}${r.status === 'sosita' ? ' · <span style="color:var(--success);">sositi</span>' : ''}
+              <small>${r.telefon ? escapeHTML(r.telefon) + ' · ' : ''}${r.nota ? escapeHTML(r.nota) + ' · ' : ''}pusa de ${escapeHTML(numeScurt(r.creat_de))}${acumA ? (st.stare === 'blocata' ? ' · masa e blocata pentru clienti' : ' · in desfasurare') : ''}</small></div>
+            ${r.status !== 'sosita' ? `<button type="button" class="rz-btn ok" data-rz-sosita="${r.id}" title="Au sosit">✓</button>` : ''}
+            <button type="button" class="rz-btn nu" data-rz-anuleaza="${r.id}" title="Anuleaza">✕</button>
+          </div>`; }).join('');
+  }
+  function deschideRezervari() {
+      const sel = document.getElementById('rzMasa');
+      const mese = [];
+      (salaConfig.zones || []).forEach(z => (z.mese || []).forEach(m => mese.push({ numar: String(m.numar), zona: z.nume, scaune: m.scaune })));
+      mese.sort((a, b) => (parseInt(a.numar) || 0) - (parseInt(b.numar) || 0) || a.numar.localeCompare(b.numar));
+      sel.innerHTML = mese.length ? mese.map(m => `<option value="${escapeHTML(m.numar)}">Masa ${escapeHTML(m.numar)} · ${escapeHTML(m.zona)} · ${m.scaune} locuri</option>`).join('')
+                                  : '<option value="">(nu sunt mese in Sala)</option>';
+      const azi = new Date(); document.getElementById('rzData').value = `${azi.getFullYear()}-${String(azi.getMonth() + 1).padStart(2, '0')}-${String(azi.getDate()).padStart(2, '0')}`;
+      document.getElementById('rzEroare').textContent = '';
+      randeazaRezervari();
+      document.getElementById('modalRezervari').classList.add('open');
+      loadRezervari();
+  }
+  async function schimbaRezervare(id, status) {
+      const { error } = await _supabase.from('rezervari').update({ status }).eq('id', id);
+      if (error) { alert('Nu s-a putut: ' + error.message); return; }
+      await loadRezervari();
+  }
+  document.addEventListener('click', (e) => {
+      const s = e.target.closest('[data-rz-sosita]'); if (s) { schimbaRezervare(Number(s.dataset.rzSosita), 'sosita'); return; }
+      const a = e.target.closest('[data-rz-anuleaza]');
+      if (a && confirm('Anulezi rezervarea? Masa devine libera pentru clienti.')) schimbaRezervare(Number(a.dataset.rzAnuleaza), 'anulata');
+  });
+  document.getElementById('btnRezervari').addEventListener('click', deschideRezervari);
+  document.getElementById('rzInchide').addEventListener('click', () => document.getElementById('modalRezervari').classList.remove('open'));
+  document.getElementById('modalRezervari').addEventListener('click', (e) => { if (e.target.id === 'modalRezervari') document.getElementById('modalRezervari').classList.remove('open'); });
+  document.getElementById('rzAdauga').addEventListener('click', async () => {
+      const err = document.getElementById('rzEroare'); err.textContent = '';
+      const mesa = document.getElementById('rzMasa').value;
+      if (!mesa) { err.textContent = 'Alege masa.'; return; }
+      const data = document.getElementById('rzData').value, ora = document.getElementById('rzOra').value;
+      if (!data || !ora) { err.textContent = 'Alege data si ora.'; return; }
+      const deLa = new Date(`${data}T${ora}:00`);
+      if (isNaN(deLa.getTime())) { err.textContent = 'Data sau ora nu e valida.'; return; }
+      if (deLa.getTime() < Date.now() - 10 * 60000) { err.textContent = 'Ora a trecut deja.'; return; }
+      const panaLa = new Date(deLa.getTime() + rezSetari.durata_minute * 60000);
+      const suprapusa = rezervari.find(r => String(r.mesa) === mesa && r.status !== 'anulata' && new Date(r.de_la) < panaLa && new Date(r.pana_la) > deLa);
+      if (suprapusa && !confirm(`Masa ${mesa} mai are o rezervare la ${oraRz(suprapusa.de_la)}. O pui si pe asta?`)) return;
+      const persoane = parseInt(document.getElementById('rzPersoane').value, 10);
+      const btn = document.getElementById('rzAdauga'); btn.disabled = true;
+      const { error } = await _supabase.from('rezervari').insert({
+          mesa, de_la: deLa.toISOString(), pana_la: panaLa.toISOString(),
+          persoane: persoane > 0 ? persoane : null,
+          nume: document.getElementById('rzNume').value.trim() || null,
+          telefon: document.getElementById('rzTelefon').value.trim() || null,
+          nota: document.getElementById('rzNota').value.trim() || null,
+          creat_de: currentUserEmail
+      });
+      btn.disabled = false;
+      if (error) { err.textContent = 'Nu s-a putut salva: ' + error.message; return; }
+      ['rzPersoane', 'rzNume', 'rzTelefon', 'rzNota'].forEach(id => document.getElementById(id).value = '');
+      await loadRezervari();
+  });
+  // setarile (director / manager)
+  async function loadRezSetari() {
+      if (!document.getElementById('rezMinute') || !esteConducere()) return;
+      const { data } = await _supabase.rpc('setari_rezervari');
+      if (data) { rezSetari = { minute_inainte: Number(data.minute_inainte) || 0, durata_minute: Number(data.durata_minute) || 120 }; }
+      document.getElementById('rezMinute').value = rezSetari.minute_inainte;
+      document.getElementById('rezDurata').value = rezSetari.durata_minute;
+      document.getElementById('rezSetariStare').textContent = `Masa se blocheaza cu ${rezSetari.minute_inainte} min inainte; o rezervare tine ${rezSetari.durata_minute} min.`;
+  }
+  const btnRezSetari = document.getElementById('btnRezSetari');
+  if (btnRezSetari) btnRezSetari.addEventListener('click', async () => {
+      const m = parseInt(document.getElementById('rezMinute').value, 10), d = parseInt(document.getElementById('rezDurata').value, 10);
+      const st = document.getElementById('rezSetariStare');
+      if (isNaN(m) || m < 0 || m > 180 || isNaN(d) || d < 30 || d > 720) { st.textContent = 'Minutele: 0–180 inainte, durata 30–720.'; return; }
+      const ok = await logActivity('setari_rezervari', null, { minute_inainte: m, durata_minute: d });
+      if (ok === false) { st.textContent = 'Nu s-a putut salva.'; return; }
+      await loadRezSetari(); await loadRezervari();
+  });
+  // harta se reface din minut in minut cand sunt rezervari (blocata -> inceputa)
+  setInterval(() => { if (rezervari.length && currentTab === 'map') renderTablesGrid(); }, 60000);
 
   // --- Nota mesei, din panou ---------------------------------------------
   // Clientul nu apasa mereu „Vreau sa platesc" pe telefon: ii zice unui
@@ -3094,17 +3295,27 @@
   function openTableAction(tableNr, statusInfo) {
       document.getElementById('taTitle').textContent = `Masa ${tableNr}`;
       document.getElementById('taStatus').textContent = statusInfo.label +
-          (statusInfo.status !== 'free' ? (/^Ocupata de/.test(statusInfo.label) ? '' : ` · ocupata de ${formatMinute(statusInfo.ocupata)}`) + ` · ultima comanda acum ${formatMinute(statusInfo.minute)}` : '');
+          (statusInfo.status !== 'free' && statusInfo.status !== 'rezervata' ? (/^Ocupata de/.test(statusInfo.label) ? '' : ` · ocupata de ${formatMinute(statusInfo.ocupata)}`) + ` · ultima comanda acum ${formatMinute(statusInfo.minute)}` : '');
+      // rezervarea mesei (daca are una azi): cine, cand, sosita / anulata
+      const taRez = document.getElementById('taRez');
+      const rzm = rezervareMesei(tableNr);
+      if (rzm) {
+          const r = rzm.r;
+          taRez.innerHTML = `<b>📅 Rezervare la ${oraRz(r.de_la)}${r.persoane ? ' · ' + r.persoane + ' pers.' : ''}${r.nume ? ' · ' + escapeHTML(r.nume) : ''}</b>` +
+              `${r.telefon ? escapeHTML(r.telefon) + ' · ' : ''}${r.nota ? escapeHTML(r.nota) + ' · ' : ''}pusa de ${escapeHTML(numeScurt(r.creat_de))}` +
+              `<div style="display:flex; gap:8px; margin-top:8px;">${r.status !== 'sosita' ? `<button class="rz-btn ok" data-rz-sosita="${r.id}">✓ Au sosit</button>` : '<span style="color:var(--success);">✓ sositi</span>'}<button class="rz-btn nu" data-rz-anuleaza="${r.id}">Anuleaza rezervarea</button></div>`;
+          taRez.style.display = 'block';
+      } else { taRez.style.display = 'none'; taRez.innerHTML = ''; }
       const canFree = (userRole === 'manager' || userRole === 'ospatar' || userRole === 'bar');
       const freeBtn = document.getElementById('taFreeTable');
       const viewBtn = document.getElementById('taViewOrders');
 
-      viewBtn.style.display = statusInfo.status === 'free' ? 'none' : 'flex';
-      freeBtn.style.display = (statusInfo.status !== 'free' && canFree) ? 'flex' : 'none';
+      viewBtn.style.display = (statusInfo.status === 'free' || statusInfo.status === 'rezervata') ? 'none' : 'flex';
+      freeBtn.style.display = (statusInfo.status !== 'free' && statusInfo.status !== 'rezervata' && canFree) ? 'flex' : 'none';
 
       // nota mesei: tot ce a consumat de cand e ocupata, ca oricine sa poata scoate nota
       const nota = document.getElementById('taNota'), cere = document.getElementById('taCereNota');
-      const rez = statusInfo.status === 'free' ? null : rezumatMasa(tableNr);
+      const rez = (statusInfo.status === 'free' || statusInfo.status === 'rezervata') ? null : rezumatMasa(tableNr);
       if (rez) {
           const ceruta = cerereNotaMasa(tableNr);
           const zona = zonaMesei(tableNr);
@@ -3229,7 +3440,7 @@
 
       if (grup === 'sinteza')  { calculateDirectorStats(); renderHeatmap(); }
       if (grup === 'meniu')    { loadMeniu(); }
-      if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); loadEliberare(); loadCodLuna(); loadMeniulZilei(); loadSecuritate(); loadChei(); loadLimite(); loadMutare(); loadAlerte(); }
+      if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); loadEliberare(); loadCodLuna(); loadMeniulZilei(); loadSecuritate(); loadChei(); loadLimite(); loadMutare(); loadRezSetari(); loadAlerte(); }
       if (grup === 'personal') { loadFeedbacks(); loadAngajati(); calculateDirectorStats(); }
   }
 
@@ -3848,7 +4059,7 @@
               } else if (a === 'comanda_uitata') {
                   alarmaComandaUitata(p.new.detalii);
               } else if (a === 'setari_chei' || a === 'setari_limite' || a === 'setari_alerte') {
-                  if (currentTab === 'admin') { loadChei(); loadLimite(); loadMutare(); loadAlerte(); }
+                  if (currentTab === 'admin') { loadChei(); loadLimite(); loadMutare(); loadRezSetari(); loadAlerte(); }
               } else if (a === 'meniul_zilei' || a === 'meniu_publicat') {
                   fullMenu = [];
                   if (currentTab === 'admin') loadMeniulZilei();

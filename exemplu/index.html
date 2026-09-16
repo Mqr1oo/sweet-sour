@@ -70,6 +70,7 @@
   }
 
   .busy-banner { display: none; background: var(--brass); color: #16110a; padding: 12px 20px; font-weight: 700; text-align: center; font-size: 14.5px; z-index: 100; position: relative; line-height: 1.3; font-family:'Space Mono', monospace; letter-spacing:.01em; }
+  .rez-banner { background: #14b8a6; color: #06201c; }
 
   /* --- HEADER --- */
   .hero{
@@ -664,6 +665,7 @@
 <body>
 
 <div id="offlineBanner" class="offline-banner" style="display:none;"></div>
+<div id="rezBanner" class="busy-banner rez-banner" style="display:none;"></div>
 <div id="busyBanner" class="busy-banner">
   🔥 Barul are comenzi multe acum. Timpii de asteptare sunt putin mai mari decat de obicei.
 </div>
@@ -980,6 +982,7 @@
   }
 
   let allItems = [];
+  let rezervariClient = [];   // mesele rezervate acum (blocate / incepute), fara nume; declarat sus, il citeste applyLanguage()
   let outOfStockIds = new Set();
   let activeFilter = 'all';
   let favoritesQty = loadFavorites();
@@ -1217,6 +1220,8 @@
       privacyAllergensText: 'Precizare privind gramajele, valorile nutritionale si alergenii: gramajele, valorile calorice (kcal) si lista de ingrediente si alergeni afisate in acest meniu digital au caracter strict orientativ si informativ. Aceste date sunt introduse, actualizate si validate exclusiv de catre local, care raspunde singur de exactitatea si actualizarea lor, in conformitate cu Regulamentul (UE) nr. 1169/2011 privind informarea consumatorilor cu privire la produsele alimentare si cu restul legislatiei aplicabile in materie de siguranta alimentara si protectia consumatorului. Platforma care gazduieste si afiseaza acest meniu digital are exclusiv rolul de furnizor al instrumentului de vizualizare si comanda, nu intervine in prepararea, supravegherea sau verificarea continutului nutritional ori a alergenilor introdusi de local si este expres exonerata de raspundere pentru erori, omisiuni, variatii de reteta, contaminare incrucisata in bucatarie sau date neactualizate. Din cauza prepararii manuale, gramajele servite efectiv si valorile calorice pot varia fata de cele indicate. Recomandam insistent clientilor cu alergii, intolerante sau nevoi alimentare speciale sa anunte direct personalul inainte de a comanda, pentru informatii actualizate si personalizate.',
       cookieBannerText: 'Folosim stocarea locala a browserului, necesara tehnic, ca sa retinem limba, masa si produsele din comanda ta. Nu folosim cookie-uri de publicitate sau de urmarire. Daca navighezi mai departe, esti de acord cu utilizarea lor.', cookieAcceptBtn: 'Accept si continui', cookieInfoBtn: 'Politica de confidentialitate',
       busyBanner: '🔥 Barul are comenzi multe acum. Timpii de asteptare sunt putin mai mari decat de obicei.',
+      rezBanner: (masa, ora) => `📅 Masa ${masa} este rezervata de la ${ora}. Te rugam alege alta masa sau intreaba personalul.`,
+      rezTitlu: 'Masa e rezervata', rezText: (masa, ora) => `Masa ${masa} este rezervata de la ${ora} si urmeaza sa fie ocupata. Te rugam alege alta masa libera sau intreaba personalul — multumim!`,
       fbTitle: 'Cum a fost la noi?', fbPlaceholder: 'Ce am putea imbunatati?', fbBtn: 'Trimite parerea', fbThanks: 'Multumim ca ne ajuti sa fim mai buni!', fbGoogle: 'Super! Ne-ar ajuta enorm o recenzie pe Google.', fbGoogleBtn: 'Lasa recenzie pe Google', tablesFree: 'mese libere', tablesFull: 'Nicio masa libera', tablesFor: 'locuri', tableWord: 'Masa',
       weightLabel:'Volum', kcalLabel:'kcal', ingredientsLabel:'Ingrediente', allergensLabel:'Alergeni', noAllergens:'Fara alergeni declarati',
       splitModeEqual: 'Parti egale', splitModeProduct: 'Pe produs', splitProductHint: 'Atribuie fiecare produs unei persoane.', personLabel: 'Persoana',
@@ -1348,6 +1353,8 @@
       privacyAllergensText: 'Notice regarding weights, nutritional values and allergens: the weights, calorie (kcal) values, and the list of ingredients and allergens shown in this digital menu are provided for guidance and informational purposes only. This information is entered, updated, and validated exclusively by the establishment (the restaurant), which is solely responsible for its accuracy and for keeping it up to date, in accordance with EU Regulation No. 1169/2011 on the provision of food information to consumers and any other applicable food-safety and consumer-protection regulations. The technology platform hosting and displaying this digital menu acts solely as the provider of the display and ordering tool; it does not take part in preparing, supervising, or verifying the nutritional or allergen content entered by the establishment, and is therefore expressly released from any liability arising from errors, omissions, recipe variations, cross-contact in the kitchen, or outdated information. Because dishes are prepared by hand, the actual weight served and calorie values may vary from those indicated. Customers with allergies, intolerances, or special dietary needs are strongly advised to inform staff directly before ordering, to receive current, personalized information.',
       cookieBannerText: 'We use browser local storage, technically necessary, to remember your language, your table and the items in your order. We do not use advertising or tracking cookies. By continuing to browse you accept its use.', cookieAcceptBtn: 'Accept and continue', cookieInfoBtn: 'Privacy policy',
       busyBanner: '🔥 The bar is very busy right now. Waiting times are slightly longer than usual.',
+      rezBanner: (masa, ora) => `📅 Table ${masa} is reserved from ${ora}. Please choose another table or ask the staff.`,
+      rezTitlu: 'This table is reserved', rezText: (masa, ora) => `Table ${masa} is reserved from ${ora} and is about to be taken. Please choose another free table or ask the staff — thank you!`,
       fbTitle: 'How was your evening?', fbPlaceholder: 'What can we improve?', fbBtn: 'Send Feedback', fbThanks: 'Thank you for your feedback!', fbGoogle: 'Great! We would love a review on Google.', fbGoogleBtn: 'Leave Google Review', tablesFree: 'tables free', tablesFull: 'No tables free', tablesFor: 'seats', tableWord: 'Table',
       weightLabel:'Volume', kcalLabel:'kcal', ingredientsLabel:'Ingredients', allergensLabel:'Allergens', noAllergens:'No declared allergens',
       splitModeEqual: 'Equal parts', splitModeProduct: 'By product', splitProductHint: 'Assign each product to a person.', personLabel: 'Person',
@@ -1444,6 +1451,7 @@
     document.getElementById('txtGdprNote').textContent = t.gdprNote;
     
     document.getElementById('busyBanner').textContent = t.busyBanner;
+    arataBannerRezervare();
     document.getElementById('fbTitle').textContent = t.fbTitle;
     document.getElementById('fbMessage').placeholder = t.fbPlaceholder;
     document.getElementById('btnSubmitFb').textContent = t.fbBtn;
@@ -2420,6 +2428,10 @@
               showCustomAlert(t.codMasaTitle, t.codMasa);
               return;
           }
+          // masa e rezervata si urmeaza sa fie ocupata: nu se comanda de pe ea
+          if (!CFG.DEMO) { await loadRezervariClient(); }
+          const rez = rezervareBlocata(finalTableNr);
+          if (rez) { showCustomAlert(t.rezTitlu, t.rezText(finalTableNr, oraRez(rez))); return; }
       }
 
       // acordul „raman la masa" (daca localul l-a pornit)
@@ -2577,8 +2589,32 @@
       } catch(e) {}
   }
 
+  // Rezervari: mesele blocate (rezervarea incepe in curand) sau incepute —
+  // fara nume, doar masa si orele (`mese_rezervate`, din baza);
+  // `rezervariClient` e declarat sus, langa celelalte setari
+  async function loadRezervariClient() {
+      try {
+          const { data } = await _supabase.rpc('mese_rezervate');
+          rezervariClient = Array.isArray(data) ? data : [];
+      } catch (e) {}
+      arataBannerRezervare();
+  }
+  function rezervareBlocata(masa) {
+      return rezervariClient.find(r => String(r.mesa) === String(masa) && r.stare === 'blocata') || null;
+  }
+  function oraRez(r) { return new Date(r.de_la).toLocaleTimeString(currentLang === 'en' ? 'en-GB' : 'ro-RO', { hour: '2-digit', minute: '2-digit' }); }
+  // masa scanata e blocata: banda sus, ca sa afle inainte sa comande
+  function arataBannerRezervare() {
+      const b = document.getElementById('rezBanner'); if (!b) return;
+      const t = I18N[currentLang] || I18N.ro;
+      const masa = sessionStorage.getItem(STORE + 'masa');
+      const r = masa && masa !== 'stabilita' && masa !== 'Takeaway' ? rezervareBlocata(masa) : null;
+      b.style.display = r ? 'block' : 'none';
+      if (r) b.textContent = t.rezBanner(masa, oraRez(r));
+  }
   function isTableFreeClient(tableNr) {
       const strNr = String(tableNr);
+      if (rezervariClient.some(r => String(r.mesa) === strNr)) return false;   // blocata sau cu rezervarea inceputa
       let ordersForTable = ordersForTablesClient.filter(o => String(o.mesa) === strNr);
       if(ordersForTable.length === 0) return true;
       let lastOrderTime = Math.max(...ordersForTable.map(o => new Date(o.created_at).getTime()));
@@ -2614,7 +2650,7 @@
   }
 
   async function refreshTablesStatus() {
-      await Promise.all([loadTablesConfigClient(), loadFreedTablesClient(), loadActiveOrdersClient()]);
+      await Promise.all([loadTablesConfigClient(), loadFreedTablesClient(), loadActiveOrdersClient(), loadRezervariClient()]);
       renderTablesBadge();
   }
 
@@ -2805,6 +2841,7 @@
                 
                 _supabase.channel('mesas_live_client')
                   .on('postgres_changes', { event: '*', schema: 'public', table: 'comenzi' }, () => refreshTablesStatus())
+                  .on('postgres_changes', { event: '*', schema: 'public', table: 'rezervari' }, () => loadRezervariClient().then(renderTablesBadge))
                   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'jurnal_activitate' }, p => {
                       if(p.new.actiune === 'mesa_liberada' || p.new.actiune === 'config_mese') refreshTablesStatus();
                       if(['setari_busy','setari_ospatari','setari_modificare','setari_pachet','setari_chei','setari_mutare'].includes(p.new.actiune)) aplicaSetari([p.new]);
