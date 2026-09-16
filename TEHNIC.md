@@ -106,7 +106,7 @@ treilea local înseamnă plan Pro, 25 $/lună pentru toate.
 | Local | Proiect Supabase | Regiune |
 |---|---|---|
 | M3 Coffee & Lounge | `cjavzdnsebbkiiefigvi` | eu-central-1 |
-| Sweet & Sour | `wnwllyyhtkufcejzjeay` | eu-west-1 |
+| ZeN Lounge Garden (fost Sweet & Sour; folder `sweetandsour/`) | `wnwllyyhtkufcejzjeay` | eu-west-1 |
 | Skyfall | de creat | eu-central-1 recomandat |
 
 ## Comanda se acceptă, nu doar se face
@@ -1298,6 +1298,133 @@ din 2 butoane; Setări să fie alt tab jos, nu în panoul de șef".
   aprinde tabul potrivit pentru orice `esteConducere()`. Pe telefon bara de
   jos are 5 taburi: Comenzi, Sala, Istoric, Sef, Setari. Turul are pași
   proprii pentru manager.
+
+## Runda 22 — clopoțel, codul folosit, „rămân la masă", meniul zilei multiplu
+
+Cerințe (lotul mare): iconiță de notificare care nu mai e pătrat alb;
+managerul și directorul anunțați când se folosește codul lunii; mesaj clar
+cu bifă înainte de comandă pentru mutarea la altă masă (taxă setabilă);
+meniul zilei cu mai multe produse, reducere afișată, interval orar.
+
+- **Insigna notificării**: Android folosește doar canalul alfa al `badge`;
+  `icon-192.png` (opac) ieșea un pătrat alb. `icons/badge-96.png` /
+  `badge-192.png` = clopoțel alb pe transparent (generat cu PIL,
+  `sigla`/`badge.py`), `sw.js` cache v3.
+- **Migrația 23** (`23_cod_folosit_push.sql`, ambele proiecte):
+  `trimite_mesaj_push` trece prin `trimite_push` (cheia de rezervă
+  `cheie_backup`); trigger `trg_notifica_cod_folosit` pe
+  `jurnal_activitate` (INSERT `pedido_cancelado` cu `cod_validat` sau
+  `cod_anulare_gresit`) → push la `['manager','director']` cu numele ales,
+  masa, totalul, motivul. Directorul se abonează de acum la push
+  (`ensureNotificationPermission` fără excepția lui; textul modalului
+  spune ce primește: doar codul folosit și dispozitiv nou).
+- **Acordul „rămân la masă"**: `setari_mutare` {activ, taxa} (director,
+  Setări → Siguranță), citibil de anon (policy `select public config`,
+  migrația 24). Client: `#acordMasa` în modalul comenzii, doar la masă, cu
+  textul RO/EN (`acordTitlu`, `acordText(masa, taxa)`); fără bifă
+  `sendOrderBtn` dă `acordCere` și scutură cutia; bifa se ține în
+  `sessionStorage` (`acord`) pe durata vizitei.
+- **Meniul zilei multiplu** (migrația 24): coloane `zilei_de_la`,
+  `zilei_zilnic`; `oferta_activa(p)` (zilnic: doar ora, Europe/Bucharest;
+  altfel intervalul exact), `pret_curent` o folosește; `pune_oferta(id,
+  pret, de_la, pana_la, zilnic)`, `scoate_oferta(id|null)`;
+  `seteaza_meniul_zilei` rămâne (compatibilitate). Cron `oferte-expirate`
+  (orar) curăță ofertele de o zi expirate de peste o zi. Client:
+  `ofertaActiva(r)` în JS (oglinda serverului), `#meniulZilei` devine listă
+  (`.mz-lista`, card per ofertă, `−N%` în `.mz-reducere` și în panglica din
+  listă), semnătura ofertelor la 30 s reîncarcă meniul când una începe /
+  se termină. Panou: lista `#mzLista` cu ✕ per produs, formular de la /
+  până la / zilnic, „Scoate toate".
+
+## Runda 23 — pozele produselor din panou
+
+Cerința: „să-l pui pe el să dea upload". **Migrația 25**: bucket Storage
+`poze` (public la citire, 3 MB, webp/jpeg/png), politici pe
+`storage.objects` doar pentru `current_staff_rol() = 'director'`. Panou:
+în fereastra produsului, „Alege poza" → `pregatestePoza()` (canvas, max
+1000 px, WebP 0.84) → `storage.from('poze').upload('produse/<uuid>.webp')`
+→ `mpPoza` = URL public → `p.imagine` la „Salvează produsul"; poza veche
+din bucket se șterge la înlocuire / „Scoate poza". Clientul folosea deja
+`item.imagine || images/<id>.webp`. Fără login de director nu s-a putut
+testa urcarea reală; fluxul (redimensionare, conversie, ștergerea celei
+vechi) e verificat cu un Storage fals în harness.
+
+## Runda 24 — rezervări
+
+**Migrația 26**: tabela `rezervari` (mesa, de_la, pana_la, persoane, nume,
+telefon, nota, status activa/sosita/anulata, creat_de), RLS doar pentru
+staff (bar/ospatar/manager/director scriu; anon nimic), realtime;
+`setari_rezervari()` {minute_inainte: 10, durata_minute: 120} din jurnal
+(`setari_rezervari`, director + manager — policy `insert log staff`
+rescrisă cu excepția); `mese_rezervate()` (anon): mesele blocate (`now()`
+în `[de_la − minute_inainte, de_la)`) sau începute (`[de_la, pana_la)`),
+fără nume; trigger `trg_refuza_masa_rezervata` BEFORE INSERT pe `comenzi`
+refuză comenzile anon pe o masă blocată; cron `rezervari-vechi` șterge la 2
+zile după `pana_la`. Panou: `#modalRezervari` (listă + formular) din Sală,
+`rezervareMesei(mesa)` → blocată / începută / urmează; `getTableStatus`
+întoarce `status: 'rezervata'` pentru masa fără comenzi dar cu rezervare
+(teal, `📅 HH:MM` pe card); `#taRez` în fereastra mesei cu „Au sosit" /
+„Anulează"; harta se reface la minut. Client: `rezervariClient` (declarat
+sus, lângă `allItems` — `applyLanguage()` îl citește la pornire; un `let`
+mai jos dădea TDZ), `loadRezervariClient()` în `refreshTablesStatus` (30 s)
+și înainte de trimitere; `#rezBanner` când masa scanată e blocată;
+`isTableFreeClient` scoate mesele rezervate din „mese libere".
+
+## Runda 25 — Sweet & Sour devine ZeN Lounge Garden
+
+Folderul `sweetandsour/` și adresa `/s/…` rămân (codurile QR tipărite,
+aplicațiile instalate și abonamentele push sunt legate de ele; un domeniu
+propriu rezolvă adresa vizibilă). S-au schimbat: `config.js` (NUME,
+SUBTITLU, TAGLINE RO/EN — textul clientului, INSTAGRAM, CULORI verzi),
+`index.html` (titlu, meta, culori de rezervă, h1, subsol cu Instagram și ©
+din config), `dashboard.html` (titlu, paletă: accent `#8fc26c`),
+`sw.js`, `manifest.json`, `404.html`. Sigla e redesenată vectorial după
+poza clientului (`scratchpad/sigla_zen.py`, PIL): `logo.png` (crem + verde,
+pentru fundal închis), `logo-print.png` (culorile originale), `mark.png`,
+iconițele 192/512/maskable/favicon. Dacă clientul trimite fișierul
+original, se pune peste `sweetandsour/icons/logo.png` (și `logo-print.png`).
+
+## Runda 26 — harta sălii
+
+`config_mese` păstrează forma veche (`zones[].mese[].{numar, scaune}`) și
+primește în plus: `zones[].plan = {w, h, pereti: [{x1,y1,x2,y2}]}` (unități:
+lățimea încăperii = 100; 100×70 / 100×100 / 70×100) și pe masă `x, y,
+forma ('patrata'|'rotunda'), marime ('mica'|'normala'|'mare'|'lunga'),
+unita_cu`. `renderTablesGrid()` desenează `#tablesGrid.plan-sala`
+(aspect-ratio din plan, `min-width: 640px` într-un `.plan-scroll`), SVG cu
+pereții și legăturile meselor unite, cardurile absolute (`left/top/width/
+height` în %). Mesele fără coordonate primesc un loc (`asazaMeseleFaraLoc`).
+Editare (`isEditingMap`): bară `#planBara` (➕ Masa, 🧱 Perete, 🧹 Șterge
+perete, forma încăperii), pointer events pe grid (tragere cu prag de 6 px,
+perete prin tragere pe gol, atingere simplă → `#modalMasa`: număr, locuri,
+formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
+`numar`, deci nu sunt afectate. Fereastra mesei arată „🔗 Unită cu masa X —
+împreună N lei".
+
+## Runda 27 — GDPR „cea mai tare", contract v2, cercetare poze angajați
+
+- Politica din meniu (RO/EN) și informarea personalului aduse la zi:
+  rezervări, acordul „rămân la masă" (doar pe telefon), pozele produselor
+  (Supabase Storage, Irlanda), notificarea conducerii la codul folosit,
+  ANSPDCP cu telefon și e-mail, „fără biometrie / video", data 17.09.2026.
+- `config.js`: `PLATFORMA: 'Ospi'` (numele produsului).
+- `Contract_licenta_mentenanta_Ospi.docx` (în `Downloads/Platforma/`, în
+  afara repo-ului): art. 3.2 (uneltele din panou), 6.3.1 (limitele
+  mentenanței: funcții noi, conținut, date șterse, echipamente, integrări
+  = separat), 8.3 (furnizorii de infrastructură pot fi schimbați cu alții
+  din UE cu anunț de 30 de zile — nu trebuie contract nou), Anexa 1 la zi
+  (Irlanda; GitHub fără date personale — copiile din `backup/` conțin doar
+  meniul și setările, deci criptarea nu e necesară), **Anexa 2 — acordul de
+  prelucrare** (art. 28 alin. 3 complet).
+- `Pachet_GDPR_Ospi.docx`: registrul art. 30, afiș clienți, consultarea
+  salariaților, procedura cereri (+ model răspuns), procedura incident
+  (72 h), sub-împuterniciți, DPO/DPIA/camere, poze angajați (nu),
+  checklist.
+- Cercetare poze la anulare: Legea 190/2018 art. 5 (monitorizarea
+  salariaților): interes legitim care prevalează, informare completă,
+  consultarea salariaților, fără alternativă mai puțin intruzivă, păstrare
+  max. 30 de zile. Alternativa există deja → nu se implementează;
+  recomandare: PIN personal pe angajat dacă e nevoie.
 
 ## Înainte de deschidere
 

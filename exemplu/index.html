@@ -1167,28 +1167,31 @@
           '<b>La masa:</b> numarul mesei, produsele comandate, mentiunile pe care le scrii si ora. Fara nume, fara cont, fara telefon.',
           '<b>La pachet:</b> numele si numarul de telefon, doar ca sa te anuntam cand e gata comanda.',
           '<b>Parerea ta:</b> nota (stele), textul scris si masa — doar daca alegi sa le trimiti.',
+          '<b>Rezervari:</b> daca suni sau ceri o masa pentru mai tarziu, personalul noteaza masa, ora, numarul de persoane si, daca vrei, un nume si un telefon ca sa te gaseasca. Se sterg singure la 2 zile dupa rezervare.',
+          '<b>Confirmarea de dinaintea comenzii</b> („raman la masa asta"): bifa ramane doar pe telefonul tau, pe durata vizitei; nu se trimite nicaieri.',
           '<b>Tehnic:</b> un identificator aleator al comenzii, pastrat pe telefonul tau, ca doar tu sa-ti poti modifica comanda; in baza de date se pastreaza numai o amprenta (hash) a lui, care nu poate fi inversata. Adresa IP ajunge la furnizorii de gazduire, ca la orice site, in jurnalele lor tehnice.',
           '<b>Ce NU facem:</b> nu cerem cont, nu citim locatia, nu folosim camera sau microfonul telefonului tau si nu iti facem fotografii, nu folosim cookie-uri de urmarire sau de publicitate, nu facem profilare, nu vindem date si nu trimitem mesaje de marketing.' ] },
         { h: '3. De ce si pe ce temei legal', p: [
           'Executarea comenzii tale (art. 6 alin. 1 lit. b din GDPR); interesul legitim al localului de a tine evidenta comenzilor, de a preveni fraudele si de a rezolva reclamatiile (art. 6 alin. 1 lit. f); consimtamantul tau pentru parerea trimisa (art. 6 alin. 1 lit. a), pe care il poti retrage oricand cerand stergerea ei.' ] },
         { h: '4. Cat timp le pastram', p: [
-          '<b>Comenzile</b> (masa, produsele, ora — nimic despre tine): luna in curs si luna trecuta, pentru statisticile localului, apoi se sterg automat. <b>Numele si telefonul de la pachet:</b> 48 de ore. <b>Jurnalul de activitate</b> (ce s-a intamplat cu comanda, fara date personale de la masa): 3 zile. <b>Parerile:</b> 30 de zile, apoi doar ca statistica, fara text.',
+          '<b>Comenzile</b> (masa, produsele, ora — nimic despre tine): luna in curs si luna trecuta, pentru statisticile localului, apoi se sterg automat. <b>Numele si telefonul de la pachet:</b> 48 de ore. <b>Rezervarile</b> (nume, telefon): 2 zile dupa ora rezervarii. <b>Jurnalul de activitate</b> (ce s-a intamplat cu comanda, fara date personale de la masa): 3 zile. <b>Parerile:</b> 30 de zile, apoi doar ca statistica, fara text. Stergerea e automata, programata in baza de date — nu depinde de cineva sa-si aduca aminte.',
           '<b>Pe telefonul tau:</b> masa si comenzile trimise raman pana inchizi meniul; limba si consimtamantul raman pana stergi datele site-ului din browser.' ] },
         { h: '5. Cui le transmitem', p: [
-          '<b>Supabase Inc.</b> — baza de date si transmisia in timp real, in centre de date din Uniunea Europeana. <b>Cloudflare Inc.</b> — livrarea paginilor. Fonturile sunt servite de pe acelasi site: nu se face niciun apel catre Google sau alt tert cand se incarca pagina.',
+          '<b>Supabase Inc.</b> — baza de date, transmisia in timp real si pozele produselor, in centre de date din Uniunea Europeana (Irlanda). <b>Cloudflare Inc.</b> — livrarea paginilor. Fonturile sunt servite de pe acelasi site: nu se face niciun apel catre Google sau alt tert cand se incarca pagina.',
           'Toti actioneaza ca persoane imputernicite, pe baza de contract, cu clauzele contractuale standard ale UE pentru orice transfer in afara Uniunii. Nimeni altcineva nu primeste datele tale si nu exista niciun transfer in scop comercial.' ] },
         { h: '6. Cum le protejam', p: [
           'Conexiune criptata (HTTPS). Comenzile pot fi citite doar de personalul autentificat, fiecare pe rolul lui, prin reguli aplicate direct in baza de date. Comanda ta poate fi modificata de pe telefon doar cu identificatorul tau secret, verificat pe server. Fiecare actiune a personalului se scrie intr-un jurnal. Stergerea datelor e automata, nu depinde de cineva.' ] },
         { h: '7. Drepturile tale', p: [
-          'Ai dreptul de acces, rectificare, stergere („dreptul de a fi uitat"), restrictionare a prelucrarii, portabilitate, opozitie si retragerea consimtamantului. Spune-i personalului sau scrie la <b>' + op.contact + '</b>; raspundem in cel mult 30 de zile.',
-          'Daca nu esti multumit, te poti adresa Autoritatii Nationale de Supraveghere a Prelucrarii Datelor cu Caracter Personal (ANSPDCP), B-dul G-ral Gheorghe Magheru 28-30, Bucuresti — <b>www.dataprotection.ro</b>.' ] },
+          'Ai dreptul de acces (o copie a datelor), rectificare, stergere („dreptul de a fi uitat"), restrictionare a prelucrarii, portabilitate, opozitie fata de prelucrarile bazate pe interes legitim si retragerea consimtamantului (fara sa afecteze ce s-a facut inainte). Spune-i personalului sau scrie la <b>' + op.contact + '</b>; raspundem in cel mult 30 de zile, gratuit. Nu trebuie sa ne dai niciun motiv.',
+          'Furnizarea datelor de la masa e necesara ca sa-ti putem executa comanda; fara ele comanda nu poate fi trimisa. Restul (parere, rezervare pe nume) e la alegerea ta.',
+          'Daca nu esti multumit de raspuns, te poti adresa Autoritatii Nationale de Supraveghere a Prelucrarii Datelor cu Caracter Personal (ANSPDCP), B-dul G-ral Gheorghe Magheru 28-30, sector 1, Bucuresti, telefon +40 318 059 211, e-mail <b>anspdcp@dataprotection.ro</b> — <b>www.dataprotection.ro</b> — sau instantelor de judecata.' ] },
         { h: '8. Stocarea locala din browser', p: [
           'Nu folosim cookie-uri. Pagina tine pe telefonul tau, fara sa trimita nicaieri: <b>limba</b> aleasa; <b>produsele din cos</b> (pana trimiti comanda); <b>masa si modul</b> (la masa / la pachet) pe durata vizitei; <b>comenzile trimise</b> si identificatorul lor secret, pe durata vizitei; <b>consimtamantul</b>, ca sa nu ti-l mai cerem. Le stergi oricand din setarile browserului (datele site-ului).' ] },
         { h: '9. Minori', p: [
           'Meniul poate fi rasfoit de oricine e la masa; nu cerem varsta si nu colectam intentionat date de la copii. Comanda la pachet (nume si telefon) e destinata adultilor.' ] },
         { h: '10. Gramaje, valori nutritionale si alergeni', p: [ op.alergeni ] },
         { h: '11. Actualizari', p: [
-          'Politica se actualizeaza cand se schimba serviciul; versiunea in vigoare e intotdeauna cea de aici. <b>Ultima actualizare: 12 septembrie 2026.</b>' ] }
+          'Politica se actualizeaza cand se schimba serviciul; versiunea in vigoare e intotdeauna cea de aici. <b>Ultima actualizare: 17 septembrie 2026.</b>' ] }
       ],
       termeni: (op) => [
         { h: '1. Partile si rolul fiecareia', p: [
@@ -1215,7 +1218,7 @@
         { h: '9. Proprietate intelectuala', p: [
           'Software-ul, designul si codul Aplicatiei apartin Platformei. Denumirile, descrierile, pozele si marca Localului apartin Localului. Nu le poti copia, extrage sau refolosi fara acordul scris al titularului.' ] },
         { h: '10. Legea aplicabila si actualizari', p: [
-          'Acesti termeni sunt guvernati de legea romana. Litigiile se solutioneaza pe cale amiabila, iar in lipsa, de instantele competente din Romania, fara a afecta drepturile tale de consumator. Termenii se pot actualiza; versiunea in vigoare e cea afisata aici. <b>Ultima actualizare: 12 septembrie 2026.</b>' ] }
+          'Acesti termeni sunt guvernati de legea romana. Litigiile se solutioneaza pe cale amiabila, iar in lipsa, de instantele competente din Romania, fara a afecta drepturile tale de consumator. Termenii se pot actualiza; versiunea in vigoare e cea afisata aici. <b>Ultima actualizare: 17 septembrie 2026.</b>' ] }
       ],
       privacyAllergensText: 'Precizare privind gramajele, valorile nutritionale si alergenii: gramajele, valorile calorice (kcal) si lista de ingrediente si alergeni afisate in acest meniu digital au caracter strict orientativ si informativ. Aceste date sunt introduse, actualizate si validate exclusiv de catre local, care raspunde singur de exactitatea si actualizarea lor, in conformitate cu Regulamentul (UE) nr. 1169/2011 privind informarea consumatorilor cu privire la produsele alimentare si cu restul legislatiei aplicabile in materie de siguranta alimentara si protectia consumatorului. Platforma care gazduieste si afiseaza acest meniu digital are exclusiv rolul de furnizor al instrumentului de vizualizare si comanda, nu intervine in prepararea, supravegherea sau verificarea continutului nutritional ori a alergenilor introdusi de local si este expres exonerata de raspundere pentru erori, omisiuni, variatii de reteta, contaminare incrucisata in bucatarie sau date neactualizate. Din cauza prepararii manuale, gramajele servite efectiv si valorile calorice pot varia fata de cele indicate. Recomandam insistent clientilor cu alergii, intolerante sau nevoi alimentare speciale sa anunte direct personalul inainte de a comanda, pentru informatii actualizate si personalizate.',
       cookieBannerText: 'Folosim stocarea locala a browserului, necesara tehnic, ca sa retinem limba, masa si produsele din comanda ta. Nu folosim cookie-uri de publicitate sau de urmarire. Daca navighezi mai departe, esti de acord cu utilizarea lor.', cookieAcceptBtn: 'Accept si continui', cookieInfoBtn: 'Politica de confidentialitate',
@@ -1300,15 +1303,17 @@
           '<b>At the table:</b> your table number, the items you order, the notes you write and the time. No name, no account, no phone.',
           '<b>Takeaway:</b> your name and phone number, only so we can tell you when the order is ready.',
           '<b>Your feedback:</b> the rating (stars), the text and the table — only if you choose to send them.',
+          '<b>Reservations:</b> if you call or ask for a table for later, the staff note the table, the time, the number of people and, if you wish, a name and a phone number to reach you. They are deleted automatically 2 days after the reservation.',
+          '<b>The confirmation before ordering</b> ("I\'m staying at this table"): the tick stays only on your phone for the visit; it is not sent anywhere.',
           '<b>Technical:</b> a random order identifier kept on your phone, so that only you can change your order; the database stores only a one-way fingerprint (hash) of it. Your IP address reaches the hosting providers, as with any website, in their technical logs.',
           '<b>What we do NOT do:</b> no account, no location, no access to your camera or microphone and no photos of you, no tracking or advertising cookies, no profiling, no selling of data, no marketing messages.' ] },
         { h: '3. Why, and on what legal basis', p: [
           'Fulfilling your order (Art. 6(1)(b) GDPR); the venue\'s legitimate interest in keeping order records, preventing fraud and handling complaints (Art. 6(1)(f)); your consent for the feedback you send (Art. 6(1)(a)), which you can withdraw at any time by asking for it to be deleted.' ] },
         { h: '4. How long we keep it', p: [
-          '<b>Orders</b> (table, items, time — nothing about you): the current and the previous month, for the venue statistics, then deleted automatically. <b>Takeaway name and phone:</b> 48 hours. <b>Activity log</b> (what happened to the order, no personal data from the table): 3 days. <b>Feedback:</b> 30 days, then statistics only, without the text.',
+          '<b>Orders</b> (table, items, time — nothing about you): the current and the previous month, for the venue statistics, then deleted automatically. <b>Takeaway name and phone:</b> 48 hours. <b>Reservations</b> (name, phone): 2 days after the reservation time. <b>Activity log</b> (what happened to the order, no personal data from the table): 3 days. <b>Feedback:</b> 30 days, then statistics only, without the text.',
           '<b>On your phone:</b> table and sent orders stay until you close the menu; language and consent stay until you clear the site data in your browser.' ] },
         { h: '5. Who receives it', p: [
-          '<b>Supabase Inc.</b> — database and real-time delivery, in data centres within the European Union. <b>Cloudflare Inc.</b> — page delivery. Fonts are served from this same site: no request goes to Google or any other third party when the page loads.',
+          '<b>Supabase Inc.</b> — database, real-time delivery and product photos, in data centres within the European Union (Ireland). <b>Cloudflare Inc.</b> — page delivery. Fonts are served from this same site: no request goes to Google or any other third party when the page loads.',
           'All of them act as processors under contract, with the EU standard contractual clauses for any transfer outside the Union. Nobody else receives your data and there is no transfer for commercial purposes.' ] },
         { h: '6. How we protect it', p: [
           'Encrypted connection (HTTPS). Orders can be read only by signed-in staff, each within their role, through rules enforced directly in the database. Your order can be changed from your phone only with your secret identifier, verified on the server. Every staff action is written to a log. Deletion is automatic, not up to anyone.' ] },
@@ -1321,7 +1326,7 @@
           'Anyone at the table may browse the menu; we do not ask for age and do not knowingly collect data from children. Takeaway ordering (name and phone) is meant for adults.' ] },
         { h: '10. Weights, nutritional values and allergens', p: [ op.alergeni ] },
         { h: '11. Updates', p: [
-          'This policy is updated whenever the service changes; the version in force is always the one shown here. <b>Last updated: 12 September 2026.</b>' ] }
+          'This policy is updated whenever the service changes; the version in force is always the one shown here. <b>Last updated: 17 September 2026.</b>' ] }
       ],
       termeni: (op) => [
         { h: '1. The parties and their roles', p: [
@@ -1348,7 +1353,7 @@
         { h: '9. Intellectual property', p: [
           'The App\'s software, design and code belong to the Platform. The Venue\'s names, descriptions, photos and brand belong to the Venue. You may not copy, extract or reuse them without the owner\'s written consent.' ] },
         { h: '10. Governing law and updates', p: [
-          'These terms are governed by Romanian law. Disputes are settled amicably or, failing that, by the competent courts of Romania, without affecting your consumer rights. The terms may be updated; the version in force is the one shown here. <b>Last updated: 12 September 2026.</b>' ] }
+          'These terms are governed by Romanian law. Disputes are settled amicably or, failing that, by the competent courts of Romania, without affecting your consumer rights. The terms may be updated; the version in force is the one shown here. <b>Last updated: 17 September 2026.</b>' ] }
       ],
       privacyAllergensText: 'Notice regarding weights, nutritional values and allergens: the weights, calorie (kcal) values, and the list of ingredients and allergens shown in this digital menu are provided for guidance and informational purposes only. This information is entered, updated, and validated exclusively by the establishment (the restaurant), which is solely responsible for its accuracy and for keeping it up to date, in accordance with EU Regulation No. 1169/2011 on the provision of food information to consumers and any other applicable food-safety and consumer-protection regulations. The technology platform hosting and displaying this digital menu acts solely as the provider of the display and ordering tool; it does not take part in preparing, supervising, or verifying the nutritional or allergen content entered by the establishment, and is therefore expressly released from any liability arising from errors, omissions, recipe variations, cross-contact in the kitchen, or outdated information. Because dishes are prepared by hand, the actual weight served and calorie values may vary from those indicated. Customers with allergies, intolerances, or special dietary needs are strongly advised to inform staff directly before ordering, to receive current, personalized information.',
       cookieBannerText: 'We use browser local storage, technically necessary, to remember your language, your table and the items in your order. We do not use advertising or tracking cookies. By continuing to browse you accept its use.', cookieAcceptBtn: 'Accept and continue', cookieInfoBtn: 'Privacy policy',

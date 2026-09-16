@@ -43,7 +43,7 @@ window.SS_CONFIG = {
   // Cine pune la dispozitie meniul digital (firma ta). Apare in termeni si
   // in politica, ca furnizor al instrumentului — nu ca vanzator al
   // produselor. Contactul e doar pentru probleme tehnice.
-  PLATFORMA:       '',
+  PLATFORMA:       'Ospi',
   EMAIL_PLATFORMA: '',
 
   // --- Culori ---

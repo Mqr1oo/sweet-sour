@@ -4830,7 +4830,7 @@ loadFreedTables();
   // face din config.js, ca sa fie acelasi la toate localurile, si se poate
   // printa cu loc de semnatura: art. 13 GDPR cere informarea inainte de
   // prelucrare.
-  const VERSIUNE_INFORMARE = '15 septembrie 2026';
+  const VERSIUNE_INFORMARE = '17 septembrie 2026';
   function sectiuniInformare() {
       const c = window.SS_CONFIG || {};
       const local = escapeHTML(c.OPERATOR || c.NUME || 'localul');
@@ -4850,13 +4850,15 @@ loadFreedTables();
           ['Zonele pe care le acoperi in tura (ospatari)', 'ca barul si colegii sa stie cine raspunde de care mese', '3 zile'],
           ['Ora la care ai intrat in panou si ora la care ai iesit (se scriu singure: la intrarea in cont, la deconectare si la inchiderea zilei)', 'informativ, pentru director: cine a fost pe tura; nu inlocuieste pontajul oficial', '3 zile'],
           ['Tipul dispozitivului, browserul si adresa IP de la care intri in cont (fara continut)', 'siguranta contului: conducerea e anuntata cand un cont de conducere intra de pe un dispozitiv nou', '90 de zile'],
-          ['Abonamentul la notificari push (o adresa tehnica, fara continut)', 'sa primesti comenzile si cand telefonul e blocat — doar daca le activezi tu', 'pana te deconectezi sau le revoci din telefon'] ] },
+          ['Abonamentul la notificari push (o adresa tehnica, fara continut)', 'sa primesti comenzile si cand telefonul e blocat — doar daca le activezi tu', 'pana te deconectezi sau le revoci din telefon'],
+          ['Contul tau pe rezervarile pe care le pui (masa, ora, persoane; numele si telefonul clientului, daca le-a dat)', 'sa se stie cine a luat rezervarea; datele clientului sunt ale localului, le prelucrezi in numele lui', '2 zile dupa ora rezervarii, apoi se sterg singure'],
+          ['Anuntarea conducerii cand folosesti codul lunii', 'managerul si directorul primesc pe loc o notificare cu numele ales, masa si motivul — aceeasi informatie care ramane si in jurnal', 'notificarea nu se pastreaza; jurnalul, ca mai sus'] ] },
         { h: '3. Ce NU se face', p: [
-          `Panoul <b>nu</b> foloseste camera, microfonul sau locatia telefonului tau, <b>nu</b> face poze si <b>nu</b> urmareste ce faci in afara aplicatiei. Nu se ia nicio decizie automata despre tine pe baza acestor date. Sesiunea ta se inchide automat la ora inchiderii localului: a doua zi intri din nou cu contul tau, ca sa fie clar cine a fost pe tura.` ] },
+          `Panoul <b>nu</b> foloseste camera, microfonul sau locatia telefonului tau, <b>nu</b> face poze si <b>nu</b> urmareste ce faci in afara aplicatiei. Nu exista supraveghere video sau audio prin panou si nu se prelucreaza date biometrice. Nu se ia nicio decizie automata despre tine pe baza acestor date; rapoartele pe angajat sunt citite de un om (directorul). Sesiunea ta se inchide automat la ora inchiderii localului: a doua zi intri din nou cu contul tau, ca sa fie clar cine a fost pe tura.` ] },
         { h: '4. Cine vede datele', p: [
           `Directorul localului vede anularile si rapoartele pe angajat (pe zi si pe luna). Managerul vede comenzile, cateva setari si codul lunii, dar nu datele personalului. Colegii vad doar comenzile pe care le lucreaza si zonele pe care le acopera fiecare. Regulile sunt aplicate in baza de date, nu doar in ecran. Datele nu se transmit nimanui altcuiva.` ] },
         { h: '5. Drepturile tale', p: [
-          `Ai dreptul de acces (sa primesti o copie), rectificare, stergere, restrictionare, <b>opozitie</b> fata de prelucrarea bazata pe interes legitim si dreptul de a te plange la Autoritatea Nationala de Supraveghere a Prelucrarii Datelor cu Caracter Personal (ANSPDCP, B-dul G-ral Gheorghe Magheru 28-30, Bucuresti, <b>www.dataprotection.ro</b>). Cererile se trimit la <b>${contact}</b>; raspunsul vine in cel mult 30 de zile.` ] },
+          `Ai dreptul de acces (sa primesti o copie), rectificare, stergere, restrictionare, <b>opozitie</b> fata de prelucrarea bazata pe interes legitim si dreptul de a te plange la Autoritatea Nationala de Supraveghere a Prelucrarii Datelor cu Caracter Personal (ANSPDCP, B-dul G-ral Gheorghe Magheru 28-30, sector 1, Bucuresti, tel. +40 318 059 211, anspdcp@dataprotection.ro, <b>www.dataprotection.ro</b>) sau la instanta. Cererile se trimit la <b>${contact}</b>; raspunsul vine in cel mult 30 de zile, gratuit. Exercitarea drepturilor nu iti poate aduce niciun dezavantaj la locul de munca.` ] },
         { h: '6. Informarea', p: [
           `Localul trebuie sa-ti dea aceasta informare <b>inainte</b> sa folosesti panoul (art. 13 GDPR). Butonul de mai jos o printeaza cu loc de semnatura: un exemplar semnat ramane la local, unul la tine. Versiunea: ${VERSIUNE_INFORMARE}.` ] }
       ];

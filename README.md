@@ -210,10 +210,31 @@ Același panou, dar cu ce-l privește pe el:
 
 ---
 
-## 6. Sala: harta meselor, cu timere
+## 6. Sala: harta localului, cu timere
 
-Directorul desenează sala: zone (Terasă, Interior…) și mesele din fiecare.
+**⭐ Harta e a localului, nu o listă.** Directorul sau managerul apasă
+„Editează harta": fiecare zonă (Terasă, Interior, Etaj…) e o încăpere —
+lată, pătrată sau înaltă — în care desenezi pereții cu degetul (linii:
+un perete, barul, o scară) și tragi mesele exact unde sunt în realitate.
+Atingi o masă și îi spui câte locuri are, dacă e rotundă sau pătrată, cât de
+mare e (mică, normală, mare, lungă) și dacă e **unită cu altă masă** (o
+linie punctată le leagă, iar nota se vede împreună). „➕ Masa" adaugă una
+nouă; „Salvează harta" o trimite tuturor. Pe telefon harta se derulează
+lateral, ca mesele să rămână mari. Mesele vechi, fără loc pe hartă, primesc
+unul singure și se pot muta.
+
 Toată lumea vede aceeași hartă, live.
+
+**📅 Rezervări**: sună cineva pentru o masă la 19:00? Oricine din personal
+(bar, ospătar, manager, director) apasă „Rezervări" în Sală și o trece:
+masa, data, ora, câte persoane, opțional un nume și un telefon. Cu 10
+minute înainte (directorul sau managerul schimbă minutele în Setări) masa se
+**blochează pentru clienți**: cine îi scanează codul vede o bandă „masa e
+rezervată de la 19:00, alege alta" și nu poate comanda (nici serverul nu
+primește comanda). De la 19:00 masa apare **ocupată** pe hartă (verde-albastru,
+cu ora) și așteaptă comanda oaspeților — ei pot comanda normal. Se încheie
+singură după 2 ore (setabil) sau când personalul apasă „Au sosit" /
+„Anulează". Numele și telefonul se șterg singure la 2 zile după.
 
 **⭐ Fiecare masă are timerul ei**, de când e ocupată și de când a comandat
 ultima dată:
@@ -349,7 +370,8 @@ managerul"):
 
 | Setare | Ce face |
 |---|---|
-| **Meniul zilei** (și managerul) | un produs în capul meniului, cu preț special și ora până la care ține; dispare singur |
+| **Meniul zilei** (și managerul) | oricâte produse în capul meniului, fiecare cu preț special și interval orar (ex. 11:30–16:30), opțional „în fiecare zi"; clientul vede reducerea (−20%), în afara intervalului produsul revine singur la prețul normal |
+| **Rezervări** (și managerul) | cu câte minute înainte se blochează masa pentru clienți (implicit 10) și cât ține o rezervare (implicit 120 min) |
 | **Codul de anulare al lunii** (și managerul) | îl vede managerul și directorul; „Cod nou" dacă s-a aflat |
 | **Ore de vârf** (și managerul) | avertisment roșu la clienți: așteptarea e mai mare |
 | **Închide bucătăria** | mâncarea merge la bar; panoul barului își schimbă numele |
@@ -372,6 +394,7 @@ managerul"):
 | **Al doilea factor** (și managerul) | codul din aplicația de autentificare, la fiecare intrare, pentru contul tău |
 | **Cod unic pe masă** | comenzile de la clienți trec doar de pe telefoane care au scanat codul QR de pe masă. Codurile QR cu cheie le face dezvoltatorul; pornești opțiunea abia după ce sunt lipite pe mese |
 | **Limite pentru comenzile clienților** | câte comenzi neconfirmate pe masă, câte în 10 minute, câte bucăți într-o comandă, pragul „sumă mare" |
+| **Mutarea la altă masă după comandă** | pornit/oprit + suma (implicit 40 lei): înainte să trimită comanda, clientul vede un mesaj clar și bifează „Rămân la masa asta — dacă mă mut, localul percepe o taxă de 40 lei"; fără bifă comanda nu pleacă. Bifa rămâne pe telefonul lui pe durata vizitei |
 
 ---
 
@@ -401,6 +424,10 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
 - Produsele au: nume, categorie, bar/bucătărie, preț (sau „preț variabil"),
   volum, ingrediente, alergeni, descriere, traducere în engleză, poză,
   „semnătura casei", activ/inactiv.
+- **⭐ Pozele le pune directorul singur**: în fereastra produsului, „Alege
+  poza" — orice poză de pe telefon; se micșorează și se face WebP pe loc,
+  se urcă în Supabase Storage și apare la clienți după „Publică". „Scoate
+  poza" revine la poza standard din repo (dacă există).
 - **Stocul**: barul, bucătăria sau managerul blochează un produs terminat —
   apare pe loc „Stoc epuizat" la clienți, revine când îl deblochezi.
   Directorul nu vede stocul și nu poate umbla la el.
@@ -420,11 +447,11 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
 - **Etichete**: vegan, vegetarian, fără gluten, fără lactoză, picant, fără
   alcool, fără zahăr — le bifezi la produs, iar clientului îi apar ca filtre
   (doar cele care există în meniu).
-- **Meniul zilei**: managerul sau directorul alege un produs, un preț
-  special și ora până la care ține. Apare primul în meniul clientului, cu
-  prețul vechi tăiat; la ora aleasă dispare singur și produsul revine la
-  prețul normal. Serverul calculează comanda cu prețul special cât timp e
-  valabil.
+- **Meniul zilei**: managerul sau directorul pune oricâte produse, fiecare
+  cu preț special și interval (de la — până la), opțional în fiecare zi.
+  Apar primele în meniul clientului, cu reducerea (−24%) și prețul vechi
+  tăiat; în afara intervalului dispar singure și produsele revin la prețul
+  normal. Serverul calculează comanda cu prețul special cât timp e valabil.
 - **Copie de siguranță**: în fiecare dimineață, GitHub salvează meniul și
   setările fiecărui local în `backup/<local>/`. Din Șef → Meniu → „Din copia
   de siguranță" pui fișierul înapoi în ciornă și publici — două minute.
@@ -459,7 +486,8 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
 
 **Pentru clienți**: nu se cere nimic personal. Se rețin masa, produsele,
 observațiile și ora — luna în curs și luna trecută, pentru statisticile
-localului, apoi se șterg singure (pachet: numele și telefonul, 48 de ore). Primul ecran cere acordul pentru
+localului, apoi se șterg singure (pachet: numele și telefonul, 48 de ore;
+rezervări pe nume: 2 zile). Primul ecran cere acordul pentru
 stocarea locală. Politica de confidențialitate și termenii sunt în meniu, în
 română și engleză, cu localul ca **operator** (vânzătorul, răspunzător de
 alergeni și de produse) și platforma ca **furnizor tehnic**. Nu se folosesc
@@ -474,6 +502,21 @@ angajatul semnează un exemplar înainte să folosească panoul, cum cere legea.
 Localul trebuie să completeze o singură dată: denumirea firmei, adresa și un
 email de contact (în `config.js`).
 
+**⭐ Pachetul GDPR** (`Pachet_GDPR_Ospi.docx`, lângă contract): registrul
+prelucrărilor (art. 30) gata completat pentru tot ce face platforma, afișul
+pentru clienți, procesul-verbal de consultare a salariaților, procedura
+pentru cereri (cu model de răspuns), procedura de incident (72 h), lista
+sub-împuterniciților (Supabase — Irlanda), evaluarea DPO / DPIA / camere și
+o listă de verificare la 6 luni. Contractul cu localul are Anexa 2 — acordul
+de prelucrare cerut de art. 28.
+
+**Poze ale angajaților la anulări — nu.** Ar fi monitorizare a salariaților
+(Legea 190/2018, art. 5): permisă doar fără alternativă mai puțin intruzivă,
+cu consultarea salariaților și păstrare de max. 30 de zile. Alternativa
+există deja (nume + cont + codul lunii + notificare instant la conducere),
+deci nu se justifică. Dacă e nevoie de mai mult, varianta corectă e un PIN
+personal pe angajat, nu poza.
+
 ---
 
 ## 15. Ce nu face (încă)
@@ -481,8 +524,8 @@ email de contact (în `config.js`).
 - Nu emite bonuri fiscale și nu se leagă la casa de marcat (barul confirmă
   bonul în aplicație, ca evidență).
 - Nu încasează cu cardul prin aplicație — clientul plătește la ospătar.
-- Nu are rezervări, opțiuni pe produs („fără gheață"), evaluări pe produs sau
-  email zilnic cu raportul.
+- Nu are opțiuni pe produs („fără gheață"), evaluări pe produs sau email
+  zilnic cu raportul.
 - Nu are imprimantă de bonuri (localul are deja ecran în bucătărie).
 
 Toate se pot adăuga când e nevoie.
