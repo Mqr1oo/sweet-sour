@@ -223,7 +223,16 @@ nouă; „Salvează harta" o trimite tuturor. Pe telefon harta se derulează
 lateral, ca mesele să rămână mari. Mesele vechi, fără loc pe hartă, primesc
 unul singure și se pot muta.
 
-Toată lumea vede aceeași hartă, live.
+Toată lumea vede aceeași hartă, live. Mesele sunt desenate ca mesele: un
+cerc (sau un dreptunghi rotunjit) cu **scaunele în jur** — câte locuri, atâtea
+scaune — iar înăuntru doar numărul mesei și timerul.
+
+**⭐ Ține apăsat pe o masă** (oricine din personal, nu trebuie „Editează
+harta"): masa se ridică și o tragi. O lași **peste altă masă** → se unesc
+pentru azi (linie punctată, nota se vede împreună — grupul mare de la 20 cu
+21). O lași **în alt loc** → stă acolo azi. Ții apăsat pe o masă unită fără
+să o miști → „Desparți mesele?" → revin la locul lor. Mâine dimineață totul
+e ca pe harta directorului; nimic din asta nu schimbă harta de bază.
 
 **📅 Rezervări**: sună cineva pentru o masă la 19:00? Oricine din personal
 (bar, ospătar, manager, director) apasă „Rezervări" în Sală și o trece:
@@ -436,12 +445,16 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
   fiecărei mese, cu numele localului pe el, la orice dimensiune, gata de
   print. Linkul din cod e scurt (`…/s/12/…`). Dacă adaugi mese noi în Sală,
   cere coduri și pentru ele.
-- **Ciornă → Publică → Versiuni.** Directorul lucrează pe o ciornă:
-  modifică, „Salvează ciorna" de câte ori vrea (clienții nu văd nimic), apoi
-  apasă „Publică" o singură dată. Fiecare publicare păstrează versiunea de
-  dinainte; din „Versiuni" te întorci la oricare („revino la versiunea de
-  ieri"). Prețurile ciudate (0 lei, peste 500 lei) și numele duplicate cer
-  o confirmare înainte.
+- **Modifici → Publică.** Directorul modifică liniștit (clienții nu văd
+  nimic până nu apasă „🚀 Publică"). Dacă vrea să lase lucrul pe mai
+  târziu, „💾 Păstrează fără să publici". Atât — fără ciorne, versiuni sau
+  fișiere de restaurat pe ecran (istoricul versiunilor și copia de siguranță
+  există în continuare în spate, dezvoltatorul le poate folosi). Prețurile
+  ciudate (0 lei, peste 500 lei) și numele duplicate cer o confirmare
+  înainte.
+- **Produs nou în trei câmpuri**: nume, categorie, preț — restul (descriere,
+  volum, ingrediente, alergeni, etichete, engleză) stă pliat sub „Mai multe
+  detalii", ca să nu sperie.
 - **Produsele nu se șterg, se ascund.** Un produs șters dispare din meniu,
   dar rămâne cu tot istoricul lui și se recuperează cu un buton.
 - **Etichete**: cu alcool, fără alcool, cald, rece, vegan, vegetarian, fără
@@ -460,8 +473,8 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
   tăiat; în afara intervalului dispar singure și produsele revin la prețul
   normal. Serverul calculează comanda cu prețul special cât timp e valabil.
 - **Copie de siguranță**: în fiecare dimineață, GitHub salvează meniul și
-  setările fiecărui local în `backup/<local>/`. Din Șef → Meniu → „Din copia
-  de siguranță" pui fișierul înapoi în ciornă și publici — două minute.
+  setările fiecărui local în `backup/<local>/`. Dacă e nevoie de ea,
+  dezvoltatorul o pune înapoi în două minute.
   Aceeași rulare ține proiectele treze (planul gratuit Supabase le pune pe
   pauză după o săptămână fără activitate) și trimite email dacă un local nu
   răspunde.

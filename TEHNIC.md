@@ -1461,6 +1461,51 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
   originală ZeN (litere închise). Se activează când clientul trimite
   fișierul original.
 
+## Runda 29 — mese rotunde cu scaune, „ține apăsat" pe masă, editor simplificat, sigla vectorială
+
+- **Migrația 28** (`28_mese_azi.sql`, ambele proiecte): politica
+  `select jurnal staff` include acțiunea `mese_azi` în lista rândurilor
+  vizibile întregului personal (nu doar autorului). Nicio tabelă nouă.
+- **Aranjarea „pe azi"** (`mese_azi`): oricine din personal ține apăsat
+  ~0,45 s pe o masă din Sală (`pointerdown` → `tinere.timer`; se anulează
+  dacă degetul se mișcă > 8 px înainte) — masa se „ridică" (`.ridicata`,
+  `pointerEvents: none`, vibrație scurtă), o trage și: **peste altă masă**
+  (`mesaSub(cx, cy)` — test pe dreptunghiuri, nu `elementFromPoint`, care
+  vedea cardul tras) → se unesc pe azi (`{mesa, cu, x: lângă țintă, y}`);
+  **în alt loc** → se mută pe azi (`{mesa, cu: cea de azi sau null, x, y}`).
+  Ținere fără mișcare pe o masă deja unită → `confirm('Desparti mesele …?
+  Revin la locul lor.')` → rânduri `{mesa, reset: true}` pentru toate
+  partenerele. Totul se scrie cu `logActivity('mese_azi', …)` în
+  `jurnal_activitate` — harta de bază a directorului (`config_mese`) nu se
+  atinge; `loadMeseAzi()` citește rândurile de la `inceputulTurei()` și
+  construiește `meseAzi = { nr: {cu, x, y} }`; `perecheaMesei(nr)` combină
+  partenerii de azi cu `unita_cu` din hartă (nota mesei, liniile punctate,
+  clasa `.unita-azi`). A doua zi rândurile ies din fereastră (și se șterg
+  la 3 zile, ca restul jurnalului) — mesele revin singure.
+  Realtime: INSERT cu `actiune = 'mese_azi'` → `loadMeseAzi()` la toți.
+- **Mesele arată ca mese**: cardul e rotund (`.plan-sala .table-card
+  {border-radius:50%}`, `.patrata` → 22 %), fără chenar pătrat; numărul de
+  locuri nu se mai scrie (`.t-seats {display:none}`), îl arată scaunele din
+  jur (`scauneHtml` — 2/4/6/8…); în cerc rămân doar numărul mesei și timerul.
+- **Editorul de meniu, mai simplu**: „🚀 Publică" salvează ciorna în tăcere
+  și publică; „💾 Păstrează fără să publici" e singurul buton secundar;
+  „🕘 Versiuni" și „📂 Din copia de siguranță" sunt ascunse
+  (`display:none`, codul rămâne — RPC-urile `restaureaza_meniu` /
+  `restaureaza_din_backup` sunt tot acolo, iar copia de siguranță se face
+  în continuare pe GitHub). Fereastra produsului: obligatorii doar numele și
+  categoria; „Activ" e în partea de sus; restul (descriere, volum,
+  ingrediente, alergeni, etichete, engleză) stă pliat sub „▸ Mai multe
+  detalii" (`arataDetalii()` — deschis automat când produsul are deja
+  detalii, pliat la produs nou).
+- **Sigla ZeN vectorială**: clientul a trimis `zenn.svg` (două `<path>`,
+  fără imagini incorporate) → `sweetandsour/icons/logo.svg`, `config.js`
+  `LOGO: 'icons/logo.svg'`. PNG-urile (`logo.png` 1400 px, `logo-print.png`
+  2000 px, `mark.png` = doar literele, iconițele 192/512/maskable pe alb,
+  `favicon.png`) au fost randate din SVG în browserul panoului (canvas pe o
+  pagină HTML — pe un document SVG `createElement('canvas')` nu merge) și
+  trimise pe disc printr-un mic receptor Python local (`primeste.py`,
+  127.0.0.1:8766, 60 s). Panoul folosește tot `icons/logo.png`.
+
 ## Înainte de deschidere
 
 1. Authentication → Providers → Email: **Allow new users to sign up** = oprit.

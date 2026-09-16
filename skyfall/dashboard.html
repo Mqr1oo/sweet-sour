@@ -287,7 +287,12 @@
   .plan-sala.unealta-sterge svg.pereti line.perete { pointer-events:stroke; cursor:pointer; stroke-width:10; }
   .plan-sala svg.pereti line.perete.previzualizare { stroke: var(--accent); stroke-dasharray: 6 5; }
   .plan-sala svg.pereti line.legatura { stroke: var(--accent); stroke-width:4; stroke-dasharray: 6 4; opacity:.75; }
-  .plan-sala .table-card { position:absolute; aspect-ratio:auto; gap:1px; padding:2px; min-width:0; }
+  .plan-sala .table-card { position:absolute; aspect-ratio:auto; gap:1px; padding:2px; min-width:0; border-radius:50%; border-width:2px; }
+  .plan-sala .table-card.patrata { border-radius:22%; }
+  .plan-sala .table-card .t-seats { display:none; }
+  .plan-sala .table-card.ridicata { z-index:6; box-shadow:0 12px 28px rgba(0,0,0,.6); transform:scale(1.06); border-style:dashed; transition:none; }
+  .plan-sala .table-card.tinta { outline:3px solid var(--accent); outline-offset:3px; }
+  .plan-sala .table-card.unita-azi { border-color: var(--accent); }
   .plan-sala .table-card .t-num { font-size:17px; }
   .plan-sala .table-card .t-seats { font-size:10px; }
   .plan-sala .table-card .t-timp { font-size:10px; }
@@ -515,6 +520,9 @@
 
   /* Traducere automata */
   .mp-f-row{ display:flex; gap:6px; align-items:stretch; }
+  .mp-detalii-btn{ background:none; border:1px dashed var(--border); color:var(--text-muted); border-radius:10px; padding:10px 12px; font:inherit; font-size:13px; cursor:pointer; text-align:left; }
+  .mp-detalii-btn.deschis{ color:var(--text); border-style:solid; }
+  .mp-detalii{ padding-top:4px; }
   .mp-poza{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
   .mp-poza img{ width:96px; height:96px; object-fit:cover; border-radius:12px; border:1px solid var(--border); background:var(--bg); }
   .mp-poza .mp-poza-btns{ display:flex; flex-direction:column; gap:6px; }
@@ -832,7 +840,7 @@
        <div class="dash-panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap:16px;">
           <div>
             <h3>🗺️ Planul salii</h3>
-            <p style="color:var(--text-muted); font-size:13px; line-height: 1.5;">Harta localului, cu mesele unde sunt in realitate. Atinge o masa ocupata ca sa vezi comanda sau sa o eliberezi. <span id="salaFullMsg" style="display:none; color:var(--danger); font-weight:700;">· SALA PLINA</span></p>
+            <p style="color:var(--text-muted); font-size:13px; line-height: 1.5;">Atinge o masa: comanda, nota, eliberare. <b>Tine apasat</b> pe o masa ca s-o tragi: peste alta masa se unesc pe ziua de azi, in gol doar se muta; tine apasat pe o masa unita ca s-o desparti. <span id="salaFullMsg" style="display:none; color:var(--danger); font-weight:700;">· SALA PLINA</span></p>
           </div>
           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
              <button id="btnRezervari" class="btn-action" style="border:1px solid #14b8a6; color:#5eead4; background:rgba(20,184,166,.10); font-size:13px; padding: 10px 14px;">📅 Rezervari<span id="nrRezervari" class="badge-count" style="display:none; position:static; margin-left:8px;">0</span></button>
@@ -1205,22 +1213,19 @@
       <div data-grup="meniu" class="dash-panel" style="border-color: var(--accent);">
           <h3 style="color: var(--accent);">🍸 Meniu</h3>
           <p style="color:var(--text-muted); font-size:13px; margin-bottom:14px;">
-            Lucrezi pe o ciorna: modifici linistit, „Salveaza ciorna" oricand
-            (clientii nu vad nimic), iar cand esti gata apesi „Publica" o
-            singura data. Fiecare publicare pastreaza versiunea de dinainte —
-            „Versiuni" te intoarce la ea. Produsele sterse doar se ascund si se
-            pot recupera de mai jos. Serverul recalculeaza fiecare comanda din
-            meniul publicat.
+            Adaugi si modifici linistit — clientii nu vad nimic pana apesi
+            „Publica". Produsele sterse doar se ascund si se pot recupera de
+            mai jos.
           </p>
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
             <input type="text" id="cautaProdus" placeholder="🔍 Cauta produs..."
                    style="flex:1; min-width:170px; padding:10px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text);">
             <button class="btn-primary" style="width:auto; padding:10px 16px;" id="btnProdusNou">➕ Produs nou</button>
             <button class="btn-action" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;" id="btnEticheteAuto" title="Completeaza etichetele cu alcool / fara alcool / cald / rece dupa numele produselor">✨ Etichete automate</button>
-            <button class="btn-primary" style="width:auto; padding:10px 16px;" id="btnSalveazaMeniu">💾 Salveaza ciorna</button>
             <button class="btn-primary" style="width:auto; padding:10px 16px; background:var(--success);" id="btnPublicaMeniu">🚀 Publica</button>
-            <button class="btn-action" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;" id="btnVersiuniMeniu">🕘 Versiuni</button>
-            <button class="btn-action" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;" id="btnRestaureazaFisier">📂 Din copia de siguranta</button>
+            <button class="btn-action" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text-muted); font-size:12px; padding:10px 12px;" id="btnSalveazaMeniu" title="Pastreaza modificarile fara sa le publici inca">💾 Pastreaza fara sa publici</button>
+            <button class="btn-action" style="display:none;" id="btnVersiuniMeniu">🕘 Versiuni</button>
+            <button class="btn-action" style="display:none;" id="btnRestaureazaFisier">📂 Din copia de siguranta</button>
             <input type="file" id="fisierBackup" accept="application/json,.json" style="display:none;">
           </div>
           <div id="meniuStare" style="font-size:13px; margin-bottom:10px; min-height:18px;"></div>
@@ -1484,16 +1489,11 @@
 <div class="modal-overlay" id="modalProdus">
   <div class="modal-box" id="modalProdusBox">
     <h2 id="mpTitlu">Produs nou</h2>
-    <p class="mp-sub">Scrii in romana; engleza se completeaza singura cand ieși din camp. Campurile cu <span class="mp-req">*</span> sunt obligatorii. Clientul le vede pe toate.</p>
+    <p class="mp-sub">Obligatoriu doar numele, pretul, categoria si alergenii. Restul e optional — dar clientul vede tot ce completezi. Engleza se face singura.</p>
 
     <div class="mp-grid">
       <label class="mp-f mp-full">Nume (romana) <span class="mp-req">*</span>
         <input type="text" id="mpNume" maxlength="60" placeholder="Ex: Flat White">
-      </label>
-
-      <label class="mp-f mp-full">Descriere (romana) <span class="mp-req">*</span>
-        <textarea id="mpDesc" maxlength="240" rows="2" placeholder="Ce e, pe scurt. Ce vede clientul sub nume."></textarea>
-        <span class="mp-hint" id="mpDescNr">0 / 240</span>
       </label>
 
       <div class="mp-f mp-full">Poza
@@ -1529,14 +1529,6 @@
         <span class="mp-hint">0 = fara. Clientul vede „−20%" si pretul vechi taiat; comanda se calculeaza cu pretul redus. Meniul zilei are prioritate cand e in interval.</span>
       </label>
 
-      <label class="mp-f">Volum / gramaj <span class="mp-req">*</span>
-        <input type="text" id="mpVolum" maxlength="20" placeholder="Ex: 160 ml sau 250 g">
-      </label>
-
-      <label class="mp-f mp-full">Ingrediente <span class="mp-req">*</span>
-        <input type="text" id="mpIngr" placeholder="Separate prin virgula: Cafea, Lapte">
-      </label>
-
       <label class="mp-f mp-full">Alergeni
         <input type="text" id="mpAlerg" placeholder="Separate prin virgula. Lasa gol daca nu are.">
         <span class="mp-hint">Obligatoriu prin lege daca produsul contine alergeni. Bifeaza mai jos daca chiar nu are.</span>
@@ -1544,6 +1536,27 @@
 
       <label class="mp-check mp-full">
         <input type="checkbox" id="mpFaraAlerg"> Produsul nu contine alergeni
+      </label>
+
+      <label class="mp-check mp-full">
+        <input type="checkbox" id="mpActiv" checked> Activ (vizibil in meniu)
+      </label>
+
+      <button type="button" class="mp-detalii-btn mp-full" id="mpDetaliiBtn">▸ Mai multe detalii (descriere, volum, ingrediente, etichete, engleza)</button>
+      <div class="mp-detalii mp-full" id="mpDetalii" style="display:none;">
+      <div class="mp-grid">
+
+      <label class="mp-f mp-full">Descriere (romana)
+        <textarea id="mpDesc" maxlength="240" rows="2" placeholder="Ce e, pe scurt. Ce vede clientul sub nume."></textarea>
+        <span class="mp-hint" id="mpDescNr">0 / 240</span>
+      </label>
+
+      <label class="mp-f">Volum / gramaj
+        <input type="text" id="mpVolum" maxlength="20" placeholder="Ex: 160 ml sau 250 g">
+      </label>
+
+      <label class="mp-f">Ingrediente
+        <input type="text" id="mpIngr" placeholder="Separate prin virgula: Cafea, Lapte">
       </label>
 
       <label class="mp-f">
@@ -1569,9 +1582,8 @@
       <label class="mp-check">
         <input type="checkbox" id="mpSemn"> Semnatura casei (apare cu eticheta)
       </label>
-      <label class="mp-check">
-        <input type="checkbox" id="mpActiv" checked> Activ (vizibil in meniu)
-      </label>
+      </div>
+      </div>
     </div>
 
     <div class="mp-err" id="mpEroare"></div>
@@ -2706,6 +2718,7 @@
     loadOrders();
     loadRezervari();
     loadRezSetari();
+    loadMeseAzi();
     _supabase.channel('rezervari_live').on('postgres_changes', { event: '*', schema: 'public', table: 'rezervari' }, () => loadRezervari()).subscribe();
 loadFreedTables();
     loadBusyMode();
@@ -3148,7 +3161,7 @@ loadFreedTables();
       const n = Math.min(40, Math.max(0, Number(m.scaune) || 0));
       if (!n) return '';
       const out = [];
-      if (m.forma === 'rotunda') {
+      if (m.forma !== 'patrata') {
           for (let i = 0; i < n; i++) {
               const a = -Math.PI / 2 + i * 2 * Math.PI / n;
               out.push(`<i class="scaun" style="left:${(50 + 57 * Math.cos(a)).toFixed(1)}%; top:${(50 + 57 * Math.sin(a)).toFixed(1)}%; --rot:${Math.round(a * 180 / Math.PI + 90)}deg"></i>`);
@@ -3199,13 +3212,14 @@ loadFreedTables();
       grid.className = 'plan-sala' + (isEditingMap ? ' editare' : '') + (uneltaPlan === 'perete' ? ' unealta-perete' : uneltaPlan === 'sterge' ? ' unealta-sterge' : '');
       grid.style.setProperty('--plan-ar', `${plan.w} / ${plan.h}`);
       const px = (x) => (x / plan.w * 100) + '%', py = (y) => (y / plan.h * 100) + '%';
-      const centru = (m) => { const s = marimeMesei(m); return [m.x + s.w / 2, m.y + s.h / 2]; };
+      const centru = (m) => { const s = marimeMesei(m); const az = meseAzi[String(m.numar)]; const x = az && typeof az.x === 'number' ? az.x : m.x, y = az && typeof az.y === 'number' ? az.y : m.y; return [x + s.w / 2, y + s.h / 2]; };
       // peretii + legaturile intre mesele unite (SVG in unitati)
       let svg = `<svg class="pereti" viewBox="0 0 ${plan.w} ${plan.h}" preserveAspectRatio="none">`;
       plan.pereti.forEach((p, i) => { svg += `<line class="perete" data-perete="${i}" x1="${p.x1}" y1="${p.y1}" x2="${p.x2}" y2="${p.y2}" vector-effect="non-scaling-stroke"/>`; });
       (zone.mese || []).forEach(m => {
-          if (!m.unita_cu) return;
-          const alta = zone.mese.find(o => String(o.numar) === String(m.unita_cu)); if (!alta) return;
+          const cu = (meseAzi[String(m.numar)] && meseAzi[String(m.numar)].cu) || m.unita_cu;
+          if (!cu) return;
+          const alta = zone.mese.find(o => String(o.numar) === String(cu)); if (!alta) return;
           const [ax, ay] = centru(m), [bx, by] = centru(alta);
           svg += `<line class="legatura" x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" vector-effect="non-scaling-stroke"/>`;
       });
@@ -3218,14 +3232,16 @@ loadFreedTables();
               ? `<div class="t-timp" title="ocupata de ${formatMinute(st.ocupata)} · ${escapeHTML(st.label)}">⏱ ${formatMinute(st.ocupata)}</div><div class="t-timp" data-termen="${st.termen}">💳 ${formatSecunde(st.termen)}</div>`
               : `<div class="t-timp" title="ocupata de ${formatMinute(st.ocupata)} · ultima comanda acum ${formatMinute(st.minute)}">⏱ ${formatMinute(st.ocupata)}${st.minute >= 10 && st.minute !== st.ocupata ? ` · ${formatMinute(st.minute)}` : ''}</div>`;
           const rz = isEditingMap ? null : rezervareMesei(mesa.numar);
-          html += `<div class="table-card status-${st.status === 'free' ? 'free' : st.status}${mesa.forma === 'rotunda' ? ' rotunda' : ''}${isEditingMap ? ' editare' : ''}" data-idx="${idx}"
-                        style="left:${px(mesa.x)}; top:${py(mesa.y)}; width:${px(s.w)}; height:${py(s.h)};">
+          const az = meseAzi[String(mesa.numar)];
+          const pozX = az && typeof az.x === 'number' ? az.x : mesa.x, pozY = az && typeof az.y === 'number' ? az.y : mesa.y;
+          html += `<div class="table-card status-${st.status === 'free' ? 'free' : st.status}${mesa.forma === 'patrata' ? ' patrata' : ' rotunda'}${isEditingMap ? ' editare' : ''}${az && az.cu ? ' unita-azi' : ''}" data-idx="${idx}" data-numar="${escapeHTML(mesa.numar)}"
+                        style="left:${px(pozX)}; top:${py(pozY)}; width:${px(s.w)}; height:${py(s.h)};">
              ${scauneHtml(mesa, s)}
              ${rz ? `<span class="t-rez" title="rezervata">📅 ${oraRz(rz.r.de_la)}</span>` : ''}
              <div class="t-num">${escapeHTML(mesa.numar)}</div>
              <div class="t-seats">🪑 ${escapeHTML(mesa.scaune)}</div>
              ${timp}
-             ${mesa.unita_cu ? `<span class="t-unita" title="unita cu masa ${escapeHTML(mesa.unita_cu)}">🔗${escapeHTML(mesa.unita_cu)}</span>` : ''}
+             ${(az && az.cu) || mesa.unita_cu ? `<span class="t-unita" title="unita cu masa ${escapeHTML((az && az.cu) || mesa.unita_cu)}">🔗${escapeHTML((az && az.cu) || mesa.unita_cu)}</span>` : ''}
           </div>`;
       });
       grid.innerHTML = html;
@@ -3278,6 +3294,45 @@ loadFreedTables();
       const [x1, y1] = inceput;
       return Math.abs(x - x1) >= Math.abs(y - y1) ? [Math.round(x), y1] : [x1, Math.round(y)];
   }
+  // --- Aranjarea „pe azi": oricine tine apasat pe o masa si o trage --------
+  // Nu se schimba harta directorului: se scrie in jurnal `mese_azi`
+  // {mesa, cu, x, y} (mutata / unita cu alta) sau {mesa, reset: true}
+  // (despartita, la loc). Se citesc randurile de la inceputul zilei de lucru.
+  let meseAzi = {};   // numar -> { cu, x, y } (ultimul rand al zilei)
+  async function loadMeseAzi() {
+      try {
+          const { data } = await _supabase.from('jurnal_activitate').select('detalii, created_at')
+              .eq('actiune', 'mese_azi').gte('created_at', new Date(await inceputulTurei()).toISOString())
+              .order('created_at', { ascending: true }).limit(500);
+          const nou = {};
+          (data || []).forEach(r => {
+              const d = r.detalii || {}; if (!d.mesa) return;
+              if (d.reset) delete nou[String(d.mesa)];
+              else nou[String(d.mesa)] = { cu: d.cu || null, x: typeof d.x === 'number' ? d.x : undefined, y: typeof d.y === 'number' ? d.y : undefined };
+          });
+          meseAzi = nou;
+      } catch (e) { console.warn('mese_azi:', e); }
+      if (currentTab === 'map') renderTablesGrid();
+  }
+  // partenerele unei mese: unirea de azi sau cea din harta
+  function perecheaMesei(nr) {
+      nr = String(nr);
+      const toate = salaConfig.zones.flatMap(z => z.mese || []);
+      const cuAzi = (m) => (meseAzi[String(m.numar)] && meseAzi[String(m.numar)].cu) || (meseAzi[String(m.numar)] ? null : m.unita_cu) || null;
+      const set = new Set();
+      toate.forEach(m => {
+          const cu = cuAzi(m);
+          if (String(m.numar) === nr && cu) set.add(String(cu));
+          if (cu && String(cu) === nr) set.add(String(m.numar));
+      });
+      return [...set];
+  }
+  async function scrieMasaAzi(detalii) {
+      const ok = await logActivity('mese_azi', null, detalii);
+      if (ok === false) { alert('Nu s-a putut salva mutarea mesei.'); return false; }
+      await loadMeseAzi();
+      return true;
+  }
   // pozitia in unitati, din coordonatele degetului
   function unitatiDin(e) {
       const grid = document.getElementById('tablesGrid'), r = grid.getBoundingClientRect();
@@ -3287,10 +3342,38 @@ loadFreedTables();
   (function initHarta() {
       const grid = document.getElementById('tablesGrid');
       let tragere = null;   // { el, mesa, dx, dy, mutat } sau { perete: [x, y] }
+      // masa (alta decat cea trasa) al carei dreptunghi cuprinde punctul
+      function mesaSub(cx, cy, exclus) {
+          for (const c of grid.querySelectorAll('.table-card')) {
+              if (c === exclus) continue;
+              const b = c.getBoundingClientRect();
+              if (cx >= b.left && cx <= b.right && cy >= b.top && cy <= b.bottom) return c;
+          }
+          return null;
+      }
+      // in modul normal: tine apasat (0,45 s) pe o masa -> se ridica si o tragi;
+      // peste alta masa = se unesc pe azi; in gol = se muta pe azi; fara sa
+      // misti = daca e unita, intrebam daca o despartim
+      let tinere = null;   // { timer, card, mesa, x0, y0, ridicata, pornit }
       grid.addEventListener('pointerdown', (e) => {
           const zone = getZoneObj(currentZone); if (!zone) return;
           const card = e.target.closest('.table-card');
-          if (!isEditingMap) return;   // atingerea normala se trateaza la click
+          if (!isEditingMap) {
+              if (!card || e.button > 0) return;
+              const mesa = zone.mese[Number(card.dataset.idx)]; if (!mesa) return;
+              const [x, y] = unitatiDin(e);
+              const az = meseAzi[String(mesa.numar)];
+              const px0 = az && typeof az.x === 'number' ? az.x : mesa.x, py0 = az && typeof az.y === 'number' ? az.y : mesa.y;
+              tinere = { card, mesa, x0: e.clientX, y0: e.clientY, dx: x - px0, dy: y - py0, ridicata: false, mutat: false, pid: e.pointerId };
+              tinere.timer = setTimeout(() => {
+                  if (!tinere) return;
+                  tinere.ridicata = true; card.classList.add('ridicata');
+                  card.style.pointerEvents = 'none';   // ca sa vedem masa de sub deget, nu pe cea trasa
+                  try { grid.setPointerCapture(tinere.pid); } catch (err) {}
+                  try { if (navigator.vibrate) navigator.vibrate(20); } catch (err) {}
+              }, 450);
+              return;
+          }
           if (uneltaPlan === 'sterge') {
               const p = e.target.closest('line.perete[data-perete]');
               if (p) { planZonei(zone).pereti.splice(Number(p.dataset.perete), 1); renderTablesGrid(); }
@@ -3310,6 +3393,27 @@ loadFreedTables();
           e.preventDefault();
       });
       grid.addEventListener('pointermove', (e) => {
+          if (tinere) {
+              if (!tinere.ridicata) {
+                  // s-a miscat inainte sa se ridice: e derulare / atingere, nu tinere
+                  if (Math.abs(e.clientX - tinere.x0) + Math.abs(e.clientY - tinere.y0) > 8) { clearTimeout(tinere.timer); tinere = null; }
+                  return;
+              }
+              const zone = getZoneObj(currentZone), plan = planZonei(zone);
+              const [x, y] = unitatiDin(e);
+              const s = marimeMesei(tinere.mesa);
+              tinere.px = Math.max(0, Math.min(plan.w - s.w, Math.round(x - tinere.dx)));
+              tinere.py = Math.max(0, Math.min(plan.h - s.h, Math.round(y - tinere.dy)));
+              tinere.mutat = true;
+              tinere.card.style.left = (tinere.px / plan.w * 100) + '%';
+              tinere.card.style.top = (tinere.py / plan.h * 100) + '%';
+              // tinta: masa peste care e degetul (dupa dreptunghiuri, nu dupa hit-test — masa trasa e chiar sub deget)
+              const alta = mesaSub(e.clientX, e.clientY, tinere.card);
+              grid.querySelectorAll('.table-card.tinta').forEach(c => c.classList.remove('tinta'));
+              if (alta) alta.classList.add('tinta');
+              e.preventDefault();
+              return;
+          }
           if (!tragere) return;
           const zone = getZoneObj(currentZone), plan = planZonei(zone);
           const [x, y] = unitatiDin(e);
@@ -3328,7 +3432,44 @@ loadFreedTables();
           tragere.el.style.left = (tragere.mesa.x / plan.w * 100) + '%';
           tragere.el.style.top = (tragere.mesa.y / plan.h * 100) + '%';
       });
+      const gataTinere = async (e) => {
+          if (!tinere) return;
+          const tn = tinere; tinere = null; clearTimeout(tn.timer);
+          if (!tn.ridicata) return;   // atingere scurta: se ocupa click-ul
+          tn.card.classList.remove('ridicata'); tn.card.style.pointerEvents = ''; ultimaRidicare = Date.now();
+          grid.querySelectorAll('.table-card.tinta').forEach(c => c.classList.remove('tinta'));
+          const zone = getZoneObj(currentZone), plan = planZonei(zone);
+          const nr = String(tn.mesa.numar);
+          if (!tn.mutat) {
+              // tinut apasat pe loc: daca e unita, o despartim (si partenerele ei revin la loc)
+              const parteneri = perecheaMesei(nr);
+              if (parteneri.length && confirm(`Desparti mesele ${nr} si ${parteneri.join(', ')}? Revin la locul lor.`)) {
+                  for (const m of [nr, ...parteneri]) await scrieMasaAzi({ mesa: m, reset: true });
+              }
+              renderTablesGrid(); return;
+          }
+          const alta = mesaSub(e.clientX, e.clientY, tn.card);
+          if (alta) {
+              // unire pe azi: masa se aseaza langa tinta
+              const tinta = zone.mese[Number(alta.dataset.idx)];
+              if (tinta) {
+                  const st = marimeMesei(tinta), sm = marimeMesei(tn.mesa);
+                  const azT = meseAzi[String(tinta.numar)];
+                  const tx = azT && typeof azT.x === 'number' ? azT.x : tinta.x, ty = azT && typeof azT.y === 'number' ? azT.y : tinta.y;
+                  let nx = tx + st.w + 2, ny = ty;
+                  if (nx + sm.w > plan.w) nx = Math.max(0, tx - sm.w - 2);
+                  const cu = (azT && azT.cu) || String(tinta.numar);   // grup existent: ne legam de aceeasi masa principala
+                  await scrieMasaAzi({ mesa: nr, cu: String(cu === nr ? tinta.numar : cu), x: nx, y: ny });
+                  try { if (navigator.vibrate) navigator.vibrate([20, 40, 20]); } catch (err) {}
+                  return;
+              }
+          }
+          // doar mutata pe azi (pastram unirea, daca era)
+          const az = meseAzi[nr];
+          await scrieMasaAzi({ mesa: nr, cu: (az && az.cu) || null, x: tn.px, y: tn.py });
+      };
       const gata = (e) => {
+          if (tinere) { gataTinere(e); return; }
           if (!tragere) return;
           const t = tragere; tragere = null;
           if (t.perete) {
@@ -3342,10 +3483,13 @@ loadFreedTables();
           deschideMasa(getZoneObj(currentZone).mese.indexOf(t.mesa));
       };
       grid.addEventListener('pointerup', gata);
-      grid.addEventListener('pointercancel', () => { tragere = null; renderTablesGrid(); });
+      grid.addEventListener('pointercancel', () => { if (tinere) { clearTimeout(tinere.timer); tinere.card.style.pointerEvents = ''; tinere = null; } tragere = null; renderTablesGrid(); });
+      grid.addEventListener('contextmenu', (e) => { if (tinere || e.target.closest('.table-card')) e.preventDefault(); });
       // in afara editarii: atingerea deschide masa (comenzi, nota, eliberare)
+      let ultimaRidicare = 0;
       grid.addEventListener('click', (e) => {
           if (isEditingMap) return;
+          if (Date.now() - ultimaRidicare < 400) return;   // click-ul de dupa o tinere
           const card = e.target.closest('.table-card'); if (!card) return;
           const zone = getZoneObj(currentZone); const mesa = zone && zone.mese[Number(card.dataset.idx)]; if (!mesa) return;
           openTableAction(mesa.numar, getTableStatus(mesa.numar));
@@ -3608,8 +3752,7 @@ loadFreedTables();
       const nota = document.getElementById('taNota'), cere = document.getElementById('taCereNota');
       const rez = (statusInfo.status === 'free' || statusInfo.status === 'rezervata') ? null : rezumatMasa(tableNr);
       // masa unita cu alta: nota se vede impreuna
-      const perechi = salaConfig.zones.flatMap(z => z.mese || []).filter(o => String(o.unita_cu) === String(tableNr) || (String(o.numar) === String(tableNr) && o.unita_cu));
-      const unite = [...new Set(perechi.map(o => String(o.numar) === String(tableNr) ? String(o.unita_cu) : String(o.numar)))];
+      const unite = perecheaMesei(tableNr);
       if (rez && unite.length) {
           const altele = unite.map(nr => ({ nr, r: rezumatMasa(nr) })).filter(x => x.r);
           if (altele.length) rez.unite = `🔗 Unita cu masa ${altele.map(x => x.nr).join(', ')} — impreuna ${(rez.total + altele.reduce((a, x) => a + x.r.total, 0)).toFixed(2)} lei`;
@@ -3822,9 +3965,9 @@ loadFreedTables();
   function actualizeazaStareCiorna() {
       const btnPub = document.getElementById('btnPublicaMeniu');
       if (btnPub) btnPub.classList.toggle('de-publicat', !ciornaPublicata && !meniuModificat);
-      if (meniuModificat) setMeniuStare('Ai modificari nesalvate. Apasa „Salveaza ciorna" — clientii nu vad nimic pana la „Publica".', 'var(--warning)');
-      else if (!ciornaPublicata) setMeniuStare('Ciorna e salvata, dar clientii vad inca meniul vechi. Apasa „Publica" cand esti gata.', 'var(--warning)');
-      else setMeniuStare('✓ Meniul publicat e la zi cu ciorna.', 'var(--success)');
+      if (meniuModificat) setMeniuStare('Ai modificari nepublicate. Apasa „Publica" cand esti gata — clientii nu vad nimic pana atunci.', 'var(--warning)');
+      else if (!ciornaPublicata) setMeniuStare('Modificarile sunt pastrate, dar clientii vad inca meniul vechi. Apasa „Publica" cand esti gata.', 'var(--warning)');
+      else setMeniuStare('✓ Meniul publicat e la zi.', 'var(--success)');
   }
   function marcheazaModificat() { meniuModificat = true; actualizeazaStareCiorna(); }
 
@@ -4033,8 +4176,7 @@ loadFreedTables();
       const et = new Set((p && p.etichete) || []);
       document.getElementById('mpEtichete').innerHTML = ETICHETE.map(([k, t]) =>
           `<label><input type="checkbox" data-eticheta="${k}"${et.has(k) ? ' checked' : ''}> ${t}</label>`).join('');
-      document.getElementById('mpFaraAlerg').checked =
-          !!(p && (!p.alergeni || p.alergeni.length === 0) && p.descriere);
+      document.getElementById('mpFaraAlerg').checked = !!(p && (!p.alergeni || p.alergeni.length === 0) && !p._nou);
 
       // categoriile existente, ca sugestii — asa nu apar "Cafea" si "cafea"
       const cats = [...new Set(meniu.map(x => x.categorie).filter(Boolean))].sort();
@@ -4046,6 +4188,7 @@ loadFreedTables();
       actualizeazaNrCaractere();
       mpPoza = p ? (p.imagine || null) : null;
       arataPoza(p ? p.id_produs : null);
+      arataDetalii(!!(p && (p.descriere || p.volum || (p.ingrediente || []).length || (p.etichete || []).length || p.semnatura)));
       document.getElementById('modalProdus').classList.add('on');
       setTimeout(() => document.getElementById('mpNume').focus(), 60);
   }
@@ -4123,6 +4266,14 @@ loadFreedTables();
       document.getElementById('mpPozaStare').textContent = 'Poza scoasa. Clientul vede poza standard (daca exista). Apasa „Salveaza produsul".';
   });
 
+  // „Mai multe detalii": pliat la produs nou, deschis daca produsul are deja detalii
+  function arataDetalii(deschis) {
+      document.getElementById('mpDetalii').style.display = deschis ? '' : 'none';
+      const b = document.getElementById('mpDetaliiBtn');
+      b.classList.toggle('deschis', deschis);
+      b.textContent = (deschis ? '▾ Mai putine detalii' : '▸ Mai multe detalii (descriere, volum, ingrediente, etichete, engleza)');
+  }
+  document.getElementById('mpDetaliiBtn').addEventListener('click', () => arataDetalii(document.getElementById('mpDetalii').style.display === 'none'));
   function actualizeazaNrCaractere() {
       const t = document.getElementById('mpDesc');
       document.getElementById('mpDescNr').textContent = `${t.value.length} / 240`;
@@ -4146,10 +4297,7 @@ loadFreedTables();
       // singura mai jos, chiar daca directorul n-a asteptat sa iasa din camp.
       const obligatorii = [
           ['mpNume',   'Numele produsului'],
-          ['mpDesc',   'Descrierea'],
           ['mpCat',    'Categoria'],
-          ['mpVolum',  'Volumul sau gramajul'],
-          ['mpIngr',   'Ingredientele'],
       ];
       for (const [id, eticheta] of obligatorii) {
           if (!v(id)) {
@@ -4297,12 +4445,10 @@ loadFreedTables();
   }
 
   async function publicaMeniu() {
-      if (meniuModificat) {
-          if (!confirm('Ai modificari nesalvate. Le salvez in ciorna si public tot?')) return;
-          if (!(await salveazaMeniu())) return;
-      }
+      // „Publica" pastreaza singur modificarile (ciorna) si apoi le publica
+      if (meniuModificat && !(await salveazaMeniu())) return;
       const vii = meniu.filter(p => !p.sters).length, sterse = meniu.filter(p => p.sters).length;
-      if (!confirm(`Publici meniul? ${vii} produse vizibile${sterse ? `, ${sterse} ascunse` : ''}. Clientii il vad in secunda asta; versiunea de acum ramane la „Versiuni”.`)) return;
+      if (!confirm(`Publici meniul? ${vii} produse vizibile${sterse ? `, ${sterse} ascunse` : ''}. Clientii il vad in secunda asta.`)) return;
       setMeniuStare('Se publica...');
       const { data, error } = await _supabase.rpc('publica_meniu');
       if (error) { setMeniuStare('Nu s-a putut publica: ' + error.message, 'var(--danger)'); return; }
@@ -4401,6 +4547,8 @@ loadFreedTables();
                   if (currentTab === 'stock') loadFullMenuForStock();
               } else if (a === 'config_mese') {
                   if (typeof renderTablesGrid === 'function') renderTablesGrid();
+              } else if (a === 'mese_azi') {
+                  loadMeseAzi();
               }
             })
         .subscribe();

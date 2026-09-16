@@ -26,7 +26,7 @@ window.SS_CONFIG = {
   ORAS:      'Piatra Neamt',
   MONEDA:    'lei',
 
-  LOGO: 'icons/logo.png',
+  LOGO: 'icons/logo.svg',
   // sigla originala are litere verde inchis: in meniu si in panou sta pe un
   // card alb, ca sa se vada pe fundalul inchis (lasa gol daca sigla e deschisa)
   LOGO_FUNDAL: '#ffffff',
