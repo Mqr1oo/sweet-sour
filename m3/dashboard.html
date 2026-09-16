@@ -272,6 +272,34 @@
   .table-card .t-del { position: absolute; top: 4px; right: 6px; font-size: 13px; color: var(--danger); font-weight: 900; display: none; }
   .table-card.editing-mode .t-del { display: block; }
   .add-table-card { aspect-ratio: 1; border-radius: 16px; border: 2px dashed var(--border); background: transparent; display: flex; align-items: center; justify-content: center; font-size: 26px; color: var(--text-muted); cursor: pointer; }
+  /* --- Harta salii: incaperea (zona) cu pereti si mesele asezate unde sunt in realitate --- */
+  .plan-scroll { overflow:auto; -webkit-overflow-scrolling:touch; border-radius:16px; }
+  .plan-sala { position:relative; width:100%; min-width:640px; aspect-ratio: var(--plan-ar, 10 / 7); background: rgba(255,255,255,.02);
+               border:1px solid var(--border); border-radius:16px; overflow:hidden; user-select:none; }
+  .plan-sala.editare { touch-action:none; background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size: 5% 7.1428%; }
+  .plan-sala.unealta-perete, .plan-sala.unealta-sterge { cursor:crosshair; }
+  .plan-sala svg.pereti { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
+  .plan-sala svg.pereti line.perete { stroke: var(--text); stroke-width: 6; stroke-linecap: round; opacity:.8; }
+  .plan-sala.unealta-sterge svg.pereti line.perete { pointer-events:stroke; cursor:pointer; stroke-width:10; }
+  .plan-sala svg.pereti line.perete.previzualizare { stroke: var(--accent); stroke-dasharray: 6 5; }
+  .plan-sala svg.pereti line.legatura { stroke: var(--accent); stroke-width:4; stroke-dasharray: 6 4; opacity:.75; }
+  .plan-sala .table-card { position:absolute; aspect-ratio:auto; gap:1px; padding:2px; min-width:0; }
+  .plan-sala .table-card .t-num { font-size:17px; }
+  .plan-sala .table-card .t-seats { font-size:10px; }
+  .plan-sala .table-card .t-timp { font-size:10px; }
+  .plan-sala .table-card.rotunda { border-radius:50%; }
+  .plan-sala .table-card.editare { cursor:grab; border-style:dashed; }
+  .plan-sala .table-card.tras { cursor:grabbing; z-index:5; box-shadow:0 10px 24px rgba(0,0,0,.55); transition:none; }
+  .plan-sala .table-card .t-unita { position:absolute; bottom:4px; right:6px; font-size:10px; color:var(--accent); }
+  .plan-sala .eticheta-zona { position:absolute; left:10px; top:8px; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); pointer-events:none; }
+  .plan-bara { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
+  .plan-bara button { background:rgba(255,255,255,.06); border:1px solid var(--border); color:var(--text); border-radius:100px; padding:8px 12px; font:inherit; font-size:13px; cursor:pointer; }
+  .plan-bara button.on { background:var(--accent); color:#16110a; border-color:var(--accent); }
+  .plan-bara .plan-hint { font-size:12px; color:var(--text-muted); flex-basis:100%; }
+  .me-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:left; }
+  .me-grid label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--text-muted); }
+  .me-grid input, .me-grid select { padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px; }
+  .me-grid .lat { grid-column:1 / -1; }
   .add-table-card:active { transform: scale(0.95); }
 
   .chart-container { display: flex; align-items: flex-end; gap: 8px; height: 180px; padding: 20px 10px 10px; border-bottom: 2px solid var(--border); margin-top: 15px; overflow-x: auto; }
@@ -795,13 +823,13 @@
        <div class="dash-panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap:16px;">
           <div>
             <h3>🗺️ Planul salii</h3>
-            <p style="color:var(--text-muted); font-size:13px; line-height: 1.5;">Atinge o masa ocupata ca sa vezi comanda sau sa o eliberezi. <span id="salaFullMsg" style="display:none; color:var(--danger); font-weight:700;">· SALA PLINA</span></p>
+            <p style="color:var(--text-muted); font-size:13px; line-height: 1.5;">Harta localului, cu mesele unde sunt in realitate. Atinge o masa ocupata ca sa vezi comanda sau sa o eliberezi. <span id="salaFullMsg" style="display:none; color:var(--danger); font-weight:700;">· SALA PLINA</span></p>
           </div>
           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
              <button id="btnRezervari" class="btn-action" style="border:1px solid #14b8a6; color:#5eead4; background:rgba(20,184,166,.10); font-size:13px; padding: 10px 14px;">📅 Rezervari<span id="nrRezervari" class="badge-count" style="display:none; position:static; margin-left:8px;">0</span></button>
              <button id="btnAddZone" class="btn-action" style="border:1px solid var(--border); display:none; font-size:13px; padding: 10px 14px;">➕ Zona noua</button>
              <button id="btnDeleteZone" class="btn-action" style="border:1px solid var(--danger); color:var(--danger); background:transparent; display:none; font-size:13px; padding: 10px 14px;">🗑️ Sterge zona</button>
-             <button id="btnEditMap" class="btn-action" style="border:1px solid var(--border); display:none; font-size:13px; padding: 10px 14px;">✏️ Editeaza mesele</button>
+             <button id="btnEditMap" class="btn-action" style="border:1px solid var(--border); display:none; font-size:13px; padding: 10px 14px;">✏️ Editeaza harta</button>
           </div>
        </div>
        
@@ -1293,6 +1321,26 @@
     <div id="polContinut"></div>
     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;">
       <button class="btn-primary" style="width:auto; padding:10px 16px;" id="btnPrintInformare">🖨️ Printeaza informarea, de semnat</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalMasa">
+  <div class="modal" style="max-width:420px; text-align:left;">
+    <button class="modal-close" id="meInchide">&times;</button>
+    <h2 id="meTitlu" style="margin-bottom:4px;">Masa</h2>
+    <p class="mp-sub">Numarul e cel de pe codul QR al mesei. Locurile si forma se vad pe harta; „unita cu" leaga doua mese trase una langa alta (nota se vede impreuna).</p>
+    <div class="me-grid">
+      <label>Numarul mesei <input type="text" id="meNumar" maxlength="12" placeholder="Ex: 12"></label>
+      <label>Locuri <input type="number" id="meScaune" min="1" max="40" value="4"></label>
+      <label>Forma <select id="meForma"><option value="patrata">Patrata</option><option value="rotunda">Rotunda</option></select></label>
+      <label>Marime <select id="meMarime"><option value="mica">Mica (2 pers.)</option><option value="normala" selected>Normala</option><option value="mare">Mare</option><option value="lunga">Lunga (grup)</option></select></label>
+      <label class="lat">Unita cu masa <select id="meUnita"><option value="">— nu e unita —</option></select></label>
+    </div>
+    <div class="mp-err" id="meEroare"></div>
+    <div class="mp-actiuni">
+      <button class="btn-primary" id="meSalveaza" style="width:auto;padding:12px 22px;">Gata</button>
+      <button id="meSterge" style="background:none;border:1px solid rgba(239,68,68,.4);color:var(--danger);cursor:pointer;font:inherit;padding:12px 16px;border-radius:12px;">Sterge masa</button>
     </div>
   </div>
 </div>
@@ -2799,15 +2847,16 @@ loadFreedTables();
       isEditingMap = !isEditingMap;
       const btn = document.getElementById('btnEditMap');
       if(isEditingMap) {
-          btn.innerHTML = '💾 Salveaza';
+          btn.innerHTML = '💾 Salveaza harta';
           btn.style.background = 'var(--accent)';
-          btn.style.color = 'white';
+          btn.style.color = '#16110a';
           btn.style.borderColor = 'var(--accent)';
       } else {
-          btn.innerHTML = '✏️ Editeaza mesele';
+          btn.innerHTML = '✏️ Editeaza harta';
           btn.style.background = 'transparent';
           btn.style.color = 'var(--text)';
           btn.style.borderColor = 'var(--border)';
+          uneltaPlan = null;
           saveTablesConfig();
       }
       renderTablesGrid();
@@ -3050,71 +3099,253 @@ loadFreedTables();
       return m < 60 ? `${m}m` : `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}m`;
   }
 
+  // --- Harta salii ---------------------------------------------------------
+  // Fiecare zona e o incapere desenata: un dreptunghi (lat / patrat / inalt),
+  // pereti trasi cu degetul (linii), mesele asezate unde sunt in realitate
+  // (trase cu degetul in modul de editare), cu locuri, forma si, daca e
+  // cazul, unite doua cate doua. Coordonatele sunt in „unitati" (latimea
+  // incaperii = 100), ca harta sa arate la fel pe orice ecran. Totul se
+  // salveaza in `config_mese` (aceeasi setare ca inainte; mesele vechi fara
+  // coordonate primesc un loc automat si se pot muta).
+  const PLAN_IMPLICIT = { w: 100, h: 70 };
+  const MARIMI = { mica: [9, 9], normala: [12, 12], mare: [15, 15], lunga: [22, 12] };
+  let uneltaPlan = null;         // null | 'perete' | 'sterge'
+  let meIndex = null;            // masa editata (index in zona) sau null = noua
+  function planZonei(zone) {
+      if (!zone.plan || !zone.plan.w || !zone.plan.h) zone.plan = { w: PLAN_IMPLICIT.w, h: PLAN_IMPLICIT.h, pereti: [] };
+      if (!Array.isArray(zone.plan.pereti)) zone.plan.pereti = [];
+      return zone.plan;
+  }
+  function marimeMesei(m) {
+      const mm = MARIMI[m.marime] || MARIMI.normala;
+      return { w: m.w || mm[0], h: m.h || mm[1] };
+  }
+  // mesele fara coordonate (config vechi) primesc un loc pe randuri
+  function asazaMeseleFaraLoc(zone) {
+      const plan = planZonei(zone);
+      const faraLoc = (zone.mese || []).filter(m => typeof m.x !== 'number' || typeof m.y !== 'number');
+      if (!faraLoc.length) return;
+      const ocupate = (zone.mese || []).filter(m => typeof m.x === 'number');
+      const pas = 16, col = Math.max(1, Math.floor((plan.w - 6) / pas));
+      let i = 0;
+      faraLoc.forEach(m => {
+          let x, y, incercari = 0;
+          do { x = 4 + (i % col) * pas; y = 4 + Math.floor(i / col) * pas; i++; incercari++; }
+          while (ocupate.some(o => Math.abs(o.x - x) < 10 && Math.abs(o.y - y) < 10) && incercari < 200);
+          m.x = x; m.y = y; ocupate.push(m);
+      });
+      const maxY = Math.max(...(zone.mese || []).map(m => m.y + marimeMesei(m).h)) + 4;
+      if (maxY > plan.h) plan.h = Math.ceil(maxY);
+  }
   function renderTablesGrid() {
       actualizeazaAlerteMese();
       const grid = document.getElementById('tablesGrid');
-      grid.innerHTML = '';
       const zone = getZoneObj(currentZone);
-      if(!zone) return;
-
-      zone.mese.forEach(mesa => {
+      if(!zone) { grid.innerHTML = ''; return; }
+      const plan = planZonei(zone);
+      asazaMeseleFaraLoc(zone);
+      grid.className = 'plan-sala' + (isEditingMap ? ' editare' : '') + (uneltaPlan === 'perete' ? ' unealta-perete' : uneltaPlan === 'sterge' ? ' unealta-sterge' : '');
+      grid.style.setProperty('--plan-ar', `${plan.w} / ${plan.h}`);
+      const px = (x) => (x / plan.w * 100) + '%', py = (y) => (y / plan.h * 100) + '%';
+      const centru = (m) => { const s = marimeMesei(m); return [m.x + s.w / 2, m.y + s.h / 2]; };
+      // peretii + legaturile intre mesele unite (SVG in unitati)
+      let svg = `<svg class="pereti" viewBox="0 0 ${plan.w} ${plan.h}" preserveAspectRatio="none">`;
+      plan.pereti.forEach((p, i) => { svg += `<line class="perete" data-perete="${i}" x1="${p.x1}" y1="${p.y1}" x2="${p.x2}" y2="${p.y2}" vector-effect="non-scaling-stroke"/>`; });
+      (zone.mese || []).forEach(m => {
+          if (!m.unita_cu) return;
+          const alta = zone.mese.find(o => String(o.numar) === String(m.unita_cu)); if (!alta) return;
+          const [ax, ay] = centru(m), [bx, by] = centru(alta);
+          svg += `<line class="legatura" x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" vector-effect="non-scaling-stroke"/>`;
+      });
+      svg += `<line class="perete previzualizare" id="peretePrev" x1="0" y1="0" x2="0" y2="0" style="display:none" vector-effect="non-scaling-stroke"/></svg>`;
+      let html = svg + `<span class="eticheta-zona">${escapeHTML(zone.nume)}</span>`;
+      zone.mese.forEach((mesa, idx) => {
           const st = getTableStatus(mesa.numar);
-          let card = document.createElement('div');
-          card.className = `table-card status-${st.status === 'free' ? 'free' : st.status} ${isEditingMap ? 'editing-mode' : ''}`;
-          // fiecare masa ocupata isi arata timerul: de cand sta si de cand a
-          // comandat ultima data (se reimprospateaza din minut in minut)
-          // a cerut nota: numaratoarea inversa pana se elibereaza singura
-          const timp = (st.status === 'free' || st.status === 'rezervata') ? '' : st.termen
+          const s = marimeMesei(mesa);
+          const timp = (st.status === 'free' || st.status === 'rezervata' || isEditingMap) ? '' : st.termen
               ? `<div class="t-timp" title="ocupata de ${formatMinute(st.ocupata)} · ${escapeHTML(st.label)}">⏱ ${formatMinute(st.ocupata)}</div><div class="t-timp" data-termen="${st.termen}">💳 ${formatSecunde(st.termen)}</div>`
               : `<div class="t-timp" title="ocupata de ${formatMinute(st.ocupata)} · ultima comanda acum ${formatMinute(st.minute)}">⏱ ${formatMinute(st.ocupata)}${st.minute >= 10 && st.minute !== st.ocupata ? ` · ${formatMinute(st.minute)}` : ''}</div>`;
-          const rz = rezervareMesei(mesa.numar);
-          card.innerHTML = `
-             ${isEditingMap ? `<span class="t-del" data-action="del">✕</span>` : ''}
-             ${rz && !isEditingMap ? `<span class="t-rez" title="rezervata">📅 ${oraRz(rz.r.de_la)}</span>` : ''}
+          const rz = isEditingMap ? null : rezervareMesei(mesa.numar);
+          html += `<div class="table-card status-${st.status === 'free' ? 'free' : st.status}${mesa.forma === 'rotunda' ? ' rotunda' : ''}${isEditingMap ? ' editare' : ''}" data-idx="${idx}"
+                        style="left:${px(mesa.x)}; top:${py(mesa.y)}; width:${px(s.w)}; height:${py(s.h)};">
+             ${rz ? `<span class="t-rez" title="rezervata">📅 ${oraRz(rz.r.de_la)}</span>` : ''}
              <div class="t-num">${escapeHTML(mesa.numar)}</div>
              <div class="t-seats">🪑 ${escapeHTML(mesa.scaune)}</div>
              ${timp}
-          `;
-          card.onclick = (e) => {
-              if(isEditingMap) {
-                  if(e.target.dataset.action === 'del') {
-                      if(confirm(`Stergi masa ${mesa.numar}?`)) {
-                          zone.mese = zone.mese.filter(m => m.numar !== mesa.numar);
-                          renderZoneTabs(); renderTablesGrid();
-                      }
-                      return;
-                  }
-                  let newSeats = prompt(`Cate locuri are masa ${mesa.numar}?`, mesa.scaune);
-                  if(newSeats !== null && !isNaN(parseInt(newSeats))) {
-                      mesa.scaune = parseInt(newSeats);
-                      renderTablesGrid();
-                  }
-              } else {
-                  openTableAction(mesa.numar, st);
-              }
-          };
-          grid.appendChild(card);
+             ${mesa.unita_cu ? `<span class="t-unita" title="unita cu masa ${escapeHTML(mesa.unita_cu)}">🔗${escapeHTML(mesa.unita_cu)}</span>` : ''}
+          </div>`;
       });
-
-      if(isEditingMap) {
-          let addCard = document.createElement('div');
-          addCard.className = 'add-table-card';
-          addCard.textContent = '+';
-          addCard.onclick = () => {
-              let numar = prompt('Numarul mesei noi (ex: 12):');
-              if(!numar || numar.trim() === '') return;
-              numar = numar.trim();
-              if(zone.mese.some(m => String(m.numar) === numar)) { alert('Exista deja o masa cu numarul asta.'); return; }
-              let scaune = prompt('Cate locuri / scaune are?', '4');
-              scaune = parseInt(scaune) || 4;
-              zone.mese.push({ numar, scaune });
-              renderZoneTabs(); renderTablesGrid();
-          };
-          grid.appendChild(addCard);
-      }
-
+      grid.innerHTML = html;
+      randeazaBaraPlan();
       updateMapBadge();
   }
+
+  // bara de unelte a editarii (doar cand se editeaza)
+  function randeazaBaraPlan() {
+      let bara = document.getElementById('planBara');
+      if (!bara) {
+          bara = document.createElement('div'); bara.id = 'planBara'; bara.className = 'plan-bara';
+          const grid = document.getElementById('tablesGrid');
+          // harta se deruleaza lateral pe telefon (mesele raman mari)
+          let scroll = grid.parentElement;
+          if (!scroll.classList.contains('plan-scroll')) {
+              scroll = document.createElement('div'); scroll.className = 'plan-scroll';
+              grid.parentNode.insertBefore(scroll, grid); scroll.appendChild(grid);
+          }
+          scroll.parentNode.insertBefore(bara, scroll);
+          bara.addEventListener('click', (e) => {
+              const b = e.target.closest('button[data-unealta]'); if (!b) return;
+              const u = b.dataset.unealta;
+              if (u === 'masa') { deschideMasa(null); return; }
+              if (u === 'lata' || u === 'patrata' || u === 'inalta') {
+                  const plan = planZonei(getZoneObj(currentZone));
+                  const dim = { lata: [100, 70], patrata: [100, 100], inalta: [70, 100] }[u];
+                  plan.w = dim[0]; plan.h = dim[1]; renderTablesGrid(); return;
+              }
+              uneltaPlan = uneltaPlan === u ? null : u;
+              renderTablesGrid();
+          });
+      }
+      if (!isEditingMap) { bara.style.display = 'none'; return; }
+      const plan = planZonei(getZoneObj(currentZone));
+      const forma = plan.w === plan.h ? 'patrata' : plan.w > plan.h ? 'lata' : 'inalta';
+      bara.style.display = 'flex';
+      bara.innerHTML = `<button type="button" data-unealta="masa">➕ Masa</button>
+        <button type="button" data-unealta="perete" class="${uneltaPlan === 'perete' ? 'on' : ''}">🧱 Perete</button>
+        <button type="button" data-unealta="sterge" class="${uneltaPlan === 'sterge' ? 'on' : ''}">🧹 Sterge perete</button>
+        <span style="width:1px; height:24px; background:var(--border);"></span>
+        <button type="button" data-unealta="lata" class="${forma === 'lata' ? 'on' : ''}">▭ Incapere lata</button>
+        <button type="button" data-unealta="patrata" class="${forma === 'patrata' ? 'on' : ''}">▢ Patrata</button>
+        <button type="button" data-unealta="inalta" class="${forma === 'inalta' ? 'on' : ''}">▯ Inalta</button>
+        <span class="plan-hint">${uneltaPlan === 'perete' ? 'Trage cu degetul pe harta ca sa desenezi un perete (sau un bar, o scara).' : uneltaPlan === 'sterge' ? 'Atinge peretele pe care vrei sa-l stergi.' : 'Trage mesele unde sunt in realitate. Atinge o masa ca sa-i schimbi locurile, forma sau s-o unesti cu alta. Apasa „Salveaza" cand ai terminat.'}</span>`;
+  }
+
+  // pozitia in unitati, din coordonatele degetului
+  function unitatiDin(e) {
+      const grid = document.getElementById('tablesGrid'), r = grid.getBoundingClientRect();
+      const plan = planZonei(getZoneObj(currentZone));
+      return [Math.max(0, Math.min(plan.w, (e.clientX - r.left) / r.width * plan.w)), Math.max(0, Math.min(plan.h, (e.clientY - r.top) / r.height * plan.h))];
+  }
+  (function initHarta() {
+      const grid = document.getElementById('tablesGrid');
+      let tragere = null;   // { el, mesa, dx, dy, mutat } sau { perete: [x, y] }
+      grid.addEventListener('pointerdown', (e) => {
+          const zone = getZoneObj(currentZone); if (!zone) return;
+          const card = e.target.closest('.table-card');
+          if (!isEditingMap) return;   // atingerea normala se trateaza la click
+          if (uneltaPlan === 'sterge') {
+              const p = e.target.closest('line.perete[data-perete]');
+              if (p) { planZonei(zone).pereti.splice(Number(p.dataset.perete), 1); renderTablesGrid(); }
+              return;
+          }
+          if (uneltaPlan === 'perete' && !card) {
+              const [x, y] = unitatiDin(e);
+              tragere = { perete: [Math.round(x), Math.round(y)] };
+              grid.setPointerCapture(e.pointerId);
+              e.preventDefault(); return;
+          }
+          if (!card) return;
+          const mesa = zone.mese[Number(card.dataset.idx)]; if (!mesa) return;
+          const [x, y] = unitatiDin(e);
+          tragere = { el: card, mesa, dx: x - mesa.x, dy: y - mesa.y, mutat: false, x0: e.clientX, y0: e.clientY };
+          grid.setPointerCapture(e.pointerId);
+          e.preventDefault();
+      });
+      grid.addEventListener('pointermove', (e) => {
+          if (!tragere) return;
+          const zone = getZoneObj(currentZone), plan = planZonei(zone);
+          const [x, y] = unitatiDin(e);
+          if (tragere.perete) {
+              const prev = document.getElementById('peretePrev');
+              if (prev) { prev.style.display = ''; prev.setAttribute('x1', tragere.perete[0]); prev.setAttribute('y1', tragere.perete[1]); prev.setAttribute('x2', Math.round(x)); prev.setAttribute('y2', Math.round(y)); }
+              return;
+          }
+          if (Math.abs(e.clientX - tragere.x0) + Math.abs(e.clientY - tragere.y0) > 6) tragere.mutat = true;
+          if (!tragere.mutat) return;
+          const s = marimeMesei(tragere.mesa);
+          tragere.mesa.x = Math.max(0, Math.min(plan.w - s.w, Math.round(x - tragere.dx)));
+          tragere.mesa.y = Math.max(0, Math.min(plan.h - s.h, Math.round(y - tragere.dy)));
+          tragere.el.classList.add('tras');
+          tragere.el.style.left = (tragere.mesa.x / plan.w * 100) + '%';
+          tragere.el.style.top = (tragere.mesa.y / plan.h * 100) + '%';
+      });
+      const gata = (e) => {
+          if (!tragere) return;
+          const t = tragere; tragere = null;
+          if (t.perete) {
+              const [x, y] = unitatiDin(e);
+              const [x1, y1] = t.perete, x2 = Math.round(x), y2 = Math.round(y);
+              if (Math.hypot(x2 - x1, y2 - y1) >= 3) planZonei(getZoneObj(currentZone)).pereti.push({ x1, y1, x2, y2 });
+              renderTablesGrid(); return;
+          }
+          if (t.mutat) { renderTablesGrid(); return; }   // legaturile se redeseneaza
+          // atingere simpla in modul de editare: fereastra mesei
+          deschideMasa(getZoneObj(currentZone).mese.indexOf(t.mesa));
+      };
+      grid.addEventListener('pointerup', gata);
+      grid.addEventListener('pointercancel', () => { tragere = null; renderTablesGrid(); });
+      // in afara editarii: atingerea deschide masa (comenzi, nota, eliberare)
+      grid.addEventListener('click', (e) => {
+          if (isEditingMap) return;
+          const card = e.target.closest('.table-card'); if (!card) return;
+          const zone = getZoneObj(currentZone); const mesa = zone && zone.mese[Number(card.dataset.idx)]; if (!mesa) return;
+          openTableAction(mesa.numar, getTableStatus(mesa.numar));
+      });
+  })();
+
+  // fereastra unei mese (noua sau existenta), in modul de editare
+  function deschideMasa(idx) {
+      const zone = getZoneObj(currentZone); if (!zone) return;
+      meIndex = idx;
+      const m = idx === null ? null : zone.mese[idx];
+      document.getElementById('meTitlu').textContent = m ? `Masa ${m.numar}` : 'Masa noua';
+      document.getElementById('meNumar').value = m ? m.numar : '';
+      document.getElementById('meNumar').disabled = !!m;
+      document.getElementById('meScaune').value = m ? m.scaune : 4;
+      document.getElementById('meForma').value = m && m.forma === 'rotunda' ? 'rotunda' : 'patrata';
+      document.getElementById('meMarime').value = m && MARIMI[m.marime] ? m.marime : 'normala';
+      const sel = document.getElementById('meUnita');
+      sel.innerHTML = '<option value="">— nu e unita —</option>' + zone.mese.filter(o => !m || String(o.numar) !== String(m.numar))
+          .map(o => `<option value="${escapeHTML(o.numar)}">Masa ${escapeHTML(o.numar)} (${escapeHTML(o.scaune)} locuri)</option>`).join('');
+      sel.value = m && m.unita_cu ? String(m.unita_cu) : '';
+      document.getElementById('meSterge').style.display = m ? '' : 'none';
+      document.getElementById('meEroare').textContent = '';
+      document.getElementById('modalMasa').classList.add('open');
+      if (!m) setTimeout(() => document.getElementById('meNumar').focus(), 60);
+  }
+  const inchideMasa = () => document.getElementById('modalMasa').classList.remove('open');
+  document.getElementById('meInchide').addEventListener('click', inchideMasa);
+  document.getElementById('modalMasa').addEventListener('click', (e) => { if (e.target.id === 'modalMasa') inchideMasa(); });
+  document.getElementById('meSalveaza').addEventListener('click', () => {
+      const zone = getZoneObj(currentZone); if (!zone) return;
+      const err = document.getElementById('meEroare');
+      const numar = document.getElementById('meNumar').value.trim();
+      const scaune = parseInt(document.getElementById('meScaune').value, 10);
+      if (!numar) { err.textContent = 'Scrie numarul mesei.'; return; }
+      if (isNaN(scaune) || scaune < 1 || scaune > 40) { err.textContent = 'Locurile: intre 1 si 40.'; return; }
+      const toate = salaConfig.zones.flatMap(z => z.mese || []);
+      if (meIndex === null && toate.some(o => String(o.numar) === numar)) { err.textContent = `Masa ${numar} exista deja (poate in alta zona).`; return; }
+      const unita = document.getElementById('meUnita').value;
+      let m;
+      if (meIndex === null) {
+          const plan = planZonei(zone);
+          m = { numar, scaune, x: Math.round(plan.w / 2 - 6), y: Math.round(plan.h / 2 - 6) };
+          zone.mese.push(m);
+      } else { m = zone.mese[meIndex]; m.scaune = scaune; }
+      m.forma = document.getElementById('meForma').value;
+      m.marime = document.getElementById('meMarime').value;
+      delete m.w; delete m.h;
+      if (unita) m.unita_cu = unita; else delete m.unita_cu;
+      inchideMasa(); renderZoneTabs(); renderTablesGrid();
+  });
+  document.getElementById('meSterge').addEventListener('click', () => {
+      const zone = getZoneObj(currentZone); if (!zone || meIndex === null) return;
+      const m = zone.mese[meIndex];
+      if (!confirm(`Stergi masa ${m.numar} din harta?`)) return;
+      zone.mese.splice(meIndex, 1);
+      zone.mese.forEach(o => { if (String(o.unita_cu) === String(m.numar)) delete o.unita_cu; });
+      inchideMasa(); renderZoneTabs(); renderTablesGrid();
+  });
 
   // --- Rezervari -----------------------------------------------------------
   // Le pune oricine din personal (bar, ospatar, manager, director) din Sala.
@@ -3316,6 +3547,13 @@ loadFreedTables();
       // nota mesei: tot ce a consumat de cand e ocupata, ca oricine sa poata scoate nota
       const nota = document.getElementById('taNota'), cere = document.getElementById('taCereNota');
       const rez = (statusInfo.status === 'free' || statusInfo.status === 'rezervata') ? null : rezumatMasa(tableNr);
+      // masa unita cu alta: nota se vede impreuna
+      const perechi = salaConfig.zones.flatMap(z => z.mese || []).filter(o => String(o.unita_cu) === String(tableNr) || (String(o.numar) === String(tableNr) && o.unita_cu));
+      const unite = [...new Set(perechi.map(o => String(o.numar) === String(tableNr) ? String(o.unita_cu) : String(o.numar)))];
+      if (rez && unite.length) {
+          const altele = unite.map(nr => ({ nr, r: rezumatMasa(nr) })).filter(x => x.r);
+          if (altele.length) rez.unite = `🔗 Unita cu masa ${altele.map(x => x.nr).join(', ')} — impreuna ${(rez.total + altele.reduce((a, x) => a + x.r.total, 0)).toFixed(2)} lei`;
+      }
       if (rez) {
           const ceruta = cerereNotaMasa(tableNr);
           const zona = zonaMesei(tableNr);
@@ -3323,6 +3561,7 @@ loadFreedTables();
           nota.innerHTML = `<b>${rez.total.toFixed(2)} lei</b>de la ${rez.deLa} · ${rez.comenzi} ${rez.comenzi === 1 ? 'comanda' : 'comenzi'}` +
               (zona ? ` · 📍 ${escapeHTML(zona)}${acopera.length ? ' (' + escapeHTML(acopera.join(', ')) + ')' : ''}` : '') +
               `<div class="ta-linii">${escapeHTML(rez.linii.join(', '))}</div>` +
+              (rez.unite ? `<div class="ta-linii" style="color:var(--accent); margin-top:6px;">${escapeHTML(rez.unite)}</div>` : '') +
               (ceruta ? `<div class="ta-linii" style="color:var(--purple); margin-top:6px;">🧾 Nota ceruta la ${new Date(ceruta.created_at).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}${ceruta.status === 'finalizata' ? ', scoasa de ' + escapeHTML(numeScurt(ceruta.preluat_de || '')) : ' — asteapta sa fie scoasa'}</div>` : '');
           nota.style.display = 'block';
           cere.style.display = (canFree && !ceruta) ? 'block' : 'none';
@@ -6149,7 +6388,7 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
               text: 'Zonele de care raspunzi azi. Comenzile lor apar primele si te anunta; pe celelalte le vezi mai sters si le poti lua.' });
       }
       pasi.push({ el: '#navMap', titlu: 'Sala',
-          text: 'Mesele si de cand stau. Verde: ok. Portocaliu: treci pe la ea. Rosu: prea mult. Mov: a cerut nota. Atinge o masa: totalul ei, cererea de nota, sau o eliberezi.' });
+          text: 'Harta localului: mesele unde sunt in realitate, cu peretii. Verde: ok. Portocaliu: treci pe la ea. Rosu: prea mult. Mov: a cerut nota. Atinge o masa: totalul ei, cererea de nota, sau o eliberezi.' });
       if (rol === 'ospatar') pasi.push({ el: '#navMeniu', titlu: 'Meniu', text: 'Trimiti o comanda in numele clientului, ca de pe telefon.' });
       if (rol === 'bar' || rol === 'bucatarie') pasi.push({ el: '#navStock', titlu: 'Stoc', text: 'S-a terminat ceva? Il blochezi si dispare din meniul clientilor.' });
       pasi.push({ el: '#navHistory', titlu: 'Istoric',
