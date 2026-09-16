@@ -524,7 +524,7 @@ angajatul semnează un exemplar înainte să folosească panoul, cum cere legea.
 Localul trebuie să completeze o singură dată: denumirea firmei, adresa și un
 email de contact (în `config.js`).
 
-**⭐ Pachetul GDPR** (`Pachet_GDPR_Ospi.docx`, lângă contract): registrul
+**⭐ Pachetul GDPR** (`Pachet_GDPR_Ospia.docx`, lângă contract): registrul
 prelucrărilor (art. 30) gata completat pentru tot ce face platforma, afișul
 pentru clienți, procesul-verbal de consultare a salariaților, procedura
 pentru cereri (cu model de răspuns), procedura de incident (72 h), lista

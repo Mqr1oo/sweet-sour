@@ -1411,8 +1411,8 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
   rezervări, acordul „rămân la masă" (doar pe telefon), pozele produselor
   (Supabase Storage, Irlanda), notificarea conducerii la codul folosit,
   ANSPDCP cu telefon și e-mail, „fără biometrie / video", data 17.09.2026.
-- `config.js`: `PLATFORMA: 'Ospi'` (numele produsului).
-- `Contract_licenta_mentenanta_Ospi.docx` (în `Downloads/Platforma/`, în
+- `config.js`: `PLATFORMA: 'Ospia'` (numele produsului; până pe 17 septembrie 2026 a fost „Ospi" — ospi.ro era luat, ospia.ro era liber la verificarea DNS; documentele Word au fost regenerate cu numele nou).
+- `Contract_licenta_mentenanta_Ospia.docx` (în `Downloads/Platforma/`, în
   afara repo-ului): art. 3.2 (uneltele din panou), 6.3.1 (limitele
   mentenanței: funcții noi, conținut, date șterse, echipamente, integrări
   = separat), 8.3 (furnizorii de infrastructură pot fi schimbați cu alții
@@ -1420,7 +1420,7 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
   (Irlanda; GitHub fără date personale — copiile din `backup/` conțin doar
   meniul și setările, deci criptarea nu e necesară), **Anexa 2 — acordul de
   prelucrare** (art. 28 alin. 3 complet).
-- `Pachet_GDPR_Ospi.docx`: registrul art. 30, afiș clienți, consultarea
+- `Pachet_GDPR_Ospia.docx`: registrul art. 30, afiș clienți, consultarea
   salariaților, procedura cereri (+ model răspuns), procedura incident
   (72 h), sub-împuterniciți, DPO/DPIA/camere, poze angajați (nu),
   checklist.
