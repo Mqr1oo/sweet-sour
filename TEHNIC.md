@@ -1426,6 +1426,37 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
   max. 30 de zile. Alternativa există deja → nu se implementează;
   recomandare: PIN personal pe angajat dacă e nevoie.
 
+## Runda 28 — reducere pe produs, mese cu scaune, etichete automate
+
+- **Migrația 27** (`27_reducere_produs.sql`, ambele proiecte): coloana
+  `meniu_produse.reducere` (0–90 %); `pret_curent` = preț special al zilei
+  (în interval) > preț redus (`round(pret*(100-reducere)/100, 2)`) > preț;
+  `meniu_ca_json` adaugă `reducere` doar când > 0 (ciornele vechi rămân
+  „publicate"); `aplica_meniu` scrie coloana. Panou: câmp „Reducere (%)" în
+  fereastra produsului; `produsCiorna` pune `reducere` doar când > 0.
+  Client: `promo` + `reducere` pe item, panglică roșie `🏷️ −20%`, preț
+  vechi tăiat; `select` include `reducere` și `nume_variante`.
+- Etichete noi `cu_alcool`, `cald`, `rece` (RO/EN); butonul „✨ Etichete
+  automate" în editor (`eticheteAutomate(p)`, regex `CUV` pe nume + categorie
+  + ingrediente, fără diacritice; nu suprascrie ce e bifat). Căutarea
+  clientului caută și în `nume_variante` și categorie.
+- Taxa la mutare: pastilă roșie separată (`#acordMasaTaxa`, `acordTaxa(t)`).
+- Harta: mesele au scaune desenate în jur (`scauneHtml`, `.scaun` — rotundă:
+  pe cerc; dreptunghiulară: laturile lungi, apoi capetele), mărimea
+  implicită vine din locuri (`marimeImplicita`: ≤2 mică, ≤4 normală, ≤6
+  mare, 7+ lungă; „Mărime" în modal are opțiunea „după locuri"), pereții
+  sunt doar drepți (`capatDrept`: se aliniază pe axa dominantă). Modalul
+  de rezervări: inputurile `width:100%; min-width:0` (ieșeau din chenar).
+- Ofertele zilei: „de la" pornește de la ora curentă (rotunjită la 5 min),
+  „până la" 23:00; lista spune explicit când clienții NU văd oferta (în
+  afara orelor / expirată / începe la). Confuzia raportată („nu apare meniul
+  zilei") = ofertele erau puse cu 11:30–16:30 și verificate seara — pe site
+  Negroni (11:30–21:30) apărea; verificat live.
+- Sigla pe fundal deschis: `config.js` `LOGO_FUNDAL: '#fff'` pune sigla pe
+  un card (`.pe-fundal`) în meniu, onboarding și panou — pentru sigla
+  originală ZeN (litere închise). Se activează când clientul trimite
+  fișierul original.
+
 ## Înainte de deschidere
 
 1. Authentication → Providers → Email: **Allow new users to sign up** = oprit.

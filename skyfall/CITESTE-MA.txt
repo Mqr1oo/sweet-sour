@@ -10,7 +10,8 @@ Sablon pentru un local nou.
    <REF> cu ref-ul proiectului), 18_inregistrare_inchisa.sql,
    19_chei_dezvoltator.sql, 20_istoric_scurt.sql, 21_istoric_lunar.sql si
    22_push_ospatari.sql (cu <REF>), 23_cod_folosit_push.sql,
-   24_oferte_mutare.sql, 25_poze_produse.sql, 26_rezervari.sql (12 nu mai e
+   24_oferte_mutare.sql, 25_poze_produse.sql, 26_rezervari.sql,
+   27_reducere_produs.sql (12 nu mai e
    necesar). Pentru notificari
    push: deploy la functia supabase/functions/notifica-comanda, secretele
    VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY / VAPID_SUBJECT la functie (pereche

@@ -41,6 +41,7 @@
   
   aside { width: 280px; background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px; z-index: 100; flex-shrink: 0;}
   .brand { font-size: 24px; font-weight: 700; color: var(--accent); margin-bottom: 40px; display: flex; align-items: center; gap: 8px;}
+  .brand img.pe-fundal, .mobile-brand img.pe-fundal { padding: 6px 8px; border-radius: 10px; }
   .nav-item { padding: 14px 16px; border-radius: 14px; color: var(--text-muted); cursor: pointer; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; transition: all 0.2s; font-size: 15px; }
   .nav-item:hover { background: rgba(255,255,255,0.03); color: var(--text); }
   .nav-item.active { background: var(--accent); color: #16110a; }
@@ -262,7 +263,10 @@
   .rz-item .rz-btn.nu { color:var(--danger); border-color:rgba(239,68,68,.4); }
   .rz-form { display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:left; }
   .rz-form label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--text-muted); }
-  .rz-form input, .rz-form select { padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px; }
+  .rz-form label { min-width:0; }
+  .rz-form input, .rz-form select { width:100%; min-width:0; box-sizing:border-box; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px; }
+  .me-grid label { min-width:0; }
+  .me-grid input, .me-grid select { width:100%; min-width:0; box-sizing:border-box; }
   .rz-form .lat { grid-column:1 / -1; }
   .ta-rez { text-align:left; background:rgba(20,184,166,.10); border:1px solid rgba(20,184,166,.4); border-radius:12px; padding:10px 12px; margin-bottom:10px; font-size:13px; }
   .ta-rez b { display:block; margin-bottom:2px; }
@@ -291,6 +295,11 @@
   .plan-sala .table-card.editare { cursor:grab; border-style:dashed; }
   .plan-sala .table-card.tras { cursor:grabbing; z-index:5; box-shadow:0 10px 24px rgba(0,0,0,.55); transition:none; }
   .plan-sala .table-card .t-unita { position:absolute; bottom:4px; right:6px; font-size:10px; color:var(--accent); }
+  .plan-sala .table-card { overflow:visible; }
+  /* scaunele: mici perne in jurul mesei, cate locuri are */
+  .plan-sala .scaun { position:absolute; width:14px; height:9px; border-radius:5px 5px 3px 3px; background:rgba(255,255,255,.28); border:1px solid rgba(255,255,255,.35); transform:translate(-50%, -50%) rotate(var(--rot, 0deg)); pointer-events:none; }
+  .plan-sala .table-card.status-free .scaun { background:rgba(255,255,255,.16); }
+  .plan-sala .table-card.rotunda .scaun { border-radius:5px; }
   .plan-sala .eticheta-zona { position:absolute; left:10px; top:8px; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); pointer-events:none; }
   .plan-bara { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
   .plan-bara button { background:rgba(255,255,255,.06); border:1px solid var(--border); color:var(--text); border-radius:100px; padding:8px 12px; font:inherit; font-size:13px; cursor:pointer; }
@@ -917,8 +926,8 @@
                <input type="number" id="mzPret" placeholder="Pret special (lei)" step="0.01" min="0" style="width:150px;">
              </div>
              <div class="mz-rand">
-               <label class="mz-ora">de la <input type="time" id="mzDeLa" value="11:30"></label>
-               <label class="mz-ora">pana la <input type="time" id="mzPana" value="16:30"></label>
+               <label class="mz-ora">de la <input type="time" id="mzDeLa"></label>
+               <label class="mz-ora">pana la <input type="time" id="mzPana" value="23:00"></label>
                <label class="mp-check" style="margin:0;"><input type="checkbox" id="mzZilnic"> in fiecare zi</label>
                <button class="btn-primary" id="btnMzPune" style="width:auto; padding:10px 16px;">Adauga</button>
                <button class="btn-action" id="btnMzScoate" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;">Scoate toate</button>
@@ -1207,6 +1216,7 @@
             <input type="text" id="cautaProdus" placeholder="🔍 Cauta produs..."
                    style="flex:1; min-width:170px; padding:10px 14px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text);">
             <button class="btn-primary" style="width:auto; padding:10px 16px;" id="btnProdusNou">➕ Produs nou</button>
+            <button class="btn-action" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;" id="btnEticheteAuto" title="Completeaza etichetele cu alcool / fara alcool / cald / rece dupa numele produselor">✨ Etichete automate</button>
             <button class="btn-primary" style="width:auto; padding:10px 16px;" id="btnSalveazaMeniu">💾 Salveaza ciorna</button>
             <button class="btn-primary" style="width:auto; padding:10px 16px; background:var(--success);" id="btnPublicaMeniu">🚀 Publica</button>
             <button class="btn-action" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;" id="btnVersiuniMeniu">🕘 Versiuni</button>
@@ -1334,7 +1344,7 @@
       <label>Numarul mesei <input type="text" id="meNumar" maxlength="12" placeholder="Ex: 12"></label>
       <label>Locuri <input type="number" id="meScaune" min="1" max="40" value="4"></label>
       <label>Forma <select id="meForma"><option value="patrata">Patrata</option><option value="rotunda">Rotunda</option></select></label>
-      <label>Marime <select id="meMarime"><option value="mica">Mica (2 pers.)</option><option value="normala" selected>Normala</option><option value="mare">Mare</option><option value="lunga">Lunga (grup)</option></select></label>
+      <label>Marime <select id="meMarime"><option value="" selected>Dupa locuri (automat)</option><option value="mica">Mica (2 pers.)</option><option value="normala">Normala</option><option value="mare">Mare</option><option value="lunga">Lunga (grup)</option></select></label>
       <label class="lat">Unita cu masa <select id="meUnita"><option value="">— nu e unita —</option></select></label>
     </div>
     <div class="mp-err" id="meEroare"></div>
@@ -1494,7 +1504,7 @@
             <button type="button" class="btn-action" id="mpPozaSterge">Scoate poza</button>
             <input type="file" id="mpPozaFisier" accept="image/*" style="display:none;">
           </div>
-          <span class="mp-hint" id="mpPozaStare">Orice poza de pe telefon: se micsoreaza si se urca singura. Patrat sau aproape patrat arata cel mai bine.</span>
+          <span class="mp-hint" id="mpPozaStare">Direct din telefon (galerie sau camera): se micsoreaza si se comprima singura (WebP, max 1000 px). Pune poze reale, facute de voi, cu produsul asa cum ajunge la masa — nu poze generate. Patrat sau aproape patrat arata cel mai bine.</span>
         </div>
       </div>
 
@@ -1512,6 +1522,11 @@
 
       <label class="mp-f">Pret (lei) <span class="mp-req">*</span>
         <input type="number" id="mpPret" step="0.01" min="0.01" max="9999" placeholder="16.00">
+      </label>
+
+      <label class="mp-f">Reducere (%)
+        <input type="number" id="mpReducere" min="0" max="90" step="1" placeholder="0">
+        <span class="mp-hint">0 = fara. Clientul vede „−20%" si pretul vechi taiat; comanda se calculeaza cu pretul redus. Meniul zilei are prioritate cand e in interval.</span>
       </label>
 
       <label class="mp-f">Volum / gramaj <span class="mp-req">*</span>
@@ -1653,6 +1668,8 @@
       aplicaVoceUI();
   }
   initSoundToggle();
+  // sigla cu litere inchise sta pe un card deschis (config LOGO_FUNDAL)
+  if (window.SS_CONFIG && SS_CONFIG.LOGO_FUNDAL) document.querySelectorAll('.brand img, .mobile-brand img').forEach(im => { im.classList.add('pe-fundal'); im.style.background = SS_CONFIG.LOGO_FUNDAL; });
 
   // Reincarcarea panoului: pe telefon tragi in jos cand lista e sus (ca in
   // aplicatiile obisnuite), pe calculator butonul ↻ din antet. Reincarcam
@@ -3116,9 +3133,44 @@ loadFreedTables();
       if (!Array.isArray(zone.plan.pereti)) zone.plan.pereti = [];
       return zone.plan;
   }
+  // fara marime aleasa, masa creste cu numarul de locuri
+  function marimeImplicita(m) {
+      const n = Number(m.scaune) || 4;
+      return n <= 2 ? 'mica' : n <= 4 ? 'normala' : n <= 6 ? 'mare' : 'lunga';
+  }
   function marimeMesei(m) {
-      const mm = MARIMI[m.marime] || MARIMI.normala;
+      const mm = MARIMI[m.marime] || MARIMI[marimeImplicita(m)];
       return { w: m.w || mm[0], h: m.h || mm[1] };
+  }
+  // scaunele din jurul mesei (pozitii in procente din card): rotunda — pe
+  // cerc; patrata / lunga — pe laturile lungi, apoi la capete
+  function scauneHtml(m, s) {
+      const n = Math.min(40, Math.max(0, Number(m.scaune) || 0));
+      if (!n) return '';
+      const out = [];
+      if (m.forma === 'rotunda') {
+          for (let i = 0; i < n; i++) {
+              const a = -Math.PI / 2 + i * 2 * Math.PI / n;
+              out.push(`<i class="scaun" style="left:${(50 + 57 * Math.cos(a)).toFixed(1)}%; top:${(50 + 57 * Math.sin(a)).toFixed(1)}%; --rot:${Math.round(a * 180 / Math.PI + 90)}deg"></i>`);
+          }
+          return out.join('');
+      }
+      const lat = Math.max(1, Math.round(s.w / 5)), inalt = Math.max(1, Math.round(s.h / 5));   // cate incap pe o latura
+      const laturi = [{ n: 0, max: lat }, { n: 0, max: lat }, { n: 0, max: inalt }, { n: 0, max: inalt }];   // sus, jos, stanga, dreapta
+      let ramase = n;
+      // intai sus/jos alternativ, apoi capetele; daca tot nu incap, se inghesuie
+      const ordine = [0, 1, 2, 3];
+      while (ramase > 0) {
+          let pus = false;
+          for (const k of ordine) { if (ramase > 0 && laturi[k].n < laturi[k].max) { laturi[k].n++; ramase--; pus = true; } }
+          if (!pus) { laturi[0].max++; laturi[1].max++; }
+      }
+      const poz = (cnt, i) => ((i + 1) * 100 / (cnt + 1)).toFixed(1);
+      for (let i = 0; i < laturi[0].n; i++) out.push(`<i class="scaun" style="left:${poz(laturi[0].n, i)}%; top:-8%; --rot:0deg"></i>`);
+      for (let i = 0; i < laturi[1].n; i++) out.push(`<i class="scaun" style="left:${poz(laturi[1].n, i)}%; top:108%; --rot:180deg"></i>`);
+      for (let i = 0; i < laturi[2].n; i++) out.push(`<i class="scaun" style="left:-8%; top:${poz(laturi[2].n, i)}%; --rot:-90deg"></i>`);
+      for (let i = 0; i < laturi[3].n; i++) out.push(`<i class="scaun" style="left:108%; top:${poz(laturi[3].n, i)}%; --rot:90deg"></i>`);
+      return out.join('');
   }
   // mesele fara coordonate (config vechi) primesc un loc pe randuri
   function asazaMeseleFaraLoc(zone) {
@@ -3168,6 +3220,7 @@ loadFreedTables();
           const rz = isEditingMap ? null : rezervareMesei(mesa.numar);
           html += `<div class="table-card status-${st.status === 'free' ? 'free' : st.status}${mesa.forma === 'rotunda' ? ' rotunda' : ''}${isEditingMap ? ' editare' : ''}" data-idx="${idx}"
                         style="left:${px(mesa.x)}; top:${py(mesa.y)}; width:${px(s.w)}; height:${py(s.h)};">
+             ${scauneHtml(mesa, s)}
              ${rz ? `<span class="t-rez" title="rezervata">📅 ${oraRz(rz.r.de_la)}</span>` : ''}
              <div class="t-num">${escapeHTML(mesa.numar)}</div>
              <div class="t-seats">🪑 ${escapeHTML(mesa.scaune)}</div>
@@ -3220,6 +3273,11 @@ loadFreedTables();
         <span class="plan-hint">${uneltaPlan === 'perete' ? 'Trage cu degetul pe harta ca sa desenezi un perete (sau un bar, o scara).' : uneltaPlan === 'sterge' ? 'Atinge peretele pe care vrei sa-l stergi.' : 'Trage mesele unde sunt in realitate. Atinge o masa ca sa-i schimbi locurile, forma sau s-o unesti cu alta. Apasa „Salveaza" cand ai terminat.'}</span>`;
   }
 
+  // peretii sunt doar drepti: capatul se aliniaza pe orizontala sau verticala
+  function capatDrept(inceput, x, y) {
+      const [x1, y1] = inceput;
+      return Math.abs(x - x1) >= Math.abs(y - y1) ? [Math.round(x), y1] : [x1, Math.round(y)];
+  }
   // pozitia in unitati, din coordonatele degetului
   function unitatiDin(e) {
       const grid = document.getElementById('tablesGrid'), r = grid.getBoundingClientRect();
@@ -3257,7 +3315,8 @@ loadFreedTables();
           const [x, y] = unitatiDin(e);
           if (tragere.perete) {
               const prev = document.getElementById('peretePrev');
-              if (prev) { prev.style.display = ''; prev.setAttribute('x1', tragere.perete[0]); prev.setAttribute('y1', tragere.perete[1]); prev.setAttribute('x2', Math.round(x)); prev.setAttribute('y2', Math.round(y)); }
+              const [x2, y2] = capatDrept(tragere.perete, x, y);
+              if (prev) { prev.style.display = ''; prev.setAttribute('x1', tragere.perete[0]); prev.setAttribute('y1', tragere.perete[1]); prev.setAttribute('x2', x2); prev.setAttribute('y2', y2); }
               return;
           }
           if (Math.abs(e.clientX - tragere.x0) + Math.abs(e.clientY - tragere.y0) > 6) tragere.mutat = true;
@@ -3274,7 +3333,7 @@ loadFreedTables();
           const t = tragere; tragere = null;
           if (t.perete) {
               const [x, y] = unitatiDin(e);
-              const [x1, y1] = t.perete, x2 = Math.round(x), y2 = Math.round(y);
+              const [x1, y1] = t.perete, [x2, y2] = capatDrept(t.perete, x, y);
               if (Math.hypot(x2 - x1, y2 - y1) >= 3) planZonei(getZoneObj(currentZone)).pereti.push({ x1, y1, x2, y2 });
               renderTablesGrid(); return;
           }
@@ -3303,7 +3362,7 @@ loadFreedTables();
       document.getElementById('meNumar').disabled = !!m;
       document.getElementById('meScaune').value = m ? m.scaune : 4;
       document.getElementById('meForma').value = m && m.forma === 'rotunda' ? 'rotunda' : 'patrata';
-      document.getElementById('meMarime').value = m && MARIMI[m.marime] ? m.marime : 'normala';
+      document.getElementById('meMarime').value = m && MARIMI[m.marime] ? m.marime : '';
       const sel = document.getElementById('meUnita');
       sel.innerHTML = '<option value="">— nu e unita —</option>' + zone.mese.filter(o => !m || String(o.numar) !== String(m.numar))
           .map(o => `<option value="${escapeHTML(o.numar)}">Masa ${escapeHTML(o.numar)} (${escapeHTML(o.scaune)} locuri)</option>`).join('');
@@ -3333,7 +3392,8 @@ loadFreedTables();
           zone.mese.push(m);
       } else { m = zone.mese[meIndex]; m.scaune = scaune; }
       m.forma = document.getElementById('meForma').value;
-      m.marime = document.getElementById('meMarime').value;
+      const mar = document.getElementById('meMarime').value;
+      if (mar) m.marime = mar; else delete m.marime;
       delete m.w; delete m.h;
       if (unita) m.unita_cu = unita; else delete m.unita_cu;
       inchideMasa(); renderZoneTabs(); renderTablesGrid();
@@ -3699,10 +3759,32 @@ loadFreedTables();
   let ciornaPublicata = true;
 
   const ETICHETE = [
+      ['cu_alcool', '🍸 Cu alcool'], ['fara_alcool', '🍹 Fara alcool'], ['cald', '☕ Cald'], ['rece', '🧊 Rece'],
       ['vegan', '🌱 Vegan'], ['vegetarian', '🥕 Vegetarian'], ['fara_gluten', '🌾 Fara gluten'],
-      ['fara_lactoza', '🥛 Fara lactoza'], ['picant', '🌶️ Picant'], ['fara_alcool', '🍹 Fara alcool'],
-      ['fara_zahar', '🍬 Fara zahar']
+      ['fara_lactoza', '🥛 Fara lactoza'], ['picant', '🌶️ Picant'], ['fara_zahar', '🍬 Fara zahar']
   ];
+  // Etichetele „de gasit" (cu alcool / fara / cald / rece) se pot completa
+  // singure dupa nume si categorie; directorul verifica si publica.
+  const CUV = {
+      cu_alcool: /\b(bere|beri|vin|vinuri|spumant|prosecco|sampanie|cocktail|gin|vodka|votca|whisk|rom|rum|tequila|aperol|spritz|negroni|mojito|margarita|shot|lichior|coniac|cognac|brandy|tuica|palinca|cidru|long ?drink|bourbon|campari|vermut|martini|hugo|sangria|jager|limoncello|old fashioned|daiquiri|cuba libre|pina colada|espresso martini|sour)\b/,
+      fara_alcool: /\b(limonada|racoritoare|suc|sucuri|apa|fresh|smoothie|milkshake|mocktail|virgin|ice ?tea|cafea|cafele|ceai|ceaiuri|espresso|cappuccino|latte|americano|cacao|ciocolata|frappe|cola|fanta|sprite|red ?bull|energizant|tonic|lapte)\b/,
+      cald: /\b(cafea|cafele|espresso|cappuccino|latte|americano|flat white|ceai|ceaiuri|cacao|ciocolata calda|vin fiert|supa|ciorba|paste|pizza|burger|gratar|friptura|tocanita|mic dejun|omleta|ochiuri|placinta|calde?|fierbinte|lungo|ristretto|macchiato|mocha|cortado)\b/,
+      rece: /\b(limonada|racoritoare|suc|sucuri|fresh|smoothie|milkshake|cocktail|bere|beri|cidru|frappe|cold ?brew|iced|ice|inghetata|salata|gheata|spritz|mojito|margarita|gin|vodka|votca|whisk|vin|vinuri|spumant|prosecco|cola|tonic|apa|shot|reci|rece|racoritor|daiquiri|sour|negroni|aperol)\b/
+  };
+  function faraDiacritice(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  function eticheteAutomate(p) {
+      const text = faraDiacritice(p.nume + ' ' + (p.categorie || '') + ' ' + (p.ingrediente || []).join(' '));
+      const are = new Set(p.etichete || []);
+      const noi = [];
+      const alcool = CUV.cu_alcool.test(text);
+      if (alcool && !are.has('cu_alcool') && !are.has('fara_alcool')) noi.push('cu_alcool');
+      if (!alcool && CUV.fara_alcool.test(text) && !are.has('fara_alcool') && !are.has('cu_alcool')) noi.push('fara_alcool');
+      const cald = CUV.cald.test(text), rece = CUV.rece.test(text);
+      if (cald && !rece && !are.has('cald') && !are.has('rece')) noi.push('cald');
+      if (rece && !cald && !are.has('rece') && !are.has('cald')) noi.push('rece');
+      if (rece && cald && !are.has('rece') && !are.has('cald')) noi.push(alcool ? 'rece' : 'cald');
+      return noi;
+  }
 
   // exact forma pe care o intoarce serverul (meniu_ca_json), ca sa poata
   // compara ciorna cu meniul publicat
@@ -3715,7 +3797,8 @@ loadFreedTables();
           semnatura: !!p.semnatura, activ: !!p.activ, ordine: Number(p.ordine) || 0,
           imagine: p.imagine || null, traduceri: p.traduceri || {},
           nume_variante: (p.nume_variante && p.nume_variante.length) ? p.nume_variante : [(p.nume || '').trim().toLowerCase()],
-          etichete: p.etichete || [], sters: !!p.sters
+          etichete: p.etichete || [], sters: !!p.sters,
+          ...(Number(p.reducere) > 0 ? { reducere: Math.min(90, Math.round(Number(p.reducere))) } : {})
       };
   }
 
@@ -3832,6 +3915,17 @@ loadFreedTables();
   document.getElementById('cautaProdus').addEventListener('input', renderMeniu);
 
   document.getElementById('btnProdusNou').addEventListener('click', () => deschideFormular(null));
+  document.getElementById('btnEticheteAuto').addEventListener('click', () => {
+      let n = 0, produse = 0;
+      meniu.filter(p => !p.sters).forEach(p => {
+          const noi = eticheteAutomate(p);
+          if (!noi.length) return;
+          p.etichete = [...(p.etichete || []), ...noi]; p._modificat = true; n += noi.length; produse++;
+      });
+      if (!n) { setMeniuStare('Etichetele cald / rece / alcool sunt deja puse la toate produsele (sau numele nu spun destul — le bifezi din produs).', 'var(--text-muted)'); return; }
+      renderMeniu(); marcheazaModificat();
+      setMeniuStare(`✨ ${n} etichete puse la ${produse} produse, dupa nume. Verifica-le (deschide produsul), apoi „Salveaza ciorna" si „Publica".`, 'var(--warning)');
+  });
 
 
   // --- Traducere automata RO -> EN ----------------------------------------
@@ -3922,6 +4016,7 @@ loadFreedTables();
       set('mpCat',    p ? p.categorie : '');
       set('mpSect',   p ? p.sectiune : 'bar');
       set('mpPret',   p && p.pret ? Number(p.pret).toFixed(2) : '');
+      set('mpReducere', p && p.reducere > 0 ? p.reducere : '');
       set('mpVolum',  p ? p.volum : '');
       set('mpIngr',   p ? (p.ingrediente || []).join(', ') : '');
       set('mpAlerg',  p ? (p.alergeni || []).join(', ') : '');
@@ -4134,6 +4229,7 @@ loadFreedTables();
       p.semnatura   = document.getElementById('mpSemn').checked;
       p.activ       = document.getElementById('mpActiv').checked;
       p.imagine     = mpPoza || null;
+      { const red = parseInt(v('mpReducere'), 10); p.reducere = isNaN(red) ? 0 : Math.min(90, Math.max(0, red)); }
       p.etichete    = [...document.querySelectorAll('#mpEtichete input:checked')].map(x => x.dataset.eticheta);
       // Ingredientele si alergenii se traduc mereu automat: n-are rost sa
       // ceri directorului sa le scrie de doua ori, in doua limbi.
@@ -5027,6 +5123,9 @@ loadFreedTables();
   async function loadMeniulZilei() {
       const sel = document.getElementById('mzProdus'), st = document.getElementById('mzStare'), lista = document.getElementById('mzLista');
       if (!sel || !esteConducere()) return;
+      // „de la" porneste de acum (rotunjit la 5 minute), ca oferta sa apara imediat
+      const deLaEl = document.getElementById('mzDeLa');
+      if (deLaEl && !deLaEl.value) { const d = new Date(); d.setMinutes(Math.floor(d.getMinutes() / 5) * 5, 0, 0); deLaEl.value = d.toTimeString().slice(0, 5); }
       const { data, error } = await _supabase.from('meniu_produse')
           .select('id_produs,nume,pret,zilei,zilei_pret,zilei_de_la,zilei_pana_la,zilei_zilnic')
           .eq('activ', true).is('sters_la', null).order('ordine');
@@ -5043,9 +5142,9 @@ loadFreedTables();
           let cand = '';
           if (p.zilei_de_la && p.zilei_pana_la) cand = `${oraHM(p.zilei_de_la)}–${oraHM(p.zilei_pana_la)}`;
           else if (p.zilei_pana_la) cand = `pana la ${oraHM(p.zilei_pana_la)}`;
-          if (p.zilei_zilnic) cand += ' · in fiecare zi';
-          else if (p.zilei_pana_la && new Date(p.zilei_pana_la).getTime() < Date.now()) cand += ' · a expirat';
-          else if (p.zilei_de_la && new Date(p.zilei_de_la).getTime() > Date.now()) cand += ' · incepe mai tarziu';
+          if (p.zilei_zilnic) cand += ' · in fiecare zi' + (acum ? '' : ' — acum e in afara orelor, clientii NU o vad');
+          else if (p.zilei_pana_la && new Date(p.zilei_pana_la).getTime() < Date.now()) cand += ' · A EXPIRAT — clientii nu o mai vad';
+          else if (p.zilei_de_la && new Date(p.zilei_de_la).getTime() > Date.now()) cand += ' · incepe la ' + oraHM(p.zilei_de_la) + ' — pana atunci clientii nu o vad';
           return `<div class="mz-item${acum ? ' acum' : ''}">
               <div class="mz-nume"><b>${escapeHTML(p.nume)}</b><small>${Number(p.zilei_pret).toFixed(2)} lei (normal ${Number(p.pret).toFixed(2)})${cand ? ' · ' + escapeHTML(cand) : ''}${acum ? ' · ACUM in meniu' : ''}</small></div>
               ${red > 0 ? `<span class="mz-red">−${red}%</span>` : ''}

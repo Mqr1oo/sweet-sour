@@ -444,9 +444,16 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
   o confirmare înainte.
 - **Produsele nu se șterg, se ascund.** Un produs șters dispare din meniu,
   dar rămâne cu tot istoricul lui și se recuperează cu un buton.
-- **Etichete**: vegan, vegetarian, fără gluten, fără lactoză, picant, fără
-  alcool, fără zahăr — le bifezi la produs, iar clientului îi apar ca filtre
-  (doar cele care există în meniu).
+- **Etichete**: cu alcool, fără alcool, cald, rece, vegan, vegetarian, fără
+  gluten, fără lactoză, picant, fără zahăr — le bifezi la produs, iar
+  clientului îi apar ca filtre (doar cele care există în meniu). Butonul
+  „✨ Etichete automate" le pune singur pe cele de băutură (alcool / cald /
+  rece) după numele produselor; le verifici și publici.
+- **Reducere pe produs**: în fereastra produsului, „Reducere (%)" — clientul
+  vede „−20%" și prețul vechi tăiat, comanda se calculează cu prețul redus.
+  Meniul zilei are prioritate cât e în interval.
+- Căutarea clientului găsește produsul și după variantele de nume (ex.
+  „negroni sbagliato") și după categorie.
 - **Meniul zilei**: managerul sau directorul pune oricâte produse, fiecare
   cu preț special și interval (de la — până la), opțional în fiecare zi.
   Apar primele în meniul clientului, cu reducerea (−24%) și prețul vechi
