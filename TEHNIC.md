@@ -1381,8 +1381,12 @@ din config), `dashboard.html` (titlu, paletă: accent `#8fc26c`),
 `sw.js`, `manifest.json`, `404.html`. Sigla e redesenată vectorial după
 poza clientului (`scratchpad/sigla_zen.py`, PIL): `logo.png` (crem + verde,
 pentru fundal închis), `logo-print.png` (culorile originale), `mark.png`,
-iconițele 192/512/maskable/favicon. Dacă clientul trimite fișierul
-original, se pune peste `sweetandsour/icons/logo.png` (și `logo-print.png`).
+iconițele 192/512/maskable/favicon. **Runda 28**: clientul a trimis sigla
+originală ca SVG de Canva (PNG-uri incorporate + mască); `scratchpad/svg_logo.py`
+le compune (culoare + alfa din mască) → `logo.png` / `logo-print.png` exact
+originalul (litere verde închis), `mark.png` doar literele, iconițele pe fundal
+alb; `config.js` `LOGO_FUNDAL: '#ffffff'` pune sigla pe card alb în meniu, în
+onboarding, în panou și pe 404.
 
 ## Runda 26 — harta sălii
 

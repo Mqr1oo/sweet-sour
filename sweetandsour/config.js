@@ -27,6 +27,9 @@ window.SS_CONFIG = {
   MONEDA:    'lei',
 
   LOGO: 'icons/logo.png',
+  // sigla originala are litere verde inchis: in meniu si in panou sta pe un
+  // card alb, ca sa se vada pe fundalul inchis (lasa gol daca sigla e deschisa)
+  LOGO_FUNDAL: '#ffffff',
 
   // Link-ul de recenzie Google: Maps -> localul tau -> Scrie o recenzie,
   // apoi copiezi adresa din bara browserului.

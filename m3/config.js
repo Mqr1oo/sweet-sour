@@ -28,6 +28,8 @@ window.SS_CONFIG = {
   // Sigla apare in antetul meniului. Pusa in icons/ ca fisier separat, ca sa
   // poata fi inlocuita fara sa se umble in cod.
   LOGO: 'icons/logo.png',
+  // daca sigla are litere inchise, pune aici un fundal deschis (ex. '#ffffff') si sta pe un card
+  LOGO_FUNDAL: '',
 
   // Link-ul de recenzie Google: Google Maps -> localul tau -> Scrie o recenzie,
   // apoi copiezi adresa din bara browserului.

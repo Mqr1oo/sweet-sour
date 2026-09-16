@@ -22,6 +22,8 @@ window.SS_CONFIG = {
 
   // Pune sigla in icons/logo.png. Daca lipseste, se afiseaza NUME ca text.
   LOGO: 'icons/logo.png',
+  // daca sigla are litere inchise, pune aici un fundal deschis (ex. '#ffffff') si sta pe un card
+  LOGO_FUNDAL: '',
 
   GOOGLE_REVIEW: '',
 
