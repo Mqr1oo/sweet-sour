@@ -109,12 +109,12 @@ self.addEventListener('push', event => {
   let d = {};
   try { d = event.data ? event.data.json() : {}; } catch (e) { d = {}; }
 
-  const title = d.title || '🛎️ Sweet & Sour';
+  const title = d.title || '🛎️ ZeN Lounge Garden';
   const options = {
     body: d.body || 'Comanda noua',
     icon: './icons/icon-192.png',
     badge: './icons/badge-96.png',   // monocrom, pe transparent: Android il arata in bara de stare (un PNG colorat iesea patrat alb)
-    tag: d.tag || 'sweetsour',
+    tag: d.tag || 'zen',
     renotify: true,              // suna din nou chiar daca exista deja una cu acelasi tag
     requireInteraction: true,    // ramane pe ecran pana o atinge cineva
     vibrate: [400, 200, 400, 200, 800],

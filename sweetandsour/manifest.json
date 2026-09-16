@@ -1,12 +1,12 @@
 {
-  "name": "Sweet & Sour — Panou personal",
-  "short_name": "Sweet & Sour Staff",
+  "name": "ZeN Lounge Garden — Panou personal",
+  "short_name": "ZeN Staff",
   "description": "Panoul de personal: comenzi, sala, stoc si rapoarte. Aplicatie interna, nu meniul clientilor.",
   "start_url": "./dashboard.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0b0f1c",
-  "theme_color": "#0b0f1c",
+  "background_color": "#0c100a",
+  "theme_color": "#0c100a",
   "orientation": "portrait",
   "lang": "ro",
   "icons": [

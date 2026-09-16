@@ -1,5 +1,5 @@
 /* ===========================================================================
-   Sweet & Sour — configurarea localului
+   ZeN Lounge Garden (fost Sweet & Sour) — configurarea localului
    ---------------------------------------------------------------------------
    Singurul fisier care difera intre localuri. index.html, dashboard.html si
    sw.js sunt identice peste tot, ca sa poti copia folderul pentru un client nou
@@ -18,10 +18,11 @@ window.SS_CONFIG = {
   VAPID_PUBLIC: 'BHKSXTQuMn8UiJ4E4udL6kNbE74nAhjHYzs5DYE9m2OIeLFNJNiClyUfbeSr3iexGcxS3IQgnF6wmYYplYVa3lU',
 
   // --- Identitate ---
-  NUME:      'Sweet & Sour',
-  SUBTITLU:  'Cocktail bar & lounge',
-  TAGLINE:   'Cocktail bar & lounge in Piatra Neamt. Cocktailuri, muzica la tonomat si seri lungi.',
-  TAGLINE_EN:'Cocktail bar & lounge in Piatra Neamt. Cocktails, jukebox music and long evenings.',
+  NUME:      'ZeN Lounge Garden',
+  SUBTITLU:  'lounge garden',
+  TAGLINE:   'O locatie deosebita in Piatra Neamt, perfecta pentru intalniri de afaceri sau pentru petreceri.',
+  TAGLINE_EN:'A special place in Piatra Neamt, perfect for business meetings or parties.',
+  INSTAGRAM: 'https://www.instagram.com/zen_lounge_garden/',
   ORAS:      'Piatra Neamt',
   MONEDA:    'lei',
 
@@ -44,19 +45,20 @@ window.SS_CONFIG = {
   PLATFORMA:       '',
   EMAIL_PLATFORMA: '',
 
-  // --- Culori: bleumarinul siglei + chihlimbarul de tonomat ---
+  // --- Culori: cele doua verzuri ale siglei (inchis pentru litere, deschis
+  // pentru E) pe un fundal verde-noapte ---
   CULORI: {
-    '--bg-base':     '#0b0f1c',
-    '--bg-card':     '#131a2e',
-    '--bg-panel':    '#1a2239',
-    '--bg-elevated': '#232c47',
-    '--ink':         '#f2ece0',
-    '--ink-soft':    '#96a0bb',
-    '--pink-main':   '#2f3f6b',
-    '--pink-bright': '#8fb0f0',
-    '--brass':       '#e8a33d',
-    '--brass-soft':  '#f7cd84',
-    '--paper-dim':   '#2a3350',
+    '--bg-base':     '#0f130c',
+    '--bg-card':     '#171f12',
+    '--bg-panel':    '#1e2818',
+    '--bg-elevated': '#28341f',
+    '--ink':         '#f3f1e8',
+    '--ink-soft':    '#a5b097',
+    '--pink-main':   '#3f5a2a',
+    '--pink-bright': '#9fd07f',
+    '--brass':       '#8fc26c',
+    '--brass-soft':  '#c4e3a8',
+    '--paper-dim':   '#2b3822',
     '--coral':       '#e0563c'
   }
 };

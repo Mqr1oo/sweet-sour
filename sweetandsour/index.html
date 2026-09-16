@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Sweet &amp; Sour &mdash; Meniu digital</title>
-<meta name="description" content="Meniul digital Sweet &amp; Sour, cocktail bar &amp; lounge in Piatra Neamt.">
+<title>ZeN Lounge Garden &mdash; Meniu digital</title>
+<meta name="description" content="Meniul digital ZeN Lounge Garden, Piatra Neamt: o locatie deosebita, perfecta pentru intalniri de afaceri sau pentru petreceri.">
 
-<meta name="theme-color" content="#0b0f1c">
+<meta name="theme-color" content="#0f130c">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <script>
   // Meniul clientilor NU e aplicatie instalabila: se deschide de la codul QR,
@@ -25,21 +25,19 @@
 <link rel="stylesheet" href="../fonturi/fonturi.css">
 <style>
   /* ============================================================
-     SWEET & SOUR — token system
-     Paleta pleaca de la cele doua lucruri care definesc localul:
-     bleumarinul adanc al siglei (&) si lumina calda, chihlimbarie,
-     de tonomat si abajur din salon. Fundalul nu e negru plat, ci un
-     bleumarin de noapte; accentul principal e navy-ul marcii, iar
-     auriul-chihlimbar marcheaza specialitatile. Motivul grafic
-     (linia perforata de bon sub fiecare categorie) ramane, pentru
-     ca in bar comanda tot pe bon se scrie.
+     ZEN LOUNGE GARDEN — token system
+     Paleta pleaca de la sigla: verdele inchis al literelor si verdele
+     deschis al E-ului. Fundalul e un verde de noapte, nu negru plat;
+     accentul principal e verdele inchis al marcii, iar verdele deschis
+     marcheaza specialitatile si meniul zilei. Valorile de aici sunt
+     doar rezerva — cele bune vin din config.js (CULORI).
      ============================================================ */
   :root{
-    --bg-base: #0b0f1c; --bg-card: #131a2e; --bg-panel: #1a2239; --bg-elevated: #232c47;
-    --ink: #f2ece0; --ink-soft: #96a0bb;
-    --pink-main: #2f3f6b; --pink-bright: #8fb0f0;
-    --brass: #e8a33d; --brass-soft: #f7cd84;
-    --paper-dim: #2a3350; --coral: #e0563c;
+    --bg-base: #0f130c; --bg-card: #171f12; --bg-panel: #1e2818; --bg-elevated: #28341f;
+    --ink: #f3f1e8; --ink-soft: #a5b097;
+    --pink-main: #3f5a2a; --pink-bright: #9fd07f;
+    --brass: #8fc26c; --brass-soft: #c4e3a8;
+    --paper-dim: #2b3822; --coral: #e0563c;
     --radius: 4px; --radius-md: 14px; --radius-lg: 20px;
     --max-w: 1180px;
     --shadow-warm: 0 16px 40px rgba(4,6,14,0.6);
@@ -557,7 +555,7 @@
      placi opace: continutul curge pe sub ele, lumina prinde muchia de
      sus, iar culoarea materialului se trage din paleta localului
      (color-mix pe --bg-panel / --ink / --pink-main), ca sa arate la fel
-     de bine pe negrul de la M3 si pe bleumarinul de la Sweet & Sour.
+     de bine pe negrul de la M3 si pe verdele de la ZeN.
      Cardurile cu produse raman opace: sunt continut, nu bara.
      ================================================================== */
   :root{
@@ -698,7 +696,7 @@
     <div class="hero-text">
       <p class="eyebrow" id="txtEyebrow">Meniu digital</p>
       <img id="heroLogo" src="" alt="" class="hero-logo" hidden>
-      <h1 id="txtTitle">Sweet &amp; Sour</h1>
+      <h1 id="txtTitle">ZeN Lounge Garden</h1>
       <p class="tag" id="txtTagline"></p>
     </div>
   </div>
@@ -921,11 +919,12 @@
 
 <footer>
   <div class="wrap footer-inner">
-    <div class="brand">Sweet &amp; Sour</div>
-    <div class="footer-links" style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
+    <div class="brand">ZeN Lounge Garden</div>
+    <div class="footer-links" style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center; align-items:center;">
+        <a id="lnkInstagram" href="https://www.instagram.com/zen_lounge_garden/" target="_blank" rel="noopener" style="display:none; color:var(--ink-soft); text-decoration:none; font-size:14px;">📸 Instagram</a>
         <button id="btnPrivacyPolicy">Politica de confidentialitate (GDPR)</button>
     </div>
-    <span id="txtFooterCopy">&copy; 2026 Sweet &amp; Sour</span>
+    <span id="txtFooterCopy">&copy; 2026 ZeN Lounge Garden</span>
   </div>
 </footer>
 
@@ -949,6 +948,10 @@
     }
     const rev = document.getElementById('fbGoogleBtn');
     if (rev && CFG.GOOGLE_REVIEW) rev.href = CFG.GOOGLE_REVIEW;
+    const ig = document.getElementById('lnkInstagram');
+    if (ig && CFG.INSTAGRAM) { ig.href = CFG.INSTAGRAM; ig.style.display = 'inline'; }
+    const copy = document.getElementById('txtFooterCopy');
+    if (copy) copy.textContent = `© ${new Date().getFullYear()} ${CFG.NUME}`;
   })();
 
   const SUPABASE_URL      = window.SS_CONFIG.SUPABASE_URL;
@@ -1091,7 +1094,7 @@
   // aici, fara nicio cerere in afara.
   const POZA_LIPSA = 'data:image/svg+xml;utf8,' + encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">' +
-    '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a2239"/><stop offset="1" stop-color="#0b0f1c"/></linearGradient></defs>' +
+    '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e2818"/><stop offset="1" stop-color="#0f130c"/></linearGradient></defs>' +
     '<rect width="400" height="300" fill="url(#g)"/>' +
     '<g fill="none" stroke="#96a0bb" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".55">' +
     '<path d="M130 120h120v60a40 40 0 0 1-40 40h-40a40 40 0 0 1-40-40z"/><path d="M250 135h18a22 22 0 0 1 0 44h-18"/>' +
@@ -1103,7 +1106,7 @@
 
   const I18N = {
     ro: {
-      flag:'🇷🇴', code:'RO', eyebrow:'Meniu digital', title:'Sweet & Sour', tagline:'',
+      flag:'🇷🇴', code:'RO', eyebrow:'Meniu digital', title:'ZeN Lounge Garden', tagline:'',
       allChip:'Toate', searchPlaceholder:'Cauta...', emptyState:'Niciun produs gasit.',
       totalLabel:'Total:', btnOrderBar:'Trimite comanda', trackerTitle:'Comanda ta',
       obCookieTitle:'Inainte sa incepem', obLangTitle:'Bine ai venit!', obLangSubtitle:'Alege limba meniului',
@@ -1234,7 +1237,7 @@
     },
 
     en: { 
-      flag:'🇬🇧', code:'EN', eyebrow:'Digital menu', title:'Sweet & Sour', tagline:'', 
+      flag:'🇬🇧', code:'EN', eyebrow:'Digital menu', title:'ZeN Lounge Garden', tagline:'', 
       allChip:'All', searchPlaceholder:'Search...', emptyState:'No products found.', 
       totalLabel:'Total:', btnOrderBar:'Send Order', trackerTitle:'Your order',
       obCookieTitle:'Before we start', obLangTitle:'Welcome!', obLangSubtitle:'Choose your menu language', 
