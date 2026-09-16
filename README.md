@@ -440,6 +440,9 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
   netul; comenzile intrate între timp sunt anunțate ca și cum ar fi intrat
   atunci.
 - Telefonul clientului reîncarcă starea comenzii când revine pe ecran.
+- **Trage în jos ca să reîncarci**: în panou, pe telefon, când lista e sus,
+  tragi în jos (ca la Instagram) și panoul se reîncarcă de tot — util
+  dacă ceva pare blocat. Pe calculator e butonul ↻ din antet.
 - **Semnal slab la client**: odată deschis, meniul rămâne în telefon. Fără
   semnal, clientul vede meniul salvat (cu o bandă „fără semnal") și poate
   trimite comanda: ea așteaptă pe telefon și pleacă singură când revine

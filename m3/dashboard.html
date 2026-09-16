@@ -142,6 +142,17 @@
   .mobile-logout { display: none; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: none; padding: 8px 14px; border-radius: 100px; font-weight: 600; font-size: 12px; }
 
   .content-area { padding: 24px 30px; overflow-y: auto; flex: 1; padding-bottom: 40px; }
+  /* trage in jos (pe telefon) ca sa reincarci panoul */
+  main { overscroll-behavior-y: contain; }
+  .ptr { position: absolute; left: 50%; top: 70px; transform: translate(-50%, -60px); width: 44px; height: 44px; border-radius: 50%;
+         background: var(--bg-card); border: 1px solid var(--border); box-shadow: 0 6px 18px rgba(0,0,0,.35);
+         display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--text-muted); z-index: 40; pointer-events: none; opacity: 0; }
+  .ptr.trage { transition: none; }
+  .ptr.gata { color: var(--accent); border-color: var(--accent); }
+  .ptr.incarca { opacity: 1; transform: translate(-50%, 18px); transition: transform .25s; color: var(--accent); border-color: var(--accent); }
+  .ptr.incarca span { animation: ptrRot .8s linear infinite; }
+  .ptr span { display: inline-block; }
+  @keyframes ptrRot { to { transform: rotate(360deg); } }
   
   .grid-comenzi { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; align-items: start; }
   .order-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); position: relative; overflow: hidden; display: flex; flex-direction: column; }
@@ -300,6 +311,7 @@
       .cr-foot > div { white-space: nowrap; }
       .cr-foot .btn-action { padding: 12px 16px !important; font-size: 14px; }
       .content-area { padding: 16px 20px calc(80px + env(safe-area-inset-bottom)); }
+      .ptr { top: 60px; }
       .grid-comenzi { grid-template-columns: 1fr; gap: 16px; }
       aside { 
           position: fixed; bottom: 0; left: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom));
@@ -710,6 +722,7 @@
   <header>
     <h2 class="page-title" id="pageTitle">Comenzi active</h2>
     <div class="header-actions">
+        <button type="button" id="btnReincarca" class="btn-ico" title="Reincarca panoul">↻</button>
         <button id="btnToggleSound" class="btn-sound-toggle" title="Pornita: spune masa la fiecare comanda si cerere. Oprita: doar bipuri si alarma.">🔇 Voce: OFF</button>
         <span class="cauta-wrap"><input type="text" id="tableFilterInputDesc" class="table-filter" placeholder="🔍 Cauta masa / la pachet..."><button type="button" class="cauta-x" data-cauta-x aria-label="Sterge cautarea">✕</button></span>
     </div>
@@ -730,6 +743,7 @@
       <span class="cauta-wrap"><input type="text" id="tableFilterInputMob" class="table-filter" placeholder="🔍 Cauta masa / la pachet..."><button type="button" class="cauta-x" data-cauta-x aria-label="Sterge cautarea">✕</button></span>
   </div>
 
+  <div class="ptr" id="ptr" aria-hidden="true"><span>↻</span></div>
   <div class="content-area">
     <div id="comenziTaburi" class="sub-taburi" style="display:none;"></div>
     <div id="istoricBara" class="istoric-bara" style="display:none;">
@@ -1481,6 +1495,59 @@
       aplicaVoceUI();
   }
   initSoundToggle();
+
+  // Reincarcarea panoului: pe telefon tragi in jos cand lista e sus (ca in
+  // aplicatiile obisnuite), pe calculator butonul ↻ din antet. Reincarcam
+  // pagina de tot — se refac si conexiunea live si abonarea la notificari.
+  (function initTrageReincarca() {
+      const zona = document.querySelector('.content-area');
+      const ptr = document.getElementById('ptr');
+      const PRAG = 80, MAXIM = 120;
+      let startY = null, dist = 0, pornit = false;
+
+      function reincarca() {
+          if (pornit) return;
+          pornit = true;
+          ptr.className = 'ptr incarca';
+          try { if (navigator.vibrate) navigator.vibrate(15); } catch(e) {}
+          setTimeout(() => location.reload(), 250);
+      }
+      function aseaza(d) {
+          const t = Math.min(d, MAXIM);
+          ptr.style.opacity = Math.min(1, t / 40);
+          ptr.style.transform = `translate(-50%, ${t - 60}px) rotate(${t * 3}deg)`;
+          ptr.classList.toggle('gata', t >= PRAG);
+      }
+      function lasa() {
+          if (startY === null) return;
+          const d = dist; startY = null; dist = 0;
+          ptr.classList.remove('trage');
+          if (d >= PRAG) { reincarca(); return; }
+          ptr.style.transition = 'transform .25s, opacity .25s';
+          ptr.style.opacity = 0; ptr.style.transform = 'translate(-50%, -60px)';
+          setTimeout(() => { ptr.style.transition = ''; ptr.classList.remove('gata'); }, 260);
+      }
+
+      zona.addEventListener('touchstart', e => {
+          if (pornit || e.touches.length !== 1) return;
+          if (document.querySelector('.modal-overlay.open, .auth-overlay.open')) return;
+          if (zona.scrollTop > 0) { startY = null; return; }
+          startY = e.touches[0].clientY; dist = 0;
+      }, { passive: true });
+      zona.addEventListener('touchmove', e => {
+          if (startY === null || pornit) return;
+          const dy = e.touches[0].clientY - startY;
+          if (dy <= 0 || zona.scrollTop > 0) { if (dist) { dist = 0; aseaza(0); } return; }
+          dist = dy * 0.6;
+          ptr.classList.add('trage');
+          aseaza(dist);
+      }, { passive: true });
+      zona.addEventListener('touchend', lasa);
+      zona.addEventListener('touchcancel', lasa);
+
+      const b = document.getElementById('btnReincarca');
+      if (b) b.addEventListener('click', () => { b.textContent = '…'; reincarca(); });
+  })();
 
   // Meniul folosit de comanda rapida si de ecranul de stoc. Vine din aceeasi
   // tabela ca meniul clientului, in forma pe care o astepta codul existent.

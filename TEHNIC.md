@@ -1243,6 +1243,30 @@ cheie, se dezabonează și se reabonează singur (`reabonare()`).
   (neversionat), luate din `chei_mese`: `/s/<masa>/<cheie>` (Sweet & Sour),
   `/m/<masa>/<cheie>` (M3).
 
+## Runda 19 — trage în jos ca să reîncarci panoul
+
+Cerința: „o pagină de refresh în fiecare cont din dashboard — să trag în jos
+și să dea refresh".
+
+`dashboard.html` (toate localurile), în `initTrageReincarca()` (după
+`initSoundToggle()`): pe `.content-area` (singurul element care derulează pe
+telefon; `body` are `overflow: hidden`, deci Chrome nu face singur
+pull-to-refresh) ascultăm `touchstart/move/end` pasive. Dacă `scrollTop` e 0
+la atingere și degetul coboară, indicatorul `#ptr` (↻ într-un cerc, absolut
+în `main`, sub antet: 70 px desktop / 60 px mobil) coboară cu 0,6 × distanța,
+se rotește și devine „gata" la 80 px; la ridicare peste prag → `.incarca`
+(se învârte), vibrație scurtă și `location.reload()` după 250 ms. Reîncărcăm
+pagina de tot, nu doar datele: se refac și canalul realtime și abonarea la
+push, adică exact lucrurile care „se blochează". Nu se declanșează cu un
+modal deschis (`.modal-overlay.open`, `.auth-overlay.open`) și nici dacă lista
+nu e sus. `main { overscroll-behavior-y: contain }` ca browserul să nu tragă
+și el pagina. Pe calculator, butonul `#btnReincarca` (↻, în
+`.header-actions`, ascuns pe mobil odată cu antetul) face același lucru.
+
+Testat cu evenimente `TouchEvent` sintetice pe viewport 375 px: indicatorul
+apare la y≈90 (sub antet), „gata" la 80 px, `touchend` → clasa `incarca` și
+pagina se reîncarcă (`performance.timeOrigin` nou).
+
 ## Înainte de deschidere
 
 1. Authentication → Providers → Email: **Allow new users to sign up** = oprit.
