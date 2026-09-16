@@ -228,11 +228,14 @@ cerc (sau un dreptunghi rotunjit) cu **scaunele în jur** — câte locuri, atâ
 scaune — iar înăuntru doar numărul mesei și timerul.
 
 **⭐ Ține apăsat pe o masă** (oricine din personal, nu trebuie „Editează
-harta"): masa se ridică și o tragi. O lași **peste altă masă** → se unesc
-pentru azi (linie punctată, nota se vede împreună — grupul mare de la 20 cu
-21). O lași **în alt loc** → stă acolo azi. Ții apăsat pe o masă unită fără
-să o miști → „Desparți mesele?" → revin la locul lor. Mâine dimineață totul
-e ca pe harta directorului; nimic din asta nu schimbă harta de bază.
+harta"): masa se ridică și o tragi. O lași **peste altă masă** → se
+**lipesc** și arată ca o singură masă mare (un contur comun, scaunele doar
+pe dinafară, nota se vede împreună — grupul mare de la 20 cu 40). O lași
+**în alt loc** → stă acolo azi; dacă era lipită de alta, s-a despărțit. Ții
+apăsat pe o masă unită fără să o miști → „Desparți mesele?" → revin la
+locul lor. Mâine dimineață totul e ca pe harta directorului; nimic din asta
+nu schimbă harta de bază. În „Editează harta" merge la fel, cu tragere
+simplă (fără ținere), și rămâne așa în harta salvată.
 
 **📅 Rezervări**: sună cineva pentru o masă la 19:00? Oricine din personal
 (bar, ospătar, manager, director) apasă „Rezervări" în Sală și o trece:
@@ -459,9 +462,11 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
   dar rămâne cu tot istoricul lui și se recuperează cu un buton.
 - **Etichete**: cu alcool, fără alcool, cald, rece, vegan, vegetarian, fără
   gluten, fără lactoză, picant, fără zahăr — le bifezi la produs, iar
-  clientul le găsește în **butonul de filtre** de lângă căutare (apare doar
-  dacă meniul are etichete): apasă, bifează ce vrea („Arată 12 produse"),
-  iar sub căutare rămân doar filtrele alese, cu ✕. Butonul
+  clientul le găsește în **butonul de filtre** de lângă căutare: apasă,
+  bifează ce vrea („Arată 12 produse"), iar sub căutare rămân doar filtrele
+  alese, cu ✕. „Cu alcool / fără alcool / calde / reci" se pun **singure**,
+  după numele produselor, și în meniul clientului — filtrele există din
+  prima zi, fără să bifeze nimeni nimic. Butonul
   „✨ Etichete automate" le pune singur pe cele de băutură (alcool / cald /
   rece) după numele produselor; le verifici și publici.
 - **Reducere pe produs**: în fereastra produsului, „Reducere (%)" — clientul

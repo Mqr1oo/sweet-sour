@@ -2741,6 +2741,29 @@
   // Inainte exista si menu.json, pe langa tabela de preturi. Cele doua se puteau
   // desincroniza, si atunci clientul vedea un pret si platea altul. Acum e o
   // singura sursa: tabela `meniu_produse`, editabila din dashboard.
+  // etichete automate (aceleasi reguli ca butonul din panou): cu alcool /
+  // fara alcool / cald / rece dupa nume, categorie si ingrediente, fara
+  // diacritice; ce a bifat directorul ramane si are prioritate
+  const CUV = {
+      cu_alcool: /\b(bere|beri|vin|vinuri|spumant|prosecco|sampanie|cocktail|gin|vodka|votca|whisk|rom|rum|tequila|aperol|spritz|negroni|mojito|margarita|shot|lichior|coniac|cognac|brandy|tuica|palinca|cidru|long ?drink|bourbon|campari|vermut|martini|hugo|sangria|jager|limoncello|old fashioned|daiquiri|cuba libre|pina colada|espresso martini|sour)\b/,
+      fara_alcool: /\b(limonada|racoritoare|suc|sucuri|apa|fresh|smoothie|milkshake|mocktail|virgin|ice ?tea|cafea|cafele|ceai|ceaiuri|espresso|cappuccino|latte|americano|cacao|ciocolata|frappe|cola|fanta|sprite|red ?bull|energizant|tonic|lapte)\b/,
+      cald: /\b(cafea|cafele|espresso|cappuccino|latte|americano|flat white|ceai|ceaiuri|cacao|ciocolata calda|vin fiert|supa|ciorba|paste|pizza|burger|gratar|friptura|tocanita|mic dejun|omleta|ochiuri|placinta|calde?|fierbinte|lungo|ristretto|macchiato|mocha|cortado)\b/,
+      rece: /\b(limonada|racoritoare|suc|sucuri|fresh|smoothie|milkshake|cocktail|bere|beri|cidru|frappe|cold ?brew|iced|ice|inghetata|salata|gheata|spritz|mojito|margarita|gin|vodka|votca|whisk|vin|vinuri|spumant|prosecco|cola|tonic|apa|shot|reci|rece|racoritor|daiquiri|sour|negroni|aperol)\b/
+  };
+  function faraDiacritice(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  function eticheteAutomate(r) {
+      const text = faraDiacritice((r.nume || '') + ' ' + (r.categorie || '') + ' ' + (r.ingrediente || []).join(' '));
+      const are = new Set(r.etichete || []);
+      const noi = [];
+      const alcool = CUV.cu_alcool.test(text);
+      if (alcool && !are.has('cu_alcool') && !are.has('fara_alcool')) noi.push('cu_alcool');
+      if (!alcool && CUV.fara_alcool.test(text) && !are.has('fara_alcool') && !are.has('cu_alcool')) noi.push('fara_alcool');
+      const cald = CUV.cald.test(text), rece = CUV.rece.test(text);
+      if (cald && !rece && !are.has('cald') && !are.has('rece')) noi.push('cald');
+      if (rece && !cald && !are.has('rece') && !are.has('cald')) noi.push('rece');
+      if (rece && cald && !are.has('rece') && !are.has('cald')) noi.push(alcool ? 'rece' : 'cald');
+      return noi;
+  }
   function dbToItem(r) {
     const tr = r.traduceri || {};
     const traduceri = {};
@@ -2769,7 +2792,7 @@
       zileiPanaLa: zileiActiv && r.zilei_pana_la ? new Date(r.zilei_pana_la).getTime() : null,
       zileiZilnic: !!r.zilei_zilnic,
       zileiBrut:   r.zilei ? { zilei: r.zilei, zilei_pret: r.zilei_pret, zilei_de_la: r.zilei_de_la, zilei_pana_la: r.zilei_pana_la, zilei_zilnic: r.zilei_zilnic } : null,
-      etichete:    r.etichete || [],
+      etichete:    (r.etichete || []).concat(eticheteAutomate(r)),
       variante:    r.nume_variante || [],
       weight:      r.volum || '',
       description: r.descriere || '',

@@ -26,10 +26,11 @@ window.SS_CONFIG = {
   ORAS:      'Piatra Neamt',
   MONEDA:    'lei',
 
-  LOGO: 'icons/logo.svg',
-  // sigla originala are litere verde inchis: in meniu si in panou sta pe un
-  // card alb, ca sa se vada pe fundalul inchis (lasa gol daca sigla e deschisa)
-  LOGO_FUNDAL: '#ffffff',
+  // sigla transparenta: pe fundalul inchis al meniului literele sunt crem
+  // (logo-inchis.svg); originalul cu litere verde inchis e logo.svg / logo-print.png
+  LOGO: 'icons/logo-inchis.svg',
+  // pune o culoare aici doar daca vrei sigla pe un card (ex. '#ffffff'); gol = transparenta
+  LOGO_FUNDAL: '',
 
   // Link-ul de recenzie Google: Maps -> localul tau -> Scrie o recenzie,
   // apoi copiezi adresa din bara browserului.

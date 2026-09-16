@@ -1534,6 +1534,48 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
   filtreSterge/filtreTot/filtreArata(n)`. Chip-urile de categorii rămân la
   locul lor.
 
+## Runda 31 — mesele unite se lipesc, sigla transparentă, filtre automate
+
+- **Unirea = lipire.** Când o masă e lăsată peste alta (ținere + tragere în
+  modul normal, tragere simplă în „Editează harta"), se așază **lipită** de
+  țintă pe latura dinspre care a venit degetul (`locLanga`: dreapta / stânga /
+  jos / sus; dacă latura nu încape în încăpere sau e ocupată de altă masă, se
+  ia următoarea liberă; dacă niciuna nu e liberă, rămâne pe latura preferată,
+  peste ce e acolo). Un grup lipit (`grupurileMeselor` = componente conexe
+  ale legăturilor, `laturaAtingere` cu toleranță 1,5 unități) se desenează
+  ca **o singură masă**: `.grup-mese` (stadion — `border-radius: 9999px`,
+  sau dreptunghi rotunjit dacă vreo masă e pătrată) în spatele cardurilor,
+  care devin transparente (`.in-grup`); scaunele de pe laturile lipite dispar
+  (`scauneHtml(m, s, ascunse)`); culoarea grupului e starea cea mai urgentă
+  dintre mese (`PRIORITATE_STARE`: mov > roșu > portocaliu > albastru >
+  verde > rezervată > liberă). Mesele unite dar depărtate rămân cu linia
+  punctată. **Tragerea unei mese departe de partenere o desparte** (pe azi:
+  rânduri `mese_azi` cu `cu: null`, partenerele rămase se leagă între ele;
+  în editare: `unita_cu` șters). `perecheaMesei` întoarce acum tot grupul,
+  nu doar vecina directă (nota mesei adună tot grupul).
+- **Editarea hărții ignoră aranjarea „pe azi"** (`dreptunghiMesei`, `unitaCu`
+  citesc `meseAzi` doar în modul normal), iar „Salvează harta" scrie
+  `{mesa, reset: true}` pentru toate rândurile de azi — harta salvată e cea
+  pe care o vede toată lumea. Fereastra mesei: forma implicită e **rotundă**
+  (înainte, orice masă deschisă în fereastră devenea pătrată la salvare —
+  de aici mesele pătrate „apărute" după unire).
+- **Sigla ZeN transparentă**: `zen/icons/logo-inchis.svg` = același desen cu
+  literele în crem (`#f3f1e8`, frunza rămâne `#82ad6b`), pentru fundalul
+  închis al meniului și panoului; `config.js` `LOGO: 'icons/logo-inchis.svg'`,
+  `LOGO_FUNDAL: ''` (fără card). `logo.svg` / `logo-print.png` rămân
+  originalul (litere verde închis) pentru print și fundal deschis. PNG-urile
+  (`logo.png` 1400 px crem, `mark.png` 800 px crem, `logo-print.png` 2000 px
+  original) sunt randate cu `sharp` (librsvg) din SVG, tăiate la conținut
+  (`trim`), transparente. Iconițele aplicației rămân pe alb. Paginile de
+  start au marca ZeN pe fundal verde închis; `zen/404.html` fără card alb.
+- **Filtrele apar fără să bifeze directorul nimic**: `eticheteAutomate(r)`
+  (aceleași regexuri `CUV` ca butonul din panou) rulează și în meniul
+  clientului, în `dbToItem`: `etichete = etichetele directorului +
+  automatele` (ce e bifat are prioritate, nu se contrazice). Butonul-pâlnie
+  apare deci pe orice meniu cu băuturi. Raportat: „nu apare meniul de
+  filtrare" — apărea doar dacă directorul apăsa „Etichete automate" și
+  publica.
+
 ## Înainte de deschidere
 
 1. Authentication → Providers → Email: **Allow new users to sign up** = oprit.
