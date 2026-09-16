@@ -298,6 +298,16 @@
   
   .input-note { width: 100%; padding: 16px; font-size: 1rem; text-align: left; background: var(--bg-base); color: var(--ink); border: 2px solid var(--paper-dim); border-radius: var(--radius-md); margin-bottom: 24px; font-family: 'Work Sans', sans-serif; resize: none; transition: border-color 0.3s;}
   .input-note:focus { outline: none; border-color: var(--pink-main); }
+  /* acordul dinaintea comenzii: raman la masa (taxa la mutare) */
+  .acord-masa { display: none; gap: 12px; align-items: flex-start; text-align: left; margin: -8px 0 18px; padding: 14px 14px 14px 12px;
+                border: 2px solid var(--brass); border-radius: var(--radius-md); background: color-mix(in srgb, var(--brass) 12%, transparent); cursor: pointer; }
+  .acord-masa.on { display: flex; }
+  .acord-masa input { width: 24px; height: 24px; flex: 0 0 24px; margin: 1px 0 0; accent-color: var(--brass); cursor: pointer; }
+  .acord-masa b { display: block; font-size: 15px; margin-bottom: 3px; color: var(--ink); }
+  .acord-masa span { font-size: 13.5px; line-height: 1.45; color: var(--ink); }
+  .acord-masa span em { font-style: normal; font-weight: 700; color: var(--brass-soft, var(--brass)); }
+  .acord-masa.lipsa { animation: acordScutura .4s; border-color: var(--coral); }
+  @keyframes acordScutura { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
   
   .btn-submit { width: 100%; background: var(--pink-main); color: #f6f0e6; border: none; padding: 18px; border-radius: var(--radius-md); font-weight: 700; font-size: 1.2rem; font-family: 'Work Sans', sans-serif; cursor: pointer; transition: transform 0.15s var(--ease-out-fast), box-shadow 0.25s var(--ease-out); margin-bottom: 10px; box-shadow: 0 8px 22px rgba(47, 63, 107, 0.35);}
   .btn-submit:active { transform: scale(0.96); transition-duration: 0.08s; }
@@ -517,9 +527,14 @@
   .filtre-etichete .chip{ font-size:13px; min-height:38px; padding:0 14px; }
   .filtre-etichete .chip.active{ background: var(--brass); border-color: var(--brass); color:#16110a; box-shadow:none; }
   .card-meta .meta-pill.eticheta{ border-color: color-mix(in srgb, var(--brass) 45%, transparent); color: var(--brass-soft, var(--brass)); }
+  .mz-lista{ display:grid; gap:10px; margin: 4px 0 22px; }
+  .mz-lista .mz-cap{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin:0 2px -2px; }
+  .mz-lista .mz-cap .mz-eyebrow{ margin:0; }
+  .mz-lista .mz-cap .mz-pana{ font-family:'Space Mono', monospace; font-size:11px; color:var(--ink-soft); }
   .meniul-zilei{ position:relative; display:grid; grid-template-columns: 112px 1fr; gap:14px; align-items:center;
-    margin: 4px 0 22px; padding:14px; border-radius: var(--radius-md, 14px); background: var(--bg-card);
+    margin: 0; padding:14px; border-radius: var(--radius-md, 14px); background: var(--bg-card);
     border: 1.5px solid var(--brass); box-shadow: 0 10px 30px color-mix(in srgb, var(--brass) 18%, transparent); }
+  .mz-reducere{ position:absolute; top:-9px; left:12px; background: var(--coral); color:#fff; font-family:'Space Mono', monospace; font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; letter-spacing:.04em; }
   .meniul-zilei .mz-img{ width:112px; height:112px; object-fit:cover; border-radius:12px; background:var(--bg-panel, var(--paper-dim)); }
   .meniul-zilei .mz-eyebrow{ font-family:'Space Mono', monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color: var(--brass); margin:0 0 4px; }
   .meniul-zilei h3{ margin:0 0 4px; font-size:1.15rem; line-height:1.2; }
@@ -711,7 +726,7 @@
     <div class="tag-filters filtre-etichete" id="filtreEtichete" style="display:none;"></div>
   </div>
 
-  <div id="meniulZilei" class="meniul-zilei" style="display:none;"></div>
+  <div id="meniulZilei" class="mz-lista" style="display:none;"></div>
   <div id="categoriesWrap"></div>
   <div class="empty-state" id="emptyState" style="display:none;"></div>
 </main>
@@ -771,6 +786,10 @@
     <span class="gdpr-note" id="txtGdprNote" style="display:none;">Datele tale se sterg automat in 48h (GDPR).</span>
 
     <textarea id="orderNoteInput" class="input-note" placeholder="Mentiune pentru comanda (optional)." rows="2"></textarea>
+    <label class="acord-masa" id="acordMasa">
+      <input type="checkbox" id="acordMasaCb">
+      <div><b id="acordMasaTitlu"></b><span id="acordMasaText"></span></div>
+    </label>
     <button class="btn-submit" id="sendOrderBtn">Trimite comanda</button>
   </div>
 </div>
@@ -1122,7 +1141,7 @@
       smartWaiter: '💳 Plata / Ajutor 🙋', smartCart: 'Comanda mea', splitTitle: 'Imparte nota', splitDesc: 'Cum impartiti nota: in parti egale, sau fiecare plateste ce a comandat?', sl1: 'Total:', sl2: 'Numar de persoane:', sl3: 'Bacsis (%):', perPerson: '/ persoana',
       badgeEpuizat: 'Stoc epuizat', ribbonEsp: 'Recomandarea casei',
       etichete: { vegan: '🌱 Vegan', vegetarian: '🥕 Vegetarian', fara_gluten: '🌾 Fara gluten', fara_lactoza: '🥛 Fara lactoza', picant: '🌶️ Picant', fara_alcool: '🍹 Fara alcool', fara_zahar: '🍬 Fara zahar' },
-      zileiTitle: 'Meniul zilei', zileiPanaLa: 'pana la', zileiAdauga: 'Adauga',
+      zileiTitle: 'Meniul zilei', zileiPanaLa: 'pana la', zileiAdauga: 'Adauga', zileiInterval: (a, b) => `${a}–${b}`, zileiZilnic: 'in fiecare zi',
       offlineMeniu: '📶 Fara semnal. Vezi meniul salvat pe telefon; comanda pleaca singura cand revine semnalul.',
       offlineComanda: 'Nu e semnal acum. Comanda ta e salvata pe telefon si pleaca singura cand revine semnalul (in cel mult 20 de minute). Daca se lungeste, cheama ospatarul.',
       offlineAsteapta: n => `📶 ${n === 1 ? 'O comanda asteapta' : n + ' comenzi asteapta'} semnal ca sa plece...`,
@@ -1133,6 +1152,9 @@
       sumaMare: 'Comanda e mare, asa ca un ospatar vine sa o confirme cu tine inainte sa fie pregatita.',
       errHints: {},      alertPayload: { cash: 'Nota (cash)', card: 'Nota (card)', help: 'Ajutor / Altceva', modificare: 'Modificare comanda' },
       privacyTitle: 'Confidentialitate si termeni', privacyBtn: 'Confidentialitate si termeni (GDPR)', gdprNote: 'Datele tale se sterg automat in 48h (GDPR).', privacyClose: 'Inchide',
+      acordTitlu: 'Raman la masa asta',
+      acordText: (masa, taxa) => `Comanda se aduce la masa ${masa}. Daca va mutati la alta masa dupa ce ati comandat, localul percepe o taxa de ${taxa} lei. Bifeaza ca ai inteles — multumim!`,
+      acordCereTitlu: 'O bifa, te rugam', acordCere: 'Bifeaza casuta „Raman la masa asta" ca sa putem trimite comanda.',
       termsTitle: 'Termeni si conditii de utilizare',
       politica: (op) => [
         { h: '1. Cine prelucreaza datele', p: [
@@ -1245,7 +1267,7 @@
       smartWaiter: '💳 Pay / Help 🙋‍♂️', smartCart: 'My Order', splitTitle: 'Split the bill', splitDesc: 'How do you split the bill: equal parts, or everyone pays what they ordered?', sl1: 'Total:', sl2: 'Number of people:', sl3: 'Tip (%):', perPerson: '/ person',
       badgeEpuizat: 'Sold Out', ribbonEsp: 'Signature',
       etichete: { vegan: '🌱 Vegan', vegetarian: '🥕 Vegetarian', fara_gluten: '🌾 Gluten-free', fara_lactoza: '🥛 Lactose-free', picant: '🌶️ Spicy', fara_alcool: '🍹 Non-alcoholic', fara_zahar: '🍬 Sugar-free' },
-      zileiTitle: "Today's special", zileiPanaLa: 'until', zileiAdauga: 'Add',
+      zileiTitle: "Today's specials", zileiPanaLa: 'until', zileiAdauga: 'Add', zileiInterval: (a, b) => `${a}–${b}`, zileiZilnic: 'every day',
       offlineMeniu: '📶 No signal. Showing the menu saved on your phone; your order is sent automatically when the signal returns.',
       offlineComanda: 'No signal right now. Your order is saved on your phone and will be sent automatically when the signal returns (within 20 minutes). If it takes long, call the waiter.',
       offlineAsteapta: n => `📶 ${n === 1 ? 'One order is waiting' : n + ' orders are waiting'} for signal...`,
@@ -1261,6 +1283,9 @@
                   alerta_recenta: 'The waiter has already been called and is on the way.' },
       alertPayload: { cash: 'Bill (Cash)', card: 'Bill (Card)', help: 'Help / Other', modificare: 'Change my order' },
       privacyTitle: 'Privacy and Terms', privacyBtn: 'Privacy and Terms (GDPR)', gdprNote: 'Your data will be auto-deleted in 48h (GDPR).', privacyClose: 'Close',
+      acordTitlu: "I'm staying at this table",
+      acordText: (masa, taxa) => `Your order is brought to table ${masa}. If you move to another table after ordering, the venue charges a ${taxa} lei fee. Please tick to confirm — thank you!`,
+      acordCereTitlu: 'One tick, please', acordCere: 'Tick the "I\'m staying at this table" box so we can send your order.',
       termsTitle: 'Terms and Conditions of Use',
       politica: (op) => [
         { h: '1. Who processes your data', p: [
@@ -1530,38 +1555,53 @@
     }));
   }
 
-  // meniul zilei: cardul din capul meniului; dispare singur la ora aleasa
+  // meniul zilei: ofertele din capul meniului (oricate), cu reducerea si
+  // intervalul; apar si dispar singure la orele alese
+  function oraScurta(ms) { return new Date(ms).toLocaleTimeString(currentLang === 'en' ? 'en-GB' : 'ro-RO', { hour: '2-digit', minute: '2-digit' }); }
+  function textIntervalOferta(item) {
+    const t = I18N[currentLang] || I18N.ro;
+    if (item.zileiDeLa && item.zileiPanaLa) return t.zileiInterval(oraScurta(item.zileiDeLa), oraScurta(item.zileiPanaLa)) + (item.zileiZilnic ? ` · ${t.zileiZilnic}` : '');
+    if (item.zileiPanaLa) return `${t.zileiPanaLa} ${oraScurta(item.zileiPanaLa)}`;
+    return '';
+  }
   function renderMeniulZilei(query){
     const t = I18N[currentLang];
     const el = document.getElementById('meniulZilei'); if (!el) return;
-    const item = allItems.find(i => i.zilei && (!i.zileiPanaLa || i.zileiPanaLa > Date.now()));
-    if (!item || query || activeFilter !== 'all' || activeEtichete.size || outOfStockIds.has(item.imageNumber.toString())) { el.style.display = 'none'; el.innerHTML = ''; return; }
-    const loc = getLocalized(item);
-    const q = getQty(item);
-    const pana = item.zileiPanaLa ? `${t.zileiPanaLa} ${new Date(item.zileiPanaLa).toLocaleTimeString(currentLang === 'en' ? 'en-GB' : 'ro-RO', { hour: '2-digit', minute: '2-digit' })}` : '';
+    const oferte = allItems.filter(i => i.zilei && !outOfStockIds.has(i.imageNumber.toString()));
+    if (!oferte.length || query || activeFilter !== 'all' || activeEtichete.size) { el.style.display = 'none'; el.innerHTML = ''; return; }
     el.style.display = '';
-    el.innerHTML = `
-      <img src="${item.imagine || `images/${item.imageNumber}.webp`}" class="mz-img" alt="" loading="lazy" onerror="handleImgError(this, '${item.imageNumber}')">
-      <div>
-        <p class="mz-eyebrow">🍽️ ${t.zileiTitle}</p>
-        <h3>${escapeHTML(loc.name)}</h3>
-        <p class="mz-desc">${escapeHTML(loc.description)}</p>
-        <div class="mz-jos">
-          <span class="mz-pret">${item.price.toFixed(2)} lei${item.priceNormal > item.price ? `<s>${item.priceNormal.toFixed(2)}</s>` : ''}${pana ? `<br><span class="mz-pana">${pana}</span>` : ''}</span>
-          <div class="card-qty-controls ${q>0?'has-items':''}">
-            <button class="c-qty-btn" onclick="appUpdateQty('${item.imageNumber}', -1)">−</button>
-            <span class="c-qty-val" id="qtyz-${item.imageNumber}">${q}</span>
-            <button class="c-qty-btn" onclick="appUpdateQty('${item.imageNumber}', 1)">+</button>
+    // acelasi interval la toate: il scriem o data, in cap
+    const intervale = new Set(oferte.map(textIntervalOferta));
+    const capInterval = intervale.size === 1 ? [...intervale][0] : '';
+    el.innerHTML = `<div class="mz-cap"><p class="mz-eyebrow">🍽️ ${t.zileiTitle}</p>${capInterval ? `<span class="mz-pana">${escapeHTML(capInterval)}</span>` : ''}</div>` + oferte.map(item => {
+      const loc = getLocalized(item);
+      const q = getQty(item);
+      const interval = capInterval ? '' : textIntervalOferta(item);
+      return `<div class="meniul-zilei">
+        ${item.reducere > 0 ? `<span class="mz-reducere">−${item.reducere}%</span>` : ''}
+        <img src="${item.imagine || `images/${item.imageNumber}.webp`}" class="mz-img" alt="" loading="lazy" onerror="handleImgError(this, '${item.imageNumber}')">
+        <div>
+          <h3>${escapeHTML(loc.name)}</h3>
+          <p class="mz-desc">${escapeHTML(loc.description)}</p>
+          <div class="mz-jos">
+            <span class="mz-pret">${item.price.toFixed(2)} lei${item.priceNormal > item.price ? `<s>${item.priceNormal.toFixed(2)}</s>` : ''}${interval ? `<br><span class="mz-pana">${escapeHTML(interval)}</span>` : ''}</span>
+            <div class="card-qty-controls ${q>0?'has-items':''}">
+              <button class="c-qty-btn" onclick="appUpdateQty('${item.imageNumber}', -1)">−</button>
+              <span class="c-qty-val" id="qtyz-${item.imageNumber}">${q}</span>
+              <button class="c-qty-btn" onclick="appUpdateQty('${item.imageNumber}', 1)">+</button>
+            </div>
           </div>
         </div>
-      </div>`;
+      </div>`; }).join('');
   }
-  // la ora aleasa, meniul zilei revine la pretul normal fara refresh
+  // cand o oferta incepe sau se termina, meniul se reface singur (preturile
+  // se schimba fara refresh)
+  let semnaturaOferte = '';
   setInterval(() => {
-    if (allItems.some(i => i.zilei && i.zileiPanaLa && i.zileiPanaLa <= Date.now())) {
-      incarcaMeniu().then(() => applyLanguage(currentLang)).catch(() => {});
-    }
-  }, 60000);
+    const s = allItems.filter(i => i.zileiBrut).map(i => i.imageNumber + ':' + (ofertaActiva(i.zileiBrut) ? 1 : 0)).join(',');
+    if (semnaturaOferte && s !== semnaturaOferte) incarcaMeniu().then(() => applyLanguage(currentLang)).catch(() => {});
+    semnaturaOferte = s;
+  }, 30000);
 
   function render(){
     const t = I18N[currentLang];
@@ -1602,7 +1642,7 @@
           <article class="card ${isEpuizat ? 'out-of-stock' : ''}">
             <div class="card-img-wrap">
               ${isEpuizat ? `<div class="badge-epuizat"><span>${t.badgeEpuizat}</span></div>` : ''}
-              ${item.zilei ? `<div class="ribbon">🍽️ ${t.zileiTitle}</div>` : (item.tags||[]).includes('semnatura') ? `<div class="ribbon">${t.ribbonEsp}</div>` : ''}
+              ${item.zilei ? `<div class="ribbon">🍽️ ${t.zileiTitle}${item.reducere > 0 ? ` −${item.reducere}%` : ''}</div>` : (item.tags||[]).includes('semnatura') ? `<div class="ribbon">${t.ribbonEsp}</div>` : ''}
               <img src="${item.imagine || `images/${item.imageNumber}.webp`}" class="card-img" alt="${escapeHTML(loc.name)}" loading="lazy" onerror="handleImgError(this, '${item.imageNumber}')">
               <div class="card-qty-controls ${q>0?'has-items':''}">
                 <button class="c-qty-btn" onclick="appUpdateQty('${item.imageNumber}', -1)">−</button>
@@ -1924,8 +1964,27 @@
     }
 
     document.getElementById('orderNoteInput').value = '';
+    arataAcordMasa();
     orderModal.classList.add('open');
   });
+  // Acordul „raman la masa": apare cand localul l-a pornit, doar la comenzile
+  // la masa. Dupa prima bifa din sesiune ramane bifat (clientul a citit deja).
+  function arataAcordMasa() {
+    const el = document.getElementById('acordMasa'), cb = document.getElementById('acordMasaCb');
+    const t = I18N[currentLang] || I18N.ro;
+    const laMasa = sessionStorage.getItem(STORE + 'mod') !== 'takeaway';
+    const on = mutareClient.activ && laMasa && !CFG.DEMO;
+    el.classList.toggle('on', on); el.classList.remove('lipsa');
+    if (!on) return;
+    const masa = document.getElementById('tableNumberInput').value.trim() || sessionStorage.getItem(STORE + 'masa') || '';
+    document.getElementById('acordMasaTitlu').textContent = t.acordTitlu;
+    document.getElementById('acordMasaText').innerHTML = escapeHTML(t.acordText(masa && masa !== 'stabilita' ? masa : '…', mutareClient.taxa))
+        .replace(String(mutareClient.taxa) + ' lei', `<em>${mutareClient.taxa} lei</em>`);
+    let dat = false; try { dat = sessionStorage.getItem(STORE + 'acord') === '1'; } catch (e) {}
+    cb.checked = dat;
+  }
+  document.getElementById('tableNumberInput').addEventListener('input', () => { if (document.getElementById('acordMasa').classList.contains('on')) arataAcordMasa(); });
+  document.getElementById('acordMasaCb').addEventListener('change', (e) => { document.getElementById('acordMasa').classList.remove('lipsa'); if (e.target.checked) { try { sessionStorage.setItem(STORE + 'acord', '1'); } catch (err) {} } });
   
   document.getElementById('closeOrderModal').addEventListener('click', () => orderModal.classList.remove('open'));
   document.getElementById('closeCallWaiter').addEventListener('click', () => callModal.classList.remove('open'));
@@ -2001,6 +2060,8 @@
   // ospatari (schimba textele de stare) si fereastra de modificare.
   let faraOspatariClient = false;
   let fereastraMinuteClient = 5;
+  // acordul dinaintea comenzii: mutarea la alta masa dupa comanda costa
+  let mutareClient = { activ: false, taxa: 40 };
   function aplicaSetari(rows) {
       const vazute = new Set();
       (rows || []).forEach(r => {
@@ -2011,6 +2072,7 @@
           if (r.actiune === 'setari_chei') cheiActiveClient = !!d.activ;
           if (r.actiune === 'setari_ospatari') faraOspatariClient = !!d.faraOspatari;
           if (r.actiune === 'setari_modificare') { const m = parseInt(d.minute, 10); fereastraMinuteClient = m > 0 ? m : 5; }
+          if (r.actiune === 'setari_mutare') mutareClient = { activ: !!d.activ, taxa: Number(d.taxa) > 0 ? Number(d.taxa) : 40 };
           // comenzile la pachet apar doar daca localul le-a pornit
           if (r.actiune === 'setari_pachet') { pachetActiv = !!d.activ; document.getElementById('btnTakeaway').style.display = d.activ ? '' : 'none'; }
       });
@@ -2360,6 +2422,15 @@
           }
       }
 
+      // acordul „raman la masa" (daca localul l-a pornit)
+      const acordEl = document.getElementById('acordMasa');
+      if (acordEl.classList.contains('on') && !document.getElementById('acordMasaCb').checked) {
+          acordEl.classList.remove('lipsa'); void acordEl.offsetWidth; acordEl.classList.add('lipsa');
+          acordEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          showCustomAlert(t.acordCereTitlu, t.acordCere);
+          return;
+      }
+
       const items = allItems.filter(i => getQty(i) > 0);
 
       if(items.length === 0) {
@@ -2550,7 +2621,7 @@
   async function checkSettings() {
       try {
           const {data} = await _supabase.from('jurnal_activitate').select('actiune, detalii')
-              .in('actiune', ['setari_busy', 'setari_ospatari', 'setari_modificare', 'setari_pachet', 'setari_chei'])
+              .in('actiune', ['setari_busy', 'setari_ospatari', 'setari_modificare', 'setari_pachet', 'setari_chei', 'setari_mutare'])
               .order('created_at', {ascending:false}).limit(60);
           if (data) aplicaSetari(data);
       } catch(e) {}
@@ -2571,15 +2642,20 @@
         allergens:   tr[lang].alergeni || []
       };
     }
-    const zileiActiv = !!r.zilei && (!r.zilei_pana_la || new Date(r.zilei_pana_la).getTime() > Date.now());
+    const zileiActiv = ofertaActiva(r);
+    const pretOferta = zileiActiv ? Number(r.zilei_pret) : Number(r.pret);
     return {
       imageNumber: r.id_produs,
       name:        r.nume,
       // meniul zilei: pretul special cat timp tine (serverul calculeaza la fel)
-      price:       zileiActiv && r.zilei_pret != null ? Number(r.zilei_pret) : Number(r.pret),
+      price:       pretOferta,
       priceNormal: Number(r.pret),
       zilei:       zileiActiv,
+      reducere:    zileiActiv && Number(r.pret) > 0 ? Math.round((1 - pretOferta / Number(r.pret)) * 100) : 0,
+      zileiDeLa:   zileiActiv && r.zilei_de_la ? new Date(r.zilei_de_la).getTime() : null,
       zileiPanaLa: zileiActiv && r.zilei_pana_la ? new Date(r.zilei_pana_la).getTime() : null,
+      zileiZilnic: !!r.zilei_zilnic,
+      zileiBrut:   r.zilei ? { zilei: r.zilei, zilei_pret: r.zilei_pret, zilei_de_la: r.zilei_de_la, zilei_pana_la: r.zilei_pana_la, zilei_zilnic: r.zilei_zilnic } : null,
       etichete:    r.etichete || [],
       weight:      r.volum || '',
       description: r.descriere || '',
@@ -2592,6 +2668,19 @@
     };
   }
 
+  // oferta e in vigoare acum? Zilnic: conteaza doar ora (telefonul e pe ora
+  // Romaniei); altfel intervalul exact. Serverul (`oferta_activa`) decide la fel.
+  function ofertaActiva(r) {
+    if (!r || !r.zilei || r.zilei_pret == null) return false;
+    const acum = new Date();
+    if (r.zilei_zilnic) {
+      const min = d => d.getHours() * 60 + d.getMinutes();
+      const deLa = r.zilei_de_la ? min(new Date(r.zilei_de_la)) : 0;
+      const pana = r.zilei_pana_la ? min(new Date(r.zilei_pana_la)) : 24 * 60;
+      return min(acum) >= deLa && min(acum) < pana;
+    }
+    return (!r.zilei_de_la || new Date(r.zilei_de_la) <= acum) && (!r.zilei_pana_la || new Date(r.zilei_pana_la) > acum);
+  }
   async function incarcaMeniu() {
     if (CFG.DEMO) {
       const r = await fetch(CFG.MENIU_DEMO);
@@ -2600,7 +2689,7 @@
       return allItems;
     }
     const {data, error} = await _supabase.from('meniu_produse')
-      .select('id_produs,nume,descriere,categorie,sectiune,volum,ingrediente,alergeni,pret,semnatura,ordine,imagine,traduceri,etichete,zilei,zilei_pret,zilei_pana_la')
+      .select('id_produs,nume,descriere,categorie,sectiune,volum,ingrediente,alergeni,pret,semnatura,ordine,imagine,traduceri,etichete,zilei,zilei_pret,zilei_de_la,zilei_pana_la,zilei_zilnic')
       .eq('activ', true).order('ordine');
     if (error) {
       // fara semnal: meniul salvat ultima data pe telefon
@@ -2718,7 +2807,7 @@
                   .on('postgres_changes', { event: '*', schema: 'public', table: 'comenzi' }, () => refreshTablesStatus())
                   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'jurnal_activitate' }, p => {
                       if(p.new.actiune === 'mesa_liberada' || p.new.actiune === 'config_mese') refreshTablesStatus();
-                      if(['setari_busy','setari_ospatari','setari_modificare','setari_pachet','setari_chei'].includes(p.new.actiune)) aplicaSetari([p.new]);
+                      if(['setari_busy','setari_ospatari','setari_modificare','setari_pachet','setari_chei','setari_mutare'].includes(p.new.actiune)) aplicaSetari([p.new]);
                   }).subscribe();
 
                 // Meniul se schimba sub clienti fara sa dea refresh: daca

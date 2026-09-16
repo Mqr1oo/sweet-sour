@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sweetsour-cache-v2';
+const CACHE_NAME = 'sweetsour-cache-v3';
 
 // Cai RELATIVE: aplicatia e servita dintr-un subfolder (/m3/), iar caile
 // absolute ('/dashboard') dadeau 404 -> cache.addAll pica -> service
@@ -16,7 +16,8 @@ const urlsToCache = [
   '../fonturi/fonturi.css',
   '../vendor/supabase.js',
   './icons/logo.png',
-  './icons/favicon.png'
+  './icons/favicon.png',
+  './icons/badge-96.png'
 ];
 // scriptul Supabase e local (vendor/), dar pastram si varianta de pe CDN in cache
 // pentru paginile vechi ramase deschise
@@ -112,7 +113,7 @@ self.addEventListener('push', event => {
   const options = {
     body: d.body || 'Comanda noua',
     icon: './icons/icon-192.png',
-    badge: './icons/icon-192.png',
+    badge: './icons/badge-96.png',   // monocrom, pe transparent: Android il arata in bara de stare (un PNG colorat iesea patrat alb)
     tag: d.tag || 'sweetsour',
     renotify: true,              // suna din nou chiar daca exista deja una cu acelasi tag
     requireInteraction: true,    // ramane pe ecran pana o atinge cineva

@@ -625,6 +625,17 @@
   .limite-grid label{ display:flex; flex-direction:column; gap:6px; font-size:13px; color:var(--text-muted); }
   .limite-grid input, .mz-rand input, .mz-rand select, .lim-in{ padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:15px; min-height:44px; }
   .mz-rand{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px; }
+  .mz-ora{ display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--text-muted); }
+  .mz-ora input{ width:110px; }
+  .mz-lista{ display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+  .mz-item{ display:flex; align-items:center; gap:10px; padding:8px 10px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,.03); font-size:13px; }
+  .mz-item.acum{ border-color: rgba(16,185,129,.45); }
+  .mz-item .mz-nume{ flex:1; min-width:0; }
+  .mz-item .mz-nume b{ display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mz-item .mz-nume small{ color:var(--text-muted); font-family:'Space Mono',monospace; font-size:11px; }
+  .mz-item .mz-red{ background:rgba(239,68,68,.15); color:#f87171; font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:2px 7px; border-radius:999px; white-space:nowrap; }
+  .mz-item .mz-x{ background:none; border:1px solid var(--border); color:var(--text-muted); border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:14px; flex:0 0 32px; }
+  .mz-item .mz-x:hover{ color:var(--danger); border-color:var(--danger); }
   #mfaQr img, #mfaQr svg{ width:180px; height:180px; background:#fff; border-radius:12px; padding:8px; display:block; margin:10px 0; }
   .mfa-secret{ font-family:'Space Mono',monospace; font-size:12px; word-break:break-all; color:var(--text-muted); user-select:all; }
 </style>
@@ -842,17 +853,24 @@
           <div class="dash-panel lat" style="border-color: var(--accent);">
              <h3 style="color: var(--accent);">🍽️ Meniul zilei</h3>
              <p style="color:var(--text-muted); font-size:13px;">
-               Un produs pus in capul meniului, cu pret special si ora pana la care
-               tine. Clientii il vad primul; dupa ora aleasa dispare singur si
-               produsul revine la pretul normal. Serverul calculeaza comanda cu
-               pretul special cat timp e valabil.
+               Oricate produse in capul meniului, fiecare cu pretul lui special si
+               cu intervalul in care tine (ex. 11:30–16:30). Clientii vad
+               reducerea (−20%); in afara intervalului produsul revine singur la
+               pretul normal. Bifeaza „in fiecare zi" ca oferta sa revina zilnic
+               la aceleasi ore. Serverul calculeaza comanda cu pretul special
+               doar cat e valabil.
              </p>
+             <div id="mzLista" class="mz-lista"></div>
              <div class="mz-rand">
                <select id="mzProdus" style="flex:1; min-width:200px;"><option value="">Alege produsul…</option></select>
-               <input type="number" id="mzPret" placeholder="Pret special (lei)" step="0.01" min="0" style="width:170px;">
-               <input type="time" id="mzPana" value="16:00" style="width:130px;">
-               <button class="btn-primary" id="btnMzPune" style="width:auto; padding:10px 16px;">Pune</button>
-               <button class="btn-action" id="btnMzScoate" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;">Scoate</button>
+               <input type="number" id="mzPret" placeholder="Pret special (lei)" step="0.01" min="0" style="width:150px;">
+             </div>
+             <div class="mz-rand">
+               <label class="mz-ora">de la <input type="time" id="mzDeLa" value="11:30"></label>
+               <label class="mz-ora">pana la <input type="time" id="mzPana" value="16:30"></label>
+               <label class="mp-check" style="margin:0;"><input type="checkbox" id="mzZilnic"> in fiecare zi</label>
+               <button class="btn-primary" id="btnMzPune" style="width:auto; padding:10px 16px;">Adauga</button>
+               <button class="btn-action" id="btnMzScoate" style="border:1px solid var(--border); background:rgba(255,255,255,.06); color:var(--text); font-size:13px; padding:10px 14px;">Scoate toate</button>
              </div>
              <div id="mzStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
           </div>
@@ -1042,6 +1060,24 @@
                <input type="checkbox" id="cheiActiv"> Comenzile de la clienti cer codul de pe masa
              </label>
              <div id="cheiStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
+          </div>
+          <div class="dash-panel lat" data-director>
+             <h3>🪑 Mutarea la alta masa dupa comanda</h3>
+             <p style="color:var(--text-muted); font-size:13px;">
+               Ca sa nu se mute lumea de la masa dupa ce a comandat: inainte sa
+               trimita comanda, clientul vede un mesaj clar si bifeaza ca a
+               inteles ca mutarea costa. Fara bifa, comanda nu pleaca. Suma o
+               alegi tu; mesajul e scris pentru client, politicos, in romana si
+               in engleza.
+             </p>
+             <label class="mp-check" style="margin:8px 0;">
+               <input type="checkbox" id="mutareActiv"> Cere bifa „Raman la masa asta" inainte de comanda
+             </label>
+             <div class="limite-grid">
+               <label>Taxa la mutare (lei) <input type="number" id="mutareTaxa" min="1" max="1000" step="1" value="40"></label>
+             </div>
+             <button class="btn-primary" id="btnMutare" style="width:auto; padding:10px 16px;">Salveaza</button>
+             <div id="mutareStare" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
           </div>
           <div class="dash-panel lat" data-director>
              <h3>🚧 Limite pentru comenzile de la clienti</h3>
@@ -1678,8 +1714,7 @@
   function arataStareNotificari() {
     const suportate = ('Notification' in window) && ('serviceWorker' in navigator) && ('PushManager' in window);
     let text = '';
-    if (userRole === 'director') text = '';
-    else if (!suportate) text = 'Acest browser nu poate primi notificari.';
+    if (!suportate) text = 'Acest browser nu poate primi notificari.';
     else if (esteIOS() && !esteInstalata()) text = 'Pe iPhone: adauga aplicatia pe ecranul principal ca sa primesti notificari.';
     else if (Notification.permission === 'denied') text = '🔕 Notificarile sunt blocate din setarile telefonului (browser → notificari).';
     else if (Notification.permission === 'default') text = '🔕 Notificarile nu sunt pornite inca.';
@@ -1724,7 +1759,12 @@
   // primeste notificari, deci nu-l intrebam.
   function ensureNotificationPermission() {
     arataStareNotificari();
-    if (userRole === 'director') return;
+    // directorul primeste doar ce e al lui (codul lunii folosit, conectare
+    // de pe un dispozitiv nou) — baza nu-i trimite comenzi sau cereri
+    const nt = document.getElementById('notifText');
+    if (nt && esteConducere()) nt.textContent = userRole === 'director'
+        ? 'Ca sa afli pe loc cand cineva foloseste codul lunii ca sa anuleze o comanda (sau incearca cu un cod gresit) si cand se intra in cont de pe un telefon nou, panoul are nevoie de voie sa trimita notificari. Apasa mai jos, apoi „Permite". Comenzile nu te deranjeaza.'
+        : 'Ca sa afli de comenzi, de cererile de la mese, de codul lunii folosit la anulari si de conectarile de pe telefoane noi — si cand telefonul e blocat sau aplicatia e inchisa — panoul are nevoie de voie sa trimita notificari. Apasa mai jos, apoi „Permite".';
     if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) return;
     if (Notification.permission === 'granted') { reabonare().catch(e => console.log('push:', e)); return; }
     if (Notification.permission === 'denied') return;
@@ -3172,7 +3212,7 @@
 
       if (grup === 'sinteza')  { calculateDirectorStats(); renderHeatmap(); }
       if (grup === 'meniu')    { loadMeniu(); }
-      if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); loadEliberare(); loadCodLuna(); loadMeniulZilei(); loadSecuritate(); loadChei(); loadLimite(); loadAlerte(); }
+      if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); loadEliberare(); loadCodLuna(); loadMeniulZilei(); loadSecuritate(); loadChei(); loadLimite(); loadMutare(); loadAlerte(); }
       if (grup === 'personal') { loadFeedbacks(); loadAngajati(); calculateDirectorStats(); }
   }
 
@@ -3720,7 +3760,7 @@
               } else if (a === 'comanda_uitata') {
                   alarmaComandaUitata(p.new.detalii);
               } else if (a === 'setari_chei' || a === 'setari_limite' || a === 'setari_alerte') {
-                  if (currentTab === 'admin') { loadChei(); loadLimite(); loadAlerte(); }
+                  if (currentTab === 'admin') { loadChei(); loadLimite(); loadMutare(); loadAlerte(); }
               } else if (a === 'meniul_zilei' || a === 'meniu_publicat') {
                   fullMenu = [];
                   if (currentTab === 'admin') loadMeniulZilei();
@@ -4433,43 +4473,79 @@
   });
 
   // --- Meniul zilei (manager si director) -----------------------------------
+  // oferta e in vigoare acum? (zilnic: doar ora; altfel intervalul exact) — ca pe server
+  function ofertaActiva(p) {
+      if (!p.zilei || p.zilei_pret == null) return false;
+      const acum = new Date(), min = d => d.getHours() * 60 + d.getMinutes();
+      if (p.zilei_zilnic) {
+          const deLa = p.zilei_de_la ? min(new Date(p.zilei_de_la)) : 0, pana = p.zilei_pana_la ? min(new Date(p.zilei_pana_la)) : 1440;
+          return min(acum) >= deLa && min(acum) < pana;
+      }
+      return (!p.zilei_de_la || new Date(p.zilei_de_la) <= acum) && (!p.zilei_pana_la || new Date(p.zilei_pana_la) > acum);
+  }
+  const oraHM = (x) => new Date(x).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
   async function loadMeniulZilei() {
-      const sel = document.getElementById('mzProdus'), st = document.getElementById('mzStare');
+      const sel = document.getElementById('mzProdus'), st = document.getElementById('mzStare'), lista = document.getElementById('mzLista');
       if (!sel || !esteConducere()) return;
       const { data, error } = await _supabase.from('meniu_produse')
-          .select('id_produs,nume,pret,zilei,zilei_pret,zilei_pana_la')
+          .select('id_produs,nume,pret,zilei,zilei_pret,zilei_de_la,zilei_pana_la,zilei_zilnic')
           .eq('activ', true).is('sters_la', null).order('ordine');
       if (error) { st.textContent = error.message; return; }
       const ales = sel.value;
       sel.innerHTML = '<option value="">Alege produsul…</option>' + (data || []).map(p =>
           `<option value="${escapeHTML(p.id_produs)}">${escapeHTML(p.nume)} — ${Number(p.pret).toFixed(2)} lei</option>`).join('');
       if (ales) sel.value = ales;
-      const z = (data || []).find(p => p.zilei);
-      if (!z) { st.textContent = 'Acum nu e pus niciun meniu al zilei.'; return; }
-      const expirat = z.zilei_pana_la && new Date(z.zilei_pana_la).getTime() < Date.now();
-      st.textContent = `Acum: „${z.nume}”${z.zilei_pret != null ? ' la ' + Number(z.zilei_pret).toFixed(2) + ' lei (normal ' + Number(z.pret).toFixed(2) + ')' : ''}`
-        + (z.zilei_pana_la ? `, pana la ${new Date(z.zilei_pana_la).toLocaleString('ro-RO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}` : '')
-        + (expirat ? ' — a expirat, produsul e la pretul normal' : '');
+      const oferte = (data || []).filter(p => p.zilei);
+      if (!oferte.length) { lista.innerHTML = ''; st.textContent = 'Acum nu e pus niciun produs in meniul zilei.'; return; }
+      lista.innerHTML = oferte.map(p => {
+          const acum = ofertaActiva(p);
+          const red = p.zilei_pret != null && Number(p.pret) > 0 ? Math.round((1 - Number(p.zilei_pret) / Number(p.pret)) * 100) : 0;
+          let cand = '';
+          if (p.zilei_de_la && p.zilei_pana_la) cand = `${oraHM(p.zilei_de_la)}–${oraHM(p.zilei_pana_la)}`;
+          else if (p.zilei_pana_la) cand = `pana la ${oraHM(p.zilei_pana_la)}`;
+          if (p.zilei_zilnic) cand += ' · in fiecare zi';
+          else if (p.zilei_pana_la && new Date(p.zilei_pana_la).getTime() < Date.now()) cand += ' · a expirat';
+          else if (p.zilei_de_la && new Date(p.zilei_de_la).getTime() > Date.now()) cand += ' · incepe mai tarziu';
+          return `<div class="mz-item${acum ? ' acum' : ''}">
+              <div class="mz-nume"><b>${escapeHTML(p.nume)}</b><small>${Number(p.zilei_pret).toFixed(2)} lei (normal ${Number(p.pret).toFixed(2)})${cand ? ' · ' + escapeHTML(cand) : ''}${acum ? ' · ACUM in meniu' : ''}</small></div>
+              ${red > 0 ? `<span class="mz-red">−${red}%</span>` : ''}
+              <button type="button" class="mz-x" data-scoate="${escapeHTML(p.id_produs)}" title="Scoate din meniul zilei">✕</button>
+          </div>`; }).join('');
+      st.textContent = `${oferte.length} produs${oferte.length === 1 ? '' : 'e'} in meniul zilei, ${oferte.filter(ofertaActiva).length} in vigoare acum.`;
   }
+  const mzLista = document.getElementById('mzLista');
+  if (mzLista) mzLista.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-scoate]'); if (!b) return;
+      const st = document.getElementById('mzStare');
+      const { error } = await _supabase.rpc('scoate_oferta', { p_id: b.dataset.scoate });
+      if (error) { st.textContent = 'Nu s-a putut scoate: ' + error.message; return; }
+      fullMenu = [];
+      await loadMeniulZilei();
+  });
   const btnMzPune = document.getElementById('btnMzPune');
   if (btnMzPune) btnMzPune.addEventListener('click', async () => {
       const id = document.getElementById('mzProdus').value, st = document.getElementById('mzStare');
       if (!id) { st.textContent = 'Alege intai produsul.'; return; }
       const pretTxt = document.getElementById('mzPret').value.trim();
-      const pret = pretTxt === '' ? null : Math.round(parseFloat(pretTxt) * 100) / 100;
-      if (pret !== null && (isNaN(pret) || pret < 0)) { st.textContent = 'Pretul special nu e valid.'; return; }
-      const ora = document.getElementById('mzPana').value || '23:59';
-      const pana = new Date(); const [hh, mm] = ora.split(':').map(Number); pana.setHours(hh, mm, 0, 0);
-      if (pana.getTime() < Date.now()) { st.textContent = 'Ora aleasa a trecut deja. Alege o ora de mai tarziu.'; return; }
-      const { data, error } = await _supabase.rpc('seteaza_meniul_zilei', { p_id: id, p_pret: pret, p_pana_la: pana.toISOString() });
+      const pret = Math.round(parseFloat(pretTxt) * 100) / 100;
+      if (pretTxt === '' || isNaN(pret) || pret < 0) { st.textContent = 'Scrie pretul special (in lei).'; return; }
+      const zilnic = document.getElementById('mzZilnic').checked;
+      const laOra = (hm) => { const d = new Date(); const [hh, mm] = (hm || '00:00').split(':').map(Number); d.setHours(hh, mm, 0, 0); return d; };
+      const deLa = laOra(document.getElementById('mzDeLa').value || '00:00');
+      const pana = laOra(document.getElementById('mzPana').value || '23:59');
+      if (pana.getTime() <= deLa.getTime()) { st.textContent = 'Ora „pana la" trebuie sa fie dupa ora „de la".'; return; }
+      if (!zilnic && pana.getTime() < Date.now()) { st.textContent = 'Intervalul de azi a trecut deja. Alege ore de mai tarziu sau bifeaza „in fiecare zi".'; return; }
+      const { error } = await _supabase.rpc('pune_oferta', { p_id: id, p_pret: pret, p_de_la: deLa.toISOString(), p_pana_la: pana.toISOString(), p_zilnic: zilnic });
       if (error) { st.textContent = 'Nu s-a putut pune: ' + error.message; return; }
+      document.getElementById('mzPret').value = '';
       fullMenu = [];
       await loadMeniulZilei();
   });
   const btnMzScoate = document.getElementById('btnMzScoate');
   if (btnMzScoate) btnMzScoate.addEventListener('click', async () => {
       const st = document.getElementById('mzStare');
-      const { error } = await _supabase.rpc('seteaza_meniul_zilei', { p_id: null });
+      if (!confirm('Scoti toate produsele din meniul zilei?')) return;
+      const { error } = await _supabase.rpc('scoate_oferta', { p_id: null });
       if (error) { st.textContent = 'Nu s-a putut scoate: ' + error.message; return; }
       fullMenu = [];
       await loadMeniulZilei();
@@ -4515,6 +4591,28 @@
       if ([d.max_neacceptate, d.max_10min, d.max_produse, d.prag_lei].some(x => isNaN(x) || x <= 0)) { document.getElementById('limiteStare').textContent = 'Toate campurile trebuie sa fie numere pozitive.'; return; }
       const ok = await logActivity('setari_limite', null, d);
       document.getElementById('limiteStare').textContent = ok === false ? 'Nu s-a putut salva. Doar directorul poate schimba limitele.' : '✓ Limite salvate.';
+  });
+
+  // --- Acordul „raman la masa" (director) --------------------------------------
+  async function loadMutare() {
+      if (!document.getElementById('mutareActiv') || userRole !== 'director') return;
+      const { data } = await _supabase.from('jurnal_activitate').select('detalii').eq('actiune', 'setari_mutare')
+          .order('created_at', { ascending: false }).limit(1);
+      const d = (data && data[0] && data[0].detalii) || {};
+      document.getElementById('mutareActiv').checked = !!d.activ;
+      document.getElementById('mutareTaxa').value = Number(d.taxa) > 0 ? Number(d.taxa) : 40;
+      document.getElementById('mutareStare').textContent = d.activ
+        ? `Pornit: clientii bifeaza inainte de comanda (taxa ${Number(d.taxa) > 0 ? Number(d.taxa) : 40} lei).`
+        : 'Oprit: clientii nu vad mesajul.';
+  }
+  const btnMutare = document.getElementById('btnMutare');
+  if (btnMutare) btnMutare.addEventListener('click', async () => {
+      const taxa = parseInt(document.getElementById('mutareTaxa').value, 10);
+      const st = document.getElementById('mutareStare');
+      if (isNaN(taxa) || taxa <= 0) { st.textContent = 'Scrie o suma in lei (numar intreg, mai mare ca 0).'; return; }
+      const ok = await logActivity('setari_mutare', null, { activ: document.getElementById('mutareActiv').checked, taxa });
+      if (ok === false) { st.textContent = 'Nu s-a putut salva. Doar directorul poate schimba asta.'; return; }
+      await loadMutare();
   });
 
   // --- Alerta „comanda uitata" (director) --------------------------------------
