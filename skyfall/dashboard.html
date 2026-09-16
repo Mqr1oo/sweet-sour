@@ -2476,8 +2476,9 @@
     // rolul e cel din staff_roles; UI-ul si RLS-ul vad acum acelasi lucru
     userRole = ['director','manager','bucatarie','ospatar','bar'].includes(rol) ? rol : 'ospatar';
 
-    // stocul e treaba celor care lucreaza (bar, bucatarie, manager), nu a directorului
-    if(userRole === 'bucatarie' || userRole === 'bar' || userRole === 'manager') {
+    // stocul e treaba celor care lucreaza (bar, bucatarie); managerul si
+    // directorul nu-l tin
+    if(userRole === 'bucatarie' || userRole === 'bar') {
         document.getElementById('navStock').style.display = 'flex';
     }
 
@@ -2514,7 +2515,9 @@
         }
     }
     
-    if(userRole === 'ospatar' || userRole === 'manager') { document.getElementById('navMeniu').style.display = 'flex'; }
+    // comanda rapida (Meniu) e a ospatarului; managerul supravegheaza: Comenzi
+    // (modifica / anuleaza, fara codul lunii), Sala, Istoric, Sef
+    if(userRole === 'ospatar') { document.getElementById('navMeniu').style.display = 'flex'; }
 
 
     ensureNotificationPermission();
@@ -5747,8 +5750,8 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
       }
       pasi.push({ el: '#navMap', titlu: 'Sala',
           text: 'Mesele si de cand stau. Verde: ok. Portocaliu: treci pe la ea. Rosu: prea mult. Mov: a cerut nota. Atinge o masa: totalul ei, cererea de nota, sau o eliberezi.' });
-      pasi.push({ el: '#navMeniu', titlu: 'Meniu', text: 'Trimiti o comanda in numele clientului, ca de pe telefon.' });
-      if (rol !== 'director') pasi.push({ el: '#navStock', titlu: 'Stoc', text: 'S-a terminat ceva? Il blochezi si dispare din meniul clientilor.' });
+      if (rol === 'ospatar') pasi.push({ el: '#navMeniu', titlu: 'Meniu', text: 'Trimiti o comanda in numele clientului, ca de pe telefon.' });
+      if (rol === 'bar' || rol === 'bucatarie') pasi.push({ el: '#navStock', titlu: 'Stoc', text: 'S-a terminat ceva? Il blochezi si dispare din meniul clientilor.' });
       pasi.push({ el: '#navHistory', titlu: 'Istoric',
           text: rol === 'bar' ? 'Comenzile terminate azi. Aici confirmi ca ai scos bonul — ramane pe numele tau. Cu sagetile vezi si zilele trecute.'
                               : 'Comenzile terminate si anulate, pe zile: azi sau orice zi din luna asta si luna trecuta.' });

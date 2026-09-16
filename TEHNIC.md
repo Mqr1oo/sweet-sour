@@ -1267,6 +1267,20 @@ Testat cu evenimente `TouchEvent` sintetice pe viewport 375 px: indicatorul
 apare la y≈90 (sub antet), „gata" la 80 px, `touchend` → clasa `incarca` și
 pagina se reîncarcă (`performance.timeOrigin` nou).
 
+## Runda 20 — managerul fără Stoc și fără Meniu
+
+Cerința: „scoate de la manager butonul de stoc, cel de meniu; ca manager,
+când anulează, să nu mai pună codul".
+
+`dashboard.html`, `setupUserEnvironment()`: `navStock` se arată doar la bar și
+bucătărie, `navMeniu` (comanda rapidă) doar la ospătar. Managerul rămâne cu
+Comenzi (modifică ✏️ prin modalul `modalEditComanda`, care nu depinde de tabul
+Meniu; anulează ✕), Sala, Istoric, Șef. Turul ghidat sare peste pașii Meniu /
+Stoc pentru rolurile care nu le au. Anularea fără cod pentru manager exista
+deja (client: `anCodBloc` ascuns și `p_cod: null`; server:
+`anuleaza_comanda` sare verificarea când `v_rol = 'manager'`, migrația 13) —
+verificat în harness că modalul se deschide fără câmpul de cod.
+
 ## Înainte de deschidere
 
 1. Authentication → Providers → Email: **Allow new users to sign up** = oprit.

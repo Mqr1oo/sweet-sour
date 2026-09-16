@@ -127,7 +127,7 @@ date: chiar dacă cineva ar umbla la aplicație, serverul refuză ce nu are voie
 | **Bar** | primește comenzile de băuturi, le acceptă, le închide; aude cererile de la mese; confirmă bonurile; anulează cu codul lunii |
 | **Bucătărie** | primește comenzile de mâncare, le acceptă, le închide; poate marca produse ca terminate |
 | **Ospătar** | vede ce e de dus la masă și cererile de la mese; modifică sau anulează comenzi (cu codul lunii); ia comenzi în numele clientului; își alege zona |
-| **Manager** | lucrează: modifică orice comandă, anulează fără cod, are **codul lunii**, pornește „ora de vârf", aranjează sala, blochează produse din stoc; **nu** vede datele personalului |
+| **Manager** | supraveghează: vede comenzile, modifică orice comandă, anulează **fără cod**, are **codul lunii**, pornește „ora de vârf", aranjează sala, are istoricul și încasările; **nu** are stocul, comanda rapidă (Meniu) și datele personalului |
 | **Director** | **⭐ nu lucrează cu comenzile**: nu vede panoul de comenzi și nici stocul, nu e deranjat de nicio alarmă. Are încasările și rapoartele pe zi sau pe lună, anulările, turele, setările, meniul, sala și istoricul pe zile |
 
 Rolurile se dau doar de la consolă, nu din aplicație — nimeni nu-și poate da
