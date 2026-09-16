@@ -1576,6 +1576,51 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
   filtrare" — apărea doar dacă directorul apăsa „Etichete automate" și
   publica.
 
+## Runda 32 — toate filtrele într-un loc, scaunele grupului pe contur, meniul zilei la Meniu
+
+- **Fereastra de filtre acoperă tot**: și categoriile (Toate / Semnătura
+  casei / Cocktailuri…) au intrat în fereastra deschisă din butonul-pâlnie,
+  secțiunea „Categorie" (o singură alegere) deasupra secțiunii „Etichete"
+  (mai multe). Rândul vechi de categorii de sub căutare (`#tagFilters`) a
+  dispărut; sub căutare rămân doar filtrele alese, cu ✕ (`#filtreEtichete`,
+  chip-uri `data-cat` / `data-eticheta`). Bulina de pe buton numără
+  categoria + etichetele; „Arată N produse" numără la fel. `renderFiltre()`
+  desenează tot (fereastra, rândul activ, bulina); `resetFiltre()` întoarce
+  la „Toate" și golește etichetele (și după trimiterea comenzii).
+  Coșul („Comanda mea") nu mai e o categorie în rând — se deschide din
+  butonul de jos și are butonul **„← Înapoi la meniu"** (`#cartBack`) în
+  antet. Antetul coșului: „1 produs ales" / „3 produse alese"
+  (`cartItemLabel1` / `cartItemsLabel`).
+- **Scaunele unui grup lipit stau pe conturul comun**, nu la mesele din
+  grup: `scauneGrupHtml(x1, y1, x2, y2, n, r)` împarte perimetrul
+  stadionului / dreptunghiului rotunjit (8 segmente: 4 laturi + 4 arce, raza
+  `r` în unități) în `n` bucăți egale și pune câte un scaun la mijlocul
+  fiecăreia, cu 0,5 unități în afara conturului (ca la mesele singure) și
+  rotit după normală (`--rot`). `n` = suma scaunelor rămase meselor din grup
+  (`numarScaune(m, s, ascunse)` = câte scaune desenează `scauneHtml` după ce
+  laturile lipite le pierd). Cardurile din grup nu mai desenează scaune
+  proprii (înainte, la mese de mărimi diferite, scaunele de pe laturile
+  nelipite rămâneau înăuntrul conturului comun — raportat: „scaunele intră
+  una în alta"). Raza conturului se calculează în unități și se pune inline
+  (`border-radius` în px, din lățimea grilei / `plan.w`), ca scaunele să
+  urmeze exact același contur.
+- **Meniul zilei la director stă în tabul „Meniu"**, deasupra editorului de
+  produse (panoul `#panelMeniulZilei` primește `data-grup="meniu"` la
+  `setupUserEnvironment` pentru director și e mutat înaintea editorului;
+  `admArata('meniu')` încarcă și meniul zilei). La manager rămâne în Setări
+  (nu are editor de produse). Ghidul rapid: pasul „Meniu" pomenește meniul
+  zilei, pasul „Setări" nu.
+- **Etichete automate mai deștepte** (aceleași reguli în panou și în meniul
+  clientului): băuturile cu alcool sunt **reci** dacă nu au un cuvânt sigur
+  de cald (`cald_sigur`: vin fiert, ciocolată caldă, fierbinte, grog, hot
+  toddy, irish coffee, supă, ciorbă) — înainte „Old Fashioned" rămânea fără
+  cald/rece, iar „Espresso Martini" ieșea cald; la egalitate câștigă
+  cuvintele sigure (`rece_sigur`: iced, frappe, cold brew, gheață,
+  smoothie, limonadă… — un „iced latte" e rece). `whisk(?:e?y)?` — înainte
+  `\bwhisk\b` nu prindea „whisky" / „whiskey" (un whisky simplu, fără alt
+  cuvânt de alcool, nu era „cu alcool").
+- `zen/sw.js` → `zen-cache-v6`, `m3/sw.js` → `m3-cache-v4`.
+
 ## Înainte de deschidere
 
 1. Authentication → Providers → Email: **Allow new users to sign up** = oprit.

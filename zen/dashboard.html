@@ -306,6 +306,8 @@
   .plan-sala .grup-mese.status-rezervata { border-color:#14b8a6; background: rgba(20,184,166,0.14); }
   .plan-sala .table-card.in-grup { background:transparent !important; border-color:transparent !important; box-shadow:none !important; animation:none !important; }
   .plan-sala .table-card.in-grup .t-unita { display:none; }
+  .plan-sala .grup-mese .scaun { border-radius:5px; }
+  .plan-sala .grup-mese.status-free .scaun { background:rgba(255,255,255,.16); }
   .plan-sala .table-card.in-grup.ridicata, .plan-sala .table-card.in-grup.tras { background:var(--bg) !important; border-color:var(--accent) !important; box-shadow:0 12px 28px rgba(0,0,0,.6) !important; }
   .plan-sala .table-card .t-num { font-size:17px; }
   .plan-sala .table-card .t-seats { font-size:10px; }
@@ -932,7 +934,7 @@
       <section class="setari-sectiune" data-grup="setari">
         <div class="setari-titlu"><h4>Zi de zi</h4><p>Ce schimbi des: oferta zilei, o seara aglomerata, bucataria inchisa, codul de anulare.</p></div>
         <div class="setari-grila">
-          <div class="dash-panel lat" style="border-color: var(--accent);">
+          <div class="dash-panel lat" id="panelMeniulZilei" style="border-color: var(--accent);">
              <h3 style="color: var(--accent);">🍽️ Meniul zilei</h3>
              <p style="color:var(--text-muted); font-size:13px;">
                Oricate produse in capul meniului, fiecare cu pretul lui special si
@@ -2719,6 +2721,9 @@
             document.getElementById('navActive').style.display = 'none';
             document.querySelector('#navAdmin .nav-text').textContent = 'Sinteza';
             ['navSefMeniu', 'navSefPersonal', 'navSefSetari'].forEach(id => document.getElementById(id).style.display = 'flex');
+            // meniul zilei sta la director in tabul Meniu, deasupra produselor (la manager ramane in Setari)
+            const pmz = document.getElementById('panelMeniulZilei'), editor = document.querySelector('.dash-panel[data-grup="meniu"]');
+            if (pmz && editor && !pmz.dataset.grup) { pmz.dataset.grup = 'meniu'; pmz.classList.remove('lat'); editor.parentNode.insertBefore(pmz, editor); }
             switchTab('admin');
         }
     }
@@ -3207,6 +3212,44 @@ loadFreedTables();
       if (!asc.has('dreapta')) for (let i = 0; i < laturi[3].n; i++) out.push(`<i class="scaun" style="left:108%; top:${poz(laturi[3].n, i)}%; --rot:90deg"></i>`);
       return out.join('');
   }
+  // cate scaune ii raman unei mese dupa ce laturile lipite pierd scaunele lor
+  function numarScaune(m, s, ascunse) {
+      return (scauneHtml(m, s, ascunse).match(/class="scaun"/g) || []).length;
+  }
+  // scaunele unui grup lipit: pe conturul comun (stadion sau dreptunghi
+  // rotunjit cu raza r, in unitati), la distante egale, putin in afara lui
+  function scauneGrupHtml(x1, y1, x2, y2, n, r) {
+      const W = x2 - x1, H = y2 - y1;
+      if (!n || W <= 0 || H <= 0) return '';
+      r = Math.min(r, W / 2, H / 2);
+      const q = Math.PI * r / 2;
+      // conturul, in sensul acelor de ceas, pornind din capatul stang al laturii de sus
+      const seg = [
+          { l: W - 2 * r, p: (t) => [x1 + r + t, y1, -Math.PI / 2] },
+          { l: q, c: [x2 - r, y1 + r], a0: -Math.PI / 2 },
+          { l: H - 2 * r, p: (t) => [x2, y1 + r + t, 0] },
+          { l: q, c: [x2 - r, y2 - r], a0: 0 },
+          { l: W - 2 * r, p: (t) => [x2 - r - t, y2, Math.PI / 2] },
+          { l: q, c: [x1 + r, y2 - r], a0: Math.PI / 2 },
+          { l: H - 2 * r, p: (t) => [x1, y2 - r - t, Math.PI] },
+          { l: q, c: [x1 + r, y1 + r], a0: Math.PI }
+      ];
+      const P = seg.reduce((a, sg) => a + sg.l, 0);
+      const out = [];
+      for (let i = 0; i < n; i++) {
+          let t = (i + 0.5) * P / n;
+          for (const sg of seg) {
+              if (t > sg.l) { t -= sg.l; continue; }
+              let x, y, ang;
+              if (sg.p) [x, y, ang] = sg.p(t);
+              else { ang = sg.a0 + t / r; x = sg.c[0] + r * Math.cos(ang); y = sg.c[1] + r * Math.sin(ang); }
+              x += Math.cos(ang) * 0.5; y += Math.sin(ang) * 0.5;   // pe marginea conturului, ca la mesele singure
+              out.push(`<i class="scaun" style="left:${((x - x1) / W * 100).toFixed(1)}%; top:${((y - y1) / H * 100).toFixed(1)}%; --rot:${Math.round(ang * 180 / Math.PI + 90)}deg"></i>`);
+              break;
+          }
+      }
+      return out.join('');
+  }
   // mesele fara coordonate (config vechi) primesc un loc pe randuri
   function asazaMeseleFaraLoc(zone) {
       const plan = planZonei(zone);
@@ -3305,7 +3348,11 @@ loadFreedTables();
           const stare = PRIORITATE_STARE.find(x => stari.includes(x)) || 'free';
           const azi = !isEditingMap && g.some(i => meseAzi[String(zone.mese[i].numar)] && meseAzi[String(zone.mese[i].numar)].cu);
           const patrata = g.some(i => zone.mese[i].forma === 'patrata');
-          grupuriHtml += `<div class="grup-mese status-${stare}${patrata ? ' patrata' : ''}${azi ? ' unita-azi' : ''}${isEditingMap ? ' editare' : ''}" style="left:${px(x1)}; top:${py(y1)}; width:${px(x2 - x1)}; height:${py(y2 - y1)};"></div>`;
+          // raza colturilor: stadion (jumatate din latura mica) sau colturi rotunjite de 3 unitati
+          const raza = patrata ? Math.min(3, (x2 - x1) / 2, (y2 - y1) / 2) : Math.min(x2 - x1, y2 - y1) / 2;
+          const upx = grid.getBoundingClientRect().width / plan.w;   // pixeli pe unitate (0 daca harta nu e afisata)
+          const scaune = g.reduce((a, i, k) => a + numarScaune(zone.mese[i], marimeMesei(zone.mese[i]), atingeri[k]), 0);
+          grupuriHtml += `<div class="grup-mese status-${stare}${patrata ? ' patrata' : ''}${azi ? ' unita-azi' : ''}${isEditingMap ? ' editare' : ''}" style="left:${px(x1)}; top:${py(y1)}; width:${px(x2 - x1)}; height:${py(y2 - y1)};${upx ? ` border-radius:${(raza * upx).toFixed(1)}px;` : ''}">${scauneGrupHtml(x1, y1, x2, y2, scaune, raza)}</div>`;
           g.forEach((i, k) => inGrup.set(i, { ascunse: atingeri[k] }));
       });
       // peretii + legaturile intre mesele unite dar departate (SVG in unitati)
@@ -3332,7 +3379,7 @@ loadFreedTables();
           const r = dreptunghiMesei(mesa), cu = unitaCu(mesa);
           html += `<div class="table-card status-${st.status === 'free' ? 'free' : st.status}${mesa.forma === 'patrata' ? ' patrata' : ' rotunda'}${isEditingMap ? ' editare' : ''}${az && az.cu ? ' unita-azi' : ''}${gr ? ' in-grup' : ''}" data-idx="${idx}" data-numar="${escapeHTML(mesa.numar)}"
                         style="left:${px(r.x)}; top:${py(r.y)}; width:${px(s.w)}; height:${py(s.h)};">
-             ${scauneHtml(mesa, s, gr && gr.ascunse)}
+             ${gr ? '' : scauneHtml(mesa, s)}
              ${rz ? `<span class="t-rez" title="rezervata">📅 ${oraRz(rz.r.de_la)}</span>` : ''}
              <div class="t-num">${escapeHTML(mesa.numar)}</div>
              <div class="t-seats">🪑 ${escapeHTML(mesa.scaune)}</div>
@@ -4004,7 +4051,7 @@ loadFreedTables();
       });
 
       if (grup === 'sinteza')  { calculateDirectorStats(); renderHeatmap(); }
-      if (grup === 'meniu')    { loadMeniu(); }
+      if (grup === 'meniu')    { loadMeniu(); loadMeniulZilei(); }
       if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); loadEliberare(); loadCodLuna(); loadMeniulZilei(); loadSecuritate(); loadChei(); loadLimite(); loadMutare(); loadRezSetari(); loadAlerte(); }
       if (grup === 'personal') { loadFeedbacks(); loadAngajati(); calculateDirectorStats(); }
   }
@@ -4032,10 +4079,13 @@ loadFreedTables();
   // Etichetele „de gasit" (cu alcool / fara / cald / rece) se pot completa
   // singure dupa nume si categorie; directorul verifica si publica.
   const CUV = {
-      cu_alcool: /\b(bere|beri|vin|vinuri|spumant|prosecco|sampanie|cocktail|gin|vodka|votca|whisk|rom|rum|tequila|aperol|spritz|negroni|mojito|margarita|shot|lichior|coniac|cognac|brandy|tuica|palinca|cidru|long ?drink|bourbon|campari|vermut|martini|hugo|sangria|jager|limoncello|old fashioned|daiquiri|cuba libre|pina colada|espresso martini|sour)\b/,
+      cu_alcool: /\b(bere|beri|vin|vinuri|spumant|prosecco|sampanie|cocktail|gin|vodka|votca|whisk(?:e?y)?|rom|rum|tequila|aperol|spritz|negroni|mojito|margarita|shot|lichior|coniac|cognac|brandy|tuica|palinca|cidru|long ?drink|bourbon|campari|vermut|martini|hugo|sangria|jager|limoncello|old fashioned|daiquiri|cuba libre|pina colada|espresso martini|sour)\b/,
       fara_alcool: /\b(limonada|racoritoare|suc|sucuri|apa|fresh|smoothie|milkshake|mocktail|virgin|ice ?tea|cafea|cafele|ceai|ceaiuri|espresso|cappuccino|latte|americano|cacao|ciocolata|frappe|cola|fanta|sprite|red ?bull|energizant|tonic|lapte)\b/,
       cald: /\b(cafea|cafele|espresso|cappuccino|latte|americano|flat white|ceai|ceaiuri|cacao|ciocolata calda|vin fiert|supa|ciorba|paste|pizza|burger|gratar|friptura|tocanita|mic dejun|omleta|ochiuri|placinta|calde?|fierbinte|lungo|ristretto|macchiato|mocha|cortado)\b/,
-      rece: /\b(limonada|racoritoare|suc|sucuri|fresh|smoothie|milkshake|cocktail|bere|beri|cidru|frappe|cold ?brew|iced|ice|inghetata|salata|gheata|spritz|mojito|margarita|gin|vodka|votca|whisk|vin|vinuri|spumant|prosecco|cola|tonic|apa|shot|reci|rece|racoritor|daiquiri|sour|negroni|aperol)\b/
+      rece: /\b(limonada|racoritoare|suc|sucuri|fresh|smoothie|milkshake|cocktail|bere|beri|cidru|frappe|cold ?brew|iced|ice|inghetata|salata|gheata|spritz|mojito|margarita|gin|vodka|votca|whisk(?:e?y)?|vin|vinuri|spumant|prosecco|cola|tonic|apa|shot|reci|rece|racoritor|daiquiri|sour|negroni|aperol)\b/,
+      // cuvinte care decid la egalitate (un "iced latte" e rece, un "vin fiert" e cald)
+      cald_sigur: /\b(vin fiert|ciocolata calda|calde?|fierbinte|grog|hot toddy|irish coffee|supa|ciorba)\b/,
+      rece_sigur: /\b(iced|ice|frappe|cold ?brew|gheata|rece|reci|inghetata|smoothie|milkshake|limonada)\b/
   };
   function faraDiacritice(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
   function eticheteAutomate(p) {
@@ -4045,10 +4095,11 @@ loadFreedTables();
       const alcool = CUV.cu_alcool.test(text);
       if (alcool && !are.has('cu_alcool') && !are.has('fara_alcool')) noi.push('cu_alcool');
       if (!alcool && CUV.fara_alcool.test(text) && !are.has('fara_alcool') && !are.has('cu_alcool')) noi.push('fara_alcool');
-      const cald = CUV.cald.test(text), rece = CUV.rece.test(text);
-      if (cald && !rece && !are.has('cald') && !are.has('rece')) noi.push('cald');
-      if (rece && !cald && !are.has('rece') && !are.has('cald')) noi.push('rece');
-      if (rece && cald && !are.has('rece') && !are.has('cald')) noi.push(alcool ? 'rece' : 'cald');
+      let cald = CUV.cald.test(text), rece = CUV.rece.test(text);
+      if (alcool && !CUV.cald_sigur.test(text)) { rece = true; cald = false; }   // bauturile cu alcool se servesc reci (in afara de vin fiert & co.)
+      if (cald && rece) { if (CUV.cald_sigur.test(text)) rece = false; else if (CUV.rece_sigur.test(text) || alcool) cald = false; else rece = false; }
+      if (cald && !are.has('cald') && !are.has('rece')) noi.push('cald');
+      if (rece && !are.has('rece') && !are.has('cald')) noi.push('rece');
       return noi;
   }
 
@@ -6768,9 +6819,9 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
                               : 'Comenzile terminate si anulate, pe zile: azi sau orice zi din luna asta si luna trecuta.' });
       if (rol === 'director') {
           pasi.push({ el: '#navAdmin', titlu: 'Sinteza', text: 'Incasari, comenzi, top produse si harta orelor de varf — pe azi sau pe ultimele 30 de zile. Excel de aici.' });
-          pasi.push({ el: '#navSefMeniu', titlu: 'Meniu', text: 'Meniul clientilor: produse, preturi, descrieri. Lucrezi pe ciorna si publici cand esti gata.' });
+          pasi.push({ el: '#navSefMeniu', titlu: 'Meniu', text: 'Meniul zilei (oferte cu pret special si interval) si meniul clientilor: produse, preturi, descrieri, poze. Publici cand esti gata.' });
           pasi.push({ el: '#navSefPersonal', titlu: 'Personal', text: 'Raportul pe angajat, anularile (cine, cand, de ce), turele de azi, parerile clientilor, lista de angajati.' });
-          pasi.push({ el: '#navSefSetari', titlu: 'Setari', text: 'Meniul zilei, ora de varf, codul lunii, ora de inchidere, comenzile la pachet, codul pe masa.' });
+          pasi.push({ el: '#navSefSetari', titlu: 'Setari', text: 'Ora de varf, codul lunii, ora de inchidere, comenzile la pachet, codul pe masa, rezervarile.' });
       } else if (rol === 'manager') {
           pasi.push({ el: '#navAdmin', titlu: 'Sef', text: 'Incasari, comenzi, top produse — pe azi sau pe ultimele 30 de zile. Excel de aici.' });
           pasi.push({ el: '#navSefSetari', titlu: 'Setari', text: 'Meniul zilei, ora de varf, codul lunii pentru anulari.' });

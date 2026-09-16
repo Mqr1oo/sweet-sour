@@ -229,8 +229,9 @@ scaune — iar înăuntru doar numărul mesei și timerul.
 
 **⭐ Ține apăsat pe o masă** (oricine din personal, nu trebuie „Editează
 harta"): masa se ridică și o tragi. O lași **peste altă masă** → se
-**lipesc** și arată ca o singură masă mare (un contur comun, scaunele doar
-pe dinafară, nota se vede împreună — grupul mare de la 20 cu 40). O lași
+**lipesc** și arată ca o singură masă mare (un contur comun, cu toate
+scaunele rămase așezate pe el, la distanțe egale; nota se vede împreună —
+grupul mare de la 20 cu 40). O lași
 **în alt loc** → stă acolo azi; dacă era lipită de alta, s-a despărțit. Ții
 apăsat pe o masă unită fără să o miști → „Desparți mesele?" → revin la
 locul lor. Mâine dimineață totul e ca pe harta directorului; nimic din asta
@@ -382,7 +383,7 @@ managerul"):
 
 | Setare | Ce face |
 |---|---|
-| **Meniul zilei** (și managerul) | oricâte produse în capul meniului, fiecare cu preț special și interval orar (ex. 11:30–16:30), opțional „în fiecare zi"; clientul vede reducerea (−20%), în afara intervalului produsul revine singur la prețul normal |
+| **Meniul zilei** (și managerul) | oricâte produse în capul meniului, fiecare cu preț special și interval orar (ex. 11:30–16:30), opțional „în fiecare zi"; clientul vede reducerea (−20%), în afara intervalului produsul revine singur la prețul normal. Directorul îl are în tabul **Meniu**, deasupra produselor; managerul în Setări |
 | **Rezervări** (și managerul) | cu câte minute înainte se blochează masa pentru clienți (implicit 10) și cât ține o rezervare (implicit 120 min) |
 | **Codul de anulare al lunii** (și managerul) | îl vede managerul și directorul; „Cod nou" dacă s-a aflat |
 | **Ore de vârf** (și managerul) | avertisment roșu la clienți: așteptarea e mai mare |
@@ -462,11 +463,13 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
   dar rămâne cu tot istoricul lui și se recuperează cu un buton.
 - **Etichete**: cu alcool, fără alcool, cald, rece, vegan, vegetarian, fără
   gluten, fără lactoză, picant, fără zahăr — le bifezi la produs, iar
-  clientul le găsește în **butonul de filtre** de lângă căutare: apasă,
-  bifează ce vrea („Arată 12 produse"), iar sub căutare rămân doar filtrele
-  alese, cu ✕. „Cu alcool / fără alcool / calde / reci" se pun **singure**,
-  după numele produselor, și în meniul clientului — filtrele există din
-  prima zi, fără să bifeze nimeni nimic. Butonul
+  clientul le găsește în **butonul de filtre** de lângă căutare, împreună cu
+  categoriile (Toate / Cocktailuri / Cafea & ceai…): apasă, alege o
+  categorie și bifează etichetele („Arată 12 produse"), iar sub căutare
+  rămân doar filtrele alese, cu ✕ — nimic altceva. „Cu alcool / fără
+  alcool / calde / reci" se pun **singure**, după numele produselor, și în
+  meniul clientului — filtrele există din prima zi, fără să bifeze nimeni
+  nimic (băuturile cu alcool sunt reci, în afară de vin fiert & co.). Butonul
   „✨ Etichete automate" le pune singur pe cele de băutură (alcool / cald /
   rece) după numele produselor; le verifici și publici.
 - **Reducere pe produs**: în fereastra produsului, „Reducere (%)" — clientul
@@ -474,7 +477,8 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
   Meniul zilei are prioritate cât e în interval.
 - Căutarea clientului găsește produsul și după variantele de nume (ex.
   „negroni sbagliato") și după categorie.
-- **Meniul zilei**: managerul sau directorul pune oricâte produse, fiecare
+- **Meniul zilei**: managerul (în Setări) sau directorul (în tabul Meniu,
+  deasupra produselor) pune oricâte produse, fiecare
   cu preț special și interval (de la — până la), opțional în fiecare zi.
   Apar primele în meniul clientului, cu reducerea (−24%) și prețul vechi
   tăiat; în afara intervalului dispar singure și produsele revin la prețul

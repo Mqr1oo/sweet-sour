@@ -546,6 +546,9 @@
   .filtre-actiuni{ display:flex; flex-direction:column; gap:10px; }
   .filtre-actiuni .btn-submit{ margin:0; }
   .filtre-actiuni .btn-cookie-info{ width:100%; }
+  .filtre-sectiune{ margin-bottom:6px; }
+  .modal .filtre-eticheta{ font-family:'Space Mono', monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 10px; }
+  .cart-back{ margin-bottom:12px; }
   @media (min-width:641px){ .cauta-rand{ flex:1; max-width:424px; } }
   .card-meta .meta-pill.eticheta{ border-color: color-mix(in srgb, var(--brass) 45%, transparent); color: var(--brass-soft, var(--brass)); }
   .mz-lista{ display:grid; gap:10px; margin: 4px 0 22px; }
@@ -710,6 +713,7 @@
   </div>
   
   <div class="wrap cart-heading" id="cartHeading">
+    <button type="button" class="chip cart-back" id="cartBack">← Inapoi la meniu</button>
     <h2 id="cartHeadingTitle">Comanda mea</h2>
     <p id="cartHeadingSub"></p>
   </div>
@@ -750,7 +754,6 @@
         <span class="filtre-nr" id="filtreNr" hidden>0</span>
       </button>
     </div>
-    <div class="tag-filters" id="tagFilters"></div>
     <div class="tag-filters filtre-etichete" id="filtreEtichete" style="display:none;"></div>
   </div>
 
@@ -904,7 +907,8 @@
     <button class="modal-close" id="closeFiltre">&times;</button>
     <h2 id="filtreTitlu">Filtre</h2>
     <p id="filtreDesc">Alege ce vrei sa vezi. Se pot combina.</p>
-    <div class="filtre-lista" id="filtreLista"></div>
+    <div class="filtre-sectiune"><p class="filtre-eticheta" id="filtreCatTitlu">Categorie</p><div class="filtre-lista" id="filtreCategorii"></div></div>
+    <div class="filtre-sectiune" id="filtreSectEtichete"><p class="filtre-eticheta" id="filtreEtTitlu">Etichete</p><div class="filtre-lista" id="filtreLista"></div></div>
     <div class="filtre-actiuni">
       <button type="button" class="btn-submit" id="btnFiltreGata">Arata tot meniul</button>
       <button type="button" class="btn-cookie-info" id="btnFiltreSterge">Sterge filtrele</button>
@@ -1172,6 +1176,7 @@
       badgeEpuizat: 'Stoc epuizat', ribbonEsp: 'Recomandarea casei',
       etichete: { cu_alcool: '🍸 Cu alcool', fara_alcool: '🍹 Fara alcool', cald: '☕ Calde', rece: '🧊 Reci', vegan: '🌱 Vegan', vegetarian: '🥕 Vegetarian', fara_gluten: '🌾 Fara gluten', fara_lactoza: '🥛 Fara lactoza', picant: '🌶️ Picant', fara_zahar: '🍬 Fara zahar' },
       filtreTitlu: 'Filtre', filtreDesc: 'Alege ce vrei sa vezi. Se pot combina.', filtreSterge: 'Sterge filtrele', filtreTot: 'Arata tot meniul',
+      filtreCategorie: 'Categorie', filtreEtichete: 'Etichete', cartBack: '← Inapoi la meniu',
       filtreArata: n => n === 1 ? 'Arata 1 produs' : `Arata ${n} produse`,
       zileiTitle: 'Meniul zilei', zileiPanaLa: 'pana la', zileiAdauga: 'Adauga', zileiInterval: (a, b) => `${a}–${b}`, zileiZilnic: 'in fiecare zi',
       offlineMeniu: '📶 Fara semnal. Vezi meniul salvat pe telefon; comanda pleaca singura cand revine semnalul.',
@@ -1258,7 +1263,7 @@
       fbTitle: 'Cum a fost la noi?', fbPlaceholder: 'Ce am putea imbunatati?', fbBtn: 'Trimite parerea', fbThanks: 'Multumim ca ne ajuti sa fim mai buni!', fbGoogle: 'Super! Ne-ar ajuta enorm o recenzie pe Google.', fbGoogleBtn: 'Lasa recenzie pe Google', tablesFree: 'mese libere', tablesFull: 'Nicio masa libera', tablesFor: 'locuri', tableWord: 'Masa',
       weightLabel:'Volum', kcalLabel:'kcal', ingredientsLabel:'Ingrediente', allergensLabel:'Alergeni', noAllergens:'Fara alergeni declarati',
       splitModeEqual: 'Parti egale', splitModeProduct: 'Pe produs', splitProductHint: 'Atribuie fiecare produs unei persoane.', personLabel: 'Persoana',
-      cartItemsLabel: 'produse alese', emptyCartHint: 'Nu ai ales nimic inca.',
+      cartItemLabel1: 'produs ales', cartItemsLabel: 'produse alese', emptyCartHint: 'Nu ai ales nimic inca.',
       // starea comenzii (bara de sus) si fisa comenzii
       stNoua: '📨 Trimisa — asteapta sa fie vazuta', stAcceptata: '✅ Acceptata — am vazut comanda, urmeaza sa vina',
       stGata: '✅ Acceptata — vine acum la masa', stVine: '🍽️ E gata — vine la masa acum', stServita: '✔️ Servita. Pofta buna!', stAnulata: '❌ Anulata',
@@ -1309,6 +1314,7 @@
       badgeEpuizat: 'Sold Out', ribbonEsp: 'Signature',
       etichete: { cu_alcool: '🍸 Alcoholic', fara_alcool: '🍹 Non-alcoholic', cald: '☕ Hot', rece: '🧊 Cold', vegan: '🌱 Vegan', vegetarian: '🥕 Vegetarian', fara_gluten: '🌾 Gluten-free', fara_lactoza: '🥛 Lactose-free', picant: '🌶️ Spicy', fara_zahar: '🍬 Sugar-free' },
       filtreTitlu: 'Filters', filtreDesc: 'Pick what you want to see. They can be combined.', filtreSterge: 'Clear filters', filtreTot: 'Show the whole menu',
+      filtreCategorie: 'Category', filtreEtichete: 'Tags', cartBack: '← Back to menu',
       filtreArata: n => `Show ${n} item${n === 1 ? '' : 's'}`,
       zileiTitle: "Today's specials", zileiPanaLa: 'until', zileiAdauga: 'Add', zileiInterval: (a, b) => `${a}–${b}`, zileiZilnic: 'every day',
       offlineMeniu: '📶 No signal. Showing the menu saved on your phone; your order is sent automatically when the signal returns.',
@@ -1399,7 +1405,7 @@
       fbTitle: 'How was your evening?', fbPlaceholder: 'What can we improve?', fbBtn: 'Send Feedback', fbThanks: 'Thank you for your feedback!', fbGoogle: 'Great! We would love a review on Google.', fbGoogleBtn: 'Leave Google Review', tablesFree: 'tables free', tablesFull: 'No tables free', tablesFor: 'seats', tableWord: 'Table',
       weightLabel:'Volume', kcalLabel:'kcal', ingredientsLabel:'Ingredients', allergensLabel:'Allergens', noAllergens:'No declared allergens',
       splitModeEqual: 'Equal parts', splitModeProduct: 'By product', splitProductHint: 'Assign each product to a person.', personLabel: 'Person',
-      cartItemsLabel: 'items selected', emptyCartHint: 'You haven\'t picked anything yet.',
+      cartItemLabel1: 'item selected', cartItemsLabel: 'items selected', emptyCartHint: 'You haven\'t picked anything yet.',
       stNoua: '📨 Sent — waiting to be seen', stAcceptata: '✅ Accepted — we\'ve seen your order, it\'s on its way',
       stGata: '✅ Accepted — coming to your table now', stVine: '🍽️ Ready — coming to your table now', stServita: '✔️ Served. Enjoy!', stAnulata: '❌ Cancelled',
       tpTrimisa: 'Sent', tpAcceptata: 'Accepted', tpLaMasa: 'At table',
@@ -1571,62 +1577,66 @@
       document.getElementById('privacyOverlay').classList.add('open');
   });
 
-  function renderTagFilters(){
-    const t = I18N[currentLang];
-    const tagsEl = document.getElementById('tagFilters');
-    tagsEl.innerHTML = `<button class="chip active" data-filter="all">${t.allChip}</button>`;
-    CATEGORY_ORDER.forEach(key => { if(allItems.some(i => (i.tags || []).includes(key))) tagsEl.innerHTML += `<button class="chip" data-filter="${escapeHTML(key)}">${escapeHTML(t.catNames[key] || key)}</button>`; });
-    tagsEl.querySelectorAll('.chip').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        activeFilter = e.target.dataset.filter;
-        tagsEl.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        e.target.classList.add('active'); render();
-      });
-    });
-    renderFiltreEtichete();
-  }
+  function renderTagFilters(){ renderFiltre(); }
 
   // filtrele pe etichete (cu alcool, calde, vegan...): stau intr-o fereastra
   // deschisa din butonul-palnie de langa cautare (butonul apare doar daca
   // meniul are etichete); se pot combina (toate trebuie sa se potriveasca).
   // Sub cautare raman doar filtrele bifate, fiecare cu x.
   let activeEtichete = new Set();
-  function renderFiltreEtichete(){
+  // toate filtrele stau in fereastra deschisa din butonul-palnie: categoria
+  // (una singura, „Toate" = niciuna) si etichetele (oricate, toate trebuie
+  // sa se potriveasca). Sub cautare raman doar filtrele alese, fiecare cu x.
+  function categoriaAleasa(){ return activeFilter !== 'all' && activeFilter !== 'favorites' ? activeFilter : null; }
+  function renderFiltre(){
     const t = I18N[currentLang];
     const el = document.getElementById('filtreEtichete'), btn = document.getElementById('btnFiltre'); if (!el || !btn) return;
+    const categorii = CATEGORY_ORDER.filter(key => allItems.some(i => (i.tags || []).includes(key)));
     const prezente = Object.keys(t.etichete || {}).filter(k => allItems.some(i => (i.etichete || []).includes(k)));
     activeEtichete = new Set([...activeEtichete].filter(k => prezente.includes(k)));
-    btn.style.display = prezente.length ? '' : 'none';
+    if (categoriaAleasa() && !categorii.includes(activeFilter)) activeFilter = 'all';
+    const cat = categoriaAleasa();
+    const nr = (cat ? 1 : 0) + activeEtichete.size;
+    btn.style.display = (categorii.length || prezente.length) ? '' : 'none';
     btn.setAttribute('aria-label', t.filtreTitlu);
-    btn.classList.toggle('active', activeEtichete.size > 0);
-    const nr = document.getElementById('filtreNr'); nr.textContent = activeEtichete.size; nr.hidden = !activeEtichete.size;
+    btn.classList.toggle('active', nr > 0);
+    const bul = document.getElementById('filtreNr'); bul.textContent = nr; bul.hidden = !nr;
 
-    if (!activeEtichete.size) { el.style.display = 'none'; el.innerHTML = ''; }
-    else {
-      el.style.display = '';
-      el.innerHTML = [...activeEtichete].map(k => `<button type="button" class="chip active" data-eticheta="${k}">${t.etichete[k]} ✕</button>`).join('');
-      el.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { activeEtichete.delete(b.dataset.eticheta); renderFiltreEtichete(); render(); }));
-    }
+    const alese = (cat ? [`<button type="button" class="chip active" data-cat="${escapeHTML(cat)}">${escapeHTML(t.catNames[cat] || cat)} ✕</button>`] : [])
+      .concat([...activeEtichete].map(k => `<button type="button" class="chip active" data-eticheta="${k}">${t.etichete[k]} ✕</button>`));
+    el.style.display = alese.length ? '' : 'none';
+    el.innerHTML = alese.join('');
+    el.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { if (b.dataset.cat) activeFilter = 'all'; else activeEtichete.delete(b.dataset.eticheta); renderFiltre(); render(); }));
 
     document.getElementById('filtreTitlu').textContent = t.filtreTitlu;
     document.getElementById('filtreDesc').textContent = t.filtreDesc;
+    document.getElementById('filtreCatTitlu').textContent = t.filtreCategorie;
+    document.getElementById('filtreEtTitlu').textContent = t.filtreEtichete;
     document.getElementById('btnFiltreSterge').textContent = t.filtreSterge;
+    const lc = document.getElementById('filtreCategorii');
+    lc.innerHTML = [`<button type="button" class="chip${cat ? '' : ' active'}" data-cat="all">${t.allChip}</button>`]
+      .concat(categorii.map(key => `<button type="button" class="chip${cat === key ? ' active' : ''}" data-cat="${escapeHTML(key)}">${escapeHTML(t.catNames[key] || key)}</button>`)).join('');
+    lc.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { activeFilter = b.dataset.cat; renderFiltre(); render(); }));
+    document.getElementById('filtreSectEtichete').style.display = prezente.length ? '' : 'none';
     const lista = document.getElementById('filtreLista');
     lista.innerHTML = prezente.map(k => `<button type="button" class="chip${activeEtichete.has(k) ? ' active' : ''}" data-eticheta="${k}">${t.etichete[k]}</button>`).join('');
     lista.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
       const k = b.dataset.eticheta;
       if (activeEtichete.has(k)) activeEtichete.delete(k); else activeEtichete.add(k);
-      renderFiltreEtichete(); render();
+      renderFiltre(); render();
     }));
-    const n = allItems.filter(i => [...activeEtichete].every(k => (i.etichete || []).includes(k))).length;
-    document.getElementById('btnFiltreGata').textContent = activeEtichete.size ? t.filtreArata(n) : t.filtreTot;
+    const n = allItems.filter(i => (!cat || (i.tags || []).includes(cat)) && [...activeEtichete].every(k => (i.etichete || []).includes(k))).length;
+    document.getElementById('btnFiltreGata').textContent = nr ? t.filtreArata(n) : t.filtreTot;
   }
+  function resetFiltre(){ activeFilter = 'all'; activeEtichete.clear(); renderFiltre(); }
   const inchideFiltre = () => document.getElementById('filtreOverlay').classList.remove('open');
-  document.getElementById('btnFiltre').addEventListener('click', () => { renderFiltreEtichete(); document.getElementById('filtreOverlay').classList.add('open'); });
+  document.getElementById('btnFiltre').addEventListener('click', () => { renderFiltre(); document.getElementById('filtreOverlay').classList.add('open'); });
   document.getElementById('closeFiltre').addEventListener('click', inchideFiltre);
   document.getElementById('btnFiltreGata').addEventListener('click', inchideFiltre);
-  document.getElementById('btnFiltreSterge').addEventListener('click', () => { activeEtichete.clear(); renderFiltreEtichete(); render(); });
+  document.getElementById('btnFiltreSterge').addEventListener('click', () => { resetFiltre(); render(); });
   document.getElementById('filtreOverlay').addEventListener('click', e => { if (e.target.id === 'filtreOverlay') inchideFiltre(); });
+  // din cos, inapoi la meniu
+  document.getElementById('cartBack').addEventListener('click', () => { activeFilter = 'all'; renderFiltre(); render(); window.scrollTo(0, 0); });
 
   // meniul zilei: ofertele din capul meniului (oricate), cu reducerea si
   // intervalul; apar si dispar singure la orele alese
@@ -1779,9 +1789,10 @@
       document.querySelector('header.hero').classList.toggle('cart-open', inCos);
       document.body.classList.toggle('cart-view', inCos);
       if (inCos) {
+        document.getElementById('cartBack').textContent = t.cartBack;
         document.getElementById('cartHeadingTitle').textContent = t.smartCart;
         document.getElementById('cartHeadingSub').textContent =
-          totalItems > 0 ? `${totalItems} ${t.cartItemsLabel}` : t.emptyCartHint;
+          totalItems > 0 ? `${totalItems} ${totalItems === 1 ? t.cartItemLabel1 : t.cartItemsLabel}` : t.emptyCartHint;
       }
       
       if(activeFilter === 'favorites' && items.length > 0) {
@@ -1795,7 +1806,7 @@
       if(totalItems > 0) {
           smartBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
                                 <span style="margin-left: 6px;">${t.smartCart} (${totalItems})</span>`;
-          smartBtn.onclick = () => { activeFilter = 'favorites'; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); render(); window.scrollTo(0,0); };
+          smartBtn.onclick = () => { activeFilter = 'favorites'; renderFiltre(); render(); window.scrollTo(0,0); };
           smartBtn.classList.add('are-cos');
       } else {
           smartBtn.innerHTML = `<span>${t.smartWaiter}</span>`;
@@ -2558,7 +2569,7 @@
           document.getElementById('orderNoteInput').value = '';
           favoritesQty = {}; saveFavorites();
           productAssignments = {};
-          activeFilter = 'all'; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); document.querySelector('.chip[data-filter="all"]').classList.add('active');
+          resetFiltre();
           render(); window.scrollTo(0,0);
           arataOffline(t.offlineAsteapta(coada.length), false);
           showCustomAlert('📶', t.offlineComanda);
@@ -2573,7 +2584,7 @@
         document.getElementById('takeawayPhoneInput').value = '';
         favoritesQty = {}; saveFavorites(); 
         productAssignments = {};
-        activeFilter = 'all'; document.querySelectorAll('.chip').forEach(c => c.classList.remove('active')); document.querySelector('.chip[data-filter="all"]').classList.add('active');
+        resetFiltre();
                 render(); window.scrollTo(0,0);
 
         if (data && data.length > 0) adaugaComenziSesiune(data, tokenHash ? token : null);
@@ -2717,10 +2728,13 @@
   // fara alcool / cald / rece dupa nume, categorie si ingrediente, fara
   // diacritice; ce a bifat directorul ramane si are prioritate
   const CUV = {
-      cu_alcool: /\b(bere|beri|vin|vinuri|spumant|prosecco|sampanie|cocktail|gin|vodka|votca|whisk|rom|rum|tequila|aperol|spritz|negroni|mojito|margarita|shot|lichior|coniac|cognac|brandy|tuica|palinca|cidru|long ?drink|bourbon|campari|vermut|martini|hugo|sangria|jager|limoncello|old fashioned|daiquiri|cuba libre|pina colada|espresso martini|sour)\b/,
+      cu_alcool: /\b(bere|beri|vin|vinuri|spumant|prosecco|sampanie|cocktail|gin|vodka|votca|whisk(?:e?y)?|rom|rum|tequila|aperol|spritz|negroni|mojito|margarita|shot|lichior|coniac|cognac|brandy|tuica|palinca|cidru|long ?drink|bourbon|campari|vermut|martini|hugo|sangria|jager|limoncello|old fashioned|daiquiri|cuba libre|pina colada|espresso martini|sour)\b/,
       fara_alcool: /\b(limonada|racoritoare|suc|sucuri|apa|fresh|smoothie|milkshake|mocktail|virgin|ice ?tea|cafea|cafele|ceai|ceaiuri|espresso|cappuccino|latte|americano|cacao|ciocolata|frappe|cola|fanta|sprite|red ?bull|energizant|tonic|lapte)\b/,
       cald: /\b(cafea|cafele|espresso|cappuccino|latte|americano|flat white|ceai|ceaiuri|cacao|ciocolata calda|vin fiert|supa|ciorba|paste|pizza|burger|gratar|friptura|tocanita|mic dejun|omleta|ochiuri|placinta|calde?|fierbinte|lungo|ristretto|macchiato|mocha|cortado)\b/,
-      rece: /\b(limonada|racoritoare|suc|sucuri|fresh|smoothie|milkshake|cocktail|bere|beri|cidru|frappe|cold ?brew|iced|ice|inghetata|salata|gheata|spritz|mojito|margarita|gin|vodka|votca|whisk|vin|vinuri|spumant|prosecco|cola|tonic|apa|shot|reci|rece|racoritor|daiquiri|sour|negroni|aperol)\b/
+      rece: /\b(limonada|racoritoare|suc|sucuri|fresh|smoothie|milkshake|cocktail|bere|beri|cidru|frappe|cold ?brew|iced|ice|inghetata|salata|gheata|spritz|mojito|margarita|gin|vodka|votca|whisk(?:e?y)?|vin|vinuri|spumant|prosecco|cola|tonic|apa|shot|reci|rece|racoritor|daiquiri|sour|negroni|aperol)\b/,
+      // cuvinte care decid la egalitate (un "iced latte" e rece, un "vin fiert" e cald)
+      cald_sigur: /\b(vin fiert|ciocolata calda|calde?|fierbinte|grog|hot toddy|irish coffee|supa|ciorba)\b/,
+      rece_sigur: /\b(iced|ice|frappe|cold ?brew|gheata|rece|reci|inghetata|smoothie|milkshake|limonada)\b/
   };
   function faraDiacritice(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
   function eticheteAutomate(r) {
@@ -2730,10 +2744,11 @@
       const alcool = CUV.cu_alcool.test(text);
       if (alcool && !are.has('cu_alcool') && !are.has('fara_alcool')) noi.push('cu_alcool');
       if (!alcool && CUV.fara_alcool.test(text) && !are.has('fara_alcool') && !are.has('cu_alcool')) noi.push('fara_alcool');
-      const cald = CUV.cald.test(text), rece = CUV.rece.test(text);
-      if (cald && !rece && !are.has('cald') && !are.has('rece')) noi.push('cald');
-      if (rece && !cald && !are.has('rece') && !are.has('cald')) noi.push('rece');
-      if (rece && cald && !are.has('rece') && !are.has('cald')) noi.push(alcool ? 'rece' : 'cald');
+      let cald = CUV.cald.test(text), rece = CUV.rece.test(text);
+      if (alcool && !CUV.cald_sigur.test(text)) { rece = true; cald = false; }   // bauturile cu alcool se servesc reci (in afara de vin fiert & co.)
+      if (cald && rece) { if (CUV.cald_sigur.test(text)) rece = false; else if (CUV.rece_sigur.test(text) || alcool) cald = false; else rece = false; }
+      if (cald && !are.has('cald') && !are.has('rece')) noi.push('cald');
+      if (rece && !are.has('rece') && !are.has('cald')) noi.push('rece');
       return noi;
   }
   function dbToItem(r) {
