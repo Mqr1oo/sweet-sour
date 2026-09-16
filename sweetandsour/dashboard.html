@@ -52,7 +52,7 @@
 
   /* Panoul sefului: pentru director, taburile lui (Sinteza, Meniu, Personal,
      Setari) stau intr-un grup cu titlu si chenar, primele in bara. Pentru
-     manager grupul e invizibil (display: contents) si ramane doar „Sef". */
+     manager grupul e invizibil (display: contents) si raman „Sef" si „Setari". */
   .nav-grup-sef { display: contents; }
   .nav-grup-sef .nav-titlu { display: none; }
   body.rol-director .nav-grup-sef {
@@ -383,6 +383,8 @@
   /* managerul nu vede ce e doar al directorului (RLS-ul refuza oricum scrierea) */
   body.rol-manager [data-director], body.rol-manager .adm-tab[data-grup="personal"],
   body.rol-manager .adm-tab[data-grup="meniu"]{ display:none !important; }
+  /* managerul are Setari ca tab in bara, ca directorul; in Sef ii ramane doar Sinteza */
+  body.rol-manager .adm-tabs{display:none}
   .dash-panel[data-grup].adm-on{display:block}
   .stats-grid[data-grup].adm-on{display:grid}
   .adm-cap{display:none; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:16px}
@@ -799,8 +801,7 @@
           <div class="adm-actiuni">
               <div class="time-toggle perioada">
                   <button type="button" class="active" data-mod="today">Azi</button>
-                  <button type="button" data-mod="month">Luna aceasta</button>
-                  <button type="button" data-mod="lastmonth">Luna trecuta</button>
+                  <button type="button" data-mod="zile30">30 de zile</button>
               </div>
               <button class="btn-action" style="background:var(--accent); color:white; font-size:13px; padding: 10px 16px;" onclick="exportCSV()">📥 Descarca Excel</button>
           </div>
@@ -810,8 +811,7 @@
           <div class="adm-actiuni">
               <div class="time-toggle perioada">
                   <button type="button" class="active" data-mod="today">Azi</button>
-                  <button type="button" data-mod="month">Luna aceasta</button>
-                  <button type="button" data-mod="lastmonth">Luna trecuta</button>
+                  <button type="button" data-mod="zile30">30 de zile</button>
               </div>
           </div>
       </div>
@@ -2502,7 +2502,10 @@
         // (bucatarie, fereastra, pachet, fara ospatari, ora de inchidere,
         // angajati) raman ale directorului; el schimba doar ora de varf si
         // harta meselor. Regula e si in RLS.
-        if (userRole === 'manager') document.body.classList.add('rol-manager');
+        if (userRole === 'manager') {
+            document.body.classList.add('rol-manager');
+            document.getElementById('navSefSetari').style.display = 'flex';
+        }
         // directorul nu sta pe panoul de comenzi: intra direct in „Sef", iar
         // sectiunile lui (Sinteza, Meniu, Personal, Setari) sunt taburi
         // separate in bara; Sala si Istoricul raman.
@@ -2604,10 +2607,10 @@
         loadFullMenuForStock();
     } else if(tab === 'admin') {
         const g = grup || 'sinteza';
-        const navId = userRole === 'director'
+        const navId = esteConducere()
             ? ({ meniu: 'navSefMeniu', personal: 'navSefPersonal', setari: 'navSefSetari' }[g] || 'navAdmin') : 'navAdmin';
         document.getElementById(navId).classList.add('active');
-        document.getElementById('pageTitle').textContent = userRole === 'director'
+        document.getElementById('pageTitle').textContent = esteConducere()
             ? 'Sef · ' + ({ sinteza: 'Sinteza', meniu: 'Meniu', personal: 'Personal', setari: 'Setari' }[g] || g) : 'Panoul sefului';
         document.getElementById('adminView').style.display = 'block';
         admArata(g);
@@ -4769,7 +4772,7 @@ csvContent += "ID,Data,Ora,Masa,Stare,Total (lei),Bon scos,Bon gratis,Produse,Re
       const link = document.createElement("a");
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
-      const sufix = statsMode === 'today' ? 'azi' : statsMode === 'month' ? 'luna' : 'luna_trecuta';
+      const sufix = statsMode === 'today' ? 'azi' : '30_zile';
       link.setAttribute("download", `Raport_comenzi_${sufix}_${now.toISOString().slice(0,10)}.csv`);
       document.body.appendChild(link);
       link.click();
@@ -4802,25 +4805,23 @@ csvContent += "ID,Data,Ora,Masa,Stare,Total (lei),Bon scos,Bon gratis,Produse,Re
       const ieri = new Date(azi); ieri.setDate(ieri.getDate() - 1);
       return Math.min(sfarsitZi(ieri).getTime(), Date.now());
   }
-  function inceputLuna() {
+  // ultimele 30 de zile de lucru (azi inclusiv): incep la inchiderea zilei
+  // de acum 30 de zile
+  const ZILE_STATS = 30;
+  function inceput30Zile() {
       const azi = ziLucru(new Date());
-      const ultimaLunaTrecuta = new Date(azi.getFullYear(), azi.getMonth(), 0);
-      return Math.min(sfarsitZi(ultimaLunaTrecuta).getTime(), Date.now());
-  }
-  // luna trecuta incepe la inchiderea ultimei zile de acum doua luni
-  function inceputLunaTrecuta() {
-      const azi = ziLucru(new Date());
-      return sfarsitZi(new Date(azi.getFullYear(), azi.getMonth() - 1, 0)).getTime();
+      const prima = new Date(azi); prima.setDate(prima.getDate() - ZILE_STATS);
+      return Math.min(sfarsitZi(prima).getTime(), Date.now());
   }
 
-  // --- Perioada statisticilor: azi / luna aceasta / luna trecuta -----------
-  // „Azi" vine din `allOrders` (live). Lunile se citesc din baza cand le ceri
-  // si se tin 5 minute, ca sa nu recitim o luna de comenzi la fiecare bifa
-  // (o bifa de bon data de aici goleste memoria, ca sa se vada pe loc).
-  // Baza pastreaza luna in curs si luna trecuta (cron-ul `curatare-zilnica`).
+  // --- Perioada statisticilor: azi / ultimele 30 de zile -------------------
+  // „Azi" vine din `allOrders` (live). Cele 30 de zile se citesc din baza cand
+  // le ceri si se tin 5 minute, ca sa nu recitim o luna de comenzi la fiecare
+  // bifa (o bifa de bon data de aici goleste memoria, ca sa se vada pe loc).
+  // Baza pastreaza luna in curs si luna trecuta (cron-ul `curatare-zilnica`),
+  // deci cele 30 de zile sunt mereu acolo.
   function perioadaStats() {
-      if (statsMode === 'month')     return [inceputLuna(), Infinity];
-      if (statsMode === 'lastmonth') return [inceputLunaTrecuta(), inceputLuna()];
+      if (statsMode === 'zile30') return [inceput30Zile(), Infinity];
       return [inceputZi(), Infinity];
   }
   // „Marti, 15 septembrie" — cu zilele noastre, fara diacritice
@@ -4830,9 +4831,11 @@ csvContent += "ID,Data,Ora,Masa,Stare,Total (lei),Bon scos,Bon gratis,Produse,Re
   function textPerioada() {
       const mare = (s) => s.charAt(0).toUpperCase() + s.slice(1);
       const azi = ziLucru(new Date());
-      const luna = (d) => mare(d.toLocaleDateString('ro-RO', { month: 'long', year: 'numeric' }));
-      if (statsMode === 'month')     return `${luna(azi)} — de pe 1 pana azi`;
-      if (statsMode === 'lastmonth') return `${luna(new Date(azi.getFullYear(), azi.getMonth() - 1, 1))} — luna intreaga`;
+      if (statsMode === 'zile30') {
+          const prima = new Date(azi); prima.setDate(prima.getDate() - ZILE_STATS + 1);
+          const scurt = (d) => d.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long' });
+          return `Ultimele ${ZILE_STATS} de zile — ${scurt(prima)} → azi, ${scurt(azi)}`;
+      }
       return `Azi, ${ziFrumos(azi)} — de la ultima inchidere`;
   }
   function setPerioada(mod) {
@@ -5756,12 +5759,13 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
           text: rol === 'bar' ? 'Comenzile terminate azi. Aici confirmi ca ai scos bonul — ramane pe numele tau. Cu sagetile vezi si zilele trecute.'
                               : 'Comenzile terminate si anulate, pe zile: azi sau orice zi din luna asta si luna trecuta.' });
       if (rol === 'director') {
-          pasi.push({ el: '#navAdmin', titlu: 'Sinteza', text: 'Incasari, comenzi, top produse si harta orelor de varf — pe azi, luna aceasta sau luna trecuta. Excel de aici.' });
+          pasi.push({ el: '#navAdmin', titlu: 'Sinteza', text: 'Incasari, comenzi, top produse si harta orelor de varf — pe azi sau pe ultimele 30 de zile. Excel de aici.' });
           pasi.push({ el: '#navSefMeniu', titlu: 'Meniu', text: 'Meniul clientilor: produse, preturi, descrieri. Lucrezi pe ciorna si publici cand esti gata.' });
           pasi.push({ el: '#navSefPersonal', titlu: 'Personal', text: 'Raportul pe angajat, anularile (cine, cand, de ce), turele de azi, parerile clientilor, lista de angajati.' });
           pasi.push({ el: '#navSefSetari', titlu: 'Setari', text: 'Meniul zilei, ora de varf, codul lunii, ora de inchidere, comenzile la pachet, codul pe masa.' });
-      } else {
-          pasi.push({ el: '#navAdmin', titlu: 'Sef', text: 'Incasari, codul lunii pentru anulari, „ora de varf".' });
+      } else if (rol === 'manager') {
+          pasi.push({ el: '#navAdmin', titlu: 'Sef', text: 'Incasari, comenzi, top produse — pe azi sau pe ultimele 30 de zile. Excel de aici.' });
+          pasi.push({ el: '#navSefSetari', titlu: 'Setari', text: 'Meniul zilei, ora de varf, codul lunii pentru anulari.' });
       }
       if (mobil) pasi.push({ el: '#mobileUserDisplay', titlu: 'Contul tau',
           text: 'Apasa pe numele tau: ghidul asta, starea notificarilor, informarea GDPR, iesirea din cont.' });

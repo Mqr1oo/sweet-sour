@@ -516,7 +516,7 @@ sâmbătă dimineața la 4. La ora aleasă (ora României), o dată pe zi:
 
 Tot de la ora asta începe „Azi" din panoul șefului și din exportul CSV: dacă
 localul închide la 3, comenzile de la 1 noaptea sunt ale serii, nu ale zilei
-următoare. „Luna aceasta" începe pe 1, la aceeași oră.
+următoare. „30 de zile" începe la închiderea zilei de acum 30 de zile.
 
 Setarea e un rând `setari_zi` în jurnal (`zile` = 7 ore, index 0 = duminica,
 ca în JavaScript; `oraReset` = rezervă), scris doar de director; cron-ul
@@ -1136,9 +1136,9 @@ datarea se face cu UPDATE după INSERT).
 - Citire paginată: `citesteTot(fa)` (pagini de 1000 cu `.range`, PostgREST
   taie la 1000), `citesteComenzi(deLa, panaLa)` (finalizate + anulate,
   interval `[deLa, panaLa)`).
-- Statistici: `statsMode` = `today | month | lastmonth`; `perioadaStats()`
-  dă intervalul (`inceputZi`, `inceputLuna`, `inceputLunaTrecuta` — toate pe
-  zile de lucru, adică de la ora de închidere); `comenziPerioada()` = azi din
+- Statistici: `statsMode` = `today | zile30` (runda 21; înainte `month |
+  lastmonth`); `perioadaStats()` dă intervalul (`inceputZi`, `inceput30Zile`
+  — pe zile de lucru, adică de la ora de închidere); `comenziPerioada()` = azi din
   `allOrders`, lunile din baza cu cache de 5 minute (`perioadaCache`, golit
   la bifa de bon). `calculateDirectorStats` e `async`, ignoră rezultatul dacă
   perioada s-a schimbat între timp; graficul e pe ore (azi) sau pe zile de
@@ -1280,6 +1280,24 @@ Stoc pentru rolurile care nu le au. Anularea fără cod pentru manager exista
 deja (client: `anCodBloc` ascuns și `p_cod: null`; server:
 `anuleaza_comanda` sare verificarea când `v_rol = 'manager'`, migrația 13) —
 verificat în harness că modalul se deschide fără câmpul de cod.
+
+## Runda 21 — perioada din două butoane, Setări tab separat la manager
+
+Cerința: „în loc de luna trecută spune altceva, 30 de zile în urmă, sau fă-le
+din 2 butoane; Setări să fie alt tab jos, nu în panoul de șef".
+
+- Perioada statisticilor (Sinteza și Personal): **Azi / 30 de zile**.
+  `statsMode` = `today | zile30`; `inceput30Zile()` = închiderea zilei de
+  lucru de acum `ZILE_STATS` (30) zile, deci 30 de zile de lucru cu azi
+  inclusiv; textul „Ultimele 30 de zile — 18 august → azi, 16 septembrie".
+  `inceputLuna` / `inceputLunaTrecuta` au dispărut; Excel-ul se numește
+  `Raport_comenzi_30_zile_…`. Retenția (migrația 21: luna în curs + luna
+  trecută) acoperă mereu cele 30 de zile.
+- Managerul are `navSefSetari` în bară (ca directorul), `body.rol-manager
+  .adm-tabs { display: none }` — în „Șef" îi rămâne Sinteza; `switchTab`
+  aprinde tabul potrivit pentru orice `esteConducere()`. Pe telefon bara de
+  jos are 5 taburi: Comenzi, Sala, Istoric, Sef, Setari. Turul are pași
+  proprii pentru manager.
 
 ## Înainte de deschidere
 
