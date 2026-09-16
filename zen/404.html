@@ -6,8 +6,8 @@
 <title>Pagina nu exista — ZeN Lounge Garden · lounge garden</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0f130c">
-<link rel="icon" href="/sweetandsour/icons/favicon.png">
-<!-- Cloudflare Pages serveste pagina asta la orice adresa lipsa de sub /sweetandsour/
+<link rel="icon" href="/zen/icons/favicon.png">
+<!-- Cloudflare Pages serveste pagina asta la orice adresa lipsa de sub /zen/
      (cea mai apropiata 404.html castiga). URL-ul ramane cel gresit, deci caile
      sunt scrise de la radacina site-ului; scriptul de jos le potriveste si pe
      github.io. Numele, sigla si culorile vin din config.js — valorile de aici
@@ -78,13 +78,13 @@
 
 <main>
   <p class="eticheta">Eroare 404</p>
-  <img id="sigla" class="sigla" src="/sweetandsour/icons/logo.png" alt="" hidden onload="this.hidden=false" style="background:#fff; padding:12px 16px; border-radius:14px;">
+  <img id="sigla" class="sigla" src="/zen/icons/logo.png" alt="" hidden onload="this.hidden=false" style="background:#fff; padding:12px 16px; border-radius:14px;">
   <p class="nume" id="nume"><b>ZeN Lounge Garden</b> · lounge garden</p>
   <h1>Pagina asta <em>nu exista</em></h1>
   <p>Poate codul QR de pe masa e mai vechi sau adresa a fost scrisa gresit. Meniul e la un pas.</p>
   <p class="en">This page doesn't exist — the QR code may be outdated or the address mistyped. The menu is one tap away.</p>
 
-  <a class="btn" id="btnMeniu" href="/sweetandsour/">Deschide meniul <span aria-hidden="true">→</span></a>
+  <a class="btn" id="btnMeniu" href="/zen/">Deschide meniul <span aria-hidden="true">→</span></a>
   <a class="alte" id="lnkAlte" href="/">Alte localuri</a>
 
   <p class="adresa" id="adresa">Adresa ceruta: <span id="adresaCale"></span></p>
@@ -97,7 +97,7 @@
     // radacina site-ului: / pe Cloudflare Pages sau domeniu propriu; pe github.io e /<repo>/
     var seg = location.pathname.split('/')[1] || '';
     var radacina = /\.github\.io$/i.test(location.hostname) && seg ? '/' + seg + '/' : '/';
-    var local = radacina + 'sweetandsour/';
+    var local = radacina + 'zen/';
     document.getElementById('fonturi').href = radacina + 'fonturi/fonturi.css';
     document.getElementById('btnMeniu').href = local;
     document.getElementById('lnkAlte').href = radacina;

@@ -10,7 +10,7 @@ clienți + panou de personal) și **propriul proiect Supabase**, complet izolat.
 Platforma/
 ├─ index.html            pagina de start: lista localurilor
 ├─ m3/                   → domeniu.ro/m3
-├─ sweetandsour/         → domeniu.ro/sweetandsour
+├─ zen/                  → domeniu.ro/zen  (fost sweetandsour/)
 │  ├─ index.html         meniul clienților (RO / EN)
 │  ├─ dashboard.html     panoul de personal
 │  ├─ config.js          ⚠️ SINGURUL fișier care diferă între localuri
@@ -106,7 +106,7 @@ treilea local înseamnă plan Pro, 25 $/lună pentru toate.
 | Local | Proiect Supabase | Regiune |
 |---|---|---|
 | M3 Coffee & Lounge | `cjavzdnsebbkiiefigvi` | eu-central-1 |
-| ZeN Lounge Garden (fost Sweet & Sour; folder `sweetandsour/`) | `wnwllyyhtkufcejzjeay` | eu-west-1 |
+| ZeN Lounge Garden (fost Sweet & Sour; folder `zen/`, fost `sweetandsour/`) | `wnwllyyhtkufcejzjeay` | eu-west-1 |
 | Skyfall | de creat | eu-central-1 recomandat |
 
 ## Comanda se acceptă, nu doar se face
@@ -572,7 +572,7 @@ Workers doar cu `not_found_handling = "404-page"` în `wrangler.jsonc`):
 pentru `/m3/masa-99` caută `/m3/404.html`, apoi `/404.html`. De aceea sunt
 două feluri de pagini:
 
-- **una pe local** (`m3/404.html`, `sweetandsour/404.html`, în șablon și în
+- **una pe local** (`m3/404.html`, `zen/404.html`, în șablon și în
   demo): în hainele meniului — sigla, numele, culorile și fonturile localului —
   cu un singur buton, „Deschide meniul", spre `/<local>/`. Un client care a
   scanat un QR vechi de pe masă rămâne la localul lui, nu e trimis să aleagă
@@ -604,7 +604,7 @@ greșeală; când directorul adaugă mese noi în Sală, îți cere coduri pentr
 
 **Linkul din cod** e scurt: `domeniu/s/12/ab12cd34` (Sweet & Sour, masa 12,
 cheia) sau `domeniu/m/12/…` (M3) — regulile sunt în `_redirects` din
-rădăcină (`/s/:masa/:cheie → /sweetandsour/?m=:masa&k=:cheie`, 302), iar
+rădăcină (`/s/:masa/:cheie → /zen/?m=:masa&k=:cheie`, 302), iar
 clientul înțelege `?m=` și, pentru codurile mai vechi, `?mesa=`. Fără cheie,
 `domeniu/s/12`. Cheia are 8 caractere (litere mici + cifre). Pentru un local
 nou: două rânduri în `_redirects` cu un prefix liber și un rând în lista
@@ -1057,13 +1057,13 @@ anonim, verifică cheia cu `cheie_dezvoltator_ok` (Vault `cheie_backup`,
 `chei_regenerate` ca „dezvoltator" (trigger-ul `force_jurnal_utilizator`
 respectă `app.jurnal_utilizator`, un GUC pe care îl pot seta doar funcțiile
 serverului). Din panou au dispărut lista de chei și „Chei noi": linkul pe
-care îl construia (`bazaMeniu()`) ieșea `…/sweetandsour/dashboardindex.html`
+care îl construia (`bazaMeniu()`) ieșea `…/zen/dashboardindex.html`
 pe adresa fără `.html`, deci nu mergea. Cheile de pe ambele proiecte au fost
 refăcute în formatul scurt pe 15 septembrie 2026 (opțiunea era oprită).
 
 **Linkuri scurte**: `_redirects` (`/s/:masa/:cheie`, `/s/:masa`, `/m/…`),
 clientul citește `?m=` sau `?mesa=`. Testat pe site: `/s/20/<cheie>` → 302 →
-`/sweetandsour/?m=20&k=<cheie>`, cheia ajunge în `localStorage`, comanda cu
+`/zen/?m=20&k=<cheie>`, cheia ajunge în `localStorage`, comanda cu
 cheie trece, fără cheie / cu cheie greșită / cu cheia altei mese e refuzată
 cu `hint = 'cod_masa'`.
 
@@ -1372,7 +1372,7 @@ mai jos dădea TDZ), `loadRezervariClient()` în `refreshTablesStatus` (30 s)
 
 ## Runda 25 — Sweet & Sour devine ZeN Lounge Garden
 
-Folderul `sweetandsour/` și adresa `/s/…` rămân (codurile QR tipărite,
+Folderul `sweetandsour/` (redenumit `zen/` în runda 30) și adresa `/s/…` rămân (codurile QR tipărite,
 aplicațiile instalate și abonamentele push sunt legate de ele; un domeniu
 propriu rezolvă adresa vizibilă). S-au schimbat: `config.js` (NUME,
 SUBTITLU, TAGLINE RO/EN — textul clientului, INSTAGRAM, CULORI verzi),
@@ -1498,13 +1498,41 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
   detalii" (`arataDetalii()` — deschis automat când produsul are deja
   detalii, pliat la produs nou).
 - **Sigla ZeN vectorială**: clientul a trimis `zenn.svg` (două `<path>`,
-  fără imagini incorporate) → `sweetandsour/icons/logo.svg`, `config.js`
+  fără imagini incorporate) → `zen/icons/logo.svg`, `config.js`
   `LOGO: 'icons/logo.svg'`. PNG-urile (`logo.png` 1400 px, `logo-print.png`
   2000 px, `mark.png` = doar literele, iconițele 192/512/maskable pe alb,
   `favicon.png`) au fost randate din SVG în browserul panoului (canvas pe o
   pagină HTML — pe un document SVG `createElement('canvas')` nu merge) și
   trimise pe disc printr-un mic receptor Python local (`primeste.py`,
   127.0.0.1:8766, 60 s). Panoul folosește tot `icons/logo.png`.
+
+## Runda 30 — folderul `zen/`, filtrele într-o fereastră
+
+- **`sweetandsour/` → `zen/`** (git mv, la fel `backup/sweetandsour/` →
+  `backup/zen/`). Linkurile scurte din `_redirects` (`/s/:masa/:cheie`)
+  duc acum la `/zen/?m=…&k=…` — codurile QR tipărite rămân valabile
+  (adresa din cod e cea scurtă). Adresele vechi sar cu 301:
+  `/sweetandsour/*  /zen/:splat`. Paginile de start (`index.html`,
+  `404.html` din rădăcină) au cardul ZeN (nume, descriere, sigla pe alb);
+  `zen/404.html` folosește căile noi; `zen/sw.js` are cache nou
+  (`zen-cache-v4`). Unealta locală `qr/index.html` are `folder: 'zen'`.
+  Numele worker-ului Cloudflare (`sweet-sour`, în `wrangler.jsonc`) NU se
+  schimbă — e în adresa `…workers.dev` din codurile QR. Consecințe pe
+  telefoanele personalului: aplicația instalată de la `/sweetandsour/`
+  deschide `/zen/` prin redirect, dar iese din „scope"-ul ei — se
+  reinstalează o dată din noul link (abonarea push se reface singură la
+  prima intrare). `localStorage`-ul clienților are prefix nou (din folder),
+  deci coșurile vechi și consimțământul se cer din nou — normal.
+- **Filtrele pe etichete** (cu alcool, fără alcool, calde, reci, vegan…)
+  nu mai stau toate sub căutare: un buton-pâlnie (`#btnFiltre`, lângă
+  căutare, apare doar dacă meniul are etichete) deschide fereastra
+  `#filtreOverlay` cu chip-urile; bulina `#filtreNr` arată câte sunt
+  bifate, butonul principal spune „Arată N produse" (numărat live), „Șterge
+  filtrele" le scoate. Sub căutare rămân doar filtrele bifate, fiecare cu ✕
+  (`#filtreEtichete`). Logica de filtrare (`activeEtichete`, toate trebuie
+  să se potrivească) e neschimbată; I18N `filtreTitlu/filtreDesc/
+  filtreSterge/filtreTot/filtreArata(n)`. Chip-urile de categorii rămân la
+  locul lor.
 
 ## Înainte de deschidere
 

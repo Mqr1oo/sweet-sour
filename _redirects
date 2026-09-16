@@ -1,8 +1,12 @@
 # Linkuri scurte pentru codurile QR de pe mese (le face unealta din qr/).
-# /s/12/ab12cd34 -> meniul Sweet & Sour, masa 12, cu cheia mesei (cod unic pe masa)
-# /s/12          -> meniul Sweet & Sour, masa 12, fara cheie
+# /s/12/ab12cd34 -> meniul ZeN Lounge Garden, masa 12, cu cheia mesei (cod unic pe masa)
+# /s/12          -> meniul ZeN Lounge Garden, masa 12, fara cheie
 # Pentru un local nou adaugi doua randuri la fel, cu un prefix liber (o litera).
-/s/:masa/:cheie  /sweetandsour/?m=:masa&k=:cheie  302
-/s/:masa         /sweetandsour/?m=:masa           302
+/s/:masa/:cheie  /zen/?m=:masa&k=:cheie  302
+/s/:masa         /zen/?m=:masa           302
 /m/:masa/:cheie  /m3/?m=:masa&k=:cheie            302
 /m/:masa         /m3/?m=:masa                     302
+
+# Folderul sweetandsour/ a devenit zen/ (17 septembrie 2026): adresele vechi
+# (aplicatia instalata pe telefoanele personalului, linkuri salvate) ajung tot acolo.
+/sweetandsour/*  /zen/:splat  301

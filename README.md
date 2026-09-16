@@ -459,7 +459,9 @@ comenzile de la 1 noaptea sunt ale serii, nu ale zilei următoare.
   dar rămâne cu tot istoricul lui și se recuperează cu un buton.
 - **Etichete**: cu alcool, fără alcool, cald, rece, vegan, vegetarian, fără
   gluten, fără lactoză, picant, fără zahăr — le bifezi la produs, iar
-  clientului îi apar ca filtre (doar cele care există în meniu). Butonul
+  clientul le găsește în **butonul de filtre** de lângă căutare (apare doar
+  dacă meniul are etichete): apasă, bifează ce vrea („Arată 12 produse"),
+  iar sub căutare rămân doar filtrele alese, cu ✕. Butonul
   „✨ Etichete automate" le pune singur pe cele de băutură (alcool / cald /
   rece) după numele produselor; le verifici și publici.
 - **Reducere pe produs**: în fereastra produsului, „Reducere (%)" — clientul
