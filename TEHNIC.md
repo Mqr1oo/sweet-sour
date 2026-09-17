@@ -1810,6 +1810,7 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
   `datalist` din zonele existente.
 - Harness: `__t.zone / culori / zonaMesei / esteZonaMea / setZoneOspatari /
   setZoneMele / legenda / bara / unelte / deschideZona / deschideMasa`.
+- Cache SW: zen v10, m3 v8, skyfall v7.
 
 ## Înainte de deschidere
 

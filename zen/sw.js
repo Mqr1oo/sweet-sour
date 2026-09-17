@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zen-cache-v9';
+const CACHE_NAME = 'zen-cache-v10';
 
 // Cai RELATIVE: aplicatia e servita dintr-un subfolder (/m3/), iar caile
 // absolute ('/dashboard') dadeau 404 -> cache.addAll pica -> service
