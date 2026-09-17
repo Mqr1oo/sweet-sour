@@ -1986,8 +1986,11 @@
   // Notificare locală, pentru cazul în care aplicația e deschisă în alt tab.
   // Push-ul de pe server acoperă restul situațiilor.
   // notificare pe telefon (cu aplicatia in fundal). `tag` = aceeasi cheie ca
-  // notificarea push a aceleiasi comenzi: daca push-ul a ajuns deja, nu o mai
-  // punem o data (si invers: service worker-ul o inlocuieste in liniste)
+  // notificarea push a aceleiasi comenzi: daca push-ul a ajuns deja (in ultimul
+  // minut), nu o mai punem o data (si invers: service worker-ul o inlocuieste in
+  // liniste). O notificare veche, ramasa pe ecran, nu conteaza — cererea noua
+  // de la aceeasi masa trebuie sa sune din nou.
+  const NOTIFICARE_DUBLA_MS = 60000;
   function showBackgroundAlert(title, body, tag) {
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
     if (!('serviceWorker' in navigator)) {
@@ -1999,7 +2002,7 @@
     const limita = new Promise((_, rej) => setTimeout(() => rej(new Error('SW timeout')), 2500));
     Promise.race([gata, limita])
       .then(async reg => {
-        if (tag) { try { if ((await reg.getNotifications({ tag })).length) return; } catch (e) {} }
+        if (tag) { try { if ((await reg.getNotifications({ tag })).some(n => Date.now() - (n.timestamp || 0) < NOTIFICARE_DUBLA_MS)) return; } catch (e) {} }
         return reg.showNotification(title, {
           body,
           icon: 'icons/icon-192.png',
@@ -3958,23 +3961,29 @@ loadFreedTables();
       // nota mesei: tot ce a consumat de cand e ocupata, ca oricine sa poata scoate nota
       const nota = document.getElementById('taNota'), cere = document.getElementById('taCereNota');
       const rez = (statusInfo.status === 'free' || statusInfo.status === 'rezervata') ? null : rezumatMasa(tableNr);
-      // masa unita cu alta: nota se vede impreuna
+      // masa unita cu alta (pe azi, de personal, sau din harta): se vede si cand
+      // nu s-a comandat inca nimic; nota se vede impreuna
       const unite = perecheaMesei(tableNr);
-      if (rez && unite.length) {
+      let uniteHtml = '';
+      if (unite.length) {
+          document.getElementById('taTitle').textContent = `Masa ${tableNr} + ${unite.join(' + ')}`;
           const altele = unite.map(nr => ({ nr, r: rezumatMasa(nr) })).filter(x => x.r);
-          if (altele.length) rez.unite = `🔗 Unita cu masa ${altele.map(x => x.nr).join(', ')} — impreuna ${(rez.total + altele.reduce((a, x) => a + x.r.total, 0)).toFixed(2)} lei`;
+          const impreuna = (rez ? rez.total : 0) + altele.reduce((a, x) => a + x.r.total, 0);
+          const peAzi = [String(tableNr)].concat(unite).some(nr => meseAzi[nr] && meseAzi[nr].cu);
+          uniteHtml = `<div class="ta-linii" style="color:var(--accent); margin-top:6px;">🔗 Unita cu masa ${escapeHTML(unite.join(', '))}${peAzi ? ' (pe azi)' : ''}` +
+              ((rez || altele.length) ? ` — impreuna ${impreuna.toFixed(2)} lei` : ' — nimic comandat inca') + `</div>`;
       }
-      if (rez) {
-          const ceruta = cerereNotaMasa(tableNr);
+      if (rez || uniteHtml) {
+          const ceruta = rez ? cerereNotaMasa(tableNr) : null;
           const zona = zonaMesei(tableNr);
           const acopera = zona ? cineAcopera(zona) : [];
-          nota.innerHTML = `<b>${rez.total.toFixed(2)} lei</b>de la ${rez.deLa} · ${rez.comenzi} ${rez.comenzi === 1 ? 'comanda' : 'comenzi'}` +
+          nota.innerHTML = (rez ? `<b>${rez.total.toFixed(2)} lei</b>de la ${rez.deLa} · ${rez.comenzi} ${rez.comenzi === 1 ? 'comanda' : 'comenzi'}` +
               (zona ? ` · 📍 ${escapeHTML(zona)}${acopera.length ? ' (' + escapeHTML(acopera.join(', ')) + ')' : ''}` : '') +
-              `<div class="ta-linii">${escapeHTML(rez.linii.join(', '))}</div>` +
-              (rez.unite ? `<div class="ta-linii" style="color:var(--accent); margin-top:6px;">${escapeHTML(rez.unite)}</div>` : '') +
+              `<div class="ta-linii">${escapeHTML(rez.linii.join(', '))}</div>` : '') +
+              uniteHtml +
               (ceruta ? `<div class="ta-linii" style="color:var(--purple); margin-top:6px;">🧾 Nota ceruta la ${new Date(ceruta.created_at).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}${ceruta.status === 'finalizata' ? ', scoasa de ' + escapeHTML(numeScurt(ceruta.preluat_de || '')) : ' — asteapta sa fie scoasa'}</div>` : '');
           nota.style.display = 'block';
-          cere.style.display = (canFree && !ceruta) ? 'block' : 'none';
+          cere.style.display = (rez && canFree && !ceruta) ? 'block' : 'none';
       } else {
           nota.style.display = 'none'; cere.style.display = 'none';
       }
@@ -5170,9 +5179,8 @@ loadFreedTables();
                                     || t - ultima.t > 2 * 3600000
                                     || (ultima.o.bon_scos_la && new Date(ultima.o.bon_scos_la).getTime() < t));
               if (!nota || rupta) { nota = { mesa, comenzi: [], alerte: [] }; note.push(nota); }
-              if (esteAlerta(o)) { nota.alerte.push(o); return; }
-              nota.comenzi.push(o);
-              ultima = { t, o };
+              (esteAlerta(o) ? nota.alerte : nota.comenzi).push(o);
+              ultima = { t, o };   // si o cerere (ex. „cheama ospatarul" inainte de prima comanda) tine nota deschisa
           });
       });
       return note;
@@ -6577,7 +6585,7 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
           const maPriveste = esteConducere() || p.new.sectiune === userRole
               || (userRole === 'bar' && faraBucatarie) || (isAlert && (userRole === 'bar' || (userRole === 'ospatar' && esteZonaMea(p.new))));
           if (maPriveste && p.new.status === 'noua') playAlertAndVibrate(p.new);
-          // lista se reface pentru toti: ospatarul vede si comenzile in lucru
+          // lista se reface pentru toti (ospatarul vede doar cererile si ce e gata de dus)
           renderOrders();
           if (currentTab === 'map') renderTablesGrid();
 

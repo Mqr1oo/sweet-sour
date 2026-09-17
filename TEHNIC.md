@@ -1681,6 +1681,42 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
   marginile paginii (`.panel-harta`), pereții au 4 px. Pe un telefon de
   390 px o masă normală are ~43 px, una mare ~54 px.
 
+## Runda 34 — după code review: notificări, fereastra mesei, ANPC
+
+- **Dedublarea notificărilor era prea lacomă.** `showBackgroundAlert` sărea
+  peste orice notificare cu același tag deja pe ecran, iar tag-ul cererilor
+  e pe masă (`alerta-<masă>`), nu pe comandă; cum notificările au
+  `requireInteraction`, o cerere veche neatinsă din tavă înghițea următoarea
+  cerere de la aceeași masă (și push-ul o înlocuia în liniște, fără
+  vibrație). Acum „dublură" înseamnă doar o notificare cu același tag din
+  **ultimul minut** (`n.timestamp`, `NOTIFICARE_DUBLA_MS = 60000`), în pagină
+  și în `sw.js`; una mai veche e înlocuită cu sunet (`renotify:true`).
+- **Fereastra mesei arată unirea și fără comenzi.** Raportat: „când le unesc
+  cu drag and drop și apăs pe ele nu apare ca fiind unite" — linia „🔗 Unită
+  cu masa…" se construia doar dacă masa atinsă avea comenzi *și* partenerele
+  aveau comenzi. Acum `openTableAction`: titlul devine „Masa 20 + 40", iar
+  caseta notei apare oricum, cu „🔗 Unită cu masa 40 (pe azi) — nimic
+  comandat încă" sau „— împreună 76.00 lei" (totalul tuturor meselor din
+  grup, chiar dacă cea atinsă n-a comandat). „(pe azi)" = unire făcută de
+  personal (`meseAzi`), altfel e din harta directorului.
+- **Nota mesei**: o cerere venită înaintea primei comenzi a unei vizite
+  (ex. „cheamă ospătarul") nu mai desparte nota — și cererile actualizează
+  „ultimul eveniment" al notei în `noteleZilei`.
+- **ANPC**: în subsolul meniului clientului (toate localurile + `exemplu/`)
+  e pictograma oficială **SAL** (`anpc-sal.png` la rădăcină, 201×50, luată
+  de pe anpc.ro), cu link la `https://anpc.ro/sal` — cerută de Ordinul ANPC
+  449/2022 pentru site-urile prin care se vând produse consumatorilor
+  (comerciantul e localul, de aceea stă în meniul clienților, nu în panou și
+  nu pe site-ul Ospia, care e B2B). Pictograma **SOL** nu se mai pune:
+  platforma europeană de soluționare online a litigiilor s-a închis pe
+  20 iulie 2025 (Regulamentul (UE) 2024/3228) și obligația de a afișa
+  link-ul a dispărut odată cu ea. Vechiul link `anpc.ro/ce-este-sal/` dă 404
+  — pagina actuală e `/sal`.
+- Contractul regenerat: termenul definit nu mai e „Platforma", ci **Ospia**
+  (`Contract_licenta_mentenanta_Ospia.docx`, generator
+  `scratchpad/contract_ospia.js`).
+- Cache SW: zen v8, m3 v6, skyfall v5.
+
 ## Înainte de deschidere
 
 1. Authentication → Providers → Email: **Allow new users to sign up** = oprit.

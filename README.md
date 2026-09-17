@@ -242,8 +242,9 @@ scaunele rămase așezate pe el, la distanțe egale; nota se vede împreună —
 grupul mare de la 20 cu 40). O lași
 **în alt loc** → stă acolo azi; dacă era lipită de alta, s-a despărțit. Ții
 apăsat pe o masă unită fără să o miști → „Desparți mesele?" → revin la
-locul lor. Mâine dimineață totul e ca pe harta directorului; nimic din asta
-nu schimbă harta de bază. În „Editează harta" merge la fel, cu tragere
+locul lor. Atingi o masă unită → „Masa 20 + 40", cu „🔗 Unită cu masa 40"
+și totalul lor împreună. Mâine dimineață totul e ca pe harta directorului;
+nimic din asta nu schimbă harta de bază. În „Editează harta" merge la fel, cu tragere
 simplă (fără ținere), și rămâne așa în harta salvată.
 
 **📅 Rezervări**: sună cineva pentru o masă la 19:00? Oricine din personal
@@ -540,6 +541,13 @@ angajatul semnează un exemplar înainte să folosească panoul, cum cere legea.
 
 Localul trebuie să completeze o singură dată: denumirea firmei, adresa și un
 email de contact (în `config.js`).
+
+**ANPC**: meniul clienților are în subsol pictograma oficială **SAL**
+(soluționarea alternativă a litigiilor), cu link la anpc.ro — cerută
+localurilor care vând prin site (Ordinul ANPC 449/2022). Pictograma **SOL**
+(litigii online, platforma europeană) nu mai e necesară: platforma s-a
+închis pe 20 iulie 2025. Pe site-ul Ospia (care vinde localurilor, nu
+consumatorilor) nu e nevoie de niciuna.
 
 **⭐ Pachetul GDPR** (`Pachet_GDPR_Ospia.docx`, lângă contract): registrul
 prelucrărilor (art. 30) gata completat pentru tot ce face platforma, afișul

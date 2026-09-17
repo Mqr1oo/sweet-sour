@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zen-cache-v7';
+const CACHE_NAME = 'zen-cache-v8';
 
 // Cai RELATIVE: aplicatia e servita dintr-un subfolder (/m3/), iar caile
 // absolute ('/dashboard') dadeau 404 -> cache.addAll pica -> service
@@ -123,8 +123,9 @@ self.addEventListener('push', event => {
 
   event.waitUntil(
     self.registration.getNotifications({ tag: options.tag }).then(list => {
-      // pagina a aratat deja aceeasi comanda (acelasi tag): o inlocuim in liniste, fara al doilea sunet
-      if (list.length) { options.renotify = false; delete options.vibrate; }
+      // pagina a aratat deja aceeasi comanda (acelasi tag, in ultimul minut): o inlocuim in
+      // liniste, fara al doilea sunet. Una veche, ramasa pe ecran, nu conteaza: suna din nou.
+      if (list.some(n => Date.now() - (n.timestamp || 0) < 60000)) { options.renotify = false; delete options.vibrate; }
       return self.registration.showNotification(title, options);
     }).catch(() => self.registration.showNotification(title, options))
   );
