@@ -879,7 +879,7 @@
        <div class="dash-panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap:16px;">
           <div>
             <h3>🗺️ Planul salii</h3>
-            <p style="color:var(--text-muted); font-size:13px; line-height: 1.5;">Atinge o masa: comanda, nota, eliberare. <b>Tine apasat</b> pe o masa ca s-o tragi: peste alta masa se unesc pe ziua de azi, in gol doar se muta; tine apasat pe o masa unita ca s-o desparti. <span id="salaFullMsg" style="display:none; color:var(--danger); font-weight:700;">· SALA PLINA</span></p>
+            <p style="color:var(--text-muted); font-size:13px; line-height: 1.5;">Atinge o masa: comanda, nota, eliberare. <b>Tine apasat</b> pe o masa ca s-o tragi: peste alta masa se unesc pe ziua de azi, in gol doar se muta (un grup lipit se muta impreuna); tine apasat pe o masa unita, fara s-o misti, ca sa desparti grupul. <span id="salaFullMsg" style="display:none; color:var(--danger); font-weight:700;">· SALA PLINA</span></p>
           </div>
           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
              <button id="btnRezervari" class="btn-action" style="border:1px solid #14b8a6; color:#5eead4; background:rgba(20,184,166,.10); font-size:13px; padding: 10px 14px;">📅 Rezervari<span id="nrRezervari" class="badge-count" style="display:none; position:static; margin-left:8px;">0</span></button>
@@ -1383,12 +1383,10 @@
   <div class="modal" style="max-width:420px; text-align:left;">
     <button class="modal-close" id="meInchide">&times;</button>
     <h2 id="meTitlu" style="margin-bottom:4px;">Masa</h2>
-    <p class="mp-sub">Numarul e cel de pe codul QR al mesei. Locurile si forma se vad pe harta; „unita cu" leaga doua mese (se lipesc pe harta, nota se vede impreuna) — sau tragi o masa peste alta.</p>
+    <p class="mp-sub">Numarul e cel de pe codul QR al mesei. Masa e rotunda, iar marimea ei pe harta vine din numarul de locuri; „unita cu" leaga doua mese (se lipesc pe harta, nota se vede impreuna) — sau tragi o masa peste alta.</p>
     <div class="me-grid">
       <label>Numarul mesei <input type="text" id="meNumar" maxlength="12" placeholder="Ex: 12"></label>
       <label>Locuri <input type="number" id="meScaune" min="1" max="40" value="4"></label>
-      <label>Forma <select id="meForma"><option value="rotunda">Rotunda</option><option value="patrata">Patrata</option></select></label>
-      <label>Marime <select id="meMarime"><option value="" selected>Dupa locuri (automat)</option><option value="mica">Mica (2 pers.)</option><option value="normala">Normala</option><option value="mare">Mare</option><option value="lunga">Lunga (grup)</option></select></label>
       <label class="lat">Unita cu masa <select id="meUnita"><option value="">— nu e unita —</option></select></label>
     </div>
     <div class="mp-err" id="meEroare"></div>
@@ -3345,14 +3343,15 @@ loadFreedTables();
   }
   // locul mesei `m` lipita de `tinta`, pe latura dinspre care a venit degetul
   // (x, y in unitati); daca nu incape acolo, pe urmatoarea latura libera
-  function locLanga(zone, m, tinta, x, y) {
-      const plan = planZonei(zone), t = dreptunghiMesei(tinta), s = marimeMesei(m);
+  // `ignora` = mesele care vin dupa ea (grupul ei): nu conteaza ca locul e „ocupat" de ele
+  function locLanga(zone, m, tinta, x, y, ignora) {
+      const plan = planZonei(zone), t = dreptunghiMesei(tinta), s = marimeMesei(m), fara = ignora || new Set();
       const dx = (x - (t.x + t.w / 2)) / t.w, dy = (y - (t.y + t.h / 2)) / t.h;
       const pref = Math.abs(dx) >= Math.abs(dy) ? (dx >= 0 ? ['dreapta', 'stanga', 'jos', 'sus'] : ['stanga', 'dreapta', 'jos', 'sus'])
                                                  : (dy >= 0 ? ['jos', 'sus', 'dreapta', 'stanga'] : ['sus', 'jos', 'dreapta', 'stanga']);
       const poz = (l) => l === 'dreapta' ? [t.x + t.w, t.y + (t.h - s.h) / 2] : l === 'stanga' ? [t.x - s.w, t.y + (t.h - s.h) / 2]
                        : l === 'jos' ? [t.x + (t.w - s.w) / 2, t.y + t.h] : [t.x + (t.w - s.w) / 2, t.y - s.h];
-      const altele = (zone.mese || []).filter(o => o !== m && o !== tinta).map(dreptunghiMesei);
+      const altele = (zone.mese || []).filter(o => o !== m && o !== tinta && !fara.has(o)).map(dreptunghiMesei);
       const libera = ([px, py]) => px >= 0 && py >= 0 && px + s.w <= plan.w && py + s.h <= plan.h
           && !altele.some(o => px < o.x + o.w - 0.5 && px + s.w > o.x + 0.5 && py < o.y + o.h - 0.5 && py + s.h > o.y + 0.5);
       const rot = (p) => p.map(v => Math.round(v * 2) / 2);
@@ -3392,7 +3391,7 @@ loadFreedTables();
           // raza colturilor: stadion (jumatate din latura mica) sau colturi rotunjite de 3 unitati
           const raza = patrata ? Math.min(3, (x2 - x1) / 2, (y2 - y1) / 2) : Math.min(x2 - x1, y2 - y1) / 2;
           const scaune = g.reduce((a, i, k) => a + numarScaune(zone.mese[i], marimeMesei(zone.mese[i]), atingeri[k]), 0);
-          grupuriHtml += `<div class="grup-mese status-${stare}${patrata ? ' patrata' : ''}${azi ? ' unita-azi' : ''}${isEditingMap ? ' editare' : ''}" style="left:${px(x1)}; top:${py(y1)}; width:${px(x2 - x1)}; height:${py(y2 - y1)}; border-radius:calc(${raza.toFixed(2)} * var(--u));">${scauneGrupHtml(x1, y1, x2, y2, scaune, raza)}</div>`;
+          grupuriHtml += `<div class="grup-mese status-${stare}${patrata ? ' patrata' : ''}${azi ? ' unita-azi' : ''}${isEditingMap ? ' editare' : ''}" data-mese="${escapeHTML(g.map(i => String(zone.mese[i].numar)).join(','))}" data-x1="${x1}" data-y1="${y1}" style="left:${px(x1)}; top:${py(y1)}; width:${px(x2 - x1)}; height:${py(y2 - y1)}; border-radius:calc(${raza.toFixed(2)} * var(--u));">${scauneGrupHtml(x1, y1, x2, y2, scaune, raza)}</div>`;
           g.forEach((i, k) => inGrup.set(i, { ascunse: atingeri[k] }));
       });
       // peretii + legaturile intre mesele unite dar departate (SVG in unitati)
@@ -3469,7 +3468,7 @@ loadFreedTables();
         <button type="button" data-unealta="lata" class="${forma === 'lata' ? 'on' : ''}">▭ Incapere lata</button>
         <button type="button" data-unealta="patrata" class="${forma === 'patrata' ? 'on' : ''}">▢ Patrata</button>
         <button type="button" data-unealta="inalta" class="${forma === 'inalta' ? 'on' : ''}">▯ Inalta</button>
-        <span class="plan-hint">${uneltaPlan === 'perete' ? 'Trage cu degetul pe harta ca sa desenezi un perete (sau un bar, o scara).' : uneltaPlan === 'sterge' ? 'Atinge peretele pe care vrei sa-l stergi.' : 'Trage mesele unde sunt in realitate. Trage o masa peste alta ca sa le unesti (se lipesc), trage-o deoparte ca sa le desparti. Atinge o masa ca sa-i schimbi locurile sau forma. Apasa „Salveaza" cand ai terminat.'}</span>`;
+        <span class="plan-hint">${uneltaPlan === 'perete' ? 'Trage cu degetul pe harta ca sa desenezi un perete (sau un bar, o scara).' : uneltaPlan === 'sterge' ? 'Atinge peretele pe care vrei sa-l stergi.' : 'Trage mesele unde sunt in realitate. Trage o masa peste alta ca sa le unesti (se lipesc); un grup lipit se muta impreuna. Atinge o masa ca sa-i schimbi locurile sau s-o desparti („nu e unita"). Apasa „Salveaza" cand ai terminat.'}</span>`;
   }
 
   // peretii sunt doar drepti: capatul se aliniaza pe orizontala sau verticala
@@ -3504,9 +3503,13 @@ loadFreedTables();
       const g = grupurileMeselor(toate).find(gr => gr.some(i => String(toate[i].numar) === nr));
       return g ? g.map(i => String(toate[i].numar)).filter(n => n !== nr) : [];
   }
-  async function scrieMasaAzi(detalii) {
-      const ok = await logActivity('mese_azi', null, detalii);
-      if (ok === false) { alert('Nu s-a putut salva mutarea mesei.'); return false; }
+  async function scrieMasaAzi(detalii) { return scrieMeseAzi([detalii]); }
+  // mai multe randuri deodata (tot grupul), apoi o singura recitire
+  async function scrieMeseAzi(lista) {
+      for (const d of lista) {
+          const ok = await logActivity('mese_azi', null, d);
+          if (ok === false) { alert('Nu s-a putut salva mutarea mesei.'); await loadMeseAzi(); return false; }
+      }
       await loadMeseAzi();
       return true;
   }
@@ -3519,19 +3522,44 @@ loadFreedTables();
   (function initHarta() {
       const grid = document.getElementById('tablesGrid');
       let tragere = null;   // { el, mesa, dx, dy, mutat } sau { perete: [x, y] }
-      // masa (alta decat cea trasa) al carei dreptunghi cuprinde punctul
-      function mesaSub(cx, cy, exclus) {
+      // masa (alta decat cele trase) al carei dreptunghi cuprinde punctul
+      function mesaSub(cx, cy, excluse) {
           for (const c of grid.querySelectorAll('.table-card')) {
-              if (c === exclus) continue;
+              if (excluse.has(c)) continue;
               const b = c.getBoundingClientRect();
               if (cx >= b.left && cx <= b.right && cy >= b.top && cy <= b.bottom) return c;
           }
           return null;
       }
-      // in modul normal: tine apasat (0,45 s) pe o masa -> se ridica si o tragi;
-      // peste alta masa = se unesc pe azi; in gol = se muta pe azi; fara sa
-      // misti = daca e unita, intrebam daca o despartim
-      let tinere = null;   // { timer, card, mesa, x0, y0, ridicata, pornit }
+      // un grup de mese lipite se muta ca una singura: membrii grupului mesei
+      // (ea insasi prima), cu cardurile lor si locul de plecare (in unitati)
+      function membriiGrupului(zone, mesa) {
+          const nr = String(mesa.numar);
+          return [nr, ...perecheaMesei(nr)].map(n => {
+              const idx = zone.mese.findIndex(o => String(o.numar) === n); if (idx < 0) return null;
+              const r = dreptunghiMesei(zone.mese[idx]);
+              return { mesa: zone.mese[idx], card: grid.querySelector(`.table-card[data-idx="${idx}"]`), x0: r.x, y0: r.y, w: r.w, h: r.h };
+          }).filter(m => m && m.card);
+      }
+      // conturul comun al grupului (daca mesele sunt lipite), ca sa alunece si el
+      function conturulGrupului(nr) {
+          const el = [...grid.querySelectorAll('.grup-mese[data-mese]')].find(h => h.dataset.mese.split(',').includes(String(nr)));
+          return el ? { el, x1: Number(el.dataset.x1), y1: Number(el.dataset.y1) } : null;
+      }
+      // cat poate aluneca grupul (in unitati) ca sa ramana tot in incapere
+      function deltaInIncapere(membri, plan, ddx, ddy) {
+          const minX = Math.min(...membri.map(m => m.x0)), maxX = Math.max(...membri.map(m => m.x0 + m.w));
+          const minY = Math.min(...membri.map(m => m.y0)), maxY = Math.max(...membri.map(m => m.y0 + m.h));
+          return [Math.max(-minX, Math.min(plan.w - maxX, Math.round(ddx))), Math.max(-minY, Math.min(plan.h - maxY, Math.round(ddy)))];
+      }
+      function asazaMembrii(membri, contur, plan, ddx, ddy) {
+          membri.forEach(m => { m.card.style.left = ((m.x0 + ddx) / plan.w * 100) + '%'; m.card.style.top = ((m.y0 + ddy) / plan.h * 100) + '%'; });
+          if (contur) { contur.el.style.left = ((contur.x1 + ddx) / plan.w * 100) + '%'; contur.el.style.top = ((contur.y1 + ddy) / plan.h * 100) + '%'; }
+      }
+      // in modul normal: tine apasat (0,45 s) pe o masa -> se ridica (cu tot
+      // grupul ei) si o tragi; peste alta masa = se unesc pe azi; in gol = se
+      // muta pe azi; fara sa misti = daca e unita, intrebam daca o despartim
+      let tinere = null;   // { timer, card, mesa, membri, contur, x0, y0, ridicata, mutat, delta }
       grid.addEventListener('pointerdown', (e) => {
           const zone = getZoneObj(currentZone); if (!zone) return;
           const card = e.target.closest('.table-card');
@@ -3539,13 +3567,11 @@ loadFreedTables();
               if (!card || e.button > 0) return;
               const mesa = zone.mese[Number(card.dataset.idx)]; if (!mesa) return;
               const [x, y] = unitatiDin(e);
-              const az = meseAzi[String(mesa.numar)];
-              const px0 = az && typeof az.x === 'number' ? az.x : mesa.x, py0 = az && typeof az.y === 'number' ? az.y : mesa.y;
-              tinere = { card, mesa, x0: e.clientX, y0: e.clientY, dx: x - px0, dy: y - py0, ridicata: false, mutat: false, pid: e.pointerId };
+              const membri = membriiGrupului(zone, mesa);
+              tinere = { card, mesa, membri, contur: conturulGrupului(mesa.numar), x0: e.clientX, y0: e.clientY, dx: x - membri[0].x0, dy: y - membri[0].y0, ridicata: false, mutat: false, delta: [0, 0], pid: e.pointerId };
               tinere.timer = setTimeout(() => {
                   if (!tinere) return;
-                  tinere.ridicata = true; card.classList.add('ridicata');
-                  card.style.pointerEvents = 'none';   // ca sa vedem masa de sub deget, nu pe cea trasa
+                  tinere.ridicata = true; tinere.membri.forEach(m => { m.card.classList.add('ridicata'); m.card.style.pointerEvents = 'none'; });   // ca sa vedem masa de sub deget, nu pe cele trase
                   try { grid.setPointerCapture(tinere.pid); } catch (err) {}
                   try { if (navigator.vibrate) navigator.vibrate(20); } catch (err) {}
               }, 450);
@@ -3565,7 +3591,8 @@ loadFreedTables();
           if (!card) return;
           const mesa = zone.mese[Number(card.dataset.idx)]; if (!mesa) return;
           const [x, y] = unitatiDin(e);
-          tragere = { el: card, mesa, dx: x - mesa.x, dy: y - mesa.y, mutat: false, x0: e.clientX, y0: e.clientY };
+          const membri = membriiGrupului(zone, mesa);
+          tragere = { el: card, mesa, membri, contur: conturulGrupului(mesa.numar), dx: x - mesa.x, dy: y - mesa.y, mutat: false, x0: e.clientX, y0: e.clientY };
           grid.setPointerCapture(e.pointerId);
           e.preventDefault();
       });
@@ -3578,14 +3605,12 @@ loadFreedTables();
               }
               const zone = getZoneObj(currentZone), plan = planZonei(zone);
               const [x, y] = unitatiDin(e);
-              const s = marimeMesei(tinere.mesa);
-              tinere.px = Math.max(0, Math.min(plan.w - s.w, Math.round(x - tinere.dx)));
-              tinere.py = Math.max(0, Math.min(plan.h - s.h, Math.round(y - tinere.dy)));
+              // tot grupul aluneca cu aceeasi distanta, cat incape in incapere
+              tinere.delta = deltaInIncapere(tinere.membri, plan, x - tinere.dx - tinere.membri[0].x0, y - tinere.dy - tinere.membri[0].y0);
               tinere.mutat = true;
-              tinere.card.style.left = (tinere.px / plan.w * 100) + '%';
-              tinere.card.style.top = (tinere.py / plan.h * 100) + '%';
-              // tinta: masa peste care e degetul (dupa dreptunghiuri, nu dupa hit-test — masa trasa e chiar sub deget)
-              const alta = mesaSub(e.clientX, e.clientY, tinere.card);
+              asazaMembrii(tinere.membri, tinere.contur, plan, tinere.delta[0], tinere.delta[1]);
+              // tinta: masa peste care e degetul (dupa dreptunghiuri, nu dupa hit-test — mesele trase sunt chiar sub deget)
+              const alta = mesaSub(e.clientX, e.clientY, new Set(tinere.membri.map(m => m.card)));
               grid.querySelectorAll('.table-card.tinta').forEach(c => c.classList.remove('tinta'));
               if (alta) alta.classList.add('tinta');
               e.preventDefault();
@@ -3602,13 +3627,11 @@ loadFreedTables();
           }
           if (Math.abs(e.clientX - tragere.x0) + Math.abs(e.clientY - tragere.y0) > 6) tragere.mutat = true;
           if (!tragere.mutat) return;
-          const s = marimeMesei(tragere.mesa);
-          tragere.mesa.x = Math.max(0, Math.min(plan.w - s.w, Math.round(x - tragere.dx)));
-          tragere.mesa.y = Math.max(0, Math.min(plan.h - s.h, Math.round(y - tragere.dy)));
-          tragere.el.classList.add('tras');
-          tragere.el.style.left = (tragere.mesa.x / plan.w * 100) + '%';
-          tragere.el.style.top = (tragere.mesa.y / plan.h * 100) + '%';
-          const alta = mesaSub(e.clientX, e.clientY, tragere.el);
+          // tot grupul se muta odata cu masa trasa (in harta de baza)
+          const [ddx, ddy] = deltaInIncapere(tragere.membri, plan, x - tragere.dx - tragere.membri[0].x0, y - tragere.dy - tragere.membri[0].y0);
+          tragere.membri.forEach(m => { m.mesa.x = m.x0 + ddx; m.mesa.y = m.y0 + ddy; m.card.classList.add('tras'); });
+          asazaMembrii(tragere.membri, tragere.contur, plan, ddx, ddy);
+          const alta = mesaSub(e.clientX, e.clientY, new Set(tragere.membri.map(m => m.card)));
           grid.querySelectorAll('.table-card.tinta').forEach(c => c.classList.remove('tinta'));
           if (alta) alta.classList.add('tinta');
       });
@@ -3616,45 +3639,37 @@ loadFreedTables();
           if (!tinere) return;
           const tn = tinere; tinere = null; clearTimeout(tn.timer);
           if (!tn.ridicata) return;   // atingere scurta: se ocupa click-ul
-          tn.card.classList.remove('ridicata'); tn.card.style.pointerEvents = ''; ultimaRidicare = Date.now();
+          tn.membri.forEach(m => { m.card.classList.remove('ridicata'); m.card.style.pointerEvents = ''; }); ultimaRidicare = Date.now();
           grid.querySelectorAll('.table-card.tinta').forEach(c => c.classList.remove('tinta'));
-          const zone = getZoneObj(currentZone), plan = planZonei(zone);
+          const zone = getZoneObj(currentZone);
           const nr = String(tn.mesa.numar);
           if (!tn.mutat) {
               // tinut apasat pe loc: daca e unita, o despartim (si partenerele ei revin la loc)
               const parteneri = perecheaMesei(nr);
               if (parteneri.length && confirm(`Desparti mesele ${nr} si ${parteneri.join(', ')}? Revin la locul lor.`)) {
-                  for (const m of [nr, ...parteneri]) await scrieMasaAzi({ mesa: m, reset: true });
+                  await scrieMeseAzi([nr, ...parteneri].map(m => ({ mesa: m, reset: true })));
               }
               renderTablesGrid(); return;
           }
-          const alta = mesaSub(e.clientX, e.clientY, tn.card);
+          const alta = mesaSub(e.clientX, e.clientY, new Set(tn.membri.map(m => m.card)));
           const tinta = alta ? zone.mese[Number(alta.dataset.idx)] : null;
+          const altii = tn.membri.slice(1);
           if (tinta && tinta !== tn.mesa) {
-              // unire pe azi: masa se lipeste de tinta, pe latura dinspre care a venit
+              // unire pe azi: masa se lipeste de tinta, pe latura dinspre care a venit;
+              // restul grupului ei vine dupa ea, pastrandu-si forma
               const [x, y] = unitatiDin(e);
-              const [nx, ny] = locLanga(zone, tn.mesa, tinta, x, y);
-              await scrieMasaAzi({ mesa: nr, cu: String(tinta.numar), x: nx, y: ny });
+              const [nx, ny] = locLanga(zone, tn.mesa, tinta, x, y, new Set(altii.map(m => m.mesa)));
+              const fx = nx - tn.membri[0].x0, fy = ny - tn.membri[0].y0;
+              // masa trasa arata acum spre tinta; ca grupul ei sa ramana legat, membrii
+              // care nu aratau spre nimeni (radacina) arata spre ea
+              await scrieMeseAzi([{ mesa: nr, cu: String(tinta.numar), x: nx, y: ny },
+                  ...altii.map(m => ({ mesa: String(m.mesa.numar), cu: unitaCu(m.mesa) || nr, x: m.x0 + fx, y: m.y0 + fy }))]);
               try { if (navigator.vibrate) navigator.vibrate([20, 40, 20]); } catch (err) {}
               return;
           }
-          // lasata in gol: daca mai atinge o partenera ramane unita, altfel se desparte de grup
-          const parteneri = perecheaMesei(nr);
-          const gasesteMasa = (p) => zone.mese.find(o => String(o.numar) === String(p));
-          const r = { ...marimeMesei(tn.mesa), x: tn.px, y: tn.py };
-          const lipita = parteneri.some(p => { const mp = gasesteMasa(p); return mp && laturaAtingere(r, dreptunghiMesei(mp)); });
-          if (parteneri.length && !lipita) {
-              // cine arata spre ea se leaga de alta partenera ramasa (sau ramane singura)
-              for (const p of parteneri) {
-                  const mp = gasesteMasa(p); if (!mp || unitaCu(mp) !== nr) continue;
-                  const rp = dreptunghiMesei(mp);
-                  await scrieMasaAzi({ mesa: p, cu: parteneri.find(q => q !== p) || null, x: rp.x, y: rp.y });
-              }
-              await scrieMasaAzi({ mesa: nr, cu: null, x: tn.px, y: tn.py });
-              try { if (navigator.vibrate) navigator.vibrate(30); } catch (err) {}
-              return;
-          }
-          await scrieMasaAzi({ mesa: nr, cu: unitaCu(tn.mesa), x: tn.px, y: tn.py });
+          // lasata in gol: tot grupul se muta (ramane unit); o masa singura doar se muta
+          const [ddx, ddy] = tn.delta;
+          await scrieMeseAzi(tn.membri.map(m => ({ mesa: String(m.mesa.numar), cu: unitaCu(m.mesa), x: m.x0 + ddx, y: m.y0 + ddy })));
       };
       const gata = (e) => {
           if (tinere) { gataTinere(e); return; }
@@ -3667,25 +3682,19 @@ loadFreedTables();
               renderTablesGrid(); return;
           }
           if (t.mutat) {
-              // lasata peste alta masa: se unesc (si se lipesc); trasa departe de partenere: se desparte
+              // lasata peste alta masa: se unesc (si se lipesc), restul grupului vine dupa ea;
+              // in gol: grupul s-a mutat intreg (despartirea se face din fereastra mesei, „nu e unita")
               const zone = getZoneObj(currentZone);
               grid.querySelectorAll('.table-card.tinta').forEach(c => c.classList.remove('tinta'));
-              const alta = mesaSub(e.clientX, e.clientY, t.el);
+              const alta = mesaSub(e.clientX, e.clientY, new Set(t.membri.map(m => m.card)));
               const tinta = alta ? zone.mese[Number(alta.dataset.idx)] : null;
               if (tinta && tinta !== t.mesa) {
                   const [x, y] = unitatiDin(e);
-                  const [nx, ny] = locLanga(zone, t.mesa, tinta, x, y);
-                  t.mesa.x = nx; t.mesa.y = ny;
+                  const [nx, ny] = locLanga(zone, t.mesa, tinta, x, y, new Set(t.membri.slice(1).map(m => m.mesa)));
+                  const fx = nx - t.membri[0].x0, fy = ny - t.membri[0].y0;
+                  t.membri.forEach(m => { m.mesa.x = m.x0 + fx; m.mesa.y = m.y0 + fy; });
+                  t.membri.slice(1).forEach(m => { if (!m.mesa.unita_cu) m.mesa.unita_cu = String(t.mesa.numar); });   // grupul ei ramane legat
                   t.mesa.unita_cu = String(tinta.unita_cu && String(tinta.unita_cu) !== String(t.mesa.numar) ? tinta.unita_cu : tinta.numar);
-              } else {
-                  const nr = String(t.mesa.numar);
-                  const parteneri = perecheaMesei(nr).map(p => zone.mese.find(o => String(o.numar) === p)).filter(Boolean);
-                  const r = dreptunghiMesei(t.mesa);
-                  if (parteneri.length && !parteneri.some(p => laturaAtingere(r, dreptunghiMesei(p)))) {
-                      delete t.mesa.unita_cu;
-                      const ramase = parteneri.filter(p => String(p.unita_cu) === nr);
-                      ramase.forEach((p, i) => { if (i === 0) delete p.unita_cu; else p.unita_cu = String(ramase[0].numar); });
-                  }
               }
               renderTablesGrid(); return;
           }
@@ -3693,7 +3702,7 @@ loadFreedTables();
           deschideMasa(getZoneObj(currentZone).mese.indexOf(t.mesa));
       };
       grid.addEventListener('pointerup', gata);
-      grid.addEventListener('pointercancel', () => { if (tinere) { clearTimeout(tinere.timer); tinere.card.style.pointerEvents = ''; tinere = null; } tragere = null; renderTablesGrid(); });
+      grid.addEventListener('pointercancel', () => { if (tinere) { clearTimeout(tinere.timer); tinere.membri.forEach(m => { m.card.style.pointerEvents = ''; }); tinere = null; } tragere = null; renderTablesGrid(); });
       grid.addEventListener('contextmenu', (e) => { if (tinere || e.target.closest('.table-card')) e.preventDefault(); });
       // in afara editarii: atingerea deschide masa (comenzi, nota, eliberare)
       let ultimaRidicare = 0;
@@ -3715,8 +3724,6 @@ loadFreedTables();
       document.getElementById('meNumar').value = m ? m.numar : '';
       document.getElementById('meNumar').disabled = !!m;
       document.getElementById('meScaune').value = m ? m.scaune : 4;
-      document.getElementById('meForma').value = m && m.forma === 'patrata' ? 'patrata' : 'rotunda';
-      document.getElementById('meMarime').value = m && MARIMI[m.marime] ? m.marime : '';
       const sel = document.getElementById('meUnita');
       sel.innerHTML = '<option value="">— nu e unita —</option>' + zone.mese.filter(o => !m || String(o.numar) !== String(m.numar))
           .map(o => `<option value="${escapeHTML(o.numar)}">Masa ${escapeHTML(o.numar)} (${escapeHTML(o.scaune)} locuri)</option>`).join('');
@@ -3745,10 +3752,9 @@ loadFreedTables();
           m = { numar, scaune, x: Math.round(plan.w / 2 - 6), y: Math.round(plan.h / 2 - 6) };
           zone.mese.push(m);
       } else { m = zone.mese[meIndex]; m.scaune = scaune; }
-      m.forma = document.getElementById('meForma').value;
-      const mar = document.getElementById('meMarime').value;
-      if (mar) m.marime = mar; else delete m.marime;
-      delete m.w; delete m.h;
+      // mesele sunt rotunde, iar marimea vine din numarul de locuri (marimeImplicita)
+      m.forma = 'rotunda';
+      delete m.marime; delete m.w; delete m.h;
       if (unita) m.unita_cu = unita; else delete m.unita_cu;
       inchideMasa(); renderZoneTabs(); renderTablesGrid();
   });
@@ -4836,6 +4842,7 @@ loadFreedTables();
   }
 
   let primaIncarcare = true;
+  const ALERTA_VECHE_MS = 5 * 60000;   // mai vechi de atat = nu se mai anunta ca „nou"
   async function loadOrders() {
     // doar ce e „viu": comenzile deschise plus cele inchise din ziua de lucru
     // curenta. Zilele trecute si lunile se citesc din baza doar cand le ceri
@@ -4847,10 +4854,12 @@ loadFreedTables();
     if(error) console.error("Error loading orders:", error);
     if(data) {
       // comenzi aparute cat n-am avut legatura (telefon blocat, net picat):
-      // le anuntam ca si cum ar fi intrat acum
+      // le anuntam ca si cum ar fi intrat acum — dar doar pe cele din ultimele
+      // 5 minute; una mai veche apare pe tabla (rosie, neacceptata), fara sa
+      // sune ca „noua" la o ora dupa ce a intrat
       const stiute = new Set(allOrders.map(o => o.id));
       const vechi = new Map(allOrders.map(o => [o.id, o]));
-      const noi = primaIncarcare ? [] : data.filter(o => !stiute.has(o.id) && o.status === 'noua');
+      const noi = primaIncarcare ? [] : data.filter(o => !stiute.has(o.id) && o.status === 'noua' && Date.now() - new Date(o.created_at).getTime() < ALERTA_VECHE_MS);
       allOrders = await attachTakeawayContacts(data);
       // pastram semnele de „modificata" pana expira singure
       allOrders.forEach(o => { const v = vechi.get(o.id); if (v && v._modificataLa) { o._modificataLa = v._modificataLa; o._modificareText = v._modificareText; o._modificareDe = v._modificareDe; } });

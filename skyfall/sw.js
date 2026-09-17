@@ -1,4 +1,4 @@
-const CACHE_NAME = 'skyfall-cache-v5';
+const CACHE_NAME = 'skyfall-cache-v6';
 
 // Cai RELATIVE: aplicatia e servita dintr-un subfolder (/m3/), iar caile
 // absolute ('/dashboard') dadeau 404 -> cache.addAll pica -> service
@@ -121,6 +121,19 @@ self.addEventListener('push', event => {
     data: { url: d.url || './dashboard.html', comandaId: d.comandaId || null }
   };
 
+  // push-ul a stat pe drum mai mult de 5 minute (telefon fara net / adormit):
+  // nu mai deranjam pe nimeni. Chrome cere totusi o notificare la fiecare
+  // push, asa ca o aratam fara sunet si o inchidem pe loc.
+  if (d.trimisLa && Date.now() - d.trimisLa > 5 * 60000) {
+    const tacuta = { body: options.body, icon: options.icon, badge: options.badge, tag: 'veche', silent: true, requireInteraction: false, data: options.data };
+    event.waitUntil(
+      self.registration.showNotification(title, tacuta)
+        .then(() => self.registration.getNotifications({ tag: 'veche' }))
+        .then(list => list.forEach(n => n.close()))
+        .catch(() => {})
+    );
+    return;
+  }
   event.waitUntil(
     self.registration.getNotifications({ tag: options.tag }).then(list => {
       // pagina a aratat deja aceeasi comanda (acelasi tag, in ultimul minut): o inlocuim in

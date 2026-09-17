@@ -1717,6 +1717,46 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
   `scratchpad/contract_ospia.js`).
 - Cache SW: zen v8, m3 v6, skyfall v5.
 
+## Runda 35 — grupul se mută întreg, fereastra mesei mai simplă, nimic mai vechi de 5 minute
+
+- **Fereastra mesei** (editare) a rămas cu: numărul, locurile, „unită cu".
+  „Forma" și „Mărimea" au dispărut din UI: la salvare `forma = 'rotunda'`,
+  `marime` se șterge (mărimea vine din `marimeImplicita` după locuri: ≤2
+  mică 9, ≤4 normală 12, ≤6 mare 15, peste — lungă 22×12). Mesele pătrate
+  vechi din config rămân desenate pătrate până sunt deschise și salvate.
+- **Un grup lipit se mută ca o singură masă.** `membriiGrupului(zone, mesa)`
+  = masa + `perecheaMesei` cu cardurile și locul de plecare;
+  `deltaInIncapere` limitează alunecarea ca toți membrii să rămână în plan;
+  `asazaMembrii` mută cardurile și conturul (`.grup-mese` are acum
+  `data-mese`, `data-x1/y1`, ca să alunece și el în timpul tragerii).
+  Ținere (mod normal): la ridicare toți membrii primesc `.ridicata`;
+  lăsat în gol → `scrieMeseAzi([...])` un rând `mese_azi` pe membru, cu
+  legăturile păstrate (o masă singură se mută ca înainte); lăsat peste altă
+  masă → masa trasă se lipește de țintă (`locLanga` ignoră membrii grupului,
+  `ignora`), restul vin după ea cu același deplasament, iar membrii care nu
+  arătau spre nimeni arată spre ea (altfel grupul s-ar fi rupt când masa
+  trasă își schimbă `cu`). **Tragerea deoparte nu mai desparte**: despărțirea
+  e doar prin ținere pe loc („Desparți mesele…?", toate revin). În editare la
+  fel: grupul se mută cu `mesa.x/y` pe toți membrii; despărțirea din
+  fereastra mesei („— nu e unită —"). `mesaSub(cx, cy, excluse)` primește
+  acum un Set (toate cardurile trase).
+- **Nimic mai vechi de 5 minute**: (1) `loadOrders` la resincronizare
+  (revenire în prim-plan, net revenit, la 60 s) anunță ca „noi" doar
+  comenzile din ultimele 5 minute (`ALERTA_VECHE_MS`) — înainte, la
+  întoarcerea în aplicație suna și arăta notificarea unei comenzi de acum o
+  oră; comanda rămâne pe tablă, roșie. (2) Funcția Edge `notifica-comanda`
+  (v10 pe wnwl, v7 pe cjav): `TTL: 300` (serviciul de push renunță la
+  mesajul pe care nu-l poate livra în 5 minute) și `trimisLa` în conținut;
+  `urgency: high` era deja (trezește telefonul din economisire).
+  (3) `sw.js`: un push cu `trimisLa` mai vechi de 5 minute se arată fără
+  sunet (`silent`) și se închide imediat (Chrome cere o notificare la fiecare
+  push, altfel afișează el una generică).
+- „Rulează în fundal": o pagină web nu poate rula în fundal; notificările
+  vin prin push cu aplicația închisă — pe Android din Chrome (dacă întârzie:
+  bateria → fără optimizare pentru Chrome), pe iPhone doar cu aplicația pusă
+  pe ecranul principal (iOS 16.4+) și notificările permise.
+- Cache SW: zen v9, m3 v7, skyfall v6.
+
 ## Înainte de deschidere
 
 1. Authentication → Providers → Email: **Allow new users to sign up** = oprit.

@@ -159,7 +159,11 @@ singur alt rol.
   există niciun buton de pornit. Barul și bucătăria primesc comenzile noi,
   ospătarul primește cererile de la mesele lui și „comanda e gata — du-o la
   masă". Pe iPhone merg doar cu aplicația pusă pe ecranul principal; pe
-  Android, dacă nu vin, scoate Chrome de la „optimizarea bateriei".
+  Android, dacă nu vin, scoate Chrome de la „optimizarea bateriei". O
+  aplicație web nu „rulează în fundal" — notificarea o aduce telefonul, cu
+  aplicația închisă. **Nimic mai vechi de 5 minute**: o notificare care n-a
+  putut fi livrată în 5 minute nu se mai arată, iar la deschiderea aplicației
+  nu mai sună comenzile intrate acum o oră (rămân pe tablă, roșii).
 - **Căutarea** (masă / la pachet) are un ✕ care o golește.
 - **Contul tău** (pe telefon, apasă pe numele tău): ghidul rapid, starea
   notificărilor, informarea GDPR, deconectarea.
@@ -222,9 +226,9 @@ Același panou, dar cu ce-l privește pe el:
 „Editează harta": fiecare zonă (Terasă, Interior, Etaj…) e o încăpere —
 lată, pătrată sau înaltă — în care desenezi pereții cu degetul (linii:
 un perete, barul, o scară) și tragi mesele exact unde sunt în realitate.
-Atingi o masă și îi spui câte locuri are, dacă e rotundă sau pătrată, cât de
-mare e (mică, normală, mare, lungă) și dacă e **unită cu altă masă** (o
-linie punctată le leagă, iar nota se vede împreună). „➕ Masa" adaugă una
+Atingi o masă și îi spui câte locuri are (mărimea ei pe hartă vine din
+locuri; toate mesele sunt rotunde) și dacă e **unită cu altă masă** (se
+lipesc, iar nota se vede împreună). „➕ Masa" adaugă una
 nouă; „Salvează harta" o trimite tuturor. **Pe telefon harta încape pe
 lățimea ecranului** — se micșorează singură, cu tot cu numere, timpi și
 scaune (o masă normală are cam un centimetru; ca să iasă bine, nu pune multe
@@ -240,9 +244,9 @@ harta"): masa se ridică și o tragi. O lași **peste altă masă** → se
 **lipesc** și arată ca o singură masă mare (un contur comun, cu toate
 scaunele rămase așezate pe el, la distanțe egale; nota se vede împreună —
 grupul mare de la 20 cu 40). O lași
-**în alt loc** → stă acolo azi; dacă era lipită de alta, s-a despărțit. Ții
-apăsat pe o masă unită fără să o miști → „Desparți mesele?" → revin la
-locul lor. Atingi o masă unită → „Masa 20 + 40", cu „🔗 Unită cu masa 40"
+**în alt loc** → stă acolo azi; **un grup lipit se mută întreg**, ca o
+singură masă (tragi de oricare din ele). Ții apăsat pe o masă unită fără să
+o miști → „Desparți mesele?" → revin la locul lor. Atingi o masă unită → „Masa 20 + 40", cu „🔗 Unită cu masa 40"
 și totalul lor împreună. Mâine dimineață totul e ca pe harta directorului;
 nimic din asta nu schimbă harta de bază. În „Editează harta" merge la fel, cu tragere
 simplă (fără ținere), și rămâne așa în harta salvată.
