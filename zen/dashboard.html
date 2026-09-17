@@ -278,7 +278,10 @@
   .add-table-card { aspect-ratio: 1; border-radius: 16px; border: 2px dashed var(--border); background: transparent; display: flex; align-items: center; justify-content: center; font-size: 26px; color: var(--text-muted); cursor: pointer; }
   /* --- Harta salii: incaperea (zona) cu pereti si mesele asezate unde sunt in realitate --- */
   .plan-scroll { overflow:auto; -webkit-overflow-scrolling:touch; border-radius:16px; }
-  .plan-sala { position:relative; width:100%; min-width:640px; aspect-ratio: var(--plan-ar, 10 / 7); background: rgba(255,255,255,.02);
+  /* harta incape mereu pe latimea ecranului; --u = cati pixeli are o unitate a planului
+     (latimea panoului / latimea planului), iar textele, scaunele si colturile se scaleaza cu ea */
+  .panel-harta { container-type: inline-size; }
+  .plan-sala { position:relative; width:100%; --u: calc(100cqw / var(--plan-w, 100)); aspect-ratio: var(--plan-ar, 10 / 7); background: rgba(255,255,255,.02);
                border:1px solid var(--border); border-radius:16px; overflow:hidden; user-select:none; }
   .plan-sala.editare { touch-action:none; background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size: 5% 7.1428%; }
   .plan-sala.unealta-perete, .plan-sala.unealta-sterge { cursor:crosshair; }
@@ -309,19 +312,26 @@
   .plan-sala .grup-mese .scaun { border-radius:5px; }
   .plan-sala .grup-mese.status-free .scaun { background:rgba(255,255,255,.16); }
   .plan-sala .table-card.in-grup.ridicata, .plan-sala .table-card.in-grup.tras { background:var(--bg) !important; border-color:var(--accent) !important; box-shadow:0 12px 28px rgba(0,0,0,.6) !important; }
-  .plan-sala .table-card .t-num { font-size:17px; }
+  .plan-sala .table-card .t-num { font-size: clamp(11px, calc(var(--u) * 2.6), 22px); line-height:1.1; }
   .plan-sala .table-card .t-seats { font-size:10px; }
-  .plan-sala .table-card .t-timp { font-size:10px; }
+  .plan-sala .table-card .t-timp { font-size: clamp(8px, calc(var(--u) * 1.55), 13px); line-height:1.15; white-space:nowrap; }
+  .plan-sala .table-card.status-purple .t-timp[data-termen] { font-size: clamp(9px, calc(var(--u) * 2), 16px); }
+  .plan-sala .table-card .t-rez { font-size: clamp(7px, calc(var(--u) * 1.5), 10px); padding: 1px 5px; top: 2px; right: 2px; }
   .plan-sala .table-card.rotunda { border-radius:50%; }
   .plan-sala .table-card.editare { cursor:grab; border-style:dashed; }
   .plan-sala .table-card.tras { cursor:grabbing; z-index:5; box-shadow:0 10px 24px rgba(0,0,0,.55); transition:none; }
-  .plan-sala .table-card .t-unita { position:absolute; bottom:4px; right:6px; font-size:10px; color:var(--accent); }
+  .plan-sala .table-card .t-unita { position:absolute; bottom:4px; right:6px; font-size: clamp(8px, calc(var(--u) * 1.5), 11px); color:var(--accent); }
   .plan-sala .table-card { overflow:visible; }
   /* scaunele: mici perne in jurul mesei, cate locuri are */
-  .plan-sala .scaun { position:absolute; width:14px; height:9px; border-radius:5px 5px 3px 3px; background:rgba(255,255,255,.28); border:1px solid rgba(255,255,255,.35); transform:translate(-50%, -50%) rotate(var(--rot, 0deg)); pointer-events:none; }
+  .plan-sala .scaun { position:absolute; width: clamp(7px, calc(var(--u) * 2.2), 16px); height: clamp(4px, calc(var(--u) * 1.4), 10px); border-radius:5px 5px 3px 3px; background:rgba(255,255,255,.28); border:1px solid rgba(255,255,255,.35); transform:translate(-50%, -50%) rotate(var(--rot, 0deg)); pointer-events:none; }
   .plan-sala .table-card.status-free .scaun { background:rgba(255,255,255,.16); }
   .plan-sala .table-card.rotunda .scaun { border-radius:5px; }
   .plan-sala .eticheta-zona { position:absolute; left:10px; top:8px; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); pointer-events:none; }
+  /* harta mica (telefon): fara eticheta zonei in plan (numele e in tabul de sus) si un singur rand de timp pe masa mov */
+  @container (max-width: 480px) {
+      .plan-sala .eticheta-zona { display:none; }
+      .plan-sala .table-card.status-purple .t-timp:not([data-termen]) { display:none; }
+  }
   .plan-bara { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
   .plan-bara button { background:rgba(255,255,255,.06); border:1px solid var(--border); color:var(--text); border-radius:100px; padding:8px 12px; font:inherit; font-size:13px; cursor:pointer; }
   .plan-bara button.on { background:var(--accent); color:#16110a; border-color:var(--accent); }
@@ -413,6 +423,8 @@
       .stat-val { font-size: 19px; margin-top: 6px; }
       .stat-label { font-size: 11px; }
       .dash-panel { padding: 16px; border-radius: 16px; margin-bottom: 16px; }
+      .panel-harta { padding: 8px; margin-left: -12px; margin-right: -12px; }   /* harta cat mai lata pe telefon */
+      .plan-sala svg.pereti line.perete { stroke-width: 4; }
       .dash-panel h3 { font-size: 15.5px; margin-bottom: 12px; flex-wrap: wrap; }
       .adm-cap.adm-on { flex-direction: column; align-items: stretch; gap: 10px; }
       .adm-cap .adm-actiuni { flex-wrap: wrap; }
@@ -691,6 +703,17 @@
   .inapoi-sec{ font-family:'Space Mono',monospace; font-size:12px; color:var(--text-muted); min-width:2ch; text-align:right; }
   .uitata-banner{ position:fixed; top:0; left:0; right:0; z-index:1150; background:var(--danger); color:#fff; font-weight:700;
     text-align:center; padding:12px 16px; font-size:14px; box-shadow:0 6px 20px rgba(0,0,0,.4); }
+  .stare-pill.nota{ background:rgba(245,158,11,.14); color:#fcd34d; border:1px solid rgba(245,158,11,.4); }
+  .nota-card{ border-color: rgba(245,158,11,.35); }
+  .o-items li.nota-total{ justify-content:space-between; border-top:1px dashed var(--border); margin-top:6px; padding-top:12px; font-family:'Space Mono',monospace; }
+  .o-items li.nota-total b{ color:var(--success); font-size:17px; }
+  .nota-alerta{ font-size:12px; color:var(--blue); margin-top:4px; }
+  .nota-comenzi{ margin-top:10px; font-size:13px; color:var(--text-muted); }
+  .nota-comenzi summary{ cursor:pointer; user-select:none; padding:6px 0; }
+  .nota-comanda{ display:flex; gap:8px; align-items:center; padding:6px 0; border-top:1px solid rgba(255,255,255,.04); }
+  .nota-comanda .nc-ora{ font-family:'Space Mono',monospace; flex-shrink:0; }
+  .nota-comanda .nc-prod{ flex:1; color:var(--text); }
+  .nota-comanda .nc-x{ background:transparent; border:1px solid rgba(239,68,68,.5); color:var(--danger); border-radius:8px; width:30px; height:30px; cursor:pointer; flex-shrink:0; }
   .stare-pill.uitata{ background:rgba(239,68,68,.22); color:#fecaca; border:1px solid rgba(239,68,68,.6); }
   .stare-pill.suma{ background:rgba(245,158,11,.18); color:#fde68a; border:1px solid rgba(245,158,11,.55); }
   .order-card.uitata{ border-color:var(--danger); }
@@ -869,7 +892,7 @@
        <div class="zone-tabs" id="zoneTabsContainer"></div>
        <div id="alerteMese"></div>
 
-       <div class="dash-panel">
+       <div class="dash-panel panel-harta">
          <div class="tables-grid" id="tablesGrid"></div>
          <div class="sala-legend">
             <span><i style="background:var(--bg); border:2px solid var(--border);"></i> Libera</span>
@@ -1648,7 +1671,8 @@
   let salaConfig = { zones: [ { nume: "Salonul principal", mese: [] } ] };
   let currentZone = "Salonul principal";
   let isEditingMap = false;
-  let freedTables = {}; 
+  let freedTables = {};
+  let eliberariRecente = [];   // toate eliberarile citite (ultimele 300): { mesa, t } — despart notele de plata
   let autoFreedGuard = new Set(); 
 
   let AUTO_FREE_MINUTES = 15;     // cate minute dupa nota se elibereaza masa singura (setare a directorului)
@@ -1961,26 +1985,40 @@
 
   // Notificare locală, pentru cazul în care aplicația e deschisă în alt tab.
   // Push-ul de pe server acoperă restul situațiilor.
-  function showBackgroundAlert(title, body) {
+  // notificare pe telefon (cu aplicatia in fundal). `tag` = aceeasi cheie ca
+  // notificarea push a aceleiasi comenzi: daca push-ul a ajuns deja, nu o mai
+  // punem o data (si invers: service worker-ul o inlocuieste in liniste)
+  function showBackgroundAlert(title, body, tag) {
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
     if (!('serviceWorker' in navigator)) {
-      try { new Notification(title, { body }); } catch (e) {}
+      try { new Notification(title, { body, tag: tag || undefined }); } catch (e) {}
       return;
     }
     // timeout, ca să nu rămână blocat dacă service worker-ul nu e gata
     const gata = navigator.serviceWorker.ready;
     const limita = new Promise((_, rej) => setTimeout(() => rej(new Error('SW timeout')), 2500));
     Promise.race([gata, limita])
-      .then(reg => reg.showNotification(title, {
-        body,
-        icon: 'icons/icon-192.png',
-        badge: 'icons/icon-192.png',
-        vibrate: [400, 200, 400, 200, 800],
-        tag: 'zen-alert',
-        renotify: true,
-        requireInteraction: true
-      }))
+      .then(async reg => {
+        if (tag) { try { if ((await reg.getNotifications({ tag })).length) return; } catch (e) {} }
+        return reg.showNotification(title, {
+          body,
+          icon: 'icons/icon-192.png',
+          badge: 'icons/badge-96.png',
+          vibrate: [400, 200, 400, 200, 800],
+          tag: tag || 'zen-alert',
+          renotify: true,
+          requireInteraction: true
+        });
+      })
       .catch(() => { try { new Notification(title, { body }); } catch (e) {} });
+  }
+  // acelasi titlu, text si tag ca notificarea push trimisa de baza (functia
+  // notifica-comanda) pentru aceeasi comanda — asa nu apar doua pe telefon
+  function continutNotificare(c, tip) {
+      const linii = (c.produse || []).filter(p => (p.cantitate || 0) > 0).map(p => `${p.cantitate}× ${p.nume}`).join(', ');
+      if (esteAlerta(c)) return { title: `🔔 Masa ${c.mesa}`, body: String((c.produse && c.produse[0] && c.produse[0].nume) || 'Solicitare').replace('🔔 ALERTĂ OSPĂTAR: ', ''), tag: `alerta-${c.mesa}` };
+      if (tip === 'gata') return { title: `🍽️ Masa ${c.mesa} — comanda e gata`, body: (linii.slice(0, 180) || 'Du-o la masa') + ' · du-o la masa', tag: `gata-${c.id}` };
+      return { title: `🛎️ Comanda noua — Masa ${c.mesa}`, body: linii.slice(0, 180) || 'Comanda noua', tag: `comanda-${c.id}` };
   }
 
   function isTakeawayMesa(mesa) {
@@ -2435,8 +2473,7 @@
           if (userRole === 'ospatar') {
               if (!esteZonaMea(order)) return;   // alta zona: colegul ei e anuntat; tu doar o vezi in „Alte zone"
               if (navigator.vibrate) { try { navigator.vibrate([300, 150, 300]); } catch(e) {} }
-              showBackgroundAlert('🔔 Cerere de la masa', `Masa ${order.mesa}: ` +
-                  (order.produse || []).filter(p => p.cantitate > 0).map(p => p.nume).join(', '));
+              { const n = continutNotificare(order); showBackgroundAlert(n.title, n.body, n.tag); }
               return;
           }
       } else if (order.status === 'noua') {
@@ -2444,9 +2481,7 @@
       }
 
       if (document.hidden || document.visibilityState !== 'visible') {
-          const validItems = (order.produse || []).filter(p => p.cantitate > 0);
-          showBackgroundAlert(alerta ? '🔔 Cerere de la masa' : '🛎️ Comanda noua',
-              `Masa ${order.mesa}: ` + validItems.map(p => p.nume).join(', '));
+          const n = continutNotificare(order); showBackgroundAlert(n.title, n.body, n.tag);
       }
     } catch(e) { console.error('Alert error:', e); }
   }
@@ -2858,10 +2893,12 @@ loadFreedTables();
   async function loadFreedTables() {
       const {data} = await _supabase.from('jurnal_activitate').select('*').eq('actiune', 'mesa_liberada').order('created_at', {ascending:false}).limit(300);
       freedTables = {};
+      eliberariRecente = [];
       if(data) {
           data.forEach(log => {
               const mesa = log.detalii && log.detalii.mesa;
               if(mesa && !freedTables[mesa]) freedTables[mesa] = new Date(log.created_at).getTime();
+              if(mesa) eliberariRecente.push({ mesa: String(mesa), t: new Date(log.created_at).getTime() });
           });
       }
       updateMapBadge();
@@ -3332,6 +3369,7 @@ loadFreedTables();
       asazaMeseleFaraLoc(zone);
       grid.className = 'plan-sala' + (isEditingMap ? ' editare' : '') + (uneltaPlan === 'perete' ? ' unealta-perete' : uneltaPlan === 'sterge' ? ' unealta-sterge' : '');
       grid.style.setProperty('--plan-ar', `${plan.w} / ${plan.h}`);
+      grid.style.setProperty('--plan-w', plan.w);
       const px = (x) => (x / plan.w * 100) + '%', py = (y) => (y / plan.h * 100) + '%';
       const centru = (m) => { const r = dreptunghiMesei(m); return [r.x + r.w / 2, r.y + r.h / 2]; };
       // grupurile de mese unite: lipite una de alta -> o singura masa mare (contur
@@ -3350,9 +3388,8 @@ loadFreedTables();
           const patrata = g.some(i => zone.mese[i].forma === 'patrata');
           // raza colturilor: stadion (jumatate din latura mica) sau colturi rotunjite de 3 unitati
           const raza = patrata ? Math.min(3, (x2 - x1) / 2, (y2 - y1) / 2) : Math.min(x2 - x1, y2 - y1) / 2;
-          const upx = grid.getBoundingClientRect().width / plan.w;   // pixeli pe unitate (0 daca harta nu e afisata)
           const scaune = g.reduce((a, i, k) => a + numarScaune(zone.mese[i], marimeMesei(zone.mese[i]), atingeri[k]), 0);
-          grupuriHtml += `<div class="grup-mese status-${stare}${patrata ? ' patrata' : ''}${azi ? ' unita-azi' : ''}${isEditingMap ? ' editare' : ''}" style="left:${px(x1)}; top:${py(y1)}; width:${px(x2 - x1)}; height:${py(y2 - y1)};${upx ? ` border-radius:${(raza * upx).toFixed(1)}px;` : ''}">${scauneGrupHtml(x1, y1, x2, y2, scaune, raza)}</div>`;
+          grupuriHtml += `<div class="grup-mese status-${stare}${patrata ? ' patrata' : ''}${azi ? ' unita-azi' : ''}${isEditingMap ? ' editare' : ''}" style="left:${px(x1)}; top:${py(y1)}; width:${px(x2 - x1)}; height:${py(y2 - y1)}; border-radius:calc(${raza.toFixed(2)} * var(--u));">${scauneGrupHtml(x1, y1, x2, y2, scaune, raza)}</div>`;
           g.forEach((i, k) => inGrup.set(i, { ascunse: atingeri[k] }));
       });
       // peretii + legaturile intre mesele unite dar departate (SVG in unitati)
@@ -4868,9 +4905,9 @@ loadFreedTables();
         if(userRole === 'bar' && currentTab === 'history') return true;
 
         const isAlert = esteAlerta(o);
-        // Ospatarul vede ce e de dus la masa si cererile de la mese; comenzile
-        // in lucru le vede si el, ca sa poata modifica una daca clientul se razgandeste.
-        if(userRole === 'ospatar') return isAlert || o.status === 'gata' || ACTIVE.includes(o.status) || gataDeDus(o)
+        // Ospatarul vede doar ce e de dus la masa (dupa ce barul a apasat „Gata",
+        // 10 minute) si cererile de la mese — nu si comenzile abia date de client
+        if(userRole === 'ospatar') return isAlert || o.status === 'gata' || gataDeDus(o)
                                         || (currentTab === 'history' && (o.creat_de === currentUserEmail || o.preluat_de === currentUserEmail));
         // In mod fara ospatari, barul preia si alertele de la mese.
         // Cu bucataria inchisa, barul preia si comenzile de mancare.
@@ -4942,7 +4979,7 @@ loadFreedTables();
         </div>`;
     }
 
-        viewOrders.forEach(order => {
+        const cardComanda = (order) => {
       const isAlert = esteAlerta(order);
       const activa = ACTIVE.includes(order.status);
 
@@ -5105,9 +5142,108 @@ loadFreedTables();
         <div class="o-foot" style="margin-top:16px;">${footerHtml}</div>
       `;
       container.appendChild(card);
-    });
+      return card;
+    };
+    // istoricul: notele de plata (comenzile unei mese, adunate), anularile si cererile
+    if (currentTab === 'history') { randeazaIstoricNote(container, viewOrders, cardComanda); updateTimersUI(); return; }
+    viewOrders.forEach(cardComanda);
 
     updateTimersUI();
+  }
+
+  // --- Nota mesei in istoric ------------------------------------------------
+  // Tot ce a comandat o masa de cand s-a asezat lumea pana s-a eliberat masa
+  // e o singura nota de plata (un singur bon). Granita dintre note: eliberarea
+  // mesei (jurnal `mesa_liberada`); in plus, un bon deja confirmat inainte de
+  // comanda urmatoare sau o pauza mai lunga de 2 ore (zilele vechi nu mai au
+  // jurnalul eliberarilor — se pastreaza 3 zile).
+  function noteleZilei(comenzi, eliberari) {
+      const note = [], peMasa = {};
+      comenzi.forEach(o => { (peMasa[String(o.mesa)] = peMasa[String(o.mesa)] || []).push(o); });
+      Object.keys(peMasa).forEach(mesa => {
+          const lista = peMasa[mesa].slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+          const elib = (eliberari || []).filter(e => e.mesa === mesa).map(e => e.t);
+          let nota = null, ultima = null;
+          lista.forEach(o => {
+              const t = new Date(o.created_at).getTime();
+              const rupta = ultima && (elib.some(e => e > ultima.t && e <= t)
+                                    || t - ultima.t > 2 * 3600000
+                                    || (ultima.o.bon_scos_la && new Date(ultima.o.bon_scos_la).getTime() < t));
+              if (!nota || rupta) { nota = { mesa, comenzi: [], alerte: [] }; note.push(nota); }
+              if (esteAlerta(o)) { nota.alerte.push(o); return; }
+              nota.comenzi.push(o);
+              ultima = { t, o };
+          });
+      });
+      return note;
+  }
+  function randeazaIstoricNote(container, comenzi, cardComanda) {
+      const eliberari = ziIstoric ? (istoricZi.eliberari || []) : eliberariRecente;
+      const note = noteleZilei(comenzi.filter(o => o.status === 'finalizata'), eliberari);
+      const intrari = [];
+      note.forEach(n => {
+          if (!n.comenzi.length) { n.alerte.forEach(o => intrari.push({ t: new Date(o.created_at).getTime(), comanda: o })); return; }
+          intrari.push({ t: Math.max(...n.comenzi.concat(n.alerte).map(o => new Date(o.created_at).getTime())), nota: n });
+      });
+      comenzi.filter(o => o.status !== 'finalizata').forEach(o => intrari.push({ t: new Date(o.created_at).getTime(), comanda: o }));
+      intrari.sort((a, b) => b.t - a.t);
+      intrari.forEach(i => { if (i.nota) container.appendChild(cardNota(i.nota)); else cardComanda(i.comanda); });
+      const istText = document.getElementById('istText'), nrNote = note.filter(n => n.comenzi.length).length;
+      if (istText) istText.textContent = `${nrNote} ${nrNote === 1 ? 'nota' : 'note'} · ${comenzi.filter(o => o.status === 'finalizata' && !esteAlerta(o)).length} comenzi · ${comenzi.filter(o => o.status === 'anulata').length} anulate`;
+  }
+  function cardNota(n) {
+      const comenzi = n.comenzi.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      const ora = (s) => new Date(s).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+      const produse = {}, notite = new Set();
+      comenzi.forEach(o => (o.produse || []).forEach(p => {
+          if (p.cantitate > 0) produse[p.nume] = (produse[p.nume] || 0) + p.cantitate;
+          else if (p.nume && p.nume.startsWith('📝')) notite.add(p.nume);
+      }));
+      const total = comenzi.reduce((s, o) => s + Number(o.total || 0), 0);
+      const ids = comenzi.map(o => o.id);
+      const confirmate = comenzi.filter(o => o.bon_scos);
+      const toate = confirmate.length === comenzi.length;
+      const ultimBon = confirmate.slice().sort((a, b) => new Date(b.bon_scos_la || 0) - new Date(a.bon_scos_la || 0))[0];
+      const bonInfo = toate && ultimBon ? `🧾 Bon confirmat${ultimBon.bon_scos_de ? ' de ' + escapeHTML(numeScurt(ultimBon.bon_scos_de)) : ''}${ultimBon.bon_scos_la ? ' la ' + ora(ultimBon.bon_scos_la) : ''}` : '';
+      const lei = `${total.toFixed(2)} lei`;
+      let footer = '';
+      if (userRole === 'bar' || userRole === 'manager') {
+          // barul confirma o singura data, pentru toata nota; managerul o poate scoate
+          const poateSchimba = !toate || userRole === 'manager';
+          const text = toate ? bonInfo : confirmate.length ? `🧾 Confirma bonul · ${confirmate.length} din ${comenzi.length} confirmate` : `🧾 Confirma bonul · ${lei}`;
+          footer = `<label class="bon-check ${toate ? 'checked' : ''}" ${poateSchimba ? `onclick="event.preventDefault(); toggleBonNota(${JSON.stringify(ids)}, ${!toate});"` : 'style="cursor:default;"'}>
+                   <input type="checkbox" ${toate ? 'checked' : ''} tabindex="-1">${text}</label>`;
+      } else if (userRole === 'director') {
+          footer = `<div class="status-text" style="color:${toate ? 'var(--success)' : 'var(--warning)'}; font-weight:700;">${toate ? bonInfo : `⚠️ Bon in asteptare (bar) · ${lei}`}</div>`;
+      } else {
+          footer = `<div class="status-text" style="color:var(--success); font-weight:700;">${toate ? bonInfo : lei}</div>`;
+      }
+      const itemsHtml = Object.entries(produse).map(([nume, q]) => `<li><span class="qty">${q}x</span> <span>${escapeHTML(nume)}</span></li>`).join('')
+          + [...notite].map(t => `<li style="color: var(--warning); font-weight: 600; font-style: italic; font-size: 14px;">${escapeHTML(t)}</li>`).join('')
+          + `<li class="nota-total"><span>Total</span><b>${lei}</b></li>`;
+      const alerteHtml = n.alerte.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+          .map(a => `<div class="nota-alerta">🔔 ${ora(a.created_at)} · ${escapeHTML(String((a.produse && a.produse[0] && a.produse[0].nume) || '').replace(/🔔?\s*ALERTĂ OSPĂTAR:\s*/, ''))}</div>`).join('');
+      const potAnula = (userRole === 'bar' || userRole === 'manager') && !ziIstoric;
+      const detalii = comenzi.map(o => `<div class="nota-comanda"><span class="nc-ora">${ora(o.created_at)}</span><span class="nc-prod">${escapeHTML((o.produse || []).filter(p => p.cantitate > 0).map(p => `${p.cantitate}× ${p.nume}`).join(', '))}</span>${o.bon_scos ? '<span title="bon confirmat">🧾</span>' : ''}${potAnula ? `<button type="button" class="nc-x" title="Retur / anulare (cu motiv)" onclick="deschideAnulare(${o.id})">✕</button>` : ''}</div>`).join('');
+      const nume = [...new Set(comenzi.map(o => o.preluat_de || o.creat_de).filter(Boolean).map(numeScurt))];
+      const staffLine = nume.length ? `<div style="font-size:11px; color:var(--text-muted); font-family:'Space Mono',monospace; margin-top:4px;">👤 ${escapeHTML(nume.join(', '))}</div>` : '';
+      let mesaDisp = escapeHTML(String(n.mesa));
+      if (mesaDisp !== 'Takeaway' && !mesaDisp.includes('Tk:')) mesaDisp = '#' + mesaDisp;
+      const card = document.createElement('div');
+      card.className = 'order-card nota-card';
+      card.dataset.status = 'finalizata';
+      card.dataset.mesa = n.mesa;
+      card.innerHTML = `
+        <div class="o-head">
+          <div class="table-nr">${mesaDisp}<br><span class="stare-pill nota">🧾 nota mesei · ${comenzi.length} ${comenzi.length === 1 ? 'comanda' : 'comenzi'}</span></div>
+          <div class="o-time"><span>${ora(comenzi[0].created_at)}${comenzi.length > 1 ? ' – ' + ora(comenzi[comenzi.length - 1].created_at) : ''}</span></div>
+        </div>
+        <ul class="o-items">${itemsHtml}</ul>
+        ${alerteHtml}
+        <details class="nota-comenzi"><summary>Comenzile, una cate una (${comenzi.length})</summary>${detalii}</details>
+        ${staffLine}
+        <div class="o-foot" style="margin-top:16px;">${footer}</div>`;
+      return card;
   }
 
   function updateTimersUI() {
@@ -5725,6 +5861,33 @@ loadFreedTables();
 
   // Barul confirma bonul; serverul scrie cine si cand. Bifa nu se mai scoate
   // de la bar — daca s-a gresit, o scoate directorul, si ramane in jurnal.
+  // bonul pentru toata nota mesei (toate comenzile ei, plus partile-pereche bar/bucatarie)
+  window.toggleBonNota = async function(ids, newState) {
+      if(userRole !== 'bar' && userRole !== 'manager') return;
+      const lista = sursaComenzi();
+      const comenzi = ids.map(id => lista.find(o => o.id === id)).filter(Boolean);
+      if (!comenzi.length) return;
+      const toateId = new Set(comenzi.map(o => o.id));
+      comenzi.forEach(o => { if (o.grup_comanda) lista.filter(x => x.grup_comanda === o.grup_comanda).forEach(x => toateId.add(x.id)); });
+      const deSchimbat = [...toateId].filter(id => { const o = lista.find(x => x.id === id); return o && !!o.bon_scos !== newState; });
+      if (!deSchimbat.length) return;
+      const total = [...toateId].reduce((s, id) => { const o = lista.find(x => x.id === id); return s + Number(o && o.total || 0); }, 0);
+      const eticheta = etichetaMasaVorbita(comenzi[0]);
+      if (!newState) {
+          if (userRole !== 'manager') { alert('Bonul confirmat ramane pe numele tau. Daca e o greseala, spune-i managerului.'); return; }
+          if (!confirm(`Scoti confirmarea bonului de la ${eticheta}? Ramane in jurnal.`)) return;
+      } else {
+          if (!confirm(`Confirmi ca ai scos bonul pentru ${eticheta} (${total.toFixed(2)} lei, ${toateId.size} ${toateId.size === 1 ? 'comanda' : 'comenzi'})?\nRamane scris pe numele tau si nu se mai poate scoate de la bar.`)) return;
+      }
+      const { data, error } = await _supabase.from('comenzi').update({ bon_scos: newState }).in('id', deSchimbat).select('id,bon_scos,bon_scos_de,bon_scos_la');
+      if (error) { alert('Nu s-a putut salva: ' + error.message); return; }
+      (data || []).forEach(r => { const o = lista.find(x => x.id === r.id); if (o) Object.assign(o, r); });
+      perioadaCache.la = 0;   // statisticile pe luna se recitesc
+      renderOrders();
+      if (currentTab === 'admin') calculateDirectorStats();
+      logActivity('ticket_confirmado', deSchimbat[0], { bon_scos: newState, mesa: comenzi[0].mesa, total, comenzi: deSchimbat });
+      if (newState) arataInapoi(`🧾 Bon confirmat · ${eticheta}`, async () => { for (const oid of deSchimbat) await revino(oid, 'bon'); });
+  };
   window.toggleBon = async function(id, newState) {
       if(userRole !== 'bar' && userRole !== 'manager') return;
       const lista = sursaComenzi();   // comanda poate fi dintr-o zi trecuta (Istoric)
@@ -6259,6 +6422,11 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
               const comenzi = await citesteComenzi(sfarsitZi(ieri).getTime(), sfarsitZi(zi).getTime());
               if (istoricZi.cheie !== cheieZi(zi)) return;   // intre timp s-a ales alta zi
               istoricZi.comenzi = await attachTakeawayContacts(comenzi);
+              // eliberarile zilei, ca sa despartim notele de plata (jurnalul le tine 3 zile;
+              // mai in urma, notele se despart dupa pauze si bonuri)
+              const { data: elib } = await _supabase.from('jurnal_activitate').select('created_at, detalii').eq('actiune', 'mesa_liberada')
+                  .gte('created_at', new Date(sfarsitZi(ieri).getTime()).toISOString()).lt('created_at', new Date(sfarsitZi(zi).getTime()).toISOString()).limit(1000);
+              istoricZi.eliberari = (elib || []).filter(r => r.detalii && r.detalii.mesa).map(r => ({ mesa: String(r.detalii.mesa), t: new Date(r.created_at).getTime() }));
           } catch (e) {
               document.getElementById('istText').textContent = 'Nu am putut incarca ziua. Incearca din nou.';
               return;
@@ -6467,11 +6635,9 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
               if (!esteZonaMea(p.new)) return;   // alta zona: colegul ei e anuntat; tu doar o vezi in „Alte zone"
               if (navigator.vibrate) { try { navigator.vibrate([400, 200, 400, 200, 800]); } catch(e) {} }
               bipScurt(2);
-              const validItems = (p.new.produse || []).filter(x => x.cantitate > 0);
               setTimeout(() => rosteste(`${etichetaMasaVorbita(p.new).replace(/^m/, 'M')}, comanda e gata.`), 700);
-              const title = '🍽️ Comanda gata';
-              const body = `Masa ${p.new.mesa}: ` + validItems.map(x => x.nume).join(', ');
-              showBackgroundAlert(title, body);
+              const n = continutNotificare(p.new, 'gata');
+              showBackgroundAlert(n.title, n.body, n.tag);
           }
 
           // Daca o comanda e anulata, reimprospatam cardurile active ca partea
@@ -6501,6 +6667,8 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
               const mesa = p.new.detalii && p.new.detalii.mesa;
               if(mesa) {
                   freedTables[String(mesa)] = new Date(p.new.created_at).getTime();
+                  eliberariRecente.push({ mesa: String(mesa), t: new Date(p.new.created_at).getTime() });
+                  if (currentTab === 'history' && !ziIstoric) renderOrders();   // nota mesei se inchide
                   updateMapBadge();
                   if(currentTab === 'map') renderTablesGrid();
               }
@@ -6796,7 +6964,7 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
       if (rol !== 'director') pasi.push({ el: () => document.getElementById('cardDemoGhid') || document.querySelector('#ordersView .order-card') || document.getElementById('ordersView'),
           titlu: 'O comanda',
           text: rol === 'ospatar'
-            ? 'Cand barul apasa „Gata", telefonul spune masa: du-o. ✏️ modifica daca clientul se razgandeste, ✕ anuleaza (cu motiv, numele tau si codul lunii de la manager).'
+            ? 'Cand barul apasa „Gata", telefonul te anunta si comanda apare aici 10 minute: du-o la masa. Pana atunci o vede doar barul. ✕ anuleaza (cu motiv, numele tau si codul lunii de la manager).'
             : rol === 'manager'
             ? 'Nu esti anuntat de comenzi noi, dar afli de fiecare anulare, cu numele si motivul. Barul si ospatarii anuleaza doar cu codul lunii — il ai in Sef → Setari.'
             : 'Comanda noua: bip, masa (cu vocea pornita) si ding-dong pana apesi „Accepta". „Gata" cand e facuta. ✏️ modifica, ✕ anuleaza (cu motiv, numele tau si codul lunii).',
@@ -6815,8 +6983,8 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
       if (rol === 'ospatar') pasi.push({ el: '#navMeniu', titlu: 'Meniu', text: 'Trimiti o comanda in numele clientului, ca de pe telefon.' });
       if (rol === 'bar' || rol === 'bucatarie') pasi.push({ el: '#navStock', titlu: 'Stoc', text: 'S-a terminat ceva? Il blochezi si dispare din meniul clientilor.' });
       pasi.push({ el: '#navHistory', titlu: 'Istoric',
-          text: rol === 'bar' ? 'Comenzile terminate azi. Aici confirmi ca ai scos bonul — ramane pe numele tau. Cu sagetile vezi si zilele trecute.'
-                              : 'Comenzile terminate si anulate, pe zile: azi sau orice zi din luna asta si luna trecuta.' });
+          text: rol === 'bar' ? 'Notele de plata de azi: o nota = tot ce a comandat masa de cand s-a asezat pana s-a eliberat, adunat. Aici confirmi ca ai scos bonul (o data pentru toata nota) — ramane pe numele tau. Cu sagetile vezi si zilele trecute.'
+                              : 'Notele de plata (tot ce a comandat o masa, adunat) si anularile, pe zile: azi sau orice zi din luna asta si luna trecuta.' });
       if (rol === 'director') {
           pasi.push({ el: '#navAdmin', titlu: 'Sinteza', text: 'Incasari, comenzi, top produse si harta orelor de varf — pe azi sau pe ultimele 30 de zile. Excel de aici.' });
           pasi.push({ el: '#navSefMeniu', titlu: 'Meniu', text: 'Meniul zilei (oferte cu pret special si interval) si meniul clientilor: produse, preturi, descrieri, poze. Publici cand esti gata.' });

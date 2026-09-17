@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zen-cache-v6';
+const CACHE_NAME = 'zen-cache-v7';
 
 // Cai RELATIVE: aplicatia e servita dintr-un subfolder (/m3/), iar caile
 // absolute ('/dashboard') dadeau 404 -> cache.addAll pica -> service
@@ -121,7 +121,13 @@ self.addEventListener('push', event => {
     data: { url: d.url || './dashboard.html', comandaId: d.comandaId || null }
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  event.waitUntil(
+    self.registration.getNotifications({ tag: options.tag }).then(list => {
+      // pagina a aratat deja aceeasi comanda (acelasi tag): o inlocuim in liniste, fara al doilea sunet
+      if (list.length) { options.renotify = false; delete options.vibrate; }
+      return self.registration.showNotification(title, options);
+    }).catch(() => self.registration.showNotification(title, options))
+  );
 });
 
 self.addEventListener('notificationclick', event => {

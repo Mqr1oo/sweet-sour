@@ -1621,6 +1621,66 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
   cuvânt de alcool, nu era „cu alcool").
 - `zen/sw.js` → `zen-cache-v6`, `m3/sw.js` → `m3-cache-v4`.
 
+## Runda 33 — o singură notificare, ospătarul vede doar ce e gata, nota mesei, harta pe telefon
+
+- **Notificarea dublă** („🍽️ Masa 10 — comanda e gata" + „🍽️ Comanda gata")
+  venea din două surse: push-ul trimis de bază (`trg_notifica_gata` →
+  `notifica-comanda`, tag `gata-<id>`) și notificarea pusă de pagina
+  deschisă în fundal (`showBackgroundAlert`, tag fix `zen-alert`). Acum
+  `continutNotificare(c, tip)` din panou produce **același titlu, text și
+  tag** ca funcția Edge (`continut()` din `notifica-comanda/index.ts`):
+  `comanda-<id>` / `gata-<id>` / `alerta-<masă>`. `showBackgroundAlert(title,
+  body, tag)` nu mai arată nimic dacă există deja o notificare cu tag-ul
+  (`reg.getNotifications({tag})`), iar `sw.js` (`push`) — dacă pagina a
+  apucat să o pună prima — o **înlocuiește în liniște** (`renotify:false`,
+  fără `vibrate`). Chrome cere ca fiecare push să arate ceva, de aceea nu se
+  sare peste `showNotification`, doar se face tăcută. Badge-ul paginii e acum
+  tot `badge-96.png`. Cache SW: zen v7, m3 v5, skyfall v4.
+- **Ospătarul nu mai vede comenzile în lucru** (`noua` / `acceptata`) —
+  raportat: „nu vreau să-mi apară la ospătari ce am comandat imediat, trebuie
+  să-mi zică barul că e gata". Filtrul din `renderOrders` pentru `ospatar`:
+  doar cererile de la mese, `gata` și `gataDeDus` (finalizată de sub 10
+  minute — `GATA_DE_DUS_MS`); cardurile dispar unul câte unul la re-randare
+  (`resincronizeaza` la 60 s). Consecință: butonul „✏️ Modifică comanda" nu
+  mai apare la ospătar (o comandă în lucru se modifică de la bar / manager);
+  cererea „vrea să schimbe comanda" ajunge tot la el, ca cerere. Push-ul
+  către ospătari era deja doar pentru `gata` și cereri (migrarea 22). Textele
+  ghidului actualizate.
+- **Istoric = note de plată, nu comenzi.** `noteleZilei(comenzi, eliberari)`
+  grupează comenzile finalizate pe masă și le taie în **note**: granița e
+  eliberarea mesei (jurnal `mesa_liberada` — `eliberariRecente` din
+  `loadFreedTables` + realtime pentru azi, `istoricZi.eliberari` citit din
+  jurnal pentru ziua aleasă; jurnalul le ține 3 zile), un bon deja confirmat
+  înainte de comanda următoare (`bon_scos_la < created_at`) sau o pauză de
+  peste 2 ore (zilele fără jurnal). Cererile de la masă (nota cash/card,
+  ajutor) intră în nota mesei ca rânduri „🔔 01:30 · Nota (cash)"; comenzile
+  anulate rămân carduri separate; o „notă" doar cu cereri, fără comenzi, își
+  arată cererile ca înainte. `cardNota(n)`: produsele **adunate** pe nume
+  (`3× Bere fără alcool`), notițele 📝, **Total**, interval orar, personalul,
+  un `<details>` „Comenzile, una câte una" cu ora, produsele, 🧾 dacă are
+  bonul și ✕ (retur, doar pe ziua curentă, bar/manager), și **un singur
+  „🧾 Confirmă bonul · 194.00 lei"** → `toggleBonNota(ids, stare)`: update pe
+  toate comenzile notei (plus părțile-pereche `grup_comanda`), o singură
+  confirmare cu totalul și numărul de comenzi, jurnal `ticket_confirmado` cu
+  lista `comenzi`, „Înapoi" pe fiecare (`revino(id,'bon')`). Parțial
+  confirmat: „Confirmă bonul · 2 din 6 confirmate" (bifează restul);
+  managerul poate scoate confirmarea. `renderOrders` a fost împărțit:
+  `cardComanda(order)` (cardul de până acum) + `randeazaIstoricNote(container,
+  comenzi, cardComanda)` pentru tabul Istoric; contorul de sus: „3 note · 9
+  comenzi · 1 anulate".
+- **Harta pe telefon** încape pe lățimea ecranului (fără derulare
+  laterală — `min-width:640px` a dispărut) și **totul se scalează** cu
+  mărimea hărții: `.panel-harta { container-type: inline-size }`, iar
+  `.plan-sala` definește `--u: calc(100cqw / var(--plan-w))` = pixeli pe
+  unitate (`--plan-w` pus din JS, 100 sau 70). Numărul mesei
+  `clamp(11px, 2.6u, 22px)`, timpul `clamp(8px, 1.55u, 13px)`, scaunele
+  `2.2u × 1.4u` (7–16 px), raza conturului grupului `calc(r * var(--u))`
+  (nu mai e nevoie de `upx`). Pe hartă mică (`@container (max-width:480px)`)
+  dispare eticheta zonei din plan și rândul „⏱" de pe masa mov (rămâne
+  numărătoarea). Pe telefon panoul hărții are padding 8 px și iese 12 px în
+  marginile paginii (`.panel-harta`), pereții au 4 px. Pe un telefon de
+  390 px o masă normală are ~43 px, una mare ~54 px.
+
 ## Înainte de deschidere
 
 1. Authentication → Providers → Email: **Allow new users to sign up** = oprit.

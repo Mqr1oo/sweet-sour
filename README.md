@@ -126,7 +126,7 @@ date: chiar dacă cineva ar umbla la aplicație, serverul refuză ce nu are voie
 |---|---|
 | **Bar** | primește comenzile de băuturi, le acceptă, le închide; aude cererile de la mese; confirmă bonurile; anulează cu codul lunii |
 | **Bucătărie** | primește comenzile de mâncare, le acceptă, le închide; poate marca produse ca terminate |
-| **Ospătar** | vede ce e de dus la masă și cererile de la mese; modifică sau anulează comenzi (cu codul lunii); ia comenzi în numele clientului; își alege zona |
+| **Ospătar** | vede **doar** ce e de dus la masă (după ce barul a apăsat „Gata") și cererile de la mese; anulează comenzi (cu codul lunii); ia comenzi în numele clientului; își alege zona |
 | **Manager** | supraveghează: vede comenzile, modifică orice comandă, anulează **fără cod**, are **codul lunii**, pornește „ora de vârf", aranjează sala, are istoricul, încasările și un tab **Setări** al lui; **nu** are stocul, comanda rapidă (Meniu) și datele personalului |
 | **Director** | **⭐ nu lucrează cu comenzile**: nu vede panoul de comenzi și nici stocul, nu e deranjat de nicio alarmă. Are încasările și rapoartele pe zi sau pe lună, anulările, turele, setările, meniul, sala și istoricul pe zile |
 
@@ -163,14 +163,19 @@ singur alt rol.
 - **Căutarea** (masă / la pachet) are un ✕ care o golește.
 - **Contul tău** (pe telefon, apasă pe numele tău): ghidul rapid, starea
   notificărilor, informarea GDPR, deconectarea.
-- **Istoric**: comenzile terminate și anulate, **pe zile de lucru**. Se
-  deschide pe azi (de la ultima închidere); cu săgețile sau din calendar
-  vezi orice zi din luna aceasta și din luna trecută. Nu există niciun buton
-  de șters: baza păstrează luna în curs și luna trecută, iar pe 1 ale lunii
-  șterge singură luna de dinainte. Barul **confirmă bonul** pe fiecare — bifa
-  rămâne pe numele lui, cu ora, și nu se mai poate scoate de la bar (doar
-  managerul, dacă a fost o greșeală); se poate bifa și pe o zi trecută, dar
-  anularea (retur) se face doar pe ziua curentă.
+- **Istoric**: **notele de plată** și anulările, **pe zile de lucru**. O
+  notă = **tot ce a comandat o masă de când s-a așezat lumea până s-a
+  eliberat masa**, adunat pe produse (masa 10 a dat șase comenzi în seara
+  asta → un singur card: 5× Ceahlău, 3× bere fără alcool…, Total 194 lei,
+  cu cererea de notă dedesubt și, la „Comenzile, una câte una", fiecare
+  comandă cu ora ei). Se deschide pe azi (de la ultima închidere); cu
+  săgețile sau din calendar vezi orice zi din luna aceasta și din luna
+  trecută. Nu există niciun buton de șters: baza păstrează luna în curs și
+  luna trecută, iar pe 1 ale lunii șterge singură luna de dinainte. Barul
+  **confirmă bonul o singură dată, pe toată nota** — bifa rămâne pe numele
+  lui, cu ora, și nu se mai poate scoate de la bar (doar managerul, dacă a
+  fost o greșeală); se poate bifa și pe o zi trecută, dar anularea (retur,
+  ✕ la fiecare comandă din notă) se face doar pe ziua curentă.
 - **Stoc**: s-a terminat ceva? Îl blochezi și dispare pe loc din meniul
   clienților.
 - **Comandă rapidă** (meniu): barul sau ospătarul trimite o comandă în numele
@@ -185,15 +190,16 @@ singur alt rol.
 Același panou, dar cu ce-l privește pe el:
 
 - **Ce e de dus la masă**: când barul apasă „Gata", telefonul ospătarului
-  bipăie, vibrează și spune masa. Cardul rămâne albastru câteva minute, apoi
-  dispare singur.
+  bipăie, vibrează, spune masa și primește **o singură** notificare (și cu
+  aplicația închisă). Abia atunci apare comanda la el — **nu** și când a
+  dat-o clientul, aceea o vede doar barul. Cardul rămâne albastru 10 minute,
+  apoi dispare singur.
 - **Cererile de la mese**: nota (cash / card), ajutor, „vrea să schimbe
   comanda". Le preia cu **„Preluat"** — rămâne pe numele lui.
 - **Calculatorul de rest**: pe cererea de notă vede totalul mesei, scrie cât
   a primit și îi arată restul.
-- **Modifică comenzi**: scoate, adaugă, schimbă cantități — barul vede pe
-  loc. Cât e neacceptată, oricând; după, în „fereastra de modificare" pusă de
-  director.
+- **Vrea clientul să schimbe comanda?** Cererea ajunge la ospătar; comanda
+  în lucru o modifică barul sau managerul (✏️ pe card).
 - **⭐ Zona mea**: își bifează zonele de care răspunde (Terasă, Interior…).
   În Comenzi are trei taburi: **„Zona mea"** (comenzile lui, de dus la masă),
   **„Cereri"** (nota, ajutor, din zona lui) și **„Alte zone"** — comenzile și
@@ -219,8 +225,10 @@ un perete, barul, o scară) și tragi mesele exact unde sunt în realitate.
 Atingi o masă și îi spui câte locuri are, dacă e rotundă sau pătrată, cât de
 mare e (mică, normală, mare, lungă) și dacă e **unită cu altă masă** (o
 linie punctată le leagă, iar nota se vede împreună). „➕ Masa" adaugă una
-nouă; „Salvează harta" o trimite tuturor. Pe telefon harta se derulează
-lateral, ca mesele să rămână mari. Mesele vechi, fără loc pe hartă, primesc
+nouă; „Salvează harta" o trimite tuturor. **Pe telefon harta încape pe
+lățimea ecranului** — se micșorează singură, cu tot cu numere, timpi și
+scaune (o masă normală are cam un centimetru; ca să iasă bine, nu pune multe
+mese una lângă alta pe lățime). Mesele vechi, fără loc pe hartă, primesc
 unul singure și se pot muta.
 
 Toată lumea vede aceeași hartă, live. Mesele sunt desenate ca mesele: un
