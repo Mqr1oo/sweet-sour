@@ -326,10 +326,24 @@
   .plan-sala .scaun { position:absolute; width: clamp(7px, calc(var(--u) * 2.2), 16px); height: clamp(4px, calc(var(--u) * 1.4), 10px); border-radius:5px 5px 3px 3px; background:rgba(255,255,255,.28); border:1px solid rgba(255,255,255,.35); transform:translate(-50%, -50%) rotate(var(--rot, 0deg)); pointer-events:none; }
   .plan-sala .table-card.status-free .scaun { background:rgba(255,255,255,.16); }
   .plan-sala .table-card.rotunda .scaun { border-radius:5px; }
+  /* zona ospatarului (scrisa pe masa de director): scaunele in culoarea zonei si numele ei sub numar;
+     legenda de deasupra hartii spune a cui e fiecare zona azi */
+  .plan-sala .table-card.cu-zona .scaun, .plan-sala .grup-mese.cu-zona .scaun { background: color-mix(in srgb, var(--zc) 62%, transparent); border-color: color-mix(in srgb, var(--zc) 80%, #fff); }
+  .plan-sala .table-card.status-free.cu-zona .scaun, .plan-sala .grup-mese.status-free.cu-zona .scaun { background: color-mix(in srgb, var(--zc) 45%, transparent); }
+  .plan-sala .table-card .t-zona { font-size: clamp(7px, calc(var(--u) * 1.35), 10px); line-height:1.1; letter-spacing:.04em; text-transform:uppercase; color: var(--zc, var(--text-muted)); max-width:94%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .zone-legenda { display:none; flex-wrap:wrap; gap:8px; margin:-6px 0 14px; }
+  .zone-legenda.on { display:flex; }
+  .zl-chip { display:inline-flex; align-items:center; gap:7px; padding:6px 11px; border-radius:100px; border:1px solid var(--border); background:var(--bg); font-size:12.5px; color:var(--text); }
+  .zl-chip i { width:11px; height:11px; border-radius:50%; background: var(--zc, rgba(255,255,255,.18)); border:1px solid rgba(255,255,255,.3); flex:none; }
+  .zl-chip small { color:var(--text-muted); font-size:12px; }
+  .zl-chip.mea { border-color: var(--zc); box-shadow: inset 0 0 0 1px var(--zc); }
+  .plan-bara .zona-pensula { display:flex; flex-wrap:wrap; gap:6px; flex-basis:100%; align-items:center; }
+  .plan-bara .zona-pensula button i { display:inline-block; width:9px; height:9px; border-radius:50%; background: var(--zc, rgba(255,255,255,.25)); margin-right:6px; vertical-align:middle; }
+  .plan-sala.unealta-zona .table-card { cursor:pointer; }
   .plan-sala .eticheta-zona { position:absolute; left:10px; top:8px; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); pointer-events:none; }
   /* harta mica (telefon): fara eticheta zonei in plan (numele e in tabul de sus) si un singur rand de timp pe masa mov */
   @container (max-width: 480px) {
-      .plan-sala .eticheta-zona { display:none; }
+      .plan-sala .eticheta-zona, .plan-sala .table-card .t-zona { display:none; }
       .plan-sala .table-card.status-purple .t-timp:not([data-termen]) { display:none; }
   }
   .plan-bara { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
@@ -742,8 +756,6 @@
   .mz-item .mz-red{ background:rgba(239,68,68,.15); color:#f87171; font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:2px 7px; border-radius:999px; white-space:nowrap; }
   .mz-item .mz-x{ background:none; border:1px solid var(--border); color:var(--text-muted); border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:14px; flex:0 0 32px; }
   .mz-item .mz-x:hover{ color:var(--danger); border-color:var(--danger); }
-  #mfaQr img, #mfaQr svg{ width:180px; height:180px; background:#fff; border-radius:12px; padding:8px; display:block; margin:10px 0; }
-  .mfa-secret{ font-family:'Space Mono',monospace; font-size:12px; word-break:break-all; color:var(--text-muted); user-select:all; }
 </style>
 </head>
 <body>
@@ -758,19 +770,6 @@
       <button type="submit" class="btn-primary">Intra</button>
     </form>
     <p id="loginInfo" style="display:none; color:var(--warning); font-size:13px; margin-top:12px; line-height:1.5;"></p>
-  </div>
-</div>
-
-<div class="auth-overlay" id="mfaOverlay" style="display:none;">
-  <div class="auth-card">
-    <h2>🔐 Al doilea factor</h2>
-    <p style="color: var(--text-muted); margin-bottom: 22px;">Scrie codul de 6 cifre din aplicatia de autentificare.</p>
-    <form id="mfaForm">
-      <input type="text" id="mfaCod" class="auth-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" required>
-      <button type="submit" class="btn-primary">Continua</button>
-    </form>
-    <p id="mfaEroare" style="display:none; color:var(--danger); font-size:13px; margin-top:12px;"></p>
-    <button id="mfaRenunta" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font:inherit;margin-top:16px;">Iesi din cont</button>
   </div>
 </div>
 
@@ -879,17 +878,18 @@
        <div class="dash-panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap:16px;">
           <div>
             <h3>🗺️ Planul salii</h3>
-            <p style="color:var(--text-muted); font-size:13px; line-height: 1.5;">Atinge o masa: comanda, nota, eliberare. <b>Tine apasat</b> pe o masa ca s-o tragi: peste alta masa se unesc pe ziua de azi, in gol doar se muta (un grup lipit se muta impreuna); tine apasat pe o masa unita, fara s-o misti, ca sa desparti grupul. <span id="salaFullMsg" style="display:none; color:var(--danger); font-weight:700;">· SALA PLINA</span></p>
+            <p style="color:var(--text-muted); font-size:13px; line-height: 1.5;">Taburile de sus sunt spatiile localului (interior, terasa, etaj); scaunele colorate arata zona unui ospatar, iar legenda spune a cui e azi. Atinge o masa: comanda, nota, eliberare. <b>Tine apasat</b> pe o masa ca s-o tragi: peste alta masa se unesc pe ziua de azi, in gol doar se muta (un grup lipit se muta impreuna); tine apasat pe o masa unita, fara s-o misti, ca sa desparti grupul (mesele revin unde erau). <span id="salaFullMsg" style="display:none; color:var(--danger); font-weight:700;">· SALA PLINA</span></p>
           </div>
           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
              <button id="btnRezervari" class="btn-action" style="border:1px solid #14b8a6; color:#5eead4; background:rgba(20,184,166,.10); font-size:13px; padding: 10px 14px;">📅 Rezervari<span id="nrRezervari" class="badge-count" style="display:none; position:static; margin-left:8px;">0</span></button>
-             <button id="btnAddZone" class="btn-action" style="border:1px solid var(--border); display:none; font-size:13px; padding: 10px 14px;">➕ Zona noua</button>
-             <button id="btnDeleteZone" class="btn-action" style="border:1px solid var(--danger); color:var(--danger); background:transparent; display:none; font-size:13px; padding: 10px 14px;">🗑️ Sterge zona</button>
+             <button id="btnAddZone" class="btn-action" style="border:1px solid var(--border); display:none; font-size:13px; padding: 10px 14px;">➕ Spatiu nou</button>
+             <button id="btnDeleteZone" class="btn-action" style="border:1px solid var(--danger); color:var(--danger); background:transparent; display:none; font-size:13px; padding: 10px 14px;">🗑️ Sterge spatiul</button>
              <button id="btnEditMap" class="btn-action" style="border:1px solid var(--border); display:none; font-size:13px; padding: 10px 14px;">✏️ Editeaza harta</button>
           </div>
        </div>
        
        <div class="zone-tabs" id="zoneTabsContainer"></div>
+       <div class="zone-legenda" id="zoneLegenda"></div>
        <div id="alerteMese"></div>
 
        <div class="dash-panel panel-harta">
@@ -1141,33 +1141,9 @@
         </div>
       </section>
 
-      <section class="setari-sectiune" data-grup="setari">
-        <div class="setari-titlu"><h4>Siguranta</h4><p>Protectie pentru cont si impotriva comenzilor false.</p></div>
+      <section class="setari-sectiune" data-grup="setari" data-director>
+        <div class="setari-titlu"><h4>Siguranta</h4><p>Protectie impotriva comenzilor false.</p></div>
         <div class="setari-grila">
-          <div class="dash-panel" style="border-color: var(--blue);">
-             <h3 style="color: var(--blue);">🔐 Al doilea factor pentru contul tau</h3>
-             <p style="color:var(--text-muted); font-size:13px;">
-               La intrare, pe langa parola, ti se cere un cod de 6 cifre din
-               aplicatia de autentificare de pe telefon (Google Authenticator,
-               Microsoft Authenticator, Authy). Daca cineva afla parola, tot nu
-               poate intra. Doar pentru contul cu care esti logat acum.
-             </p>
-             <div id="mfaStare" style="margin:10px 0; font-size:14px;">…</div>
-             <div id="mfaInrolare" style="display:none;">
-               <p style="font-size:13px; color:var(--text-muted);">1. Deschide aplicatia de autentificare si scaneaza codul (sau scrie cheia de mai jos). 2. Scrie codul de 6 cifre pe care ti-l arata.</p>
-               <div id="mfaQr"></div>
-               <div class="mfa-secret" id="mfaSecret"></div>
-               <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px;">
-                 <input type="text" id="mfaCodInrolare" class="lim-in" inputmode="numeric" maxlength="6" placeholder="000000" style="width:130px;">
-                 <button class="btn-primary" id="btnMfaConfirma" style="width:auto; padding:10px 16px;">Confirma</button>
-               </div>
-             </div>
-             <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-               <button class="btn-primary" id="btnMfaActiveaza" style="width:auto; padding:10px 16px; display:none;">Activeaza</button>
-               <button class="btn-action" id="btnMfaDezactiveaza" style="display:none; border:1px solid var(--danger); background:rgba(239,68,68,.12); color:var(--text); font-size:13px; padding:10px 14px;">Dezactiveaza</button>
-             </div>
-             <div id="mfaMesaj" style="margin-top:10px; font-size:12px; font-family:'Space Mono',monospace; color:var(--text-muted);"></div>
-          </div>
           <div class="dash-panel" data-director style="border-color: var(--danger);">
              <h3 style="color: var(--danger);">🔑 Cod unic pe masa (anti-farse)</h3>
              <p style="color:var(--text-muted); font-size:13px;">
@@ -1383,10 +1359,11 @@
   <div class="modal" style="max-width:420px; text-align:left;">
     <button class="modal-close" id="meInchide">&times;</button>
     <h2 id="meTitlu" style="margin-bottom:4px;">Masa</h2>
-    <p class="mp-sub">Numarul e cel de pe codul QR al mesei. Masa e rotunda, iar marimea ei pe harta vine din numarul de locuri; „unita cu" leaga doua mese (se lipesc pe harta, nota se vede impreuna) — sau tragi o masa peste alta.</p>
+    <p class="mp-sub">Numarul e cel de pe codul QR al mesei. Masa e rotunda, iar marimea ei pe harta vine din numarul de locuri. „Zona" e a ospatarului care raspunde de masa (goala = tot spatiul); „unita cu" leaga doua mese (se lipesc pe harta, nota se vede impreuna) — sau tragi o masa peste alta.</p>
     <div class="me-grid">
       <label>Numarul mesei <input type="text" id="meNumar" maxlength="12" placeholder="Ex: 12"></label>
       <label>Locuri <input type="number" id="meScaune" min="1" max="40" value="4"></label>
+      <label class="lat">Zona (ospatarul care raspunde) <input type="text" id="meZona" list="meZoneLista" maxlength="30" placeholder="ex: Zona 1 — goala = tot spatiul"><datalist id="meZoneLista"></datalist></label>
       <label class="lat">Unita cu masa <select id="meUnita"><option value="">— nu e unita —</option></select></label>
     </div>
     <div class="mp-err" id="meEroare"></div>
@@ -2554,103 +2531,8 @@
         mesajLogin('Ziua s-a inchis de cand ai intrat ultima data. Intra din nou cu contul tau.');
         return;
     }
-    if (!(await verificaMfa())) return;
     await startSession(session.user.email);
   }
-
-  // --- Al doilea factor (TOTP) -------------------------------------------
-  // Cine si-a activat un factor trebuie sa intre cu codul din aplicatie;
-  // serverul (mfa_ok) nu-l considera „staff" pana nu-l da. Cine n-are factor
-  // intra ca pana acum.
-  async function verificaMfa() {
-      let nivel = null;
-      try { nivel = (await _supabase.auth.mfa.getAuthenticatorAssuranceLevel()).data; } catch(e) { return true; }
-      if (!nivel || nivel.nextLevel !== 'aal2' || nivel.currentLevel === 'aal2') return true;
-      document.getElementById('authOverlay').style.display = 'none';
-      document.getElementById('mfaEroare').style.display = 'none';
-      document.getElementById('mfaCod').value = '';
-      document.getElementById('mfaOverlay').style.display = 'flex';
-      setTimeout(() => document.getElementById('mfaCod').focus(), 80);
-      return false;
-  }
-  document.getElementById('mfaForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const err = document.getElementById('mfaEroare');
-      const cod = document.getElementById('mfaCod').value.replace(/\D/g, '');
-      if (cod.length !== 6) { err.textContent = 'Codul are 6 cifre.'; err.style.display = 'block'; return; }
-      try {
-          const { data: lf } = await _supabase.auth.mfa.listFactors();
-          const f = ((lf && lf.totp) || []).find(x => x.status === 'verified');
-          if (!f) { err.textContent = 'Nu gasesc factorul. Iesi si intra din nou.'; err.style.display = 'block'; return; }
-          const { error } = await _supabase.auth.mfa.challengeAndVerify({ factorId: f.id, code: cod });
-          if (error) { err.textContent = 'Cod gresit sau expirat. Incearca din nou.'; err.style.display = 'block'; return; }
-          document.getElementById('mfaOverlay').style.display = 'none';
-          const { data: { session } } = await _supabase.auth.getSession();
-          if (session) await startSession(session.user.email);
-      } catch(ex) { err.textContent = 'Nu s-a putut verifica: ' + ex.message; err.style.display = 'block'; }
-  });
-  document.getElementById('mfaRenunta').addEventListener('click', async () => {
-      try { await _supabase.auth.signOut(); } catch(e) {}
-      location.reload();
-  });
-
-  let mfaFactorNou = null;
-  async function loadSecuritate() {
-      const st = document.getElementById('mfaStare');
-      if (!st || !esteConducere()) return;
-      try {
-          const { data } = await _supabase.auth.mfa.listFactors();
-          const f = ((data && data.totp) || []).find(x => x.status === 'verified');
-          st.innerHTML = f
-            ? '<span style="color:var(--success); font-weight:700;">✓ Activ</span> — la fiecare intrare ti se cere codul din aplicatie.'
-            : '<span style="color:var(--warning); font-weight:700;">Inactiv</span> — intri doar cu parola.';
-          document.getElementById('btnMfaActiveaza').style.display = f ? 'none' : 'inline-flex';
-          document.getElementById('btnMfaDezactiveaza').style.display = f ? 'inline-flex' : 'none';
-          document.getElementById('btnMfaDezactiveaza').dataset.id = f ? f.id : '';
-          if (f) document.getElementById('mfaInrolare').style.display = 'none';
-      } catch(e) { st.textContent = 'Nu am putut citi starea: ' + e.message; }
-  }
-  document.getElementById('btnMfaActiveaza').addEventListener('click', async () => {
-      const msg = document.getElementById('mfaMesaj'); msg.textContent = 'Se pregateste...';
-      try {
-          // incercarile vechi, neterminate, se curata
-          const { data: lf } = await _supabase.auth.mfa.listFactors();
-          for (const f of ((lf && lf.all) || []).filter(x => x.status !== 'verified')) {
-              try { await _supabase.auth.mfa.unenroll({ factorId: f.id }); } catch(e) {}
-          }
-          const { data, error } = await _supabase.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'Panou ' + new Date().toLocaleDateString('ro-RO') });
-          if (error) { msg.textContent = 'Nu s-a putut porni: ' + error.message; return; }
-          mfaFactorNou = data.id;
-          const qr = document.getElementById('mfaQr');
-          const cod = (data.totp && data.totp.qr_code) || '';
-          qr.innerHTML = '';
-          if (cod.startsWith('data:')) { const img = document.createElement('img'); img.src = cod; img.alt = 'Cod QR'; qr.appendChild(img); }
-          else if (cod.startsWith('<svg')) { qr.innerHTML = cod; }
-          document.getElementById('mfaSecret').textContent = data.totp && data.totp.secret ? 'Cheie manuala: ' + data.totp.secret : '';
-          document.getElementById('mfaInrolare').style.display = 'block';
-          document.getElementById('mfaCodInrolare').value = '';
-          msg.textContent = '';
-      } catch(e) { msg.textContent = 'Eroare: ' + e.message; }
-  });
-  document.getElementById('btnMfaConfirma').addEventListener('click', async () => {
-      const msg = document.getElementById('mfaMesaj');
-      const cod = document.getElementById('mfaCodInrolare').value.replace(/\D/g, '');
-      if (!mfaFactorNou || cod.length !== 6) { msg.textContent = 'Scrie codul de 6 cifre din aplicatie.'; return; }
-      const { error } = await _supabase.auth.mfa.challengeAndVerify({ factorId: mfaFactorNou, code: cod });
-      if (error) { msg.textContent = 'Cod gresit. Mai incearca (codul se schimba la 30 de secunde).'; return; }
-      mfaFactorNou = null;
-      msg.textContent = '✓ Activ. De acum, la intrare, dupa parola ti se cere codul.';
-      await loadSecuritate();
-  });
-  document.getElementById('btnMfaDezactiveaza').addEventListener('click', async (e) => {
-      const id = e.currentTarget.dataset.id; if (!id) return;
-      if (!confirm('Dezactivezi al doilea factor? Contul ramane doar cu parola.')) return;
-      const msg = document.getElementById('mfaMesaj');
-      const { error } = await _supabase.auth.mfa.unenroll({ factorId: id });
-      if (error) { msg.textContent = 'Nu s-a putut dezactiva: ' + error.message + ' (iesi si intra din nou cu codul, apoi incearca).'; return; }
-      msg.textContent = 'Dezactivat.';
-      await loadSecuritate();
-  });
 
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -2661,7 +2543,6 @@
     if (!error) {
         try { localStorage.setItem(CHEIE_LOGIN_LA, String(Date.now())); } catch(e) {}
         mesajLogin('');
-        if (!(await verificaMfa())) return;
         await startSession(data.user.email);
     } else {
         alert("Autentificare esuata! Verifica emailul si parola.");
@@ -2789,7 +2670,7 @@ loadFreedTables();
     loadTablesConfig().then(loadZoneOspatari).then(() => {
         renderOrders();
         // prima intrare din zi a unui ospatar: isi alege zona si e in tura
-        if (userRole === 'ospatar' && (salaConfig.zones || []).length > 1 && !zoneOspatari[currentUserEmail]) {
+        if (userRole === 'ospatar' && zoneleSalii().length > 1 && !zoneOspatari[currentUserEmail]) {
             const deschide = () => { if (Tur.activ()) zonaDupaGhid = true; else deschideZona(true); };
             if (notificariDeschise()) dupaNotificari.push(deschide); else deschide();
         }
@@ -2909,7 +2790,7 @@ loadFreedTables();
   function getZoneObj(nume) { return salaConfig.zones.find(z => z.nume === nume); }
 
   document.getElementById('btnAddZone').addEventListener('click', () => {
-      let zName = prompt('Numele zonei noi (ex: Terasa, Etaj 1):');
+      let zName = prompt('Numele spatiului nou (ex: Interior, Terasa, Etaj 1):');
       if(zName && zName.trim() !== '') {
           zName = zName.trim();
           if(!getZoneObj(zName)) {
@@ -2922,8 +2803,8 @@ loadFreedTables();
   });
 
   document.getElementById('btnDeleteZone').addEventListener('click', () => {
-      if(salaConfig.zones.length <= 1) { alert('Trebuie sa ramana cel putin o zona.'); return; }
-      if(!confirm(`Stergi zona "${currentZone}" si toate mesele ei? Actiunea nu poate fi anulata.`)) return;
+      if(salaConfig.zones.length <= 1) { alert('Trebuie sa ramana cel putin un spatiu.'); return; }
+      if(!confirm(`Stergi spatiul "${currentZone}" si toate mesele lui? Actiunea nu poate fi anulata.`)) return;
       salaConfig.zones = salaConfig.zones.filter(z => z.nume !== currentZone);
       currentZone = salaConfig.zones[0].nume;
       saveTablesConfig();
@@ -2943,7 +2824,7 @@ loadFreedTables();
           btn.style.background = 'transparent';
           btn.style.color = 'var(--text)';
           btn.style.borderColor = 'var(--border)';
-          uneltaPlan = null;
+          uneltaPlan = null; zonaPensula = null; zoneNoi = [];
           saveTablesConfig().then(async () => {
               // harta salvata e cea pe care o vede toata lumea: aranjarea „pe azi" se sterge
               const deResetat = Object.keys(meseAzi);
@@ -3369,11 +3250,14 @@ loadFreedTables();
       if(!zone) { grid.innerHTML = ''; return; }
       const plan = planZonei(zone);
       asazaMeseleFaraLoc(zone);
-      grid.className = 'plan-sala' + (isEditingMap ? ' editare' : '') + (uneltaPlan === 'perete' ? ' unealta-perete' : uneltaPlan === 'sterge' ? ' unealta-sterge' : '');
+      grid.className = 'plan-sala' + (isEditingMap ? ' editare' : '') + (uneltaPlan === 'perete' ? ' unealta-perete' : uneltaPlan === 'sterge' ? ' unealta-sterge' : uneltaPlan === 'zona' ? ' unealta-zona' : '');
       grid.style.setProperty('--plan-ar', `${plan.w} / ${plan.h}`);
       grid.style.setProperty('--plan-w', plan.w);
       const px = (x) => (x / plan.w * 100) + '%', py = (y) => (y / plan.h * 100) + '%';
       const centru = (m) => { const r = dreptunghiMesei(m); return [r.x + r.w / 2, r.y + r.h / 2]; };
+      // culoarea zonei scrise pe masa (null = fara zona: scaunele raman albe)
+      const culori = culorileZonelor();
+      const zc = (m) => { const zn = String(m.zona || '').trim(); return zn ? (culori.get(zn) || null) : null; };
       // grupurile de mese unite: lipite una de alta -> o singura masa mare (contur
       // comun, fara scaune intre ele); departate -> linie punctata intre ele
       const inGrup = new Map();   // idx -> { ascunse: laturile lipite }
@@ -3391,7 +3275,8 @@ loadFreedTables();
           // raza colturilor: stadion (jumatate din latura mica) sau colturi rotunjite de 3 unitati
           const raza = patrata ? Math.min(3, (x2 - x1) / 2, (y2 - y1) / 2) : Math.min(x2 - x1, y2 - y1) / 2;
           const scaune = g.reduce((a, i, k) => a + numarScaune(zone.mese[i], marimeMesei(zone.mese[i]), atingeri[k]), 0);
-          grupuriHtml += `<div class="grup-mese status-${stare}${patrata ? ' patrata' : ''}${azi ? ' unita-azi' : ''}${isEditingMap ? ' editare' : ''}" data-mese="${escapeHTML(g.map(i => String(zone.mese[i].numar)).join(','))}" data-x1="${x1}" data-y1="${y1}" style="left:${px(x1)}; top:${py(y1)}; width:${px(x2 - x1)}; height:${py(y2 - y1)}; border-radius:calc(${raza.toFixed(2)} * var(--u));">${scauneGrupHtml(x1, y1, x2, y2, scaune, raza)}</div>`;
+          const cz = g.map(i => zc(zone.mese[i])).find(Boolean);   // scaunele conturului: culoarea primei mese cu zona
+          grupuriHtml += `<div class="grup-mese status-${stare}${patrata ? ' patrata' : ''}${azi ? ' unita-azi' : ''}${isEditingMap ? ' editare' : ''}${cz ? ' cu-zona' : ''}" data-mese="${escapeHTML(g.map(i => String(zone.mese[i].numar)).join(','))}" data-x1="${x1}" data-y1="${y1}" style="${cz ? `--zc:${cz}; ` : ''}left:${px(x1)}; top:${py(y1)}; width:${px(x2 - x1)}; height:${py(y2 - y1)}; border-radius:calc(${raza.toFixed(2)} * var(--u));">${scauneGrupHtml(x1, y1, x2, y2, scaune, raza)}</div>`;
           g.forEach((i, k) => inGrup.set(i, { ascunse: atingeri[k] }));
       });
       // peretii + legaturile intre mesele unite dar departate (SVG in unitati)
@@ -3415,12 +3300,13 @@ loadFreedTables();
               : `<div class="t-timp" title="ocupata de ${formatMinute(st.ocupata)} · ultima comanda acum ${formatMinute(st.minute)}">⏱ ${formatMinute(st.ocupata)}${st.minute >= 10 && st.minute !== st.ocupata ? ` · ${formatMinute(st.minute)}` : ''}</div>`;
           const rz = isEditingMap ? null : rezervareMesei(mesa.numar);
           const az = isEditingMap ? null : meseAzi[String(mesa.numar)];
-          const r = dreptunghiMesei(mesa), cu = unitaCu(mesa);
-          html += `<div class="table-card status-${st.status === 'free' ? 'free' : st.status}${mesa.forma === 'patrata' ? ' patrata' : ' rotunda'}${isEditingMap ? ' editare' : ''}${az && az.cu ? ' unita-azi' : ''}${gr ? ' in-grup' : ''}" data-idx="${idx}" data-numar="${escapeHTML(mesa.numar)}"
-                        style="left:${px(r.x)}; top:${py(r.y)}; width:${px(s.w)}; height:${py(s.h)};">
+          const r = dreptunghiMesei(mesa), cu = unitaCu(mesa), cz = zc(mesa);
+          html += `<div class="table-card status-${st.status === 'free' ? 'free' : st.status}${mesa.forma === 'patrata' ? ' patrata' : ' rotunda'}${isEditingMap ? ' editare' : ''}${az && az.cu ? ' unita-azi' : ''}${gr ? ' in-grup' : ''}${cz ? ' cu-zona' : ''}" data-idx="${idx}" data-numar="${escapeHTML(mesa.numar)}"
+                        style="${cz ? `--zc:${cz}; ` : ''}left:${px(r.x)}; top:${py(r.y)}; width:${px(s.w)}; height:${py(s.h)};">
              ${gr ? '' : scauneHtml(mesa, s)}
              ${rz ? `<span class="t-rez" title="rezervata">📅 ${oraRz(rz.r.de_la)}</span>` : ''}
              <div class="t-num">${escapeHTML(mesa.numar)}</div>
+             ${cz ? `<div class="t-zona" title="zona ${escapeHTML(String(mesa.zona).trim())}">${escapeHTML(String(mesa.zona).trim())}</div>` : ''}
              <div class="t-seats">🪑 ${escapeHTML(mesa.scaune)}</div>
              ${timp}
              ${cu ? `<span class="t-unita" title="unita cu masa ${escapeHTML(cu)}">🔗${escapeHTML(cu)}</span>` : ''}
@@ -3428,10 +3314,32 @@ loadFreedTables();
       });
       grid.innerHTML = html;
       randeazaBaraPlan();
+      randeazaLegendaZone(zone, culori);
       updateMapBadge();
   }
 
+  // legenda zonelor din spatiul afisat: culoarea, numele si cine raspunde azi
+  // (ospatarii care au ales zona — sau „toate zonele" — de la intrarea in tura)
+  function randeazaLegendaZone(zone, culori) {
+      const box = document.getElementById('zoneLegenda'); if (!box) return;
+      const nume = [];
+      (zone.mese || []).forEach(m => { const zn = String(m.zona || '').trim(); if (zn && !nume.includes(zn)) nume.push(zn); });
+      if (!nume.length) { box.classList.remove('on'); box.innerHTML = ''; return; }
+      const chip = (zn, culoare, eticheta) => {
+          const aMea = userRole === 'ospatar' && zoneMele.length > 0 && zoneMele.includes(zn);
+          const altii = Object.entries(zoneOspatari).filter(([email, v]) => email !== currentUserEmail && (!v.zone.length || v.zone.includes(zn))).map(([email]) => numeScurt(email));
+          const cine = (aMea ? ['tu'] : []).concat(altii);
+          return `<span class="zl-chip${aMea ? ' mea' : ''}"${culoare ? ` style="--zc:${culoare}"` : ''}><i></i>${eticheta}<small>· ${cine.length ? escapeHTML(cine.join(', ')) : 'nimeni azi'}</small></span>`;
+      };
+      const faraZona = (zone.mese || []).some(m => !String(m.zona || '').trim());
+      box.innerHTML = nume.map(zn => chip(zn, culori.get(zn) || null, escapeHTML(zn))).join('')
+          + (faraZona ? chip(zone.nume, null, `${escapeHTML(zone.nume)} <small>(mesele fara zona)</small>`) : '');
+      box.classList.add('on');
+  }
+
   // bara de unelte a editarii (doar cand se editeaza)
+  let zonaPensula = null;   // unealta „Zone": zona care se pune pe mesele atinse ('' = se scoate)
+  let zoneNoi = [];         // zone facute din bara, inca fara mese
   function randeazaBaraPlan() {
       let bara = document.getElementById('planBara');
       if (!bara) {
@@ -3448,6 +3356,13 @@ loadFreedTables();
               const b = e.target.closest('button[data-unealta]'); if (!b) return;
               const u = b.dataset.unealta;
               if (u === 'masa') { deschideMasa(null); return; }
+              if (u === 'zona-noua') {
+                  let n = prompt('Numele zonei noi (ex: Zona 1, Stanga, Langa bar):');
+                  n = n ? n.trim().slice(0, 30) : '';
+                  if (n) { if (!zoneNoi.includes(n)) zoneNoi.push(n); zonaPensula = n; uneltaPlan = 'zona'; renderTablesGrid(); }
+                  return;
+              }
+              if (b.dataset.zona !== undefined) { zonaPensula = b.dataset.zona; renderTablesGrid(); return; }
               if (u === 'lata' || u === 'patrata' || u === 'inalta') {
                   const plan = planZonei(getZoneObj(currentZone));
                   const dim = { lata: [100, 70], patrata: [100, 100], inalta: [70, 100] }[u];
@@ -3461,14 +3376,26 @@ loadFreedTables();
       const plan = planZonei(getZoneObj(currentZone));
       const forma = plan.w === plan.h ? 'patrata' : plan.w > plan.h ? 'lata' : 'inalta';
       bara.style.display = 'flex';
+      // zonele scrise pe mese + cele abia facute (fara mese inca)
+      const culori = culorileZonelor();
+      const zone = zoneleSalii().filter(z => z.explicita).map(z => z.nume).concat(zoneNoi.filter(n => !culori.has(n)));
+      const pensula = uneltaPlan !== 'zona' ? '' : `<div class="zona-pensula">
+          ${zone.map(zn => `<button type="button" data-unealta="pensula" data-zona="${escapeHTML(zn)}" class="${zonaPensula === zn ? 'on' : ''}"${culori.has(zn) ? ` style="--zc:${culori.get(zn)}"` : ''}><i></i>${escapeHTML(zn)}</button>`).join('')}
+          <button type="button" data-unealta="pensula" data-zona="" class="${zonaPensula === '' ? 'on' : ''}">⌀ Fara zona</button>
+          <button type="button" data-unealta="zona-noua">➕ Zona noua</button></div>`;
+      const hintZona = zonaPensula === null ? 'Alege o zona (sau fa una noua), apoi atinge mesele ei.'
+          : zonaPensula === '' ? 'Atinge mesele pe care vrei sa le scoti din orice zona.'
+          : `Atinge mesele din zona „${escapeHTML(zonaPensula)}" (atingi din nou = o scoti). Zona e a ospatarului care o alege la intrarea in tura.`;
       bara.innerHTML = `<button type="button" data-unealta="masa">➕ Masa</button>
+        <button type="button" data-unealta="zona" class="${uneltaPlan === 'zona' ? 'on' : ''}">📍 Zone</button>
         <button type="button" data-unealta="perete" class="${uneltaPlan === 'perete' ? 'on' : ''}">🧱 Perete</button>
         <button type="button" data-unealta="sterge" class="${uneltaPlan === 'sterge' ? 'on' : ''}">🧹 Sterge perete</button>
         <span style="width:1px; height:24px; background:var(--border);"></span>
         <button type="button" data-unealta="lata" class="${forma === 'lata' ? 'on' : ''}">▭ Incapere lata</button>
         <button type="button" data-unealta="patrata" class="${forma === 'patrata' ? 'on' : ''}">▢ Patrata</button>
         <button type="button" data-unealta="inalta" class="${forma === 'inalta' ? 'on' : ''}">▯ Inalta</button>
-        <span class="plan-hint">${uneltaPlan === 'perete' ? 'Trage cu degetul pe harta ca sa desenezi un perete (sau un bar, o scara).' : uneltaPlan === 'sterge' ? 'Atinge peretele pe care vrei sa-l stergi.' : 'Trage mesele unde sunt in realitate. Trage o masa peste alta ca sa le unesti (se lipesc); un grup lipit se muta impreuna. Atinge o masa ca sa-i schimbi locurile sau s-o desparti („nu e unita"). Apasa „Salveaza" cand ai terminat.'}</span>`;
+        ${pensula}
+        <span class="plan-hint">${uneltaPlan === 'perete' ? 'Trage cu degetul pe harta ca sa desenezi un perete (sau un bar, o scara).' : uneltaPlan === 'sterge' ? 'Atinge peretele pe care vrei sa-l stergi.' : uneltaPlan === 'zona' ? hintZona : 'Trage mesele unde sunt in realitate. Trage o masa peste alta ca sa le unesti (se lipesc); un grup lipit se muta impreuna. Tine apasat pe o masa unita, fara s-o misti, ca sa desparti grupul (mesele revin unde erau). Atinge o masa: locurile, zona ospatarului, unirea. „📍 Zone": atingi mesele si le dai zona. Apasa „Salveaza" cand ai terminat.'}</span>`;
   }
 
   // peretii sunt doar drepti: capatul se aliniaza pe orizontala sau verticala
@@ -3502,6 +3429,52 @@ loadFreedTables();
       const toate = salaConfig.zones.flatMap(z => z.mese || []);
       const g = grupurileMeselor(toate).find(gr => gr.some(i => String(toate[i].numar) === nr));
       return g ? g.map(i => String(toate[i].numar)).filter(n => n !== nr) : [];
+  }
+  // --- Despartirea meselor unite --------------------------------------------
+  // Cand directorul lipeste o masa de alta (editare), masa isi tine minte locul
+  // de dinainte (`liber`, salvat in harta); la despartire revine acolo — in
+  // editare direct in harta, pe azi printr-un rand `mese_azi` cu `cu: null`
+  // (un „reset" ar lasa-o lipita, unirea fiind in harta de baza).
+  function inGrupBaza(zone, m) {
+      return !!m.unita_cu || (zone.mese || []).some(o => o !== m && String(o.unita_cu) === String(m.numar));
+  }
+  function inPlan(zone, m, x, y) {
+      const plan = planZonei(zone), s = marimeMesei(m);
+      return [Math.max(0, Math.min(plan.w - s.w, Math.round(x * 2) / 2)), Math.max(0, Math.min(plan.h - s.h, Math.round(y * 2) / 2))];
+  }
+  // locul liber al mesei azi: cel tinut minte, mutat cu cat s-a mutat grupul intre timp
+  function loculLiber(zone, m) {
+      const r = dreptunghiMesei(m), lb = m.liber && typeof m.liber.x === 'number' ? m.liber : { x: m.x, y: m.y };
+      return inPlan(zone, m, lb.x + r.x - m.x, lb.y + r.y - m.y);
+  }
+  // mesele care raman lipite de `m` daca se taie legatura ei cu `p` (harta de baza)
+  function componentaFara(zone, m, p) {
+      const mese = zone.mese || [], dupaNr = new Map(mese.map(o => [String(o.numar), o]));
+      const adj = new Map(mese.map(o => [o, new Set()]));
+      mese.forEach(o => {
+          const c = o.unita_cu ? dupaNr.get(String(o.unita_cu)) : null;
+          if (!c || c === o || (o === m && c === p) || (o === p && c === m)) return;
+          adj.get(o).add(c); adj.get(c).add(o);
+      });
+      const out = [m], vazut = new Set(out), st = [m];
+      while (st.length) { const k = st.pop(); adj.get(k).forEach(o => { if (!vazut.has(o)) { vazut.add(o); out.push(o); st.push(o); } }); }
+      return out;
+  }
+  // in editare: masa se dezlipeste de partenera ei si revine, cu ce ramane lipit de ea, la locul liber
+  function desparteDe(zone, m) {
+      const p = (zone.mese || []).find(o => String(o.numar) === String(m.unita_cu));
+      const grup = p ? componentaFara(zone, m, p) : [m];
+      const [lx, ly] = m.liber && typeof m.liber.x === 'number' ? inPlan(zone, m, m.liber.x, m.liber.y) : [m.x, m.y];
+      const dx = lx - m.x, dy = ly - m.y;
+      grup.forEach(o => { o.x += dx; o.y += dy; });
+      delete m.unita_cu; delete m.liber;
+  }
+  // in editare: tot grupul se desparte, fiecare masa la locul ei liber
+  function desparteGrupul(zone, mese) {
+      mese.forEach(m => {
+          if (m.liber && typeof m.liber.x === 'number') [m.x, m.y] = inPlan(zone, m, m.liber.x, m.liber.y);
+          delete m.liber; delete m.unita_cu;
+      });
   }
   async function scrieMasaAzi(detalii) { return scrieMeseAzi([detalii]); }
   // mai multe randuri deodata (tot grupul), apoi o singura recitire
@@ -3592,7 +3565,13 @@ loadFreedTables();
           const mesa = zone.mese[Number(card.dataset.idx)]; if (!mesa) return;
           const [x, y] = unitatiDin(e);
           const membri = membriiGrupului(zone, mesa);
-          tragere = { el: card, mesa, membri, contur: conturulGrupului(mesa.numar), dx: x - mesa.x, dy: y - mesa.y, mutat: false, x0: e.clientX, y0: e.clientY };
+          tragere = { el: card, mesa, membri, contur: conturulGrupului(mesa.numar), dx: x - mesa.x, dy: y - mesa.y, mutat: false, tinut: false, x0: e.clientX, y0: e.clientY };
+          // tinut apasat fara sa misti (0,45 s): daca masa e unita, la ridicarea degetului intrebam daca despartim grupul
+          tragere.timer = setTimeout(() => {
+              if (!tragere || tragere.mutat) return;
+              tragere.tinut = true;
+              try { if (navigator.vibrate) navigator.vibrate(20); } catch (err) {}
+          }, 450);
           grid.setPointerCapture(e.pointerId);
           e.preventDefault();
       });
@@ -3625,7 +3604,7 @@ loadFreedTables();
               if (prev) { prev.style.display = ''; prev.setAttribute('x1', tragere.perete[0]); prev.setAttribute('y1', tragere.perete[1]); prev.setAttribute('x2', x2); prev.setAttribute('y2', y2); }
               return;
           }
-          if (Math.abs(e.clientX - tragere.x0) + Math.abs(e.clientY - tragere.y0) > 6) tragere.mutat = true;
+          if (Math.abs(e.clientX - tragere.x0) + Math.abs(e.clientY - tragere.y0) > 6) { tragere.mutat = true; clearTimeout(tragere.timer); }
           if (!tragere.mutat) return;
           // tot grupul se muta odata cu masa trasa (in harta de baza)
           const [ddx, ddy] = deltaInIncapere(tragere.membri, plan, x - tragere.dx - tragere.membri[0].x0, y - tragere.dy - tragere.membri[0].y0);
@@ -3647,7 +3626,13 @@ loadFreedTables();
               // tinut apasat pe loc: daca e unita, o despartim (si partenerele ei revin la loc)
               const parteneri = perecheaMesei(nr);
               if (parteneri.length && confirm(`Desparti mesele ${nr} si ${parteneri.join(', ')}? Revin la locul lor.`)) {
-                  await scrieMeseAzi([nr, ...parteneri].map(m => ({ mesa: m, reset: true })));
+                  // unite azi: „reset" (revin pe harta); unite in harta: un rand cu `cu: null`, la locul liber
+                  await scrieMeseAzi([nr, ...parteneri].map(n => {
+                      const m = zone.mese.find(o => String(o.numar) === n);
+                      if (!m || !inGrupBaza(zone, m)) return { mesa: n, reset: true };
+                      const [x, y] = loculLiber(zone, m);
+                      return { mesa: n, cu: null, x, y };
+                  }));
               }
               renderTablesGrid(); return;
           }
@@ -3681,28 +3666,52 @@ loadFreedTables();
               if (Math.hypot(x2 - x1, y2 - y1) >= 3) planZonei(getZoneObj(currentZone)).pereti.push({ x1, y1, x2, y2 });
               renderTablesGrid(); return;
           }
+          clearTimeout(t.timer);
           if (t.mutat) {
               // lasata peste alta masa: se unesc (si se lipesc), restul grupului vine dupa ea;
-              // in gol: grupul s-a mutat intreg (despartirea se face din fereastra mesei, „nu e unita")
+              // in gol: grupul s-a mutat intreg (despartirea: tinere pe loc sau „nu e unita")
               const zone = getZoneObj(currentZone);
               grid.querySelectorAll('.table-card.tinta').forEach(c => c.classList.remove('tinta'));
               const alta = mesaSub(e.clientX, e.clientY, new Set(t.membri.map(m => m.card)));
               const tinta = alta ? zone.mese[Number(alta.dataset.idx)] : null;
               if (tinta && tinta !== t.mesa) {
+                  // masa trasa (si ce vine cu ea) tine minte locul de dinainte, ca sa revina acolo la despartire
+                  t.membri.forEach(m => { if (!m.mesa.liber) m.mesa.liber = { x: m.x0, y: m.y0 }; });
                   const [x, y] = unitatiDin(e);
                   const [nx, ny] = locLanga(zone, t.mesa, tinta, x, y, new Set(t.membri.slice(1).map(m => m.mesa)));
                   const fx = nx - t.membri[0].x0, fy = ny - t.membri[0].y0;
                   t.membri.forEach(m => { m.mesa.x = m.x0 + fx; m.mesa.y = m.y0 + fy; });
                   t.membri.slice(1).forEach(m => { if (!m.mesa.unita_cu) m.mesa.unita_cu = String(t.mesa.numar); });   // grupul ei ramane legat
                   t.mesa.unita_cu = String(tinta.unita_cu && String(tinta.unita_cu) !== String(t.mesa.numar) ? tinta.unita_cu : tinta.numar);
+              } else {
+                  // mutat in gol: locul tinut minte se muta odata cu grupul
+                  const ddx = t.membri[0].mesa.x - t.membri[0].x0, ddy = t.membri[0].mesa.y - t.membri[0].y0;
+                  t.membri.forEach(m => { if (m.mesa.liber) { m.mesa.liber.x += ddx; m.mesa.liber.y += ddy; } });
               }
               renderTablesGrid(); return;
           }
+          const zone = getZoneObj(currentZone), nr = String(t.mesa.numar);
+          if (uneltaPlan === 'zona' && zonaPensula !== null) {
+              // pensula de zone: atingerea pune masa in zona aleasa (sau o scoate)
+              const zn = String(t.mesa.zona || '').trim();
+              if (!zonaPensula || zn === zonaPensula) delete t.mesa.zona; else t.mesa.zona = zonaPensula;
+              renderTablesGrid(); return;
+          }
+          if (t.tinut) {
+              // tinut apasat pe loc: masa unita se desparte de grup, toate revin unde erau
+              const parteneri = perecheaMesei(nr);
+              if (parteneri.length) {
+                  if (confirm(`Desparti mesele ${nr} si ${parteneri.join(', ')}? Revin la locul lor.`)) {
+                      desparteGrupul(zone, [nr, ...parteneri].map(n => zone.mese.find(o => String(o.numar) === n)).filter(Boolean));
+                  }
+                  renderTablesGrid(); return;
+              }
+          }
           // atingere simpla in modul de editare: fereastra mesei
-          deschideMasa(getZoneObj(currentZone).mese.indexOf(t.mesa));
+          deschideMasa(zone.mese.indexOf(t.mesa));
       };
       grid.addEventListener('pointerup', gata);
-      grid.addEventListener('pointercancel', () => { if (tinere) { clearTimeout(tinere.timer); tinere.membri.forEach(m => { m.card.style.pointerEvents = ''; }); tinere = null; } tragere = null; renderTablesGrid(); });
+      grid.addEventListener('pointercancel', () => { if (tinere) { clearTimeout(tinere.timer); tinere.membri.forEach(m => { m.card.style.pointerEvents = ''; }); tinere = null; } if (tragere) clearTimeout(tragere.timer); tragere = null; renderTablesGrid(); });
       grid.addEventListener('contextmenu', (e) => { if (tinere || e.target.closest('.table-card')) e.preventDefault(); });
       // in afara editarii: atingerea deschide masa (comenzi, nota, eliberare)
       let ultimaRidicare = 0;
@@ -3724,6 +3733,8 @@ loadFreedTables();
       document.getElementById('meNumar').value = m ? m.numar : '';
       document.getElementById('meNumar').disabled = !!m;
       document.getElementById('meScaune').value = m ? m.scaune : 4;
+      document.getElementById('meZona').value = m && m.zona ? String(m.zona) : '';
+      document.getElementById('meZoneLista').innerHTML = zoneleSalii().filter(z => z.explicita).map(z => `<option value="${escapeHTML(z.nume)}">`).join('');
       const sel = document.getElementById('meUnita');
       sel.innerHTML = '<option value="">— nu e unita —</option>' + zone.mese.filter(o => !m || String(o.numar) !== String(m.numar))
           .map(o => `<option value="${escapeHTML(o.numar)}">Masa ${escapeHTML(o.numar)} (${escapeHTML(o.scaune)} locuri)</option>`).join('');
@@ -3746,6 +3757,7 @@ loadFreedTables();
       const toate = salaConfig.zones.flatMap(z => z.mese || []);
       if (meIndex === null && toate.some(o => String(o.numar) === numar)) { err.textContent = `Masa ${numar} exista deja (poate in alta zona).`; return; }
       const unita = document.getElementById('meUnita').value;
+      const zona = document.getElementById('meZona').value.trim().slice(0, 30);
       let m;
       if (meIndex === null) {
           const plan = planZonei(zone);
@@ -3755,7 +3767,9 @@ loadFreedTables();
       // mesele sunt rotunde, iar marimea vine din numarul de locuri (marimeImplicita)
       m.forma = 'rotunda';
       delete m.marime; delete m.w; delete m.h;
-      if (unita) m.unita_cu = unita; else delete m.unita_cu;
+      if (zona) m.zona = zona; else delete m.zona;
+      if (unita) m.unita_cu = unita;
+      else if (m.unita_cu) desparteDe(zone, m);   // „nu e unita": revine (cu ce ramane lipit de ea) unde era inainte de unire
       inchideMasa(); renderZoneTabs(); renderTablesGrid();
   });
   document.getElementById('meSterge').addEventListener('click', () => {
@@ -3763,7 +3777,7 @@ loadFreedTables();
       const m = zone.mese[meIndex];
       if (!confirm(`Stergi masa ${m.numar} din harta?`)) return;
       zone.mese.splice(meIndex, 1);
-      zone.mese.forEach(o => { if (String(o.unita_cu) === String(m.numar)) delete o.unita_cu; });
+      zone.mese.forEach(o => { if (String(o.unita_cu) === String(m.numar)) { delete o.unita_cu; delete o.liber; } });
       inchideMasa(); renderZoneTabs(); renderTablesGrid();
   });
 
@@ -4104,7 +4118,7 @@ loadFreedTables();
 
       if (grup === 'sinteza')  { calculateDirectorStats(); renderHeatmap(); }
       if (grup === 'meniu')    { loadMeniu(); loadMeniulZilei(); }
-      if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); loadEliberare(); loadCodLuna(); loadMeniulZilei(); loadSecuritate(); loadChei(); loadLimite(); loadMutare(); loadRezSetari(); loadAlerte(); }
+      if (grup === 'setari')   { loadFaraOspatari(); loadBusyMode(); loadOraReset(); loadFaraBucatarie(); loadFereastra(); loadEliberare(); loadCodLuna(); loadMeniulZilei(); loadChei(); loadLimite(); loadMutare(); loadRezSetari(); loadAlerte(); }
       if (grup === 'personal') { loadFeedbacks(); loadAngajati(); calculateDirectorStats(); }
   }
 
@@ -4943,7 +4957,7 @@ loadFreedTables();
         // Taburi: comenzile (ale zonei mele, la ospatar), cererile de la mese
         // (nota, ajutor) si, pentru ospatarul cu zona aleasa, comenzile
         // colegilor din alte zone — fara sunet, dar le poate lua.
-        const cuZone = userRole === 'ospatar' && zoneMele.length > 0 && (salaConfig.zones || []).length > 1;
+        const cuZone = userRole === 'ospatar' && zoneMele.length > 0 && zoneleSalii().length > 1;
         const grupuri = {
             comenzi: viewOrders.filter(o => !esteAlerta(o) && (!cuZone || esteZonaMea(o))),
             cereri:  viewOrders.filter(o => esteAlerta(o) && (!cuZone || esteZonaMea(o))),
@@ -5478,12 +5492,34 @@ loadFreedTables();
   let ghidDupaZona = false;     // fereastra zonei e deschisa: ghidul porneste dupa ea
   let zoneOspatari = {};        // email -> { zone: [...], la: ms }, azi
 
+  // Zona unei mese = cea scrisa pe masa de director (ospatarul care raspunde),
+  // altfel numele spatiului in care e (taburile de sus: interior, terasa...).
+  // Aceeasi regula e in baza (`ospatari_pentru_masa`, migratia 29).
   function zonaMesei(mesa) {
       const nr = String(mesa || '').replace('#', '');
       for (const z of (salaConfig.zones || [])) {
-          if ((z.mese || []).some(m => String(m.numar) === nr)) return z.nume;
+          const m = (z.mese || []).find(o => String(o.numar) === nr);
+          if (m) return zonaDin(m, z);
       }
       return null;
+  }
+  function zonaDin(m, spatiu) { const zn = String(m.zona || '').trim(); return zn || spatiu.nume; }
+  // toate zonele din harta, in ordinea spatiilor: { nume, spatii, explicita (scrisa pe mese) }
+  function zoneleSalii() {
+      const lista = [], dupaNume = new Map();
+      (salaConfig.zones || []).forEach(z => (z.mese || []).forEach(m => {
+          const nume = zonaDin(m, z);
+          let e = dupaNume.get(nume);
+          if (!e) { e = { nume, spatii: [], explicita: false }; dupaNume.set(nume, e); lista.push(e); }
+          if (!e.spatii.includes(z.nume)) e.spatii.push(z.nume);
+          if (String(m.zona || '').trim()) e.explicita = true;
+      }));
+      return lista;
+  }
+  // culorile zonelor scrise pe mese (aceeasi culoare in toate spatiile): nume -> culoare
+  const CULORI_ZONE = ['#38bdf8', '#f472b6', '#a3e635', '#fbbf24', '#c084fc', '#fb923c', '#2dd4bf', '#f87171'];
+  function culorileZonelor() {
+      return new Map(zoneleSalii().filter(z => z.explicita).map((z, i) => [z.nume, CULORI_ZONE[i % CULORI_ZONE.length]]));
   }
   function esteZonaMea(o) {
       if (userRole !== 'ospatar' || !zoneMele.length) return true;
@@ -5528,10 +5564,10 @@ loadFreedTables();
   function deschideZona(automat) {
       zonaAutoDeschisa = automat === true;
       const lista = document.getElementById('zonaLista');
-      const zone = (salaConfig.zones || []).map(z => z.nume);
+      const zone = zoneleSalii();
       lista.innerHTML = zone.length
-          ? zone.map(z => `<label class="zona-opt"><input type="checkbox" value="${escapeHTML(z)}" ${zoneMele.includes(z) ? 'checked' : ''}> ${escapeHTML(z)}</label>`).join('')
-          : '<p class="mp-sub">Sala n-are inca zone. Le pune directorul sau managerul din Sala → Editeaza mesele.</p>';
+          ? zone.map(z => `<label class="zona-opt"><input type="checkbox" value="${escapeHTML(z.nume)}" ${zoneMele.includes(z.nume) ? 'checked' : ''}> ${escapeHTML(z.nume)}${z.spatii.length === 1 && z.spatii[0] === z.nume ? '' : ` <small style="color:var(--text-muted)">· ${escapeHTML(z.spatii.join(', '))}</small>`}</label>`).join('')
+          : '<p class="mp-sub">Harta n-are inca mese. Le pune directorul sau managerul din Sala → Editeaza harta.</p>';
       document.getElementById('modalZona').classList.add('open');
   }
   function inchideZona() {
@@ -6996,7 +7032,7 @@ let hPercent = Math.max(Math.round((amount / maxVal) * 100), 5);
               text: 'Zonele de care raspunzi azi. Comenzile lor apar primele si te anunta; pe celelalte le vezi mai sters si le poti lua.' });
       }
       pasi.push({ el: '#navMap', titlu: 'Sala',
-          text: 'Harta localului: mesele unde sunt in realitate, cu peretii. Verde: ok. Portocaliu: treci pe la ea. Rosu: prea mult. Mov: a cerut nota. Atinge o masa: totalul ei, cererea de nota, sau o eliberezi.' });
+          text: 'Harta localului: mesele unde sunt in realitate, cu peretii. Verde: ok. Portocaliu: treci pe la ea. Rosu: prea mult. Mov: a cerut nota. Scaunele colorate: zona unui ospatar (legenda de sus). Atinge o masa: totalul ei, cererea de nota, sau o eliberezi.' });
       if (rol === 'ospatar') pasi.push({ el: '#navMeniu', titlu: 'Meniu', text: 'Trimiti o comanda in numele clientului, ca de pe telefon.' });
       if (rol === 'bar' || rol === 'bucatarie') pasi.push({ el: '#navStock', titlu: 'Stoc', text: 'S-a terminat ceva? Il blochezi si dispare din meniul clientilor.' });
       pasi.push({ el: '#navHistory', titlu: 'Istoric',

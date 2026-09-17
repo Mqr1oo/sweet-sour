@@ -874,13 +874,10 @@ status_schimbat_la / status_schimbat_de` (nu și pe drumul RPC-urilor, care
 doar acțiunea aceluiași cont din ultimele 25 s (bara din panou arată 10);
 anularea se retrage după rândul `pedido_cancelado`. Jurnal `revenire`.
 
-**Al doilea factor.** `mfa_ok()` = jwt `aal = 'aal2'` sau niciun factor
-verificat în `auth.mfa_factors`; `is_staff()`, `current_staff_rol()` și
-politica de pe `staff_roles` îl includ, deci un cont înrolat fără cod nu e
-„staff" nicăieri. Panoul: `verificaMfa()` după login (fereastra de cod),
-Șef → Setări → „Al doilea factor" (enroll TOTP cu QR, `challengeAndVerify`,
-unenroll). TOTP trebuie să fie pornit în Authentication → Multi-Factor (e
-implicit).
+**Al doilea factor** — scos în runda 36 (migrația 29): `mfa_ok()` răspunde
+mereu `true` și rămâne doar pentru că o cheamă `is_staff()`,
+`current_staff_rol()`, politica de pe `staff_roles` și trigger-ul comenzilor;
+panoul nu mai are fereastra de cod și nici panoul din Setări.
 
 **Jurnal de conectări.** Trigger pe `auth.sessions` (postgres are TRIGGER
 acolo): rând `conectare {rol, dispozitiv, ip, amprenta, nou}`; amprenta e
@@ -1042,8 +1039,8 @@ flux de răspundere.
 se folosesc: „Zi de zi" (meniul zilei, codul lunii, ore de vârf, închide
 bucătăria), „Cum lucrează localul" (ora de închidere, mod fără ospătari,
 fereastra de modificare, cât stă masa după notă, alerta „comandă uitată",
-comenzi la pachet — toată secțiunea doar pentru director) și „Siguranță" (al
-doilea factor, cod unic pe masă, limite). Pe ecrane de peste 1080 px
+comenzi la pachet — toată secțiunea doar pentru director) și „Siguranță" (cod
+unic pe masă, limite, mutare — și ea doar pentru director). Pe ecrane de peste 1080 px
 panourile stau pe două coloane (`.setari-grila`; `.lat` = pe toată lățimea).
 Secțiunea (`<section class="setari-sectiune" data-grup="setari">`) poartă
 grupul, panourile din ea nu — `admArata` comută secțiunile.
@@ -1757,6 +1754,63 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
   pe ecranul principal (iOS 16.4+) și notificările permise.
 - Cache SW: zen v9, m3 v7, skyfall v6.
 
+## Runda 36 — fără al doilea factor, despărțirea aduce mesele la loc, spații > zone
+
+- **Al doilea factor a fost scos** (cererea localului). Din panou au dispărut
+  fereastra de cod de după login (`verificaMfa`, `#mfaOverlay`) și panoul
+  „Al doilea factor" din Setări → Siguranță (secțiunea a rămas doar pentru
+  director: cod unic pe masă, limite, mutare). Migrația 29 (aplicată pe
+  ambele proiecte): `mfa_ok()` răspunde mereu `true` (rămâne, pentru că o
+  cheamă `is_staff`, `current_staff_rol`, politica pe `staff_roles` și
+  trigger-ul comenzilor) și `delete from auth.mfa_factors` (pe wnwl era un
+  factor neverificat, rămas de la o înrolare neterminată). TOTP din
+  Authentication → Multi-Factor poate rămâne pornit — nu-l mai folosește nimic.
+- **Despărțirea aduce mesele unde erau.** Raportat: după ce a lipit 20 de 10 în
+  „Editează harta" și a salvat, ținerea pe loc nu le mai despărțea (un „reset"
+  `mese_azi` lasă unirea din harta de bază), iar din fereastra mesei („nu e
+  unită") rămâneau una lângă alta. Acum, la lipire în editare, masa trasă (și
+  ce vine cu ea) își ține minte locul de dinainte în `mese[].liber = {x, y}`
+  (salvat în `config_mese`); la mutarea grupului în gol, `liber` se mută cu
+  același deplasament. Despărțirea: **în editare**, ținere pe loc (0,45 s,
+  `tragere.tinut`) pe o masă unită → „Desparți mesele…?" →
+  `desparteGrupul` (fiecare la `liber`, fără `unita_cu`/`liber`); din
+  fereastra mesei, „nu e unită" → `desparteDe` (masa și componenta care
+  rămâne lipită de ea, `componentaFara`, revin cu același deplasament).
+  **Pe azi** (mod normal): pentru mesele unite în harta de bază
+  (`inGrupBaza`) se scrie `mese_azi {mesa, cu: null, x, y}` la locul liber
+  (`loculLiber` = `liber` mutat cu cât s-a mutat masa azi), pentru cele
+  unite azi rămâne `reset`. Locurile trebuie să existe deja în hartă; nu se
+  ocolesc mesele care s-au așezat între timp acolo.
+- Locurile nu se schimbă la unire/despărțire: grupul arată scaunele tuturor
+  meselor, minus cele de pe laturile lipite; la despărțire fiecare masă își
+  arată iar locurile ei din hartă. (Masa 20 avea 8 locuri salvate în harta
+  de azi, față de 6 aseară — schimbate din fereastra mesei, nu de cod.)
+- **Spații > zone.** Taburile de sus ale hărții sunt acum *spații*
+  (interior, terasă, etaj — butoanele „➕ Spațiu nou" / „🗑️ Sterge spațiul";
+  cheia din `config_mese` rămâne `zones[]`), iar **zona unui ospătar se
+  scrie pe mese**: `mese[].zona` (text, max 30). Regula unică
+  (`zonaMesei` în panou, `ospatari_pentru_masa` în bază, migrația 29):
+  zona mesei = `zona` scrisă pe ea, altfel numele spațiului — deci hărțile
+  fără zone pe mese merg ca înainte (spațiul = zona). `zoneleSalii()`
+  întoarce toate zonele derivate ({nume, spatii, explicita}); fereastra
+  „Zona mea" le listează pe toate (cu spațiul în mic când diferă), iar
+  întrebarea automată la prima intrare / taburile „Zona mea · Cereri · Alte
+  zone" apar când sunt ≥ 2 zone derivate. **Pe hartă**: toate mesele
+  spațiului se văd deodată; scaunele unei mese cu zonă sunt în culoarea zonei
+  (`--zc`, `culorileZonelor()` — 8 culori după ordinea primei apariții;
+  conturul unui grup ia culoarea primei mese cu zonă), sub număr scrie zona
+  (`.t-zona`, ascunsă pe hărți sub 480 px), iar deasupra hărții e legenda
+  (`#zoneLegenda`, `randeazaLegendaZone`): zonele spațiului, cine le acoperă
+  azi (`zoneOspatari`: cine a ales zona sau „toate", „tu" pentru ospătar) și,
+  dacă există mese fără zonă, „<spațiu> (mesele fără zonă)". **Cum se dau
+  zonele**: în „Editează harta", unealta „📍 Zone" (`uneltaPlan = 'zona'`,
+  `zonaPensula`): chip-uri cu zonele existente, „⌀ Fără zonă", „➕ Zona nouă"
+  (prompt; `zoneNoi` până primesc mese) — atingi mesele și le dai zona
+  (a doua atingere o scoate); sau din fereastra mesei, câmpul „Zona" cu
+  `datalist` din zonele existente.
+- Harness: `__t.zone / culori / zonaMesei / esteZonaMea / setZoneOspatari /
+  setZoneMele / legenda / bara / unelte / deschideZona / deschideMasa`.
+
 ## Înainte de deschidere
 
 1. Authentication → Providers → Email: **Allow new users to sign up** = oprit.
@@ -1767,7 +1821,7 @@ formă, mărime, unită cu). Clientul și `ospatari_pentru_masa` citesc doar
    parola minimă la 10 caractere din aceeași pagină.
 3. GitHub → Settings → Secrets and variables → Actions → `CHEIE_BACKUP`
    (cheia din Vault `cheie_backup`), altfel copiile nu se fac.
-4. Directorul și managerul își activează al doilea factor (Șef → Setări).
+4. (Al doilea factor a fost scos în runda 36 — nu mai e nimic de activat.)
 5. Codurile QR le faci tu din `qr/` (cu cheia dezvoltatorului) și le
    printezi; dacă localul vrea codul unic pe masă, directorul pornește
    opțiunea abia după ce codurile cu cheie sunt lipite pe mese.

@@ -204,7 +204,10 @@ Același panou, dar cu ce-l privește pe el:
   a primit și îi arată restul.
 - **Vrea clientul să schimbe comanda?** Cererea ajunge la ospătar; comanda
   în lucru o modifică barul sau managerul (✏️ pe card).
-- **⭐ Zona mea**: își bifează zonele de care răspunde (Terasă, Interior…).
+- **⭐ Zona mea**: își bifează zonele de care răspunde (cele scrise pe mese
+  de director — „Zona 1", „Zona 2" — sau, unde nu-s, spațiul întreg: Terasă,
+  Interior…). Pe hartă vede toate mesele, cu culoarea zonei pe scaune și
+  legenda „cine răspunde azi".
   În Comenzi are trei taburi: **„Zona mea"** (comenzile lui, de dus la masă),
   **„Cereri"** (nota, ajutor, din zona lui) și **„Alte zone"** — comenzile și
   cererile colegilor, cu „📍 Interior · Maria" (cine le acoperă): **nu-l
@@ -223,12 +226,21 @@ Același panou, dar cu ce-l privește pe el:
 ## 6. Sala: harta localului, cu timere
 
 **⭐ Harta e a localului, nu o listă.** Directorul sau managerul apasă
-„Editează harta": fiecare zonă (Terasă, Interior, Etaj…) e o încăpere —
-lată, pătrată sau înaltă — în care desenezi pereții cu degetul (linii:
-un perete, barul, o scară) și tragi mesele exact unde sunt în realitate.
-Atingi o masă și îi spui câte locuri are (mărimea ei pe hartă vine din
-locuri; toate mesele sunt rotunde) și dacă e **unită cu altă masă** (se
-lipesc, iar nota se vede împreună). „➕ Masa" adaugă una
+„Editează harta": fiecare **spațiu** (Interior, Terasă, Etaj 1… — taburile
+de sus, „➕ Spațiu nou") e o încăpere — lată, pătrată sau înaltă — în care
+desenezi pereții cu degetul (linii: un perete, barul, o scară) și tragi
+mesele exact unde sunt în realitate. Atingi o masă și îi spui câte locuri
+are (mărimea ei pe hartă vine din locuri; toate mesele sunt rotunde), **zona
+ospătarului** care răspunde de ea și dacă e **unită cu altă masă** (se
+lipesc, iar nota se vede împreună).
+
+**⭐ Zonele se văd pe hartă.** Un spațiu are mai multe zone (bucata fiecărui
+ospătar), dar toate mesele lui se văd deodată: scaunele unei mese au
+culoarea zonei ei, sub număr scrie zona, iar deasupra hărții e legenda —
+„🔵 Zona 1 · Ana", „🟣 Zona 2 · tu, Ion" — deci oricine vede a cui e fiecare
+masă, și din alte zone. Zonele le dai din „Editează harta" → „📍 Zone":
+alegi o zonă (sau „➕ Zona nouă"), apoi atingi mesele ei; „⌀ Fără zonă" le
+scoate. O masă fără zonă ține de tot spațiul (zona ei e numele spațiului). „➕ Masa" adaugă una
 nouă; „Salvează harta" o trimite tuturor. **Pe telefon harta încape pe
 lățimea ecranului** — se micșorează singură, cu tot cu numere, timpi și
 scaune (o masă normală are cam un centimetru; ca să iasă bine, nu pune multe
@@ -246,10 +258,14 @@ scaunele rămase așezate pe el, la distanțe egale; nota se vede împreună —
 grupul mare de la 20 cu 40). O lași
 **în alt loc** → stă acolo azi; **un grup lipit se mută întreg**, ca o
 singură masă (tragi de oricare din ele). Ții apăsat pe o masă unită fără să
-o miști → „Desparți mesele?" → revin la locul lor. Atingi o masă unită → „Masa 20 + 40", cu „🔗 Unită cu masa 40"
+o miști → „Desparți mesele?" → **revin unde erau înainte de unire**, cu
+locurile lor de dinainte (unirea nu schimbă locurile: grupul arată scaunele
+ambelor mese, fără cele de la mijloc). Atingi o masă unită → „Masa 20 + 40", cu „🔗 Unită cu masa 40"
 și totalul lor împreună. Mâine dimineață totul e ca pe harta directorului;
 nimic din asta nu schimbă harta de bază. În „Editează harta" merge la fel, cu tragere
-simplă (fără ținere), și rămâne așa în harta salvată.
+simplă (fără ținere), și rămâne așa în harta salvată; și acolo, ținut apăsat
+pe loc pe o masă unită → „Desparți mesele?" → revin unde erau (la fel „nu e
+unită" din fereastra mesei).
 
 **📅 Rezervări**: sună cineva pentru o masă la 19:00? Oricine din personal
 (bar, ospătar, manager, director) apasă „Rezervări" în Sală și o trece:
@@ -417,7 +433,6 @@ managerul"):
 
 | Setare | Ce face |
 |---|---|
-| **Al doilea factor** (și managerul) | codul din aplicația de autentificare, la fiecare intrare, pentru contul tău |
 | **Cod unic pe masă** | comenzile de la clienți trec doar de pe telefoane care au scanat codul QR de pe masă. Codurile QR cu cheie le face dezvoltatorul; pornești opțiunea abia după ce sunt lipite pe mese |
 | **Limite pentru comenzile clienților** | câte comenzi neconfirmate pe masă, câte în 10 minute, câte bucăți într-o comandă, pragul „sumă mare" |
 | **Mutarea la altă masă după comandă** | pornit/oprit + suma (implicit 40 lei): înainte să trimită comanda, clientul vede un mesaj clar și bifează „Rămân la masa asta — dacă mă mut, localul percepe o taxă de 40 lei"; fără bifă comanda nu pleacă. Bifa rămâne pe telefonul lui pe durata vizitei |
@@ -595,6 +610,7 @@ Toate se pot adăuga când e nevoie.
 - **Nota mesei** — totul consumat la o masă de când e ocupată.
 - **Codul lunii** — cele 6 cifre ale managerului, fără de care barul și
   ospătarii nu pot anula.
-- **Zona** — bucata din sală de care răspunde un ospătar.
+- **Spațiu** — o încăpere a localului pe hartă (Interior, Terasă, Etaj 1): un tab.
+- **Zona** — bucata dintr-un spațiu de care răspunde un ospătar (scrisă pe mese).
 - **Ora de închidere** — când se resetează ziua: mesele se eliberează,
   conturile ies, „Azi" începe de aici.
